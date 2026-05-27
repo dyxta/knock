@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Knock · Letter of Intent — Pilot Talent Drop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300,400,500,600,700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --black: #000000;
+    --white: #FFFFFF;
+    --off-white: #F8F7F5;
+    --purple: #5E17EB;
+    --purple-light: #F0EBFF;
+    --purple-mid: #C9AAFF;
+    --purple-deep: #4A0FC1;
+    --gray-100: #EDEDEB;
+    --gray-300: #BDBBB7;
+    --gray-500: #888580;
+    --gray-700: #444241;
+    --do-bg:  #E1F5EE;
+    --do-ink: #085041;
+    --font-title: "Cabinet Grotesk", "Switzer", system-ui, sans-serif;
+    --font-head:  "Poppins", system-ui, sans-serif;
+    --font-body:  "Switzer", "Inter", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+  body {
+    background:
+      radial-gradient(900px 600px at 100% 0%, rgba(94,23,235,0.05) 0%, rgba(94,23,235,0) 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(94,23,235,0.03) 0%, rgba(94,23,235,0) 55%),
+      var(--white);
+    color: var(--black);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    padding: 1.4rem 1rem 2rem;
+  }
+
+  /* ==========  ACTION BAR  ========== */
+  .action-bar {
+    max-width: 860px;
+    margin: 0 auto 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+  .action-bar .ab-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .action-bar .ab-left strong { color: var(--black); font-weight: 600; }
+  .action-bar button {
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: background .15s ease;
+  }
+  .action-bar button:hover { background: var(--purple-deep); }
+  .action-bar button svg { width: 14px; height: 14px; }
+  .action-bar .secondary { background: var(--white); color: var(--purple); border: 1px solid var(--purple-mid); }
+  .action-bar .secondary:hover { background: var(--purple-light); }
+  .action-bar .ghost { background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-100); }
+  .action-bar .ghost:hover { background: var(--off-white); color: var(--black); border-color: var(--gray-300); }
+
+  /* ==========  FILL-IN BAR  ========== */
+  .fill-bar {
+    max-width: 860px;
+    margin: 0 auto 1rem;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(94,23,235,0.05);
+    overflow: hidden;
+  }
+  .fill-bar summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.85rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease;
+  }
+  .fill-bar[open] summary {
+    border-bottom-color: var(--gray-100);
+  }
+  .fill-bar summary::-webkit-details-marker { display: none; }
+  .fill-bar summary .left {
+    display: flex; align-items: center; gap: 9px;
+  }
+  .fill-bar summary .left .badge {
+    background: var(--purple-light);
+    color: var(--purple);
+    font-family: var(--font-body);
+    font-size: 9.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 999px;
+  }
+  .fill-bar summary .left .desc {
+    color: var(--gray-500);
+    font-weight: 500;
+    font-size: 12px;
+  }
+  .fill-bar summary .chev {
+    transition: transform 0.18s ease;
+    color: var(--gray-500);
+  }
+  .fill-bar[open] summary .chev { transform: rotate(180deg); color: var(--purple); }
+  .fill-bar .fb-body {
+    padding: 0.95rem 1.2rem 1.05rem;
+  }
+  .fb-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0.7rem 0.85rem;
+  }
+  .fb-grid .fb-field { display: flex; flex-direction: column; gap: 4px; }
+  .fb-grid .fb-field.wide-2 { grid-column: span 2; }
+  .fb-grid label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 9.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+  }
+  .fb-grid input {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--black);
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 7px 10px;
+    transition: all 0.15s ease;
+    outline: none;
+  }
+  .fb-grid input:hover { border-color: var(--purple-mid); }
+  .fb-grid input:focus {
+    border-color: var(--purple);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(94,23,235,0.10);
+  }
+  .fb-grid input::placeholder { color: var(--gray-300); font-style: italic; }
+
+  /* ==========  KNOCK LOGO  ========== */
+  .knock-logo {
+    display: inline-block;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 6px 18px rgba(94,23,235,0.18), 0 2px 6px rgba(15,15,20,0.08);
+  }
+  .knock-logo svg { display: block; width: 100%; height: 100%; }
+
+  /* ==========  DOCUMENT SHEET  ========== */
+  .sheet {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(15,15,20,0.06), 0 8px 24px rgba(15,15,20,0.04);
+    padding: 3rem 3.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .sheet .watermark-k {
+    position: absolute;
+    right: -120px; top: -120px;
+    width: 380px; height: 380px;
+    opacity: 0.03;
+    pointer-events: none;
+  }
+  .sheet > * { position: relative; z-index: 1; }
+
+  /* ==========  HEADER / LETTERHEAD  ========== */
+  .letterhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--gray-100);
+    padding-bottom: 1.2rem;
+    margin-bottom: 1.8rem;
+    gap: 1.5rem;
+  }
+  .lockup { display: flex; align-items: center; gap: 12px; }
+  .lockup .knock-logo { width: 42px; height: 42px; }
+  .lockup .word {
+    font-family: var(--font-title);
+    font-weight: 900; font-size: 24px;
+    letter-spacing: -1px; line-height: 1; color: var(--black);
+  }
+  .lockup .tag {
+    font-family: var(--font-body); font-size: 9px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple);
+    margin-top: 3px;
+  }
+  .meta-right { text-align: right; font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); line-height: 1.6; }
+  .meta-right .doctype {
+    display: inline-block; background: var(--purple-light); color: var(--purple);
+    font-family: var(--font-body); font-weight: 600; font-size: 10px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    padding: 5px 11px; border-radius: 999px; margin-bottom: 8px;
+  }
+
+  /* ==========  TYPOGRAPHY  ========== */
+  h1.title {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.05; letter-spacing: -0.025em;
+    margin-bottom: 0.6rem; color: var(--black);
+  }
+  h1.title em { font-style: normal; color: var(--purple); }
+  p.intro {
+    font-family: var(--font-body); font-size: 14px; color: var(--gray-500);
+    line-height: 1.55; margin-bottom: 1.6rem;
+  }
+
+  /* ==========  EDITABLE INLINE FIELDS  ========== */
+  .ed {
+    border-bottom: 1px dashed var(--purple-mid);
+    padding: 0 2px;
+    border-radius: 2px;
+    cursor: text;
+    outline: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    color: inherit;
+    text-decoration: none;
+    display: inline;
+    white-space: pre-wrap;
+  }
+  .ed:hover  { background: var(--purple-light); }
+  .ed:focus  { background: var(--purple-light); border-bottom-style: solid; border-bottom-color: var(--purple); }
+  .ed.is-placeholder { color: var(--gray-500); font-style: italic; opacity: 0.8; }
+
+  /* ==========  ADDRESS BLOCKS  ========== */
+  .address-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.5rem; margin-bottom: 1.6rem;
+  }
+  .address-block {
+    background: var(--off-white); border: 1px solid var(--gray-100);
+    border-radius: 10px; padding: 0.85rem 1rem;
+  }
+  .address-block .lbl {
+    font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500);
+    margin-bottom: 6px;
+  }
+  .address-block .name { font-family: var(--font-head); font-weight: 700; font-size: 13.5px; color: var(--black); letter-spacing: -0.01em; line-height: 1.2; }
+  .address-block .role { font-family: var(--font-body); font-size: 11.5px; color: var(--gray-700); margin-top: 2px; }
+  .address-block .contact { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); margin-top: 5px; line-height: 1.5; }
+
+  /* ==========  CONCEPT DECK (inline embedded) ========== */
+  .concept-deck {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 14px;
+    margin-bottom: 1.6rem;
+    overflow: hidden;
+  }
+  .concept-deck summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.85rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    user-select: none;
+    transition: background 0.15s ease;
+  }
+  .concept-deck summary:hover { background: var(--white); }
+  .concept-deck summary::-webkit-details-marker { display: none; }
+  .concept-deck .cd-summary-l {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .concept-deck .cd-summary-l .cd-icon {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: var(--purple);
+    color: var(--white);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .concept-deck .cd-summary-l .cd-icon svg { width: 14px; height: 14px; }
+  .concept-deck .cd-summary-l .cd-label {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 13px; color: var(--black);
+    letter-spacing: -0.01em;
+  }
+  .concept-deck .cd-summary-l .cd-label small {
+    display: block;
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 10.5px; color: var(--gray-500);
+    margin-top: 2px;
+    letter-spacing: 0;
+  }
+  .concept-deck .cd-chev {
+    transition: transform 0.18s ease;
+    color: var(--gray-500);
+  }
+  .concept-deck[open] .cd-chev { transform: rotate(180deg); color: var(--purple); }
+
+  .cd-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    padding: 0 1.1rem 1.1rem;
+    border-top: 1px solid var(--gray-100);
+    padding-top: 1.1rem;
+  }
+  .cd-panel {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    position: relative;
+  }
+  .cd-panel .cd-num {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 24px;
+    color: var(--purple-light);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .cd-panel .cd-eyebrow {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+  .cd-panel h4 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--black);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin-bottom: 5px;
+  }
+  .cd-panel p {
+    font-family: var(--font-body);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--gray-700);
+  }
+  .cd-panel p strong { color: var(--black); font-weight: 600; }
+
+  /* ==========  BODY SECTIONS / OFFER / TERMS / FEEDBACK / SIG  ========== */
+  .eyebrow {
+    font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple);
+    margin-bottom: 7px;
+  }
+  h2.section { font-family: var(--font-head); font-weight: 700; font-size: 14px; letter-spacing: -0.01em; color: var(--black); margin-bottom: 0.4rem; }
+  p.body { font-family: var(--font-body); font-size: 13px; line-height: 1.6; color: var(--gray-700); margin-bottom: 0.9rem; }
+  p.body strong { color: var(--black); font-weight: 600; }
+
+  .offer-card {
+    background: var(--purple-light); border: 1.5px solid var(--purple-mid);
+    border-radius: 14px; padding: 1.1rem 1.3rem;
+    margin: 0.6rem 0 1.4rem; position: relative;
+  }
+  .offer-card .offer-lbl { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
+  .offer-card .offer-text { font-family: var(--font-head); font-weight: 600; font-size: 14.5px; color: var(--black); line-height: 1.55; letter-spacing: -0.005em; }
+  .offer-card .offer-text .kw {
+    background: var(--white); color: var(--purple);
+    padding: 2px 8px; border-radius: 5px;
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 13.5px; letter-spacing: -0.01em;
+    margin: 0 2px; display: inline-block; line-height: 1.4;
+  }
+  .offer-card .offer-text .kw.price { background: var(--black); color: var(--white); }
+  .offer-card .offer-foot { font-family: var(--font-body); font-size: 11px; color: var(--purple-deep); margin-top: 10px; font-style: italic; }
+
+  .delivery-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0.7rem; margin: 0.6rem 0 1.4rem;
+  }
+  .delivery-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 10px; padding: 0.7rem 0.85rem; }
+  .delivery-card .dc-ico {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center; margin-bottom: 7px;
+  }
+  .delivery-card .dc-ico svg { width: 14px; height: 14px; }
+  .delivery-card .dc-title { font-family: var(--font-head); font-weight: 700; font-size: 11.5px; color: var(--black); letter-spacing: -0.01em; margin-bottom: 3px; }
+  .delivery-card .dc-desc { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); line-height: 1.5; }
+
+  .terms-list {
+    background: var(--off-white); border: 1px solid var(--gray-100);
+    border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.4rem;
+  }
+  .terms-list .tl-item {
+    display: grid; grid-template-columns: 95px 1fr;
+    gap: 14px; padding: 6px 0; border-top: 1px solid var(--gray-100);
+    font-family: var(--font-body); font-size: 11.5px; line-height: 1.5;
+  }
+  .terms-list .tl-item:first-child { border-top: none; padding-top: 0; }
+  .terms-list .tl-item:last-child  { padding-bottom: 0; }
+  .terms-list .tl-key { font-family: var(--font-head); font-weight: 600; font-size: 10.5px; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 1px; }
+  .terms-list .tl-val { color: var(--gray-700); }
+  .terms-list .tl-val strong { color: var(--black); font-weight: 600; }
+
+  .feedback-card {
+    background: var(--white); border: 1px dashed var(--purple-mid);
+    border-radius: 12px; padding: 1rem 1.2rem; margin: 0 0 1.4rem;
+  }
+  .feedback-card .fc-title { font-family: var(--font-head); font-weight: 700; font-size: 13px; color: var(--purple); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .feedback-card .fc-intro { font-family: var(--font-body); font-size: 12px; color: var(--gray-700); line-height: 1.55; margin-bottom: 9px; }
+  .feedback-card ul {
+    list-style: none; display: grid;
+    grid-template-columns: 1fr 1fr; gap: 5px 14px;
+  }
+  .feedback-card li { font-family: var(--font-body); font-size: 11.5px; color: var(--gray-700); line-height: 1.45; display: flex; align-items: flex-start; gap: 7px; }
+  .feedback-card li::before { content: "→"; color: var(--purple); font-family: var(--font-title); font-weight: 900; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+  .feedback-card li strong { color: var(--black); font-weight: 600; }
+
+  .sig-section { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--gray-100); }
+  .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 0.8rem; }
+  .sig-block { display: flex; flex-direction: column; gap: 4px; }
+  .sig-block .sb-label { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500); }
+  .sig-block .sb-line { height: 36px; border-bottom: 1.5px solid var(--gray-300); margin-top: 18px; }
+  .sig-block .sb-name { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); margin-top: 5px; }
+  .sig-block .sb-name strong { color: var(--black); font-weight: 600; }
+  .sig-easy {
+    margin-top: 0.9rem; background: var(--do-bg);
+    border-left: 3px solid var(--do-ink); border-radius: 0 8px 8px 0;
+    padding: 9px 14px; font-family: var(--font-body);
+    font-size: 11.5px; line-height: 1.55; color: var(--do-ink);
+  }
+  .sig-easy strong { font-weight: 600; }
+  .sig-easy a { color: var(--do-ink); text-decoration: underline; font-weight: 600; }
+
+  .doc-footer {
+    margin-top: 1.4rem; padding-top: 1rem;
+    border-top: 1px solid var(--gray-100);
+    display: grid; grid-template-columns: 1fr auto; gap: 1rem;
+    font-family: var(--font-body); font-size: 10px; color: var(--gray-500); line-height: 1.55;
+  }
+  .doc-footer .legal { max-width: 540px; }
+  .doc-footer .contact { text-align: right; }
+  .doc-footer .contact a { color: var(--purple); text-decoration: none; font-weight: 600; }
+  .doc-footer .contact a:hover { text-decoration: underline; }
+
+  /* ==========  PRINT  ========== */
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body { background: var(--white); padding: 0; min-height: 0; }
+    .action-bar, .fill-bar { display: none !important; }
+    .sheet {
+      max-width: none; box-shadow: none; border: none;
+      border-radius: 0; padding: 0;
+    }
+    .sheet .watermark-k { opacity: 0.025; }
+    .ed { border-bottom: none !important; padding: 0 !important; background: transparent !important; }
+    .ed.is-placeholder { color: var(--gray-300); font-style: normal; opacity: 1; }
+    /* concept deck: respect user's open/closed state, but if open print it cleanly */
+    .concept-deck summary { cursor: default; }
+    .concept-deck .cd-chev { display: none; }
+    .concept-deck[open] { page-break-inside: auto; }
+    .concept-deck .cd-grid { page-break-inside: avoid; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    .sheet { padding: 1.8rem 1.4rem; }
+    .address-row, .sig-grid, .feedback-card ul, .cd-grid { grid-template-columns: 1fr; }
+    .delivery-grid { grid-template-columns: 1fr; }
+    .terms-list .tl-item { grid-template-columns: 1fr; gap: 4px; }
+    .action-bar { flex-direction: column; align-items: stretch; }
+    .fb-grid { grid-template-columns: 1fr; }
+    .fb-grid .fb-field.wide-2 { grid-column: span 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- INLINE: real Knock logo SVG                                    -->
+<!-- ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo-dark" viewBox="0 0 1180 1180">
+      <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
+      <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#FFFFFF"/>
+      <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#FFFFFF"/>
+      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#FFFFFF"/>
+      <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============================================================ -->
+<!-- ACTION BAR                                                     -->
+<!-- ============================================================ -->
+<div class="action-bar">
+  <div class="ab-left">
+    <strong>Knock LOI — Pilot Drop</strong>
+    <span>· non-binding · single-page</span>
+  </div>
+  <div style="display:flex; gap: 8px;">
+    <button class="ghost" id="resetBtn" title="Clear all fields back to placeholders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
+      Reset
+    </button>
+    <button class="secondary" id="copyBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Copy link
+    </button>
+    <button onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FILL-IN BAR (collapsible — appears in browser, hidden in print)-->
+<!-- ============================================================ -->
+<details class="fill-bar" id="fillBar" open>
+  <summary>
+    <div class="left">
+      <span class="badge">Fill</span>
+      <span>Recipient &amp; document details</span>
+      <span class="desc">— enter once, syncs everywhere in the LOI below</span>
+    </div>
+    <svg class="chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </summary>
+  <div class="fb-body">
+    <div class="fb-grid">
+      <div class="fb-field wide-2">
+        <label for="in-company">Company name</label>
+        <input id="in-company" data-field="company" type="text" placeholder="e.g. Standard Bank" autocomplete="off" />
+      </div>
+      <div class="fb-field">
+        <label for="in-date">Date</label>
+        <input id="in-date" data-field="date" type="text" placeholder="e.g. 15 May 2026" autocomplete="off" />
+      </div>
+      <div class="fb-field">
+        <label for="in-recipientName">Recipient name</label>
+        <input id="in-recipientName" data-field="recipientName" type="text" placeholder="e.g. Sarah Mokoena" autocomplete="off" />
+      </div>
+      <div class="fb-field">
+        <label for="in-recipientTitle">Recipient title</label>
+        <input id="in-recipientTitle" data-field="recipientTitle" type="text" placeholder="e.g. Head of Talent" autocomplete="off" />
+      </div>
+      <div class="fb-field">
+        <label for="in-ref">Reference #</label>
+        <input id="in-ref" data-field="ref" type="text" placeholder="0001" autocomplete="off" />
+      </div>
+      <div class="fb-field wide-2">
+        <label for="in-recipientEmail">Recipient email</label>
+        <input id="in-recipientEmail" data-field="recipientEmail" type="email" placeholder="e.g. sarah@company.com" autocomplete="off" />
+      </div>
+      <div class="fb-field">
+        <label for="in-recipientPhone">Recipient phone</label>
+        <input id="in-recipientPhone" data-field="recipientPhone" type="tel" placeholder="+27 ___ ___ ____" autocomplete="off" />
+      </div>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================ -->
+<!-- THE LOI DOCUMENT                                               -->
+<!-- ============================================================ -->
+<div class="sheet">
+  <svg class="watermark-k" viewBox="0 0 1180 1180" aria-hidden="true"><use href="#logo-dark"/></svg>
+
+  <!-- LETTERHEAD -->
+  <div class="letterhead">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div>
+        <div class="word">knock</div>
+        <div class="tag">talent intelligence</div>
+      </div>
+    </div>
+    <div class="meta-right">
+      <div class="doctype">Letter of Intent · Non-binding</div>
+      <div>Date: <span class="ed" data-field="date">[DD Month 2026]</span></div>
+      <div>Ref: KNK-LOI-<span class="ed" data-field="ref">[####]</span></div>
+    </div>
+  </div>
+
+  <!-- TITLE -->
+  <h1 class="title">A single pilot drop. <em>Designed for you.</em></h1>
+  <p class="intro">
+    Knock is finalising launch and we'd love <span class="ed" data-field="company">[Company Name]</span>
+    to walk this journey with us. This letter sets out a non-binding expression of intent to run a single
+    pilot WhatsApp talent drop on standard commercial terms — with the pilot itself designed around your hiring needs.
+  </p>
+
+  <!-- ADDRESS BLOCKS -->
+  <div class="address-row">
+    <div class="address-block">
+      <div class="lbl">From</div>
+      <div class="name">Dylan Tasdhary</div>
+      <div class="role">Founder · Knock Talent Intelligence</div>
+      <div class="contact">
+        sales@knocktalent.co.za<br/>
+        +27 79 061 7894
+      </div>
+    </div>
+    <div class="address-block">
+      <div class="lbl">To</div>
+      <div class="name"><span class="ed" data-field="recipientName">[Recipient Name]</span></div>
+      <div class="role"><span class="ed" data-field="recipientTitle">[Title]</span> · <span class="ed" data-field="company">[Company Name]</span></div>
+      <div class="contact">
+        <span class="ed" data-field="recipientEmail">[recipient@company.com]</span><br/>
+        <span class="ed" data-field="recipientPhone">[+27 ___ ___ ____]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- EMBEDDED CONCEPT DECK                                          -->
+  <!-- ============================================================ -->
+  <details class="concept-deck" id="conceptDeck">
+    <summary>
+      <div class="cd-summary-l">
+        <span class="cd-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </span>
+        <span class="cd-label">
+          Read the 60-second concept
+          <small>What Knock is · the opportunity layer · how the pilot works · why now</small>
+        </span>
+      </div>
+      <svg class="cd-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </summary>
+
+    <div class="cd-grid">
+      <div class="cd-panel">
+        <div class="cd-num">01</div>
+        <div class="cd-eyebrow">What is Knock</div>
+        <h4>The opportunity layer for SA students.</h4>
+        <p>
+          Knock is an AI-driven infrastructure that turns a student's verified academic transcript into a
+          <strong>matchable identity</strong> — instantly connecting them to the right careers, programmes, and funding.
+          WhatsApp-native delivery, POPIA-compliant, no extra app to install.
+        </p>
+      </div>
+
+      <div class="cd-panel">
+        <div class="cd-num">02</div>
+        <div class="cd-eyebrow">The vision</div>
+        <h4>The singular, unbiased layer every SA student plugs into.</h4>
+        <p>
+          Our long game: one verified identity in → <strong>funding, programmes, and careers</strong> out.
+          Every South African student plugged into the same opportunity layer, so potential gets
+          <strong>recognised, funded, and hired</strong> without bias.
+        </p>
+      </div>
+
+      <div class="cd-panel">
+        <div class="cd-num">03</div>
+        <div class="cd-eyebrow">How this pilot works</div>
+        <h4>100 verified UCT STEM grads. One WhatsApp drop. R2,500.</h4>
+        <p>
+          We collect transcripts from <strong>100 UCT STEM final-years</strong> and verify them through our AI engine.
+          You design the message; we deliver it directly to each student's phone. Within 7 days you get
+          reach, click rate, and how your post performed.
+        </p>
+      </div>
+
+      <div class="cd-panel">
+        <div class="cd-num">04</div>
+        <div class="cd-eyebrow">Why now</div>
+        <h4>SA youth unemployment is 60%+. Top STEM talent is invisible.</h4>
+        <p>
+          The graduate recruitment market is drowning in noise. We isolate the signal. Knock focuses on careers first,
+          then we use that revenue to layer in funding and programmes. The pilot is how we prove the
+          mechanic together. Low-risk for you, high-signal for us.
+        </p>
+      </div>
+    </div>
+  </details>
+
+  <!-- THE CONDITIONAL OFFER -->
+  <div class="eyebrow">The Offer · Conditional Pilot</div>
+  <div class="offer-card">
+    <div class="offer-lbl">In plain terms</div>
+    <div class="offer-text">
+      If Knock delivers <span class="kw">100 verified STEM final-year</span> /
+      soon-to-graduate students at <span class="kw">UCT</span> with transcripts uploaded, and we can deliver your posts
+      <span class="kw">directly to each student's phone via WhatsApp</span> —
+      then <span class="kw"><span class="ed" data-field="company">[Company Name]</span></span> agrees to participate in
+      <span class="kw">1 (one) pilot talent drop</span> at the standard rate of
+      <span class="kw price">R2,500</span>.
+    </div>
+    <div class="offer-foot">
+      Non-binding. No payment owed until the drop is mutually confirmed and executed in writing.
+    </div>
+  </div>
+
+  <!-- WHAT KNOCK DELIVERS -->
+  <div class="eyebrow">What Knock delivers</div>
+  <div class="delivery-grid">
+    <div class="delivery-card">
+      <div class="dc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+      </div>
+      <div class="dc-title">100 verified students</div>
+      <div class="dc-desc">UCT STEM final-years / soon-to-graduates <strong style="color: var(--gray-700);">with transcripts uploaded</strong> &mdash; AI-parsed and verified by Knock.</div>
+    </div>
+    <div class="delivery-card">
+      <div class="dc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </div>
+      <div class="dc-title">Direct-to-phone delivery</div>
+      <div class="dc-desc">WhatsApp drop on the channel students actually use &mdash; no extra app to install, no platform to join.</div>
+    </div>
+    <div class="delivery-card">
+      <div class="dc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="dc-title">Post-drop analytics</div>
+      <div class="dc-desc">Reach, click rate, and performance against your other posts &mdash; delivered within 7 days of the drop.</div>
+    </div>
+  </div>
+
+  <!-- STANDARD PILOT TERMS -->
+  <div class="eyebrow">Standard pilot terms</div>
+  <div class="terms-list">
+    <div class="tl-item">
+      <div class="tl-key">Drop type</div>
+      <div class="tl-val">
+        Flexible &mdash; <strong><span class="ed" data-field="company">[Company Name]</span></strong> chooses the content type at confirmation
+        (job listing, brand-awareness post, internship, recruitment-event invite, or similar).
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-key">Targeting</div>
+      <div class="tl-val">
+        100 UCT STEM final-years / soon-to-graduates with transcripts uploaded, verified by Knock.
+        Tighter filters (degree, GPA, year) available on request &mdash; no additional cost for the pilot.
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-key">Timing</div>
+      <div class="tl-val">
+        At a <strong>mutually agreed time</strong>, typically within <strong>6 months</strong> of signing &mdash; aligned with
+        <strong><span class="ed" data-field="company">[Company Name]</span>'s</strong> hiring cycle. Either party may postpone with 14 days' notice.
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-key">Commercial</div>
+      <div class="tl-val">
+        <strong>R2,500</strong> flat fee for the pilot drop. Invoiced on execution. No retainer, no platform fee, no minimum spend.
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-key">Cancellation</div>
+      <div class="tl-val">
+        Either party may withdraw at any point before the drop is scheduled, at no cost.
+        Signing creates <strong>no payment obligation</strong> &mdash; only an expression of intent. A separate written agreement will govern any executed pilot.
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-key">Compliance</div>
+      <div class="tl-val">
+        All student data handled in line with POPIA. Students consent before any message is delivered.
+        Knock provides an audit trail on request.
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT WOULD NEED TO CHANGE -->
+  <div class="feedback-card">
+    <div class="fc-title">Not quite the right fit? Tell us what would need to change.</div>
+    <div class="fc-intro">
+      This letter is deliberately light. If you'd want to participate but something here doesn't work for you,
+      we'd rather hear it than lose the conversation. The most common adjustments:
+    </div>
+    <ul>
+      <li><strong>Different price</strong> &mdash; discount in exchange for case-study rights, or premium pricing with performance guarantees.</li>
+      <li><strong>Different audience</strong> &mdash; Wits, Stellies, or a specific degree / GPA cluster.</li>
+      <li><strong>Multi-drop bundle</strong> &mdash; 3&ndash;5 drops priced as a package instead of a single pilot.</li>
+      <li><strong>Specific timing</strong> &mdash; tie to a recruitment cycle or event window.</li>
+      <li><strong>Sector exclusivity</strong> &mdash; first-mover lock for your sector during the pilot quarter.</li>
+      <li><strong>Different success metric</strong> &mdash; measure on hires, applications, or brand reach.</li>
+    </ul>
+  </div>
+
+  <!-- SIGNATURE BLOCK -->
+  <div class="sig-section">
+    <div class="eyebrow">Expression of Intent</div>
+    <p class="body" style="margin-bottom: 0.3rem;">
+      By signing below, <strong><span class="ed" data-field="company">[Company Name]</span></strong> indicates that, if the pilot existed today,
+      it would intend to participate on the terms above. <strong>This letter is non-binding</strong> &mdash; it creates no contractual or payment
+      obligation. Either party may withdraw at any point before a drop date is confirmed in writing.
+    </p>
+
+    <div class="sig-grid">
+      <div class="sig-block">
+        <div class="sb-label">For <span class="ed" data-field="company">[Company Name]</span></div>
+        <div class="sb-line"></div>
+        <div class="sb-name"><strong><span class="ed" data-field="recipientName">[Recipient Name]</span></strong> · <span class="ed" data-field="recipientTitle">[Title]</span> · Date: ___ / ___ / ______</div>
+      </div>
+      <div class="sig-block">
+        <div class="sb-label">For Knock Talent Intelligence</div>
+        <div class="sb-line"></div>
+        <div class="sb-name"><strong>Dylan Tasdhary</strong> · Founder · Date: ___ / ___ / ______</div>
+      </div>
+    </div>
+
+    <div class="sig-easy">
+      <strong>Easier option:</strong> Reply to <a id="mailtoLink" href="mailto:sales@knocktalent.co.za">sales@knocktalent.co.za</a>
+      with <em>"We confirm intent to participate"</em> + a contact person for coordination. That counts as a signed LOI for our records.
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div class="legal">
+      This letter is a non-binding expression of intent only. It does not constitute a contract,
+      payment obligation, or guarantee of services. A separate written agreement will govern any executed pilot.
+      All data handling subject to the Protection of Personal Information Act (POPIA).
+    </div>
+    <div class="contact">
+      <strong style="color: var(--black);">Knock Talent Intelligence</strong><br/>
+      <a href="mailto:sales@knocktalent.co.za">sales@knocktalent.co.za</a><br/>
+      <a href="tel:+27790617894">+27 79 061 7894</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ============================================================
+     SHARED FIELD STATE
+     - <input data-field="X"> in the fill-bar
+     - <span class="ed" data-field="X"> inline in the doc
+     - Both stay in sync via setField()
+     - Values persist in localStorage
+     ============================================================ */
+
+  const STORAGE_KEY = 'knock_loi_fields';
+  const editables = document.querySelectorAll('.ed');
+  const inputs = document.querySelectorAll('.fb-grid input[data-field]');
+
+  // Capture each editable span's default placeholder text
+  editables.forEach(el => {
+    el.dataset.default = el.textContent;
+    el.setAttribute('contenteditable', 'true');
+    el.setAttribute('spellcheck', 'false');
+    if (isPlaceholder(el.textContent)) el.classList.add('is-placeholder');
+  });
+
+  function isPlaceholder(txt) {
+    return /^\[.*\]$/.test(txt.trim()) || /^\[/.test(txt.trim());
+  }
+
+  // ============== STATE ==============
+  function loadState()  { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+  // ============== SET FIELD (single source of truth) ==============
+  function setField(name, value, source) {
+    const isEmpty = !value || isPlaceholder(value);
+
+    // 1. Update all inline spans for this field
+    document.querySelectorAll('.ed[data-field="' + name + '"]').forEach(el => {
+      if (source === 'ed' && el === source) return; // don't nuke the focused span
+      if (isEmpty) {
+        el.textContent = el.dataset.default;
+        el.classList.add('is-placeholder');
+      } else {
+        el.textContent = value;
+        el.classList.remove('is-placeholder');
+      }
+    });
+
+    // 2. Update the fill-bar input for this field
+    const inp = document.querySelector('.fb-grid input[data-field="' + name + '"]');
+    if (inp && inp !== source) {
+      inp.value = isEmpty ? '' : value;
+    }
+
+    // 3. Persist
+    const state = loadState();
+    if (isEmpty) delete state[name];
+    else state[name] = value;
+    saveState(state);
+
+    // 4. Refresh mailto if company / recipient changed
+    if (name === 'company' || name === 'recipientName') rebuildMailto();
+  }
+
+  // ============== LOAD SAVED STATE ==============
+  const saved = loadState();
+  Object.keys(saved).forEach(k => setField(k, saved[k]));
+  rebuildMailto();
+
+  // ============== WIRE UP FILL-BAR INPUTS ==============
+  inputs.forEach(inp => {
+    inp.addEventListener('input', () => {
+      setField(inp.dataset.field, inp.value, inp);
+    });
+  });
+
+  // ============== WIRE UP INLINE EDITABLE SPANS ==============
+  editables.forEach(el => {
+    // Focus → if placeholder, select-all so typing replaces
+    el.addEventListener('focus', () => {
+      if (el.classList.contains('is-placeholder')) {
+        requestAnimationFrame(() => {
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        });
+      }
+    });
+
+    el.addEventListener('input', () => {
+      const f = el.dataset.field;
+      if (!f) return;
+      const v = el.textContent;
+      // mark this span itself
+      el.classList.toggle('is-placeholder', isPlaceholder(v));
+      // sync to other spans + input + storage (but not back to this span)
+      setField(f, v, el);
+    });
+
+    el.addEventListener('blur', () => {
+      if (!el.textContent.trim()) {
+        const f = el.dataset.field;
+        if (f) setField(f, el.dataset.default, el);
+        else {
+          el.textContent = el.dataset.default;
+          el.classList.add('is-placeholder');
+        }
+      }
+    });
+
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    });
+
+    el.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      document.execCommand('insertText', false, text);
+    });
+  });
+
+  // ============== MAILTO ==============
+  function rebuildMailto() {
+    const link = document.getElementById('mailtoLink');
+    if (!link) return;
+    const cmpEl = document.querySelector('.ed[data-field="company"]');
+    const company = cmpEl && !cmpEl.classList.contains('is-placeholder') ? cmpEl.textContent.trim() : '[Company Name]';
+    const subj = 'Pilot LOI — ' + company;
+    const body = 'I confirm our intent to participate in the Knock pilot talent drop on the standard terms outlined in the LOI.\n\nContact for coordination:\nName: \nTitle: \nEmail: \nPhone: ';
+    link.href = 'mailto:sales@knocktalent.co.za?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+  }
+
+  // ============== RESET ==============
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Clear all fields and reset to placeholders?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    editables.forEach(el => {
+      el.textContent = el.dataset.default;
+      el.classList.add('is-placeholder');
+    });
+    inputs.forEach(inp => { inp.value = ''; });
+    rebuildMailto();
+  });
+
+  // ============== COPY LINK ==============
+  document.getElementById('copyBtn').addEventListener('click', e => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = e.currentTarget;
+      const orig = btn.innerHTML;
+      btn.textContent = 'Link copied';
+      setTimeout(() => { btn.innerHTML = orig; }, 1500);
+    }).catch(() => alert(window.location.href));
+  });
+
+  /* ============================================================
+     CONCEPT DECK — remember user's open/closed preference
+     ============================================================ */
+  const cdEl = document.getElementById('conceptDeck');
+  const CD_KEY = 'knock_loi_concept_open';
+  cdEl.open = localStorage.getItem(CD_KEY) === '1';
+  cdEl.addEventListener('toggle', () => {
+    localStorage.setItem(CD_KEY, cdEl.open ? '1' : '0');
+  });
+
+  /* ============================================================
+     FILL-BAR — remember user's open/closed preference
+     ============================================================ */
+  const fbEl = document.getElementById('fillBar');
+  const FB_KEY = 'knock_loi_fillbar_open';
+  const fbSaved = localStorage.getItem(FB_KEY);
+  if (fbSaved !== null) fbEl.open = fbSaved === '1';
+  fbEl.addEventListener('toggle', () => {
+    localStorage.setItem(FB_KEY, fbEl.open ? '1' : '0');
+  });
+</script>
+</body>
+</html>
