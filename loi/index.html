@@ -25,9 +25,18 @@
     --gray-700: #444241;
     --do-bg:  #E1F5EE;
     --do-ink: #085041;
+    --warn-bg: #FFF4DD;
+    --warn-ink: #8A5A00;
+    --dont-bg: #FCEBEB;
+    --dont-ink: #A32D2D;
+    --wa-header: #075E54;
+    --wa-bg: #ECE5DD;
+    --wa-out: #DCF8C6;
+    --wa-in: #FFFFFF;
     --font-title: "Cabinet Grotesk", "Switzer", system-ui, sans-serif;
     --font-head:  "Poppins", system-ui, sans-serif;
     --font-body:  "Switzer", "Inter", system-ui, sans-serif;
+    --font-mono:  "JetBrains Mono", "Menlo", monospace;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
@@ -45,7 +54,7 @@
 
   /* ==========  ACTION BAR  ========== */
   .action-bar {
-    max-width: 860px;
+    max-width: 880px;
     margin: 0 auto 0.8rem;
     display: flex;
     justify-content: space-between;
@@ -54,6 +63,7 @@
     font-family: var(--font-body);
     font-size: 12px;
     color: var(--gray-500);
+    flex-wrap: wrap;
   }
   .action-bar .ab-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .action-bar .ab-left strong { color: var(--black); font-weight: 600; }
@@ -81,7 +91,7 @@
 
   /* ==========  FILL-IN BAR  ========== */
   .fill-bar {
-    max-width: 860px;
+    max-width: 880px;
     margin: 0 auto 1rem;
     background: var(--white);
     border: 1px solid var(--gray-100);
@@ -105,129 +115,80 @@
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s ease;
   }
-  .fill-bar[open] summary {
-    border-bottom-color: var(--gray-100);
-  }
+  .fill-bar[open] summary { border-bottom-color: var(--gray-100); }
   .fill-bar summary::-webkit-details-marker { display: none; }
-  .fill-bar summary .left {
-    display: flex; align-items: center; gap: 9px;
-  }
+  .fill-bar summary .left { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
   .fill-bar summary .left .badge {
-    background: var(--purple-light);
-    color: var(--purple);
-    font-family: var(--font-body);
-    font-size: 9.5px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    font-weight: 700;
-    padding: 4px 9px;
-    border-radius: 999px;
+    background: var(--purple-light); color: var(--purple);
+    font-family: var(--font-body); font-size: 9.5px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    font-weight: 700; padding: 4px 9px; border-radius: 999px;
   }
-  .fill-bar summary .left .desc {
-    color: var(--gray-500);
-    font-weight: 500;
-    font-size: 12px;
-  }
-  .fill-bar summary .chev {
-    transition: transform 0.18s ease;
-    color: var(--gray-500);
-  }
+  .fill-bar summary .left .desc { color: var(--gray-500); font-weight: 500; font-size: 12px; }
+  .fill-bar summary .chev { transition: transform 0.18s ease; color: var(--gray-500); }
   .fill-bar[open] summary .chev { transform: rotate(180deg); color: var(--purple); }
-  .fill-bar .fb-body {
-    padding: 0.95rem 1.2rem 1.05rem;
-  }
+  .fill-bar .fb-body { padding: 0.95rem 1.2rem 1.05rem; }
   .fb-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    display: grid; grid-template-columns: 2fr 1fr 1fr;
     gap: 0.7rem 0.85rem;
   }
   .fb-grid .fb-field { display: flex; flex-direction: column; gap: 4px; }
   .fb-grid .fb-field.wide-2 { grid-column: span 2; }
   .fb-grid label {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 9.5px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--gray-500);
+    font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
+    letter-spacing: 0.10em; text-transform: uppercase; color: var(--gray-500);
   }
   .fb-grid input {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--black);
-    background: var(--off-white);
-    border: 1px solid var(--gray-100);
-    border-radius: 8px;
-    padding: 7px 10px;
-    transition: all 0.15s ease;
-    outline: none;
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--black); background: var(--off-white);
+    border: 1px solid var(--gray-100); border-radius: 8px;
+    padding: 7px 10px; outline: none; transition: all 0.15s ease;
   }
   .fb-grid input:hover { border-color: var(--purple-mid); }
-  .fb-grid input:focus {
-    border-color: var(--purple);
-    background: var(--white);
-    box-shadow: 0 0 0 3px rgba(94,23,235,0.10);
-  }
+  .fb-grid input:focus { border-color: var(--purple); background: var(--white); box-shadow: 0 0 0 3px rgba(94,23,235,0.10); }
   .fb-grid input::placeholder { color: var(--gray-300); font-style: italic; }
 
   /* ==========  KNOCK LOGO  ========== */
   .knock-logo {
-    display: inline-block;
-    border-radius: 50%;
-    flex-shrink: 0;
+    display: inline-block; border-radius: 50%; flex-shrink: 0;
     box-shadow: 0 6px 18px rgba(94,23,235,0.18), 0 2px 6px rgba(15,15,20,0.08);
   }
   .knock-logo svg { display: block; width: 100%; height: 100%; }
 
   /* ==========  DOCUMENT SHEET  ========== */
   .sheet {
-    max-width: 860px;
+    max-width: 880px;
     margin: 0 auto;
     background: var(--white);
     border: 1px solid var(--gray-100);
     border-radius: 16px;
     box-shadow: 0 24px 60px rgba(15,15,20,0.06), 0 8px 24px rgba(15,15,20,0.04);
-    padding: 3rem 3.2rem;
+    padding: 2.6rem 2.8rem;
     position: relative;
     overflow: hidden;
   }
   .sheet .watermark-k {
-    position: absolute;
-    right: -120px; top: -120px;
-    width: 380px; height: 380px;
-    opacity: 0.03;
-    pointer-events: none;
+    position: absolute; right: -120px; top: -120px;
+    width: 380px; height: 380px; opacity: 0.03; pointer-events: none;
   }
   .sheet > * { position: relative; z-index: 1; }
 
-  /* ==========  HEADER / LETTERHEAD  ========== */
+  /* ==========  LETTERHEAD  ========== */
   .letterhead {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: flex; justify-content: space-between; align-items: flex-start;
     border-bottom: 1px solid var(--gray-100);
-    padding-bottom: 1.2rem;
-    margin-bottom: 1.8rem;
-    gap: 1.5rem;
+    padding-bottom: 1rem; margin-bottom: 1.5rem; gap: 1.5rem;
   }
   .lockup { display: flex; align-items: center; gap: 12px; }
-  .lockup .knock-logo { width: 42px; height: 42px; }
-  .lockup .word {
-    font-family: var(--font-title);
-    font-weight: 900; font-size: 24px;
-    letter-spacing: -1px; line-height: 1; color: var(--black);
-  }
-  .lockup .tag {
-    font-family: var(--font-body); font-size: 9px; font-weight: 500;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple);
-    margin-top: 3px;
-  }
+  .lockup .knock-logo { width: 40px; height: 40px; }
+  .lockup .word { font-family: var(--font-title); font-weight: 900; font-size: 23px; letter-spacing: -1px; line-height: 1; color: var(--black); }
+  .lockup .tag { font-family: var(--font-body); font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); margin-top: 3px; }
   .meta-right { text-align: right; font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); line-height: 1.6; }
   .meta-right .doctype {
     display: inline-block; background: var(--purple-light); color: var(--purple);
     font-family: var(--font-body); font-weight: 600; font-size: 10px;
     letter-spacing: 0.10em; text-transform: uppercase;
-    padding: 5px 11px; border-radius: 999px; margin-bottom: 8px;
+    padding: 5px 11px; border-radius: 999px; margin-bottom: 6px;
   }
 
   /* ==========  TYPOGRAPHY  ========== */
@@ -235,26 +196,23 @@
     font-family: var(--font-title); font-weight: 900;
     font-size: clamp(28px, 3.4vw, 40px);
     line-height: 1.05; letter-spacing: -0.025em;
-    margin-bottom: 0.6rem; color: var(--black);
+    margin-bottom: 0.5rem; color: var(--black);
   }
   h1.title em { font-style: normal; color: var(--purple); }
   p.intro {
-    font-family: var(--font-body); font-size: 14px; color: var(--gray-500);
-    line-height: 1.55; margin-bottom: 1.6rem;
+    font-family: var(--font-body); font-size: 14px; color: var(--gray-700);
+    line-height: 1.55; margin-bottom: 1.4rem;
   }
+  p.intro strong { color: var(--black); font-weight: 600; }
 
   /* ==========  EDITABLE INLINE FIELDS  ========== */
   .ed {
     border-bottom: 1px dashed var(--purple-mid);
     padding: 0 2px;
-    border-radius: 2px;
-    cursor: text;
-    outline: none;
+    border-radius: 2px; cursor: text; outline: none;
     transition: background 0.15s ease, border-color 0.15s ease;
-    color: inherit;
-    text-decoration: none;
-    display: inline;
-    white-space: pre-wrap;
+    color: inherit; text-decoration: none;
+    display: inline; white-space: pre-wrap;
   }
   .ed:hover  { background: var(--purple-light); }
   .ed:focus  { background: var(--purple-light); border-bottom-style: solid; border-bottom-color: var(--purple); }
@@ -263,171 +221,336 @@
   /* ==========  ADDRESS BLOCKS  ========== */
   .address-row {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1.5rem; margin-bottom: 1.6rem;
+    gap: 1.2rem; margin-bottom: 1.4rem;
   }
   .address-block {
     background: var(--off-white); border: 1px solid var(--gray-100);
-    border-radius: 10px; padding: 0.85rem 1rem;
+    border-radius: 10px; padding: 0.8rem 0.95rem;
   }
   .address-block .lbl {
     font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
     letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500);
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
   .address-block .name { font-family: var(--font-head); font-weight: 700; font-size: 13.5px; color: var(--black); letter-spacing: -0.01em; line-height: 1.2; }
   .address-block .role { font-family: var(--font-body); font-size: 11.5px; color: var(--gray-700); margin-top: 2px; }
-  .address-block .contact { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); margin-top: 5px; line-height: 1.5; }
+  .address-block .contact { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); margin-top: 4px; line-height: 1.5; }
 
-  /* ==========  CONCEPT DECK (inline embedded) ========== */
-  .concept-deck {
+  /* ==========  CAROUSEL SECTION  ========== */
+  .carousel-section { margin-bottom: 1.4rem; }
+  .carousel-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.7rem; gap: 1rem;
+  }
+  .carousel-head .ch-left {
+    display: flex; align-items: center; gap: 9px;
+  }
+  .carousel-head .ch-icon {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .carousel-head .ch-icon svg { width: 13px; height: 13px; }
+  .carousel-head .ch-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 13px;
+    color: var(--black); letter-spacing: -0.01em;
+  }
+  .carousel-head .ch-title small {
+    display: block; font-family: var(--font-body); font-weight: 500;
+    font-size: 10.5px; color: var(--gray-500); margin-top: 2px; letter-spacing: 0;
+  }
+  .deck-btn {
+    background: var(--white); color: var(--purple);
+    border: 1px solid var(--purple-mid);
+    font-family: var(--font-body); font-weight: 600; font-size: 11.5px;
+    padding: 7px 12px; border-radius: 8px;
+    text-decoration: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all .15s ease;
+  }
+  .deck-btn:hover { background: var(--purple-light); border-color: var(--purple); }
+  .deck-btn svg { width: 12px; height: 12px; }
+
+  .carousel-wrap {
     background: var(--off-white);
     border: 1px solid var(--gray-100);
     border-radius: 14px;
-    margin-bottom: 1.6rem;
-    overflow: hidden;
-  }
-  .concept-deck summary {
-    cursor: pointer;
-    list-style: none;
-    padding: 0.85rem 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.8rem;
-    user-select: none;
-    transition: background 0.15s ease;
-  }
-  .concept-deck summary:hover { background: var(--white); }
-  .concept-deck summary::-webkit-details-marker { display: none; }
-  .concept-deck .cd-summary-l {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .concept-deck .cd-summary-l .cd-icon {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    background: var(--purple);
-    color: var(--white);
-    display: grid; place-items: center;
-    flex-shrink: 0;
-  }
-  .concept-deck .cd-summary-l .cd-icon svg { width: 14px; height: 14px; }
-  .concept-deck .cd-summary-l .cd-label {
-    font-family: var(--font-head); font-weight: 700;
-    font-size: 13px; color: var(--black);
-    letter-spacing: -0.01em;
-  }
-  .concept-deck .cd-summary-l .cd-label small {
-    display: block;
-    font-family: var(--font-body); font-weight: 500;
-    font-size: 10.5px; color: var(--gray-500);
-    margin-top: 2px;
-    letter-spacing: 0;
-  }
-  .concept-deck .cd-chev {
-    transition: transform 0.18s ease;
-    color: var(--gray-500);
-  }
-  .concept-deck[open] .cd-chev { transform: rotate(180deg); color: var(--purple); }
-
-  .cd-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.7rem;
-    padding: 0 1.1rem 1.1rem;
-    border-top: 1px solid var(--gray-100);
-    padding-top: 1.1rem;
-  }
-  .cd-panel {
-    background: var(--white);
-    border: 1px solid var(--gray-100);
-    border-radius: 10px;
-    padding: 0.85rem 1rem;
+    padding: 0.5rem;
     position: relative;
   }
-  .cd-panel .cd-num {
-    position: absolute;
-    top: 10px; right: 14px;
-    font-family: var(--font-title);
-    font-weight: 900;
-    font-size: 24px;
-    color: var(--purple-light);
-    line-height: 1;
-    letter-spacing: -0.04em;
+  .carousel-track {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    border-radius: 10px;
+    scroll-behavior: smooth;
   }
-  .cd-panel .cd-eyebrow {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--purple);
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .csl-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 290px;
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    align-items: center;
+  }
+  .csl-text { display: flex; flex-direction: column; gap: 8px; }
+  .csl-eyebrow {
+    font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--purple);
+  }
+  .csl-title {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 19px; line-height: 1.15;
+    letter-spacing: -0.015em; color: var(--black);
     margin-bottom: 4px;
   }
-  .cd-panel h4 {
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 12.5px;
-    color: var(--black);
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-    margin-bottom: 5px;
+  .csl-title em { font-style: normal; color: var(--purple); }
+  .csl-body {
+    font-family: var(--font-body); font-size: 12.5px;
+    line-height: 1.55; color: var(--gray-700);
   }
-  .cd-panel p {
-    font-family: var(--font-body);
-    font-size: 11px;
-    line-height: 1.5;
-    color: var(--gray-700);
+  .csl-body strong { color: var(--black); font-weight: 600; }
+  .csl-visual {
+    aspect-ratio: 1/1; max-height: 230px;
+    background: radial-gradient(circle at 80% 0%, var(--purple-light) 0%, var(--white) 60%);
+    border-radius: 12px; border: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 1rem;
   }
-  .cd-panel p strong { color: var(--black); font-weight: 600; }
 
-  /* ==========  BODY SECTIONS / OFFER / TERMS / FEEDBACK / SIG  ========== */
+  /* slide 1 — opportunity layer mini */
+  .opp-mini {
+    width: 100%; display: flex; flex-direction: column;
+    justify-content: space-between; align-items: center;
+    height: 100%; gap: 8px;
+  }
+  .opp-mini .top { display: flex; }
+  .opp-mini .center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .opp-mini .center .knock-logo { width: 56px; height: 56px; background: var(--white); }
+  .opp-mini .center .lbl {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 9.5px; letter-spacing: -0.01em; color: var(--purple);
+  }
+  .opp-mini .bottom { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+  .opp-mini .pill-s {
+    background: var(--white); border: 1px solid var(--gray-100);
+    padding: 4px 9px; border-radius: 999px;
+    font-family: var(--font-body); font-weight: 600; font-size: 10px;
+    color: var(--black);
+    box-shadow: 0 2px 6px rgba(15,15,20,0.04);
+  }
+  .opp-mini .pill-s.dark { background: var(--black); color: var(--white); border-color: var(--black); }
+  .opp-mini .spine {
+    width: 1px;
+    background-image: linear-gradient(to bottom, var(--purple-mid) 50%, transparent 50%);
+    background-size: 1px 6px;
+    height: 18px;
+  }
+
+  /* slide 2 — signal vs noise */
+  .signal-mini {
+    width: 100%; display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 0.6rem; align-items: center;
+  }
+  .noise-cluster {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 8px;
+    background: var(--off-white);
+    border-radius: 8px;
+    border: 1px dashed var(--gray-300);
+  }
+  .noise-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gray-300);
+  }
+  .noise-dot:nth-child(2n)   { background: var(--gray-100); }
+  .noise-dot:nth-child(3n+1) { background: var(--dont-bg); }
+  .signal-arrow {
+    color: var(--purple);
+    font-family: var(--font-title);
+    font-weight: 900; font-size: 20px;
+  }
+  .signal-stream {
+    display: flex; flex-direction: column; gap: 4px;
+    background: var(--purple-light);
+    padding: 8px; border-radius: 8px;
+    border: 1px solid var(--purple-mid);
+  }
+  .signal-stream .bar {
+    height: 7px; background: var(--purple); border-radius: 999px;
+  }
+  .signal-stream .bar:nth-child(1) { width: 100%; }
+  .signal-stream .bar:nth-child(2) { width: 85%; }
+  .signal-stream .bar:nth-child(3) { width: 92%; }
+  .signal-stream .bar:nth-child(4) { width: 78%; }
+  .signal-stream .bar:nth-child(5) { width: 88%; }
+
+  /* slide 3 — how it works (3 mini pillars) */
+  .pillars-mini {
+    width: 100%;
+    display: flex; flex-direction: column;
+    gap: 6px;
+  }
+  .pillar-mini {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 9px; padding: 8px 10px;
+    display: grid; grid-template-columns: 26px 1fr;
+    gap: 9px; align-items: center;
+  }
+  .pillar-mini .pm-ico {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+  }
+  .pillar-mini .pm-ico svg { width: 12px; height: 12px; }
+  .pillar-mini .pm-name {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 11.5px; color: var(--black); letter-spacing: -0.01em;
+  }
+  .pillar-mini .pm-desc {
+    font-family: var(--font-body); font-size: 9.5px;
+    color: var(--gray-500); margin-top: 1px;
+  }
+
+  /* slide 4 — the pilot numbers */
+  .pilot-nums {
+    width: 100%; display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px; align-items: stretch;
+  }
+  .pilot-num {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 9px; padding: 9px 6px;
+    text-align: center;
+  }
+  .pilot-num.dark { background: var(--black); border-color: var(--black); }
+  .pilot-num .pn-val {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 26px; color: var(--purple);
+    letter-spacing: -0.03em; line-height: 1;
+  }
+  .pilot-num.dark .pn-val { color: var(--purple-mid); }
+  .pilot-num .pn-lbl {
+    font-family: var(--font-body); font-weight: 600; font-size: 8.5px;
+    color: var(--gray-500); letter-spacing: 0.08em;
+    text-transform: uppercase; margin-top: 5px;
+  }
+  .pilot-num.dark .pn-lbl { color: rgba(255,255,255,0.65); }
+
+  /* slide 5 — what's next timeline */
+  .timeline-mini {
+    width: 100%; display: flex; flex-direction: column; gap: 8px;
+  }
+  .timeline-step {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 9px; padding: 8px 10px;
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 9px; align-items: center;
+    position: relative;
+  }
+  .timeline-step .ts-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 10px; color: var(--white);
+    background: var(--purple); letter-spacing: -0.02em;
+  }
+  .timeline-step.future .ts-dot { background: var(--purple-light); color: var(--purple); border: 1.5px solid var(--purple-mid); }
+  .timeline-step .ts-name { font-family: var(--font-head); font-weight: 700; font-size: 11.5px; color: var(--black); letter-spacing: -0.01em; }
+  .timeline-step .ts-when { font-family: var(--font-body); font-size: 9.5px; color: var(--gray-500); margin-top: 1px; }
+  .timeline-arrow {
+    text-align: center; color: var(--purple-mid); font-family: var(--font-title);
+    font-weight: 900; font-size: 12px; line-height: 0.5;
+  }
+
+  /* Carousel nav */
+  .carousel-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 0.55rem; padding: 0 0.3rem;
+  }
+  .nav-arrows { display: flex; gap: 5px; }
+  .nav-arrow {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--white); border: 1px solid var(--gray-100);
+    color: var(--black); cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .15s ease;
+  }
+  .nav-arrow:hover:not(:disabled) { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
+  .nav-arrow:disabled { opacity: 0.35; cursor: not-allowed; }
+  .nav-arrow svg { width: 13px; height: 13px; }
+  .dots { display: flex; gap: 5px; }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gray-300); cursor: pointer;
+    transition: all .15s ease; border: none; padding: 0;
+  }
+  .dot.active { background: var(--purple); width: 18px; border-radius: 999px; }
+  .dot:hover:not(.active) { background: var(--purple-mid); }
+  .counter-mini {
+    font-family: var(--font-title); font-weight: 900; font-size: 10.5px;
+    color: var(--gray-500); letter-spacing: 0.04em;
+  }
+  .counter-mini b { color: var(--purple); }
+
+  /* ==========  OFFER / DELIVERY / TERMS  ========== */
   .eyebrow {
     font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple);
     margin-bottom: 7px;
   }
-  h2.section { font-family: var(--font-head); font-weight: 700; font-size: 14px; letter-spacing: -0.01em; color: var(--black); margin-bottom: 0.4rem; }
-  p.body { font-family: var(--font-body); font-size: 13px; line-height: 1.6; color: var(--gray-700); margin-bottom: 0.9rem; }
-  p.body strong { color: var(--black); font-weight: 600; }
-
   .offer-card {
     background: var(--purple-light); border: 1.5px solid var(--purple-mid);
-    border-radius: 14px; padding: 1.1rem 1.3rem;
-    margin: 0.6rem 0 1.4rem; position: relative;
+    border-radius: 14px; padding: 1rem 1.2rem;
+    margin: 0.5rem 0 1.2rem; position: relative;
   }
-  .offer-card .offer-lbl { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
-  .offer-card .offer-text { font-family: var(--font-head); font-weight: 600; font-size: 14.5px; color: var(--black); line-height: 1.55; letter-spacing: -0.005em; }
+  .offer-card .offer-text {
+    font-family: var(--font-head); font-weight: 600; font-size: 13.5px;
+    color: var(--black); line-height: 1.55; letter-spacing: -0.005em;
+  }
   .offer-card .offer-text .kw {
     background: var(--white); color: var(--purple);
-    padding: 2px 8px; border-radius: 5px;
+    padding: 1px 7px; border-radius: 5px;
     font-family: var(--font-title); font-weight: 900;
-    font-size: 13.5px; letter-spacing: -0.01em;
-    margin: 0 2px; display: inline-block; line-height: 1.4;
+    font-size: 12.5px; letter-spacing: -0.01em;
+    margin: 0 1px; display: inline-block; line-height: 1.4;
   }
   .offer-card .offer-text .kw.price { background: var(--black); color: var(--white); }
-  .offer-card .offer-foot { font-family: var(--font-body); font-size: 11px; color: var(--purple-deep); margin-top: 10px; font-style: italic; }
+  .offer-card .offer-foot { font-family: var(--font-body); font-size: 10.5px; color: var(--purple-deep); margin-top: 8px; font-style: italic; }
 
   .delivery-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 0.7rem; margin: 0.6rem 0 1.4rem;
+    gap: 0.6rem; margin: 0.5rem 0 1.2rem;
   }
-  .delivery-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 10px; padding: 0.7rem 0.85rem; }
+  .delivery-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: 10px; padding: 0.7rem 0.8rem; }
   .delivery-card .dc-ico {
-    width: 28px; height: 28px; border-radius: 7px;
+    width: 26px; height: 26px; border-radius: 7px;
     background: var(--purple); color: var(--white);
-    display: grid; place-items: center; margin-bottom: 7px;
+    display: grid; place-items: center; margin-bottom: 6px;
   }
-  .delivery-card .dc-ico svg { width: 14px; height: 14px; }
-  .delivery-card .dc-title { font-family: var(--font-head); font-weight: 700; font-size: 11.5px; color: var(--black); letter-spacing: -0.01em; margin-bottom: 3px; }
+  .delivery-card .dc-ico svg { width: 13px; height: 13px; }
+  .delivery-card .dc-title { font-family: var(--font-head); font-weight: 700; font-size: 11.5px; color: var(--black); letter-spacing: -0.01em; margin-bottom: 2px; }
   .delivery-card .dc-desc { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); line-height: 1.5; }
 
   .terms-list {
     background: var(--off-white); border: 1px solid var(--gray-100);
-    border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.4rem;
+    border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.2rem;
   }
   .terms-list .tl-item {
-    display: grid; grid-template-columns: 95px 1fr;
-    gap: 14px; padding: 6px 0; border-top: 1px solid var(--gray-100);
+    display: grid; grid-template-columns: 90px 1fr;
+    gap: 13px; padding: 5px 0; border-top: 1px solid var(--gray-100);
     font-family: var(--font-body); font-size: 11.5px; line-height: 1.5;
   }
   .terms-list .tl-item:first-child { border-top: none; padding-top: 0; }
@@ -436,38 +559,360 @@
   .terms-list .tl-val { color: var(--gray-700); }
   .terms-list .tl-val strong { color: var(--black); font-weight: 600; }
 
+  /* ============================================================ */
+  /* EMBEDDED INTERACTIVE SANDBOX                                   */
+  /* ============================================================ */
+  .demo-section { margin-bottom: 1.3rem; }
+  .demo-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.6rem; gap: 1rem; flex-wrap: wrap;
+  }
+  .demo-head .dh-left { display: flex; align-items: center; gap: 9px; }
+  .demo-head .dh-ico {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+  }
+  .demo-head .dh-ico svg { width: 13px; height: 13px; }
+  .demo-head .dh-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 13px;
+    color: var(--black); letter-spacing: -0.01em;
+  }
+  .demo-head .dh-title small {
+    display: block; font-family: var(--font-body); font-weight: 500;
+    font-size: 10.5px; color: var(--gray-500); margin-top: 2px; letter-spacing: 0;
+  }
+  .demo-head .dh-tag {
+    background: var(--do-bg); color: var(--do-ink);
+    font-family: var(--font-body); font-weight: 600; font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 999px;
+  }
+
+  .sandbox-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 0.8rem;
+    background: var(--off-white);
+    padding: 0.8rem;
+    border-radius: 14px;
+    border: 1px solid var(--gray-100);
+  }
+  .sb-section-label {
+    font-family: var(--font-body); font-weight: 700; font-size: 9px;
+    text-transform: uppercase; color: var(--gray-500);
+    letter-spacing: 0.10em; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .sb-section-label .step-no {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+    font-family: var(--font-title); font-weight: 900; font-size: 8px;
+  }
+  .selector-row { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+  .select-btn {
+    background: var(--white); border: 1px solid var(--gray-100);
+    padding: 5px 9px; border-radius: 7px;
+    font-family: var(--font-body); font-size: 10.5px; font-weight: 600;
+    color: var(--gray-700); cursor: pointer;
+    transition: all .15s ease;
+  }
+  .select-btn:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
+  .select-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* phone */
+  .phone-mockup {
+    background: #1C1C1E; border-radius: 24px; padding: 5px;
+    border: 3px solid #2C2C2E; box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    height: 380px; display: flex; flex-direction: column;
+  }
+  .phone-screen {
+    background: var(--wa-bg); border-radius: 19px;
+    flex-grow: 1; overflow: hidden;
+    display: flex; flex-direction: column;
+    background-image:
+      radial-gradient(circle at 25% 30%, rgba(94,23,235,0.04) 0%, transparent 35%),
+      radial-gradient(circle at 75% 70%, rgba(94,23,235,0.03) 0%, transparent 30%);
+  }
+  .wa-header {
+    background: var(--wa-header); padding: 0.55rem 0.7rem;
+    display: flex; align-items: center; gap: 0.55rem; color: var(--white);
+  }
+  .wa-header .knock-logo { width: 24px; height: 24px; box-shadow: none; }
+  .wa-header .wa-name { font-family: var(--font-body); font-weight: 700; font-size: 11px; line-height: 1; }
+  .wa-header .wa-presence {
+    font-family: var(--font-body); font-size: 9px;
+    color: rgba(255,255,255,0.7); margin-top: 2px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .wa-header .wa-presence::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #4CD964; }
+  .wa-chat {
+    flex-grow: 1; padding: 0.65rem; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .wa-chat .msg {
+    max-width: 88%; padding: 0.4rem 0.55rem; border-radius: 9px;
+    line-height: 1.4; font-family: var(--font-body); font-size: 10.5px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.10); position: relative;
+  }
+  .wa-chat .msg--bot { background: var(--wa-in); color: #1F2C34; align-self: flex-start; border-bottom-left-radius: 3px; }
+  .wa-chat .msg--user { background: var(--wa-out); color: #1F2C34; align-self: flex-end; border-bottom-right-radius: 3px; }
+
+  /* corp workspace */
+  .corp-workspace {
+    background: var(--white); border-radius: 12px;
+    border: 1px solid var(--gray-100); padding: 0.85rem;
+    display: flex; flex-direction: column;
+    height: 380px; box-shadow: 0 2px 6px rgba(15,15,20,0.03);
+  }
+  .corp-topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--gray-100);
+    padding-bottom: 0.5rem; margin-bottom: 0.5rem;
+  }
+  .corp-topbar .corp-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 11.5px;
+    color: var(--black); letter-spacing: -0.01em;
+  }
+  .credit-badge {
+    background: var(--purple-light); color: var(--purple);
+    padding: 4px 8px; border-radius: 6px;
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 10.5px; letter-spacing: -0.01em;
+  }
+  .pricing-strip {
+    display: flex; gap: 5px; margin-bottom: 0.5rem; flex-wrap: wrap;
+  }
+  .pricing-strip .pp {
+    font-family: var(--font-body); font-size: 9px; font-weight: 600;
+    color: var(--gray-700); background: var(--off-white);
+    border: 1px solid var(--gray-100); border-radius: 5px;
+    padding: 3px 6px; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .pricing-strip .pp b {
+    font-family: var(--font-title); font-weight: 900;
+    color: var(--purple); letter-spacing: -0.01em; font-size: 10px;
+  }
+  .corp-desc {
+    font-family: var(--font-body); font-size: 10.5px;
+    color: var(--gray-500); line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+  .profile-list {
+    display: flex; flex-direction: column; gap: 0.35rem;
+    margin-bottom: 0.5rem;
+  }
+  .anonymised-row {
+    border: 1px solid var(--gray-100); border-radius: 8px;
+    padding: 0.55rem 0.65rem;
+    display: grid; grid-template-columns: 1fr auto; align-items: center;
+    background: var(--off-white); gap: 0.55rem;
+    transition: all .18s ease;
+  }
+  .anonymised-row:hover { border-color: var(--purple-mid); background: var(--white); }
+  .anonymised-row .row-top {
+    font-family: var(--font-body); font-weight: 700; font-size: 10.5px;
+    color: var(--black); display: flex; align-items: center; gap: 5px;
+  }
+  .anonymised-row .row-top svg { width: 10px; height: 10px; color: var(--purple); }
+  .anonymised-row .row-meta {
+    font-family: var(--font-body); font-size: 9.5px;
+    color: var(--gray-500); margin-top: 3px;
+  }
+  .anonymised-row .row-meta strong { color: var(--purple); font-weight: 700; }
+  .anonymised-row .row-meta .debt { color: #B11E1E; font-weight: 700; }
+  .action-btn {
+    background: var(--purple); color: var(--white);
+    border: none; padding: 5px 9px; border-radius: 6px;
+    font-family: var(--font-body); font-size: 9.5px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    transition: background .15s ease;
+  }
+  .action-btn:hover { background: var(--purple-deep); }
+  .action-btn.green { background: var(--do-ink); }
+  .action-btn.green:hover { background: #053b30; }
+  .action-btn.outline {
+    background: var(--white); color: var(--purple);
+    border: 1.5px solid var(--purple);
+  }
+  .action-btn.outline:hover { background: var(--purple-light); }
+
+  /* analytics panel */
+  .analytics-panel {
+    margin-top: 0.4rem;
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+  .analytics-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.45rem;
+  }
+  .ah-label {
+    font-family: var(--font-body); font-weight: 700;
+    font-size: 8.5px; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--gray-500);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ah-label .step-no {
+    width: 13px; height: 13px; border-radius: 50%;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+    font-family: var(--font-title); font-weight: 900; font-size: 7.5px;
+  }
+  .ah-period { font-family: var(--font-body); font-weight: 500; font-size: 8.5px; color: var(--gray-500); }
+  .analytics-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+  .a-tile {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 6px; padding: 0.4rem 0.5rem;
+  }
+  .a-tile .a-lbl {
+    font-family: var(--font-body); font-weight: 600;
+    font-size: 7.5px; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--gray-500);
+    margin-bottom: 3px;
+  }
+  .a-tile.sentiment {
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 7px; align-items: center;
+  }
+  .a-tile.sentiment .score-circle {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 11px; letter-spacing: -0.02em;
+    background: var(--do-bg); color: var(--do-ink);
+  }
+  .a-tile.sentiment .score-text .a-lbl { margin-bottom: 0; }
+  .a-tile.sentiment .trend {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 9.5px; letter-spacing: -0.01em; color: var(--do-ink);
+  }
+  .a-tile.bench .bench-vals { display: flex; align-items: baseline; gap: 5px; margin-bottom: 3px; }
+  .a-tile.bench .bench-mine {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 14px; color: var(--purple); letter-spacing: -0.02em;
+  }
+  .a-tile.bench .bench-vs { font-family: var(--font-body); font-size: 8px; color: var(--gray-500); }
+  .a-tile.bench .bench-bar { height: 4px; background: var(--gray-100); border-radius: 999px; position: relative; }
+  .a-tile.bench .bench-bar .fill { height: 100%; background: var(--purple); border-radius: 999px; }
+  .a-tile.posts .spark { display: flex; align-items: flex-end; gap: 2px; height: 22px; }
+  .a-tile.posts .bar {
+    flex: 1; background: var(--purple-light); border-radius: 2px;
+  }
+  .a-tile.posts .bar.hi { background: var(--purple); }
+  .a-tile.posts .pf-foot { font-family: var(--font-body); font-size: 8.5px; color: var(--gray-500); margin-top: 3px; }
+  .a-tile.posts .pf-foot b { font-family: var(--font-title); font-weight: 900; color: var(--black); font-size: 9.5px; }
+  .a-tile.funnel .funnel-row {
+    display: grid; grid-template-columns: 45px 1fr 22px;
+    align-items: center; gap: 5px;
+    font-family: var(--font-body); font-size: 8.5px;
+    margin-bottom: 2.5px;
+  }
+  .a-tile.funnel .funnel-row:last-child { margin-bottom: 0; }
+  .a-tile.funnel .funnel-row .label { color: var(--gray-500); }
+  .a-tile.funnel .funnel-row .funnel-bar { height: 4px; background: var(--purple-light); border-radius: 999px; }
+  .a-tile.funnel .funnel-row .funnel-fill { height: 100%; background: var(--purple); border-radius: 999px; }
+  .a-tile.funnel .funnel-row .num {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 9px; color: var(--black); letter-spacing: -0.02em;
+    text-align: right;
+  }
+  .corp-foot {
+    border-top: 1px solid var(--gray-100);
+    padding-top: 0.5rem; margin-top: auto;
+    font-family: var(--font-body); font-size: 9.5px;
+    font-weight: 600; color: var(--purple);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .corp-foot svg { width: 11px; height: 11px; }
+
+  /* ==========  FEEDBACK / SIGNATURE / WAITLIST  ========== */
   .feedback-card {
     background: var(--white); border: 1px dashed var(--purple-mid);
-    border-radius: 12px; padding: 1rem 1.2rem; margin: 0 0 1.4rem;
+    border-radius: 12px; padding: 0.9rem 1.1rem; margin: 0 0 1.2rem;
   }
-  .feedback-card .fc-title { font-family: var(--font-head); font-weight: 700; font-size: 13px; color: var(--purple); margin-bottom: 6px; letter-spacing: -0.01em; }
-  .feedback-card .fc-intro { font-family: var(--font-body); font-size: 12px; color: var(--gray-700); line-height: 1.55; margin-bottom: 9px; }
+  .feedback-card .fc-title { font-family: var(--font-head); font-weight: 700; font-size: 12.5px; color: var(--purple); margin-bottom: 5px; letter-spacing: -0.01em; }
+  .feedback-card .fc-intro { font-family: var(--font-body); font-size: 11.5px; color: var(--gray-700); line-height: 1.55; margin-bottom: 7px; }
   .feedback-card ul {
     list-style: none; display: grid;
-    grid-template-columns: 1fr 1fr; gap: 5px 14px;
+    grid-template-columns: 1fr 1fr; gap: 4px 14px;
   }
-  .feedback-card li { font-family: var(--font-body); font-size: 11.5px; color: var(--gray-700); line-height: 1.45; display: flex; align-items: flex-start; gap: 7px; }
+  .feedback-card li { font-family: var(--font-body); font-size: 11px; color: var(--gray-700); line-height: 1.45; display: flex; align-items: flex-start; gap: 6px; }
   .feedback-card li::before { content: "→"; color: var(--purple); font-family: var(--font-title); font-weight: 900; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
   .feedback-card li strong { color: var(--black); font-weight: 600; }
 
-  .sig-section { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--gray-100); }
-  .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 0.8rem; }
+  .sig-section { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--gray-100); }
+  .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 0.7rem; }
   .sig-block { display: flex; flex-direction: column; gap: 4px; }
   .sig-block .sb-label { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500); }
-  .sig-block .sb-line { height: 36px; border-bottom: 1.5px solid var(--gray-300); margin-top: 18px; }
+  .sig-block .sb-line { height: 30px; border-bottom: 1.5px solid var(--gray-300); margin-top: 14px; }
   .sig-block .sb-name { font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500); margin-top: 5px; }
   .sig-block .sb-name strong { color: var(--black); font-weight: 600; }
   .sig-easy {
-    margin-top: 0.9rem; background: var(--do-bg);
+    margin-top: 0.7rem; background: var(--do-bg);
     border-left: 3px solid var(--do-ink); border-radius: 0 8px 8px 0;
-    padding: 9px 14px; font-family: var(--font-body);
-    font-size: 11.5px; line-height: 1.55; color: var(--do-ink);
+    padding: 8px 12px; font-family: var(--font-body);
+    font-size: 11px; line-height: 1.55; color: var(--do-ink);
   }
   .sig-easy strong { font-weight: 600; }
   .sig-easy a { color: var(--do-ink); text-decoration: underline; font-weight: 600; }
 
+  /* WAITLIST CTA */
+  .waitlist-card {
+    margin-top: 1.1rem;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .waitlist-card::after {
+    content: ""; position: absolute;
+    width: 250px; height: 250px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(94,23,235,0.50) 0%, rgba(94,23,235,0) 70%);
+    right: -100px; top: -100px;
+  }
+  .waitlist-card .wl-text { position: relative; z-index: 1; }
+  .waitlist-card .wl-eyebrow {
+    font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--purple-mid); margin-bottom: 5px;
+  }
+  .waitlist-card .wl-title {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 18px; letter-spacing: -0.025em;
+    color: var(--white); margin-bottom: 4px; line-height: 1.15;
+  }
+  .waitlist-card .wl-desc {
+    font-family: var(--font-body); font-size: 12px; line-height: 1.5;
+    color: rgba(255,255,255,0.72); max-width: 460px;
+  }
+  .waitlist-btn {
+    position: relative; z-index: 1;
+    background: var(--purple); color: var(--white);
+    font-family: var(--font-body); font-weight: 700; font-size: 12.5px;
+    padding: 11px 18px; border-radius: 8px;
+    border: none; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 7px;
+    white-space: nowrap; transition: background .15s ease;
+  }
+  .waitlist-btn:hover { background: var(--purple-deep); }
+  .waitlist-btn svg { width: 13px; height: 13px; }
+
+  /* ==========  FOOTER  ========== */
   .doc-footer {
-    margin-top: 1.4rem; padding-top: 1rem;
+    margin-top: 1.2rem; padding-top: 0.9rem;
     border-top: 1px solid var(--gray-100);
     display: grid; grid-template-columns: 1fr auto; gap: 1rem;
     font-family: var(--font-body); font-size: 10px; color: var(--gray-500); line-height: 1.55;
@@ -489,22 +934,40 @@
     .sheet .watermark-k { opacity: 0.025; }
     .ed { border-bottom: none !important; padding: 0 !important; background: transparent !important; }
     .ed.is-placeholder { color: var(--gray-300); font-style: normal; opacity: 1; }
-    /* concept deck: respect user's open/closed state, but if open print it cleanly */
-    .concept-deck summary { cursor: default; }
-    .concept-deck .cd-chev { display: none; }
-    .concept-deck[open] { page-break-inside: auto; }
-    .concept-deck .cd-grid { page-break-inside: avoid; }
+
+    /* Carousel: hide nav, print only current slide */
+    .carousel-nav { display: none !important; }
+    .deck-btn { display: none !important; }
+    .carousel-track { overflow: visible !important; }
+    .csl-slide { break-inside: avoid; }
+    .csl-slide:not(.print-keep) { display: none !important; }
+
+    /* Sandbox: hide entirely (interactive only) */
+    .demo-section { display: none !important; }
+
+    /* Waitlist: keep but flatten styling */
+    .waitlist-card { background: var(--white); color: var(--black); border: 1px solid var(--gray-100); }
+    .waitlist-card::after { display: none; }
+    .waitlist-card .wl-title { color: var(--black); }
+    .waitlist-card .wl-desc { color: var(--gray-700); }
+    .waitlist-card .wl-eyebrow { color: var(--purple); }
+    .waitlist-btn { background: var(--purple); color: var(--white); }
   }
 
   /* RESPONSIVE */
-  @media (max-width: 720px) {
-    .sheet { padding: 1.8rem 1.4rem; }
-    .address-row, .sig-grid, .feedback-card ul, .cd-grid { grid-template-columns: 1fr; }
+  @media (max-width: 760px) {
+    .sheet { padding: 1.6rem 1.2rem; }
+    .address-row, .sig-grid, .feedback-card ul { grid-template-columns: 1fr; }
     .delivery-grid { grid-template-columns: 1fr; }
     .terms-list .tl-item { grid-template-columns: 1fr; gap: 4px; }
     .action-bar { flex-direction: column; align-items: stretch; }
     .fb-grid { grid-template-columns: 1fr; }
     .fb-grid .fb-field.wide-2 { grid-column: span 1; }
+    .csl-slide { grid-template-columns: 1fr; min-height: 0; }
+    .csl-visual { aspect-ratio: 16/10; max-height: 180px; }
+    .sandbox-grid { grid-template-columns: 1fr; }
+    .phone-mockup, .corp-workspace { height: auto; min-height: 320px; }
+    .waitlist-card { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -532,9 +995,9 @@
 <div class="action-bar">
   <div class="ab-left">
     <strong>Knock LOI — Pilot Drop</strong>
-    <span>· non-binding · single-page</span>
+    <span>· non-binding</span>
   </div>
-  <div style="display:flex; gap: 8px;">
+  <div style="display:flex; gap: 8px; flex-wrap: wrap;">
     <button class="ghost" id="resetBtn" title="Clear all fields back to placeholders">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
       Reset
@@ -551,14 +1014,14 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- FILL-IN BAR (collapsible — appears in browser, hidden in print)-->
+<!-- FILL-IN BAR                                                    -->
 <!-- ============================================================ -->
 <details class="fill-bar" id="fillBar" open>
   <summary>
     <div class="left">
       <span class="badge">Fill</span>
       <span>Recipient &amp; document details</span>
-      <span class="desc">— enter once, syncs everywhere in the LOI below</span>
+      <span class="desc">— enter once, syncs everywhere</span>
     </div>
     <svg class="chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
   </summary>
@@ -621,9 +1084,8 @@
   <!-- TITLE -->
   <h1 class="title">A single pilot drop. <em>Designed for you.</em></h1>
   <p class="intro">
-    Knock is finalising launch and we'd love <span class="ed" data-field="company">[Company Name]</span>
-    to walk this journey with us. This letter sets out a non-binding expression of intent to run a single
-    pilot WhatsApp talent drop on standard commercial terms — with the pilot itself designed around your hiring needs.
+    We'd love <strong><span class="ed" data-field="company">[Company Name]</span></strong> to walk our launch with us.
+    This is a non-binding intent for one pilot WhatsApp talent drop — built around your hiring needs.
   </p>
 
   <!-- ADDRESS BLOCKS -->
@@ -649,87 +1111,223 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- EMBEDDED CONCEPT DECK                                          -->
+  <!-- CAROUSEL OF CONCEPT SLIDES                                     -->
   <!-- ============================================================ -->
-  <details class="concept-deck" id="conceptDeck">
-    <summary>
-      <div class="cd-summary-l">
-        <span class="cd-icon">
+  <div class="carousel-section">
+    <div class="carousel-head">
+      <div class="ch-left">
+        <span class="ch-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         </span>
-        <span class="cd-label">
-          Read the 60-second concept
-          <small>What Knock is · the opportunity layer · how the pilot works · why now</small>
+        <span class="ch-title">
+          The 60-second concept
+          <small>Scroll through · or jump to the full pitch deck</small>
         </span>
       </div>
-      <svg class="cd-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </summary>
-
-    <div class="cd-grid">
-      <div class="cd-panel">
-        <div class="cd-num">01</div>
-        <div class="cd-eyebrow">What is Knock</div>
-        <h4>The opportunity layer for SA students.</h4>
-        <p>
-          Knock is an AI-driven infrastructure that turns a student's verified academic transcript into a
-          <strong>matchable identity</strong> — instantly connecting them to the right careers, programmes, and funding.
-          WhatsApp-native delivery, POPIA-compliant, no extra app to install.
-        </p>
-      </div>
-
-      <div class="cd-panel">
-        <div class="cd-num">02</div>
-        <div class="cd-eyebrow">The vision</div>
-        <h4>The singular, unbiased layer every SA student plugs into.</h4>
-        <p>
-          Our long game: one verified identity in → <strong>funding, programmes, and careers</strong> out.
-          Every South African student plugged into the same opportunity layer, so potential gets
-          <strong>recognised, funded, and hired</strong> without bias.
-        </p>
-      </div>
-
-      <div class="cd-panel">
-        <div class="cd-num">03</div>
-        <div class="cd-eyebrow">How this pilot works</div>
-        <h4>100 verified UCT STEM grads. One WhatsApp drop. R2,500.</h4>
-        <p>
-          We collect transcripts from <strong>100 UCT STEM final-years</strong> and verify them through our AI engine.
-          You design the message; we deliver it directly to each student's phone. Within 7 days you get
-          reach, click rate, and how your post performed.
-        </p>
-      </div>
-
-      <div class="cd-panel">
-        <div class="cd-num">04</div>
-        <div class="cd-eyebrow">Why now</div>
-        <h4>SA youth unemployment is 60%+. Top STEM talent is invisible.</h4>
-        <p>
-          The graduate recruitment market is drowning in noise. We isolate the signal. Knock focuses on careers first,
-          then we use that revenue to layer in funding and programmes. The pilot is how we prove the
-          mechanic together. Low-risk for you, high-signal for us.
-        </p>
-      </div>
+      <a href="index.html" target="_blank" rel="noopener" class="deck-btn">
+        View the full pitch deck
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
     </div>
-  </details>
 
-  <!-- THE CONDITIONAL OFFER -->
-  <div class="eyebrow">The Offer · Conditional Pilot</div>
-  <div class="offer-card">
-    <div class="offer-lbl">In plain terms</div>
-    <div class="offer-text">
-      If Knock delivers <span class="kw">100 verified STEM final-year</span> /
-      soon-to-graduate students at <span class="kw">UCT</span> with transcripts uploaded, and we can deliver your posts
-      <span class="kw">directly to each student's phone via WhatsApp</span> —
-      then <span class="kw"><span class="ed" data-field="company">[Company Name]</span></span> agrees to participate in
-      <span class="kw">1 (one) pilot talent drop</span> at the standard rate of
-      <span class="kw price">R2,500</span>.
-    </div>
-    <div class="offer-foot">
-      Non-binding. No payment owed until the drop is mutually confirmed and executed in writing.
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="carouselTrack" tabindex="0" aria-label="Knock concept carousel">
+
+        <!-- Slide 1: What is Knock -->
+        <div class="csl-slide print-keep" data-slide="0">
+          <div class="csl-text">
+            <div class="csl-eyebrow">01 · What is Knock</div>
+            <h3 class="csl-title">The opportunity layer for <em>SA students.</em></h3>
+            <p class="csl-body">
+              An AI infrastructure that turns a student's verified academic transcript into a
+              <strong>matchable identity</strong> — instantly. WhatsApp-native. POPIA-compliant.
+            </p>
+          </div>
+          <div class="csl-visual">
+            <div class="opp-mini">
+              <div class="top">
+                <div class="pill-s dark">SA student · verified</div>
+              </div>
+              <div class="spine"></div>
+              <div class="center">
+                <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+                <div class="lbl">the layer</div>
+              </div>
+              <div class="spine"></div>
+              <div class="bottom">
+                <span class="pill-s">Funding</span>
+                <span class="pill-s">Programmes</span>
+                <span class="pill-s">Careers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Signal vs Noise -->
+        <div class="csl-slide" data-slide="1">
+          <div class="csl-text">
+            <div class="csl-eyebrow">02 · Why now</div>
+            <h3 class="csl-title">Industry drowns in noise. <em>We surface the signal.</em></h3>
+            <p class="csl-body">
+              We give every student a signal — and make sure the right opportunities find it.
+              <strong>Verified data, not vibes.</strong>
+            </p>
+          </div>
+          <div class="csl-visual">
+            <div class="signal-mini">
+              <div class="noise-cluster">
+                <span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span>
+                <span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span>
+                <span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span>
+                <span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span><span class="noise-dot"></span>
+              </div>
+              <div class="signal-arrow">→</div>
+              <div class="signal-stream">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: How it works -->
+        <div class="csl-slide" data-slide="2">
+          <div class="csl-text">
+            <div class="csl-eyebrow">03 · How it works</div>
+            <h3 class="csl-title">Three steps. <em>Done in seconds.</em></h3>
+            <p class="csl-body">
+              Students upload transcripts. Knock verifies and matches. Your post lands directly on their WhatsApp.
+            </p>
+          </div>
+          <div class="csl-visual">
+            <div class="pillars-mini">
+              <div class="pillar-mini">
+                <span class="pm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg></span>
+                <div>
+                  <div class="pm-name">Verify</div>
+                  <div class="pm-desc">Transcripts AI-parsed</div>
+                </div>
+              </div>
+              <div class="pillar-mini">
+                <span class="pm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg></span>
+                <div>
+                  <div class="pm-name">Match</div>
+                  <div class="pm-desc">PII stripped, bias removed</div>
+                </div>
+              </div>
+              <div class="pillar-mini">
+                <span class="pm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+                <div>
+                  <div class="pm-name">Deliver</div>
+                  <div class="pm-desc">Direct to WhatsApp</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: The pilot -->
+        <div class="csl-slide" data-slide="3">
+          <div class="csl-text">
+            <div class="csl-eyebrow">04 · This pilot</div>
+            <h3 class="csl-title">100 grads. <em>One drop. R2,500.</em></h3>
+            <p class="csl-body">
+              UCT STEM final-years with verified transcripts. Your post, delivered direct.
+              Reach, click rate, and channel-comparison within <strong>7 days</strong>.
+            </p>
+          </div>
+          <div class="csl-visual">
+            <div class="pilot-nums">
+              <div class="pilot-num">
+                <div class="pn-val">100</div>
+                <div class="pn-lbl">Verified grads</div>
+              </div>
+              <div class="pilot-num">
+                <div class="pn-val">1</div>
+                <div class="pn-lbl">WhatsApp drop</div>
+              </div>
+              <div class="pilot-num dark">
+                <div class="pn-val">R2.5k</div>
+                <div class="pn-lbl">Flat fee</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5: What's next -->
+        <div class="csl-slide" data-slide="4">
+          <div class="csl-text">
+            <div class="csl-eyebrow">05 · What's next</div>
+            <h3 class="csl-title">Pilot first. <em>Platform second.</em></h3>
+            <p class="csl-body">
+              This drop proves the mechanic. Full Knock platform launches afterwards — multi-drop,
+              cluster targeting, B-BBEE routing. Join the waitlist below.
+            </p>
+          </div>
+          <div class="csl-visual">
+            <div class="timeline-mini">
+              <div class="timeline-step">
+                <div class="ts-dot">1</div>
+                <div>
+                  <div class="ts-name">Pilot drop</div>
+                  <div class="ts-when">Now → 6 months</div>
+                </div>
+              </div>
+              <div class="timeline-arrow">↓</div>
+              <div class="timeline-step future">
+                <div class="ts-dot">2</div>
+                <div>
+                  <div class="ts-name">Full platform launch</div>
+                  <div class="ts-when">After pilot · Q1 2027</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="carousel-nav">
+        <div class="nav-arrows">
+          <button class="nav-arrow" id="csl-prev" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="nav-arrow" id="csl-next" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="dots" id="csl-dots">
+          <button class="dot active" data-i="0" aria-label="Slide 1"></button>
+          <button class="dot" data-i="1" aria-label="Slide 2"></button>
+          <button class="dot" data-i="2" aria-label="Slide 3"></button>
+          <button class="dot" data-i="3" aria-label="Slide 4"></button>
+          <button class="dot" data-i="4" aria-label="Slide 5"></button>
+        </div>
+        <div class="counter-mini"><b id="csl-curr">1</b> / 5</div>
+      </div>
     </div>
   </div>
 
-  <!-- WHAT KNOCK DELIVERS -->
+  <!-- ============================================================ -->
+  <!-- THE CONDITIONAL OFFER                                          -->
+  <!-- ============================================================ -->
+  <div class="eyebrow">The Offer · Conditional Pilot</div>
+  <div class="offer-card">
+    <div class="offer-text">
+      If Knock delivers <span class="kw">100 verified UCT STEM final-years</span> with transcripts uploaded,
+      and we can deliver your posts <span class="kw">direct to each student's phone via WhatsApp</span> —
+      then <span class="kw"><span class="ed" data-field="company">[Company Name]</span></span> agrees to
+      <span class="kw">1 pilot talent drop</span> at <span class="kw price">R2,500</span>.
+    </div>
+    <div class="offer-foot">
+      Non-binding. No payment owed until the drop is mutually confirmed in writing.
+    </div>
+  </div>
+
+  <!-- WHAT KNOCK DELIVERS (trimmed) -->
   <div class="eyebrow">What Knock delivers</div>
   <div class="delivery-grid">
     <div class="delivery-card">
@@ -737,94 +1335,201 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
       </div>
       <div class="dc-title">100 verified students</div>
-      <div class="dc-desc">UCT STEM final-years / soon-to-graduates <strong style="color: var(--gray-700);">with transcripts uploaded</strong> &mdash; AI-parsed and verified by Knock.</div>
+      <div class="dc-desc">UCT STEM final-years with verified transcripts. AI-parsed by Knock.</div>
     </div>
     <div class="delivery-card">
       <div class="dc-ico">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       </div>
-      <div class="dc-title">Direct-to-phone delivery</div>
-      <div class="dc-desc">WhatsApp drop on the channel students actually use &mdash; no extra app to install, no platform to join.</div>
+      <div class="dc-title">Direct-to-phone</div>
+      <div class="dc-desc">WhatsApp drop on the channel students use. No app, no portal.</div>
     </div>
     <div class="delivery-card">
       <div class="dc-ico">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       </div>
       <div class="dc-title">Post-drop analytics</div>
-      <div class="dc-desc">Reach, click rate, and performance against your other posts &mdash; delivered within 7 days of the drop.</div>
+      <div class="dc-desc">Reach, click rate, and channel comparison — within 7 days.</div>
     </div>
   </div>
 
-  <!-- STANDARD PILOT TERMS -->
+  <!-- STANDARD PILOT TERMS (trimmed) -->
   <div class="eyebrow">Standard pilot terms</div>
   <div class="terms-list">
     <div class="tl-item">
       <div class="tl-key">Drop type</div>
-      <div class="tl-val">
-        Flexible &mdash; <strong><span class="ed" data-field="company">[Company Name]</span></strong> chooses the content type at confirmation
-        (job listing, brand-awareness post, internship, recruitment-event invite, or similar).
-      </div>
+      <div class="tl-val">Flexible — <strong><span class="ed" data-field="company">[Company Name]</span></strong> picks at confirmation: job, brand, internship, event invite, etc.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Targeting</div>
-      <div class="tl-val">
-        100 UCT STEM final-years / soon-to-graduates with transcripts uploaded, verified by Knock.
-        Tighter filters (degree, GPA, year) available on request &mdash; no additional cost for the pilot.
-      </div>
+      <div class="tl-val">100 UCT STEM final-years with verified transcripts. Tighter filters (degree, GPA) free on request.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Timing</div>
-      <div class="tl-val">
-        At a <strong>mutually agreed time</strong>, typically within <strong>6 months</strong> of signing &mdash; aligned with
-        <strong><span class="ed" data-field="company">[Company Name]</span>'s</strong> hiring cycle. Either party may postpone with 14 days' notice.
-      </div>
+      <div class="tl-val">Mutually agreed, typically within <strong>6 months</strong>. Either party may postpone with 14 days' notice.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Commercial</div>
-      <div class="tl-val">
-        <strong>R2,500</strong> flat fee for the pilot drop. Invoiced on execution. No retainer, no platform fee, no minimum spend.
-      </div>
+      <div class="tl-val"><strong>R2,500</strong> flat. Invoiced on execution. No retainer, no platform fee.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Cancellation</div>
-      <div class="tl-val">
-        Either party may withdraw at any point before the drop is scheduled, at no cost.
-        Signing creates <strong>no payment obligation</strong> &mdash; only an expression of intent. A separate written agreement will govern any executed pilot.
-      </div>
+      <div class="tl-val">Either party may withdraw before scheduling at no cost. Signing creates <strong>no payment obligation</strong>.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Compliance</div>
-      <div class="tl-val">
-        All student data handled in line with POPIA. Students consent before any message is delivered.
-        Knock provides an audit trail on request.
+      <div class="tl-val">POPIA-aligned. Students consent before any delivery. Audit trail on request.</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- EMBEDDED INTERACTIVE SANDBOX                                   -->
+  <!-- ============================================================ -->
+  <div class="demo-section">
+    <div class="demo-head">
+      <div class="dh-left">
+        <span class="dh-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </span>
+        <span class="dh-title">
+          Try the product
+          <small>Switch personas. Click actions. See what corporates see.</small>
+        </span>
+      </div>
+      <span class="dh-tag">Interactive · live demo</span>
+    </div>
+
+    <div class="sandbox-grid">
+      <!-- LEFT: STUDENT WHATSAPP -->
+      <div>
+        <div class="sb-section-label"><span class="step-no">1</span>Student persona</div>
+        <div class="selector-row">
+          <button class="select-btn active" id="btn-thabo" onclick="loadStudentPersona('thabo')">Thabo · CS</button>
+          <button class="select-btn" id="btn-priya" onclick="loadStudentPersona('priya')">Priya · Data</button>
+          <button class="select-btn" id="btn-alex" onclick="loadStudentPersona('alex')">Alex · Eng</button>
+        </div>
+
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="wa-header">
+              <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+              <div>
+                <div class="wa-name">Knock</div>
+                <div class="wa-presence">verified signal layer</div>
+              </div>
+            </div>
+            <div class="wa-chat" id="waChatBox"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: CORPORATE WORKSPACE -->
+      <div>
+        <div class="sb-section-label"><span class="step-no">2</span>Enterprise buyer</div>
+        <div class="selector-row">
+          <button class="select-btn active" id="corp-bank" onclick="loadCorpPersona('bank')">Company A · Talent Team</button>
+          <button class="select-btn" id="corp-bbee" onclick="loadCorpPersona('bbee')">B-BBEE Compliance</button>
+        </div>
+
+        <div class="corp-workspace">
+          <div class="corp-topbar">
+            <div class="corp-title" id="corpNameDisplay">Company A · talent portal</div>
+            <div class="credit-badge" id="creditCounter">Balance R4,500</div>
+          </div>
+          <div class="pricing-strip">
+            <span class="pp">View list <b>R200</b></span>
+            <span class="pp">Unlock <b>R50</b></span>
+            <span class="pp">Audience drop <b>R2,500</b></span>
+          </div>
+          <div class="corp-desc" id="corpDescriptionDisplay">
+            Searching for high-performance engineering candidates across verified pools.
+          </div>
+          <div class="profile-list" id="anonymisedProfileContainer"></div>
+
+          <!-- ANALYTICS PANEL -->
+          <div class="analytics-panel">
+            <div class="analytics-head">
+              <div class="ah-label"><span class="step-no">3</span>Brand &amp; post analytics</div>
+              <div class="ah-period">Last 30 days</div>
+            </div>
+            <div class="analytics-grid">
+              <div class="a-tile sentiment">
+                <div class="score-circle" id="aScore">82</div>
+                <div class="score-text">
+                  <div class="a-lbl">Sentiment</div>
+                  <div class="trend" id="aTrend">↑ +6</div>
+                </div>
+              </div>
+              <div class="a-tile bench">
+                <div class="a-lbl">vs sector</div>
+                <div class="bench-vals">
+                  <span class="bench-mine" id="aBenchMine">47%</span>
+                  <span class="bench-vs" id="aBenchSector">vs banking 22%</span>
+                </div>
+                <div class="bench-bar"><div class="fill" id="aBenchFill" style="width:78%;"></div></div>
+              </div>
+              <div class="a-tile posts">
+                <div class="a-lbl">Posts · last 7</div>
+                <div class="spark" id="aSpark">
+                  <div class="bar" style="height:30%"></div>
+                  <div class="bar" style="height:55%"></div>
+                  <div class="bar hi" style="height:78%"></div>
+                  <div class="bar" style="height:42%"></div>
+                  <div class="bar" style="height:68%"></div>
+                  <div class="bar hi" style="height:90%"></div>
+                  <div class="bar" style="height:60%"></div>
+                </div>
+                <div class="pf-foot"><b>2,841</b> reach</div>
+              </div>
+              <div class="a-tile funnel">
+                <div class="a-lbl" style="margin-bottom: 5px;">Talent funnel</div>
+                <div class="funnel-row">
+                  <span class="label">Reached</span>
+                  <div class="funnel-bar"><div class="funnel-fill" style="width:100%"></div></div>
+                  <span class="num" id="aFun1">250</span>
+                </div>
+                <div class="funnel-row">
+                  <span class="label">Unlocked</span>
+                  <div class="funnel-bar"><div class="funnel-fill" style="width:35%"></div></div>
+                  <span class="num" id="aFun2">87</span>
+                </div>
+                <div class="funnel-row">
+                  <span class="label">Responded</span>
+                  <div class="funnel-bar"><div class="funnel-fill" style="width:12%"></div></div>
+                  <span class="num" id="aFun3">31</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="corp-foot" id="demoAlertStatus">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Click an action to execute real-time routing.
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- WHAT WOULD NEED TO CHANGE -->
+  <!-- FRICTION / FEEDBACK -->
   <div class="feedback-card">
-    <div class="fc-title">Not quite the right fit? Tell us what would need to change.</div>
-    <div class="fc-intro">
-      This letter is deliberately light. If you'd want to participate but something here doesn't work for you,
-      we'd rather hear it than lose the conversation. The most common adjustments:
-    </div>
+    <div class="fc-title">Not quite the right fit? Tell us what would change it.</div>
+    <div class="fc-intro">We'd rather hear it than lose the conversation. Most common adjustments:</div>
     <ul>
-      <li><strong>Different price</strong> &mdash; discount in exchange for case-study rights, or premium pricing with performance guarantees.</li>
-      <li><strong>Different audience</strong> &mdash; Wits, Stellies, or a specific degree / GPA cluster.</li>
-      <li><strong>Multi-drop bundle</strong> &mdash; 3&ndash;5 drops priced as a package instead of a single pilot.</li>
-      <li><strong>Specific timing</strong> &mdash; tie to a recruitment cycle or event window.</li>
-      <li><strong>Sector exclusivity</strong> &mdash; first-mover lock for your sector during the pilot quarter.</li>
-      <li><strong>Different success metric</strong> &mdash; measure on hires, applications, or brand reach.</li>
+      <li><strong>Different price</strong> — discount for case-study rights, or premium with performance guarantees.</li>
+      <li><strong>Different audience</strong> — Wits, Stellies, or a specific degree / GPA cluster.</li>
+      <li><strong>Multi-drop bundle</strong> — 3–5 drops priced as a package.</li>
+      <li><strong>Specific timing</strong> — tied to your recruitment cycle.</li>
     </ul>
   </div>
 
   <!-- SIGNATURE BLOCK -->
   <div class="sig-section">
     <div class="eyebrow">Expression of Intent</div>
-    <p class="body" style="margin-bottom: 0.3rem;">
-      By signing below, <strong><span class="ed" data-field="company">[Company Name]</span></strong> indicates that, if the pilot existed today,
-      it would intend to participate on the terms above. <strong>This letter is non-binding</strong> &mdash; it creates no contractual or payment
-      obligation. Either party may withdraw at any point before a drop date is confirmed in writing.
+    <p style="font-family: var(--font-body); font-size: 12px; line-height: 1.55; color: var(--gray-700);">
+      By signing, <strong style="color: var(--black);"><span class="ed" data-field="company">[Company Name]</span></strong>
+      indicates that — if the pilot existed today — it would intend to participate.
+      <strong style="color: var(--black);">Non-binding.</strong> No payment obligation. Either party may withdraw before a drop date is confirmed.
     </p>
 
     <div class="sig-grid">
@@ -842,16 +1547,30 @@
 
     <div class="sig-easy">
       <strong>Easier option:</strong> Reply to <a id="mailtoLink" href="mailto:sales@knocktalent.co.za">sales@knocktalent.co.za</a>
-      with <em>"We confirm intent to participate"</em> + a contact person for coordination. That counts as a signed LOI for our records.
+      with <em>"We confirm intent to participate"</em> + a contact person. Counts as signed.
     </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- WAITLIST CTA                                                   -->
+  <!-- ============================================================ -->
+  <div class="waitlist-card">
+    <div class="wl-text">
+      <div class="wl-eyebrow">Want more than one drop?</div>
+      <div class="wl-title">Join the waitlist for the full Knock platform.</div>
+      <div class="wl-desc">Multi-drop campaigns, audience clustering, B-BBEE routing, live analytics. Launching after the pilot.</div>
+    </div>
+    <a id="waitlistBtn" href="mailto:sales@knocktalent.co.za?subject=Knock%20platform%20waitlist&body=Hi%20Knock%20team%2C%0A%0AWe%27d%20like%20to%20be%20added%20to%20the%20waitlist%20for%20the%20full%20Knock%20platform.%0A%0ACompany%3A%20%0AContact%3A%20%0AEmail%3A%20%0APhone%3A%20" class="waitlist-btn">
+      Join the waitlist
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
   </div>
 
   <!-- FOOTER -->
   <div class="doc-footer">
     <div class="legal">
-      This letter is a non-binding expression of intent only. It does not constitute a contract,
-      payment obligation, or guarantee of services. A separate written agreement will govern any executed pilot.
-      All data handling subject to the Protection of Personal Information Act (POPIA).
+      Non-binding expression of intent only. Not a contract or payment obligation. A separate
+      written agreement will govern any executed pilot. POPIA-compliant data handling.
     </div>
     <div class="contact">
       <strong style="color: var(--black);">Knock Talent Intelligence</strong><br/>
@@ -864,18 +1583,12 @@
 
 <script>
   /* ============================================================
-     SHARED FIELD STATE
-     - <input data-field="X"> in the fill-bar
-     - <span class="ed" data-field="X"> inline in the doc
-     - Both stay in sync via setField()
-     - Values persist in localStorage
+     EDITABLE FIELDS (bidirectional sync — form inputs ↔ inline spans)
      ============================================================ */
-
   const STORAGE_KEY = 'knock_loi_fields';
   const editables = document.querySelectorAll('.ed');
   const inputs = document.querySelectorAll('.fb-grid input[data-field]');
 
-  // Capture each editable span's default placeholder text
   editables.forEach(el => {
     el.dataset.default = el.textContent;
     el.setAttribute('contenteditable', 'true');
@@ -883,61 +1596,35 @@
     if (isPlaceholder(el.textContent)) el.classList.add('is-placeholder');
   });
 
-  function isPlaceholder(txt) {
-    return /^\[.*\]$/.test(txt.trim()) || /^\[/.test(txt.trim());
-  }
-
-  // ============== STATE ==============
+  function isPlaceholder(txt) { return /^\[.*\]$/.test(txt.trim()) || /^\[/.test(txt.trim()); }
   function loadState()  { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
   function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
 
-  // ============== SET FIELD (single source of truth) ==============
   function setField(name, value, source) {
     const isEmpty = !value || isPlaceholder(value);
-
-    // 1. Update all inline spans for this field
     document.querySelectorAll('.ed[data-field="' + name + '"]').forEach(el => {
-      if (source === 'ed' && el === source) return; // don't nuke the focused span
-      if (isEmpty) {
-        el.textContent = el.dataset.default;
-        el.classList.add('is-placeholder');
-      } else {
-        el.textContent = value;
-        el.classList.remove('is-placeholder');
-      }
+      if (source === el) return;
+      if (isEmpty) { el.textContent = el.dataset.default; el.classList.add('is-placeholder'); }
+      else         { el.textContent = value; el.classList.remove('is-placeholder'); }
     });
-
-    // 2. Update the fill-bar input for this field
     const inp = document.querySelector('.fb-grid input[data-field="' + name + '"]');
-    if (inp && inp !== source) {
-      inp.value = isEmpty ? '' : value;
-    }
-
-    // 3. Persist
+    if (inp && inp !== source) { inp.value = isEmpty ? '' : value; }
     const state = loadState();
     if (isEmpty) delete state[name];
     else state[name] = value;
     saveState(state);
-
-    // 4. Refresh mailto if company / recipient changed
     if (name === 'company' || name === 'recipientName') rebuildMailto();
   }
 
-  // ============== LOAD SAVED STATE ==============
   const saved = loadState();
   Object.keys(saved).forEach(k => setField(k, saved[k]));
   rebuildMailto();
 
-  // ============== WIRE UP FILL-BAR INPUTS ==============
   inputs.forEach(inp => {
-    inp.addEventListener('input', () => {
-      setField(inp.dataset.field, inp.value, inp);
-    });
+    inp.addEventListener('input', () => setField(inp.dataset.field, inp.value, inp));
   });
 
-  // ============== WIRE UP INLINE EDITABLE SPANS ==============
   editables.forEach(el => {
-    // Focus → if placeholder, select-all so typing replaces
     el.addEventListener('focus', () => {
       if (el.classList.contains('is-placeholder')) {
         requestAnimationFrame(() => {
@@ -949,32 +1636,20 @@
         });
       }
     });
-
     el.addEventListener('input', () => {
-      const f = el.dataset.field;
-      if (!f) return;
+      const f = el.dataset.field; if (!f) return;
       const v = el.textContent;
-      // mark this span itself
       el.classList.toggle('is-placeholder', isPlaceholder(v));
-      // sync to other spans + input + storage (but not back to this span)
       setField(f, v, el);
     });
-
     el.addEventListener('blur', () => {
       if (!el.textContent.trim()) {
         const f = el.dataset.field;
         if (f) setField(f, el.dataset.default, el);
-        else {
-          el.textContent = el.dataset.default;
-          el.classList.add('is-placeholder');
-        }
+        else { el.textContent = el.dataset.default; el.classList.add('is-placeholder'); }
       }
     });
-
-    el.addEventListener('keydown', e => {
-      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
-    });
-
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
     el.addEventListener('paste', e => {
       e.preventDefault();
       const text = (e.clipboardData || window.clipboardData).getData('text');
@@ -982,7 +1657,6 @@
     });
   });
 
-  // ============== MAILTO ==============
   function rebuildMailto() {
     const link = document.getElementById('mailtoLink');
     if (!link) return;
@@ -993,19 +1667,14 @@
     link.href = 'mailto:sales@knocktalent.co.za?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
   }
 
-  // ============== RESET ==============
   document.getElementById('resetBtn').addEventListener('click', () => {
     if (!confirm('Clear all fields and reset to placeholders?')) return;
     localStorage.removeItem(STORAGE_KEY);
-    editables.forEach(el => {
-      el.textContent = el.dataset.default;
-      el.classList.add('is-placeholder');
-    });
+    editables.forEach(el => { el.textContent = el.dataset.default; el.classList.add('is-placeholder'); });
     inputs.forEach(inp => { inp.value = ''; });
     rebuildMailto();
   });
 
-  // ============== COPY LINK ==============
   document.getElementById('copyBtn').addEventListener('click', e => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       const btn = e.currentTarget;
@@ -1015,25 +1684,258 @@
     }).catch(() => alert(window.location.href));
   });
 
-  /* ============================================================
-     CONCEPT DECK — remember user's open/closed preference
-     ============================================================ */
-  const cdEl = document.getElementById('conceptDeck');
-  const CD_KEY = 'knock_loi_concept_open';
-  cdEl.open = localStorage.getItem(CD_KEY) === '1';
-  cdEl.addEventListener('toggle', () => {
-    localStorage.setItem(CD_KEY, cdEl.open ? '1' : '0');
-  });
-
-  /* ============================================================
-     FILL-BAR — remember user's open/closed preference
-     ============================================================ */
+  /* FILL-BAR open-state memory */
   const fbEl = document.getElementById('fillBar');
   const FB_KEY = 'knock_loi_fillbar_open';
   const fbSaved = localStorage.getItem(FB_KEY);
   if (fbSaved !== null) fbEl.open = fbSaved === '1';
-  fbEl.addEventListener('toggle', () => {
-    localStorage.setItem(FB_KEY, fbEl.open ? '1' : '0');
+  fbEl.addEventListener('toggle', () => localStorage.setItem(FB_KEY, fbEl.open ? '1' : '0'));
+
+  /* ============================================================
+     CAROUSEL — scroll-snap with prev/next, dots, keyboard, swipe
+     ============================================================ */
+  const track = document.getElementById('carouselTrack');
+  const slidesArr = track.querySelectorAll('.csl-slide');
+  const dots = document.querySelectorAll('#csl-dots .dot');
+  const prevBtn = document.getElementById('csl-prev');
+  const nextBtn = document.getElementById('csl-next');
+  const cslCurr = document.getElementById('csl-curr');
+  let currentSlide = 0;
+
+  function goToSlide(i) {
+    i = Math.max(0, Math.min(slidesArr.length - 1, i));
+    track.scrollTo({ left: slidesArr[i].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+  }
+
+  function setActive(i) {
+    currentSlide = i;
+    cslCurr.textContent = i + 1;
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    prevBtn.disabled = (i === 0);
+    nextBtn.disabled = (i === slidesArr.length - 1);
+    slidesArr.forEach((s, idx) => s.classList.toggle('print-keep', idx === i));
+  }
+
+  prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+  nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+  dots.forEach(d => d.addEventListener('click', () => goToSlide(+d.dataset.i)));
+
+  // Update active state as user scrolls (manually or via swipe)
+  let scrollTimeout;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== currentSlide) setActive(i);
+    }, 80);
+  });
+
+  // Keyboard nav when carousel is focused
+  track.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); goToSlide(currentSlide + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+  });
+
+  setActive(0);
+
+  /* ============================================================
+     SANDBOX DEMO
+     ============================================================ */
+  const studentData = {
+    thabo: {
+      school: "UCT", degree: "BSc CompSci", gpa: "81% GPA", status: "Debt · R42,000",
+      messages: [
+        { type: "user", text: "📤 Uploading: transcript_final.pdf" },
+        { type: "bot", text: "⚙️ Parsing structure vectors…" },
+        { type: "bot", text: "✅ <strong>Verified</strong><br/>UCT · CompSci · 81.3%<br/>🔒 PII stripped for blind matching." }
+      ]
+    },
+    priya: {
+      school: "Wits", degree: "BSc Data Science", gpa: "78% GPA", status: "Bursary active",
+      messages: [
+        { type: "user", text: "📤 Uploading: Priya_Wits_Data.pdf" },
+        { type: "bot", text: "⚙️ Validating pipelines…" },
+        { type: "bot", text: "✅ <strong>Validated</strong><br/>Wits · Data Science · 78.5%<br/>🔒 Anonymisation token active." }
+      ]
+    },
+    alex: {
+      school: "Stellenbosch", degree: "BEng Mechatronics", gpa: "74% GPA", status: "Debt · R18,500",
+      messages: [
+        { type: "user", text: "📤 Uploading: Maties_Record.pdf" },
+        { type: "bot", text: "⚙️ Parsing academic tables…" },
+        { type: "bot", text: "✅ <strong>Parsed</strong><br/>SU · Mechatronics · 74.0%<br/>🔒 PII isolated." }
+      ]
+    }
+  };
+
+  const corpData = {
+    bank: {
+      title: "Company A · talent portal",
+      desc: "Searching for high-performance engineering candidates across verified pools.",
+      sentiment: 82, sentTrend: '↑ +6',
+      benchMine: 47, benchSector: 22, sectorLabel: 'banking',
+      posts: [30,55,78,42,68,90,60], reach: 2841,
+      funnel: { reached: 250, unlocked: 87, responded: 31 }
+    },
+    bbee: {
+      title: "Enterprise B-BBEE deck",
+      desc: "Targeting Skills Development fund allocation against verified student debt.",
+      sentiment: 91, sentTrend: '↑ +11',
+      benchMine: 58, benchSector: 19, sectorLabel: 'compliance',
+      posts: [40,70,55,82,95,68,88], reach: 1820,
+      funnel: { reached: 320, unlocked: 142, responded: 67 }
+    }
+  };
+
+  let activeStudent = 'thabo';
+  let activeCorp = 'bank';
+  let availableBalance = 4500;
+  let listViewed = false;
+
+  function loadStudentPersona(id) {
+    activeStudent = id;
+    ['thabo','priya','alex'].forEach(s => {
+      document.getElementById('btn-' + s).classList.toggle('active', s === id);
+    });
+    const chatBox = document.getElementById('waChatBox');
+    chatBox.innerHTML = '';
+    studentData[id].messages.forEach(m => {
+      const div = document.createElement('div');
+      div.className = `msg msg--${m.type}`;
+      div.innerHTML = m.text;
+      chatBox.appendChild(div);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+    listViewed = false;
+    renderCorporateList();
+  }
+
+  function loadCorpPersona(corpId) {
+    activeCorp = corpId;
+    document.getElementById('corp-bank').classList.toggle('active', corpId === 'bank');
+    document.getElementById('corp-bbee').classList.toggle('active', corpId === 'bbee');
+    const c = corpData[corpId];
+    document.getElementById('corpNameDisplay').textContent = c.title;
+    document.getElementById('corpDescriptionDisplay').textContent = c.desc;
+
+    const scoreEl = document.getElementById('aScore');
+    scoreEl.textContent = c.sentiment;
+    if (c.sentiment >= 85)      { scoreEl.style.background = 'var(--do-bg)';   scoreEl.style.color = 'var(--do-ink)'; }
+    else if (c.sentiment >= 65) { scoreEl.style.background = 'var(--warn-bg)'; scoreEl.style.color = 'var(--warn-ink)'; }
+    else                        { scoreEl.style.background = 'var(--dont-bg)'; scoreEl.style.color = 'var(--dont-ink)'; }
+    document.getElementById('aTrend').textContent = c.sentTrend;
+    document.getElementById('aBenchMine').textContent = c.benchMine + '%';
+    document.getElementById('aBenchSector').textContent = `vs ${c.sectorLabel} ${c.benchSector}%`;
+    document.getElementById('aBenchFill').style.width = Math.min(100, c.benchMine / 60 * 100) + '%';
+
+    const sparkEl = document.getElementById('aSpark');
+    sparkEl.innerHTML = '';
+    const maxBar = Math.max(...c.posts);
+    c.posts.forEach((v) => {
+      const div = document.createElement('div');
+      div.className = 'bar' + (v === maxBar ? ' hi' : '');
+      div.style.height = v + '%';
+      sparkEl.appendChild(div);
+    });
+    document.querySelector('.a-tile.posts .pf-foot').innerHTML = `<b>${c.reach.toLocaleString()}</b> reach`;
+    document.getElementById('aFun1').textContent = c.funnel.reached;
+    document.getElementById('aFun2').textContent = c.funnel.unlocked;
+    document.getElementById('aFun3').textContent = c.funnel.responded;
+
+    listViewed = false;
+    renderCorporateList();
+  }
+
+  function renderCorporateList() {
+    const container = document.getElementById('anonymisedProfileContainer');
+    container.innerHTML = '';
+    const info = studentData[activeStudent];
+
+    if (!listViewed) {
+      const row = document.createElement('div');
+      row.className = 'anonymised-row';
+      row.innerHTML = `
+        <div>
+          <div class="row-top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Matched talent pool
+          </div>
+          <div class="row-meta">${activeCorp === 'bank' ? 'STEM · GPA ≥ 75%' : 'Skills Dev · debt > R10k'} · <strong>${activeCorp === 'bank' ? '7 candidates' : '12 candidates'}</strong></div>
+        </div>
+        <button class="action-btn outline" onclick="viewTalentList()">View · R200</button>
+      `;
+      container.appendChild(row);
+      return;
+    }
+
+    const row = document.createElement('div');
+    row.className = 'anonymised-row';
+    if (activeCorp === 'bank') {
+      row.innerHTML = `
+        <div>
+          <div class="row-top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Candidate token
+          </div>
+          <div class="row-meta">${info.school} · ${info.degree} · <strong>${info.gpa}</strong></div>
+        </div>
+        <button class="action-btn" onclick="executeDemoAction('unlock')">Unlock · R50</button>
+      `;
+    } else {
+      row.innerHTML = `
+        <div>
+          <div class="row-top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Compliance match
+          </div>
+          <div class="row-meta">${info.school} · <span class="debt">${info.status}</span></div>
+        </div>
+        <button class="action-btn green" onclick="executeDemoAction('clearDebt')">Clear debt</button>
+      `;
+    }
+    container.appendChild(row);
+  }
+
+  function viewTalentList() {
+    if (availableBalance < 200) return;
+    availableBalance -= 200;
+    document.getElementById('creditCounter').textContent = `Balance R${availableBalance.toLocaleString()}`;
+    listViewed = true;
+    const alertBar = document.getElementById('demoAlertStatus');
+    alertBar.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      List unlocked · R200 deducted · ${activeCorp === 'bank' ? '7' : '12'} tokens loaded.
+    `;
+    renderCorporateList();
+  }
+
+  function executeDemoAction(actionType) {
+    const alertBar = document.getElementById('demoAlertStatus');
+    const chatBox = document.getElementById('waChatBox');
+    if (actionType === 'unlock' && availableBalance >= 50) {
+      availableBalance -= 50;
+      document.getElementById('creditCounter').textContent = `Balance R${availableBalance.toLocaleString()}`;
+      alertBar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Profile unlocked · R50 deducted · routing to student…`;
+      const notice = document.createElement('div');
+      notice.className = 'msg msg--bot';
+      notice.style.borderLeft = '3px solid var(--purple)';
+      notice.innerHTML = `🔔 <strong>Update:</strong> A corporate talent team unlocked your profile!`;
+      chatBox.appendChild(notice);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    } else if (actionType === 'clearDebt') {
+      alertBar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="color: var(--do-ink);"><polyline points="20 6 9 17 4 12"/></svg> <span style="color: var(--do-ink);">Balance transferred · routed compliance funds to university.</span>`;
+      const notice = document.createElement('div');
+      notice.className = 'msg msg--bot';
+      notice.style.borderLeft = '3px solid var(--do-ink)';
+      notice.innerHTML = `🎉 <strong>Alert:</strong> Corporate compliance funding cleared your university debt!`;
+      chatBox.appendChild(notice);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadCorpPersona('bank');
+    loadStudentPersona('thabo');
   });
 </script>
 </body>
