@@ -1,2243 +1,1039 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Knock — EDHE Absa InnoVarsity Pitch</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300,400,500,600,700&display=swap" rel="stylesheet" />
-
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Knock — EDHE Absa InnoVarsity 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-  /* ==========  BRAND TOKENS  ========== */
-  :root {
-    --black: #000000;
-    --white: #FFFFFF;
-    --off-white: #F8F7F5;
-    --purple: #5E17EB;
-    --purple-light: #F0EBFF;
-    --purple-mid: #C9AAFF;
-    --purple-deep: #4A0FC1;
-    --purple-planet: #9560FF;
-    --gray-100: #EDEDEB;
-    --gray-300: #BDBBB7;
-    --gray-500: #888580;
-    --gray-700: #444241;
-    --do-bg:  #E1F5EE;
-    --do-ink: #085041;
-    --warn-bg: #FFF4DD;
-    --warn-ink: #8A5A00;
-    --dont-bg: #FCEBEB;
-    --dont-ink: #A32D2D;
-    /* WhatsApp palette */
-    --wa-header: #075E54;
-    --wa-bg: #ECE5DD;
-    --wa-out: #DCF8C6;
-    --wa-in: #FFFFFF;
-    /* Type */
-    --font-title: "Cabinet Grotesk", "Switzer", system-ui, sans-serif;
-    --font-head:  "Poppins", system-ui, sans-serif;
-    --font-body:  "Switzer", "Inter", system-ui, sans-serif;
-    --font-mono:  "JetBrains Mono", "Menlo", monospace;
-    /* Shadows */
-    --shadow-xs: 0 1px 2px rgba(15,15,20,0.04);
-    --shadow-sm: 0 2px 8px rgba(15,15,20,0.04), 0 1px 2px rgba(15,15,20,0.03);
-    --shadow-md: 0 8px 24px rgba(15,15,20,0.06), 0 2px 6px rgba(15,15,20,0.04);
-    --shadow-lg: 0 24px 60px rgba(94,23,235,0.12), 0 8px 24px rgba(15,15,20,0.06);
-    --shadow-logo: 0 6px 18px rgba(94,23,235,0.18), 0 2px 6px rgba(15,15,20,0.08);
-    /* Layout */
-    --slide-max-w: 1180px;
-    --slide-min-h: 660px;
-  }
+:root {
+  --black:        #000000;
+  --white:        #FFFFFF;
+  --off-white:    #F8F7F5;
+  --purple:       #5E17EB;
+  --purple-light: #F0EBFF;
+  --purple-mid:   #C9AAFF;
+  --purple-deep:  #4A0FC1;
+  --gray-100:     #EDEDEB;
+  --gray-200:     #E0DEDA;
+  --gray-300:     #BDBBB7;
+  --gray-500:     #888580;
+  --gray-700:     #444241;
+  --do-bg:        #E1F5EE;
+  --do-ink:       #085041;
+  --warn-bg:      #FFF4DD;
+  --warn-ink:     #8A5A00;
+  --font-title:   "Cabinet Grotesk", "Switzer", system-ui, sans-serif;
+  --font-head:    "Poppins", system-ui, sans-serif;
+  --font-body:    "Switzer", "Inter", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", monospace;
+  --shadow-xs:    0 1px 2px rgba(15,15,20,0.04);
+  --shadow-sm:    0 2px 8px rgba(15,15,20,0.04), 0 1px 2px rgba(15,15,20,0.03);
+  --shadow-md:    0 8px 24px rgba(15,15,20,0.06), 0 2px 6px rgba(15,15,20,0.04);
+  --shadow-lg:    0 24px 60px rgba(94,23,235,0.12), 0 8px 24px rgba(15,15,20,0.06);
+  --shadow-logo:  0 6px 18px rgba(94,23,235,0.18), 0 2px 6px rgba(15,15,20,0.08);
+  --slide-max-w:  1180px;
+  --slide-min-h:  660px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-  html, body { height: 100%; }
-  body {
-    background:
-      radial-gradient(900px 600px at 100% 0%, rgba(94,23,235,0.05) 0%, rgba(94,23,235,0) 60%),
-      radial-gradient(700px 500px at 0% 100%, rgba(94,23,235,0.03) 0%, rgba(94,23,235,0) 55%),
-      var(--white);
-    color: var(--black);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-font-smoothing:antialiased; }
+html,body { height:100%; }
+body {
+  background:
+    radial-gradient(900px 600px at 100% 0%, rgba(94,23,235,0.05) 0%, rgba(94,23,235,0) 60%),
+    radial-gradient(700px 500px at 0% 100%, rgba(94,23,235,0.03) 0%, rgba(94,23,235,0) 55%),
+    var(--white);
+  color:var(--black); font-family:var(--font-body);
+  min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
+}
 
-  /* ==========  DECK CANVAS  ========== */
-  .deck-container {
-    width: 100%;
-    max-width: var(--slide-max-w);
-    margin: 0 auto;
-    padding: 1rem;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .slide {
-    display: none;
-    width: 100%;
-    min-height: var(--slide-min-h);
-    background: var(--white);
-    border: 1px solid var(--gray-100);
-    border-radius: 24px;
-    box-shadow: var(--shadow-md);
-    padding: 2.4rem 2.8rem;
-    position: relative;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    overflow: hidden;
-  }
-  .slide.active {
-    display: flex;
-    flex-direction: column;
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ── DECK ── */
+.deck-container {
+  width:100%; max-width:var(--slide-max-w); margin:0 auto;
+  padding:1rem; flex-grow:1; display:flex; align-items:center; justify-content:center;
+}
+.slide {
+  display:none; width:100%; min-height:var(--slide-min-h);
+  background:var(--white); border:1px solid var(--gray-100);
+  border-radius:24px; box-shadow:var(--shadow-md);
+  padding:2.4rem 2.8rem; position:relative;
+  opacity:0; transform:translateY(10px);
+  transition:opacity .4s ease, transform .4s ease; overflow:hidden;
+}
+.slide.active { display:flex; flex-direction:column; opacity:1; transform:translateY(0); }
 
-  /* ==========  REAL KNOCK LOGO  ========== */
-  .knock-logo {
-    display: inline-block;
-    border-radius: 50%;
-    flex-shrink: 0;
-    box-shadow: var(--shadow-logo);
-  }
-  .knock-logo svg { display: block; width: 100%; height: 100%; }
+/* ── LOGO ── */
+.knock-logo { display:inline-block; border-radius:50%; flex-shrink:0; box-shadow:var(--shadow-logo); }
+.knock-logo svg { display:block; width:100%; height:100%; }
 
-  /* ==========  LOCKUP  ========== */
-  .lockup { display: flex; align-items: center; gap: 12px; }
-  .lockup .knock-logo { width: 36px; height: 36px; }
-  .lockup .word {
-    font-family: var(--font-title);
-    font-weight: 900; font-size: 22px;
-    letter-spacing: -1px; line-height: 1; color: var(--black);
-  }
-  .lockup .tag {
-    font-family: var(--font-body); font-size: 8.5px; font-weight: 500;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple);
-    margin-top: 3px;
-  }
-  .lockup.on-dark .knock-logo { box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
-  .lockup.on-dark .word { color: var(--white); }
-  .lockup.on-dark .tag  { color: var(--purple-mid); }
+/* ── LOCKUP ── */
+.lockup { display:flex; align-items:center; gap:12px; }
+.lockup .knock-logo { width:36px; height:36px; }
+.lockup .word { font-family:var(--font-title); font-weight:900; font-size:22px; letter-spacing:-1px; line-height:1; color:var(--black); }
+.lockup .tag  { font-family:var(--font-body); font-size:8.5px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--purple); margin-top:3px; }
+.lockup.on-dark .word { color:var(--white); }
+.lockup.on-dark .tag  { color:var(--purple-mid); }
+.lockup.on-dark .knock-logo { box-shadow:0 6px 18px rgba(0,0,0,.25); }
 
-  /* ==========  SLIDE HEADER  ========== */
-  .slide-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    border-bottom: 1px solid var(--gray-100);
-    padding-bottom: 1rem; margin-bottom: 1.6rem; gap: 1.5rem;
-  }
-  .slide-header.no-border { border-bottom: none; margin-bottom: 1rem; padding-bottom: 0; }
-  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.45rem; }
-  .slide-tag {
-    font-family: var(--font-body); font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.10em; color: var(--purple);
-    background: var(--purple-light);
-    padding: 6px 13px; border-radius: 999px; white-space: nowrap;
-  }
-  .slide-meta {
-    font-family: var(--font-body); font-size: 11px; color: var(--gray-500);
-    text-align: right; line-height: 1.45; font-weight: 500;
-  }
+/* ── SLIDE HEADER ── */
+.slide-header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--gray-100); padding-bottom:1rem; margin-bottom:1.6rem; gap:1.5rem; }
+.slide-header.no-border { border-bottom:none; margin-bottom:1rem; padding-bottom:0; }
+.header-right { display:flex; flex-direction:column; align-items:flex-end; gap:.45rem; }
+.slide-tag { font-family:var(--font-body); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.10em; color:var(--purple); background:var(--purple-light); padding:6px 13px; border-radius:999px; white-space:nowrap; }
+.slide-meta { font-family:var(--font-body); font-size:11px; color:var(--gray-500); text-align:right; line-height:1.45; font-weight:500; }
 
-  /* ==========  TYPOGRAPHY  ========== */
-  .slide-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
-  .slide-body.top { justify-content: flex-start; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4rem; align-items: center; }
-  .grid-2.start { align-items: start; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+/* ── TYPOGRAPHY ── */
+.slide-body { flex-grow:1; display:flex; flex-direction:column; justify-content:center; min-height:0; }
+.slide-body.top { justify-content:flex-start; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:2.4rem; align-items:center; }
+.grid-2.start { align-items:start; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.eyebrow { font-family:var(--font-body); font-weight:600; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
+h1.display { font-family:var(--font-title); font-weight:900; font-size:clamp(46px,6vw,80px); line-height:.96; letter-spacing:-0.035em; margin-bottom:1.1rem; color:var(--black); }
+h1.display em { font-style:normal; color:var(--purple); }
+h2.heading { font-family:var(--font-head); font-weight:700; font-size:clamp(24px,2.4vw,34px); line-height:1.12; letter-spacing:-0.02em; margin-bottom:.8rem; color:var(--black); }
+h2.heading em { font-style:normal; color:var(--purple); }
+h3.sub { font-family:var(--font-head); font-weight:700; font-size:16px; margin-bottom:5px; letter-spacing:-0.01em; }
+p.lede { font-family:var(--font-body); font-weight:400; font-size:clamp(14px,1.2vw,16.5px); line-height:1.55; color:var(--gray-700); margin-bottom:1.2rem; max-width:700px; }
+p.body { font-family:var(--font-body); font-size:13.5px; line-height:1.6; color:var(--gray-700); }
 
-  .eyebrow {
-    font-family: var(--font-body); font-weight: 600; font-size: 10px;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--purple);
-    margin-bottom: 10px;
-  }
-  h1.display {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: clamp(46px, 6vw, 82px);
-    line-height: 0.96; letter-spacing: -0.035em;
-    margin-bottom: 1.1rem; color: var(--black);
-  }
-  h1.display em { font-style: normal; color: var(--purple); }
-  h2.heading {
-    font-family: var(--font-head); font-weight: 700;
-    font-size: clamp(25px, 2.5vw, 36px);
-    line-height: 1.12; letter-spacing: -0.02em;
-    margin-bottom: 0.8rem; color: var(--black);
-  }
-  h2.heading em { font-style: normal; color: var(--purple); }
-  h3.sub {
-    font-family: var(--font-head); font-weight: 700; font-size: 17px;
-    margin-bottom: 5px; letter-spacing: -0.01em; color: var(--black);
-  }
-  p.lede {
-    font-family: var(--font-body); font-weight: 400;
-    font-size: clamp(15px, 1.25vw, 17px);
-    line-height: 1.55; color: var(--gray-700);
-    margin-bottom: 1.2rem; max-width: 700px;
-  }
-  p.body {
-    font-family: var(--font-body); font-weight: 400; font-size: 14px;
-    line-height: 1.6; color: var(--gray-700);
-  }
+/* ── PRIMITIVES ── */
+.pill-cluster { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.9rem; }
+.pill { background:var(--white); border:1px solid var(--gray-100); padding:8px 14px; border-radius:999px; font-family:var(--font-body); font-size:12.5px; font-weight:500; color:var(--black); display:inline-flex; align-items:center; gap:7px; }
+.pill.solid { background:var(--black); color:var(--white); border-color:var(--black); }
+.pill.purple { background:var(--purple-light); color:var(--purple); border-color:var(--purple-mid); font-weight:600; }
+.note { background:var(--purple-light); border-left:3px solid var(--purple); padding:13px 17px; border-radius:0 10px 10px 0; font-size:12.5px; line-height:1.55; color:#3a0a9e; }
+.note strong { font-weight:600; }
+.verified-badge { display:inline-flex; align-items:center; gap:6px; background:var(--do-bg); color:var(--do-ink); padding:4px 10px 4px 8px; border-radius:999px; font-family:var(--font-body); font-weight:600; font-size:11px; }
 
-  /* ==========  PRIMITIVES  ========== */
-  .pill-cluster { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
-  .pill {
-    background: var(--white); border: 1px solid var(--gray-100);
-    padding: 8px 14px; border-radius: 999px;
-    font-family: var(--font-body); font-size: 12.5px; font-weight: 500;
-    color: var(--black); display: inline-flex; align-items: center; gap: 7px;
-  }
-  .pill svg { width: 13px; height: 13px; color: var(--purple); }
-  .pill.solid { background: var(--black); color: var(--white); border-color: var(--black); }
-  .pill.solid svg { color: var(--purple-mid); }
+/* ── SLIDE 2 — MANIFESTO (purple) ── */
+#s2 { background:var(--purple); color:var(--white); border-color:var(--purple); }
+#s2 .watermark-k { position:absolute; right:-90px; bottom:-90px; width:520px; height:520px; opacity:.09; pointer-events:none; }
+#s2 .slide-header { border-bottom:1px solid rgba(255,255,255,.12); }
+#s2 .slide-body { align-items:center; justify-content:center; text-align:center; position:relative; z-index:1; }
+#s2 .manifesto-eyebrow { font-family:var(--font-body); font-weight:600; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--purple-mid); margin-bottom:1.4rem; }
+#s2 .manifesto-text { font-family:var(--font-title); font-weight:900; font-size:clamp(38px,5.2vw,72px); line-height:1.04; letter-spacing:-0.035em; max-width:980px; color:var(--white); }
+#s2 .manifesto-text em { font-style:normal; color:var(--purple-mid); display:block; margin-top:.4em; }
+#s2 .manifesto-tag { margin-top:2.2rem; font-family:var(--font-body); font-weight:500; font-size:14px; color:rgba(255,255,255,.7); letter-spacing:.02em; }
 
-  .note {
-    background: var(--purple-light); border-left: 3px solid var(--purple);
-    padding: 13px 17px; border-radius: 0 10px 10px 0;
-    font-family: var(--font-body); font-size: 12.5px; line-height: 1.55;
-    color: #3a0a9e;
-  }
-  .note strong { font-weight: 600; }
+/* ── SLIDE 1 — COVER VISUAL ── */
+#s1 .grid-2 { grid-template-columns:1.15fr 1fr; }
+#s1 .hero-visual { aspect-ratio:1/1; max-height:400px; background:radial-gradient(120% 120% at 80% 0%, var(--purple-light) 0%, var(--white) 60%); border-radius:24px; border:1px solid var(--gray-100); position:relative; overflow:hidden; box-shadow:var(--shadow-lg); display:flex; flex-direction:column; justify-content:space-between; padding:26px 22px; }
+#s1 .hero-visual::before { content:""; position:absolute; left:50%; top:70px; bottom:70px; width:1px; background-image:linear-gradient(to bottom, var(--purple-mid) 50%, transparent 50%); background-size:1px 9px; background-repeat:repeat-y; transform:translateX(-.5px); opacity:.55; z-index:0; }
+#s1 .opp-row { position:relative; z-index:1; display:flex; justify-content:center; gap:10px; align-items:center; }
+#s1 .opp-pill { background:var(--white); border:1px solid var(--gray-100); border-radius:11px; padding:9px 12px; font-family:var(--font-body); font-weight:600; font-size:11.5px; color:var(--black); display:inline-flex; align-items:center; gap:7px; box-shadow:var(--shadow-md); line-height:1.2; }
+#s1 .opp-pill .pico { width:22px; height:22px; border-radius:6px; background:var(--purple-light); color:var(--purple); display:grid; place-items:center; flex-shrink:0; }
+#s1 .opp-pill .pico svg { width:12px; height:12px; }
+#s1 .opp-pill.dark { background:var(--black); color:var(--white); border-color:var(--black); padding:11px 14px; }
+#s1 .opp-pill.dark .pico { background:rgba(255,255,255,.10); color:var(--purple-mid); }
+#s1 .opp-pill span.sub { font-weight:400; color:var(--gray-500); font-size:10px; display:block; }
+#s1 .opp-pill.dark span.sub { color:rgba(255,255,255,.65); }
+#s1 .opp-center { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:8px; }
+#s1 .opp-center .knock-logo { width:88px; height:88px; }
+#s1 .opp-center .clbl { font-family:var(--font-title); font-weight:900; font-size:13px; letter-spacing:-0.02em; color:var(--purple); }
 
-  .verified-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--do-bg); color: var(--do-ink);
-    padding: 4px 10px 4px 8px; border-radius: 999px;
-    font-family: var(--font-body); font-weight: 600; font-size: 11px;
-  }
-  .verified-badge svg { width: 12px; height: 12px; }
+/* ── SLIDE 3 — PROBLEM ── */
+.disconnect-pair { display:grid; grid-template-columns:1fr auto 1fr; gap:1.6rem; align-items:center; margin-top:.6rem; }
+.disconnect-card { background:var(--white); border:1.5px solid var(--gray-100); border-radius:18px; padding:1.4rem; box-shadow:var(--shadow-sm); }
+.disconnect-card.left  { border-color:var(--purple-mid); }
+.disconnect-card.right { border-color:var(--black); }
+.disconnect-card .dtag { display:inline-block; font-family:var(--font-head); font-weight:600; font-size:10.5px; letter-spacing:0.10em; text-transform:uppercase; padding:5px 10px; border-radius:6px; margin-bottom:.7rem; }
+.disconnect-card.left .dtag  { background:var(--purple-light); color:var(--purple); }
+.disconnect-card.right .dtag { background:var(--off-white); color:var(--black); }
+.dquote { font-family:var(--font-body); font-style:italic; font-size:13.5px; color:var(--gray-700); line-height:1.55; padding:.3rem 0 .8rem; position:relative; }
+.dquote::before { content:"\201C"; font-family:var(--font-title); font-weight:900; font-size:36px; line-height:0; color:var(--purple-mid); margin-right:4px; vertical-align:-14px; }
+.dpromise { margin-top:.5rem; padding-top:.8rem; border-top:1px solid var(--gray-100); font-family:var(--font-head); font-weight:700; font-size:12.5px; color:var(--purple); line-height:1.45; }
+.disconnect-card.right .dpromise { color:var(--black); }
+.dhub { display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; }
+.dhub::before,.dhub::after { content:""; position:absolute; top:50%; width:28px; height:2px; background:var(--purple-mid); border-radius:2px; }
+.dhub::before { left:-28px; }
+.dhub::after  { right:-28px; }
+.dhub .knock-logo { width:58px; height:58px; }
+.dhub .hub-label { font-family:var(--font-title); font-weight:900; font-size:12px; letter-spacing:-0.02em; color:var(--purple); text-align:center; }
 
-  /* ==========  FOOTER CONTROLS  ========== */
-  .controls-outer {
-    width: 100%; background: var(--white);
-    border-top: 1px solid var(--gray-100);
-    padding: 0.85rem 0; position: sticky; bottom: 0; z-index: 100;
-  }
-  .controls-inner {
-    max-width: var(--slide-max-w); margin: 0 auto; padding: 0 1.5rem;
-    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-  }
-  .nav-buttons { display: flex; gap: 0.5rem; }
-  .btn {
-    background: var(--white); border: 1px solid var(--gray-100); color: var(--black);
-    font-family: var(--font-body); font-weight: 600; font-size: 0.85rem;
-    padding: 0.55rem 1.05rem; border-radius: 8px; cursor: pointer;
-    transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
-  .btn--primary { background: var(--purple); color: var(--white); border-color: var(--purple); }
-  .btn--primary:hover { background: var(--purple-deep); color: var(--white); border-color: var(--purple-deep); }
-  .progress-container { flex-grow: 1; max-width: 420px; display: flex; align-items: center; gap: 1rem; }
-  .progress-bg { flex-grow: 1; height: 4px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
-  .progress-bar { height: 100%; width: 0%; background: var(--purple); border-radius: 3px; transition: width 0.3s ease; }
-  .slide-counter {
-    font-family: var(--font-title); font-size: 12px; font-weight: 900;
-    color: var(--black); white-space: nowrap; letter-spacing: 0.04em;
-  }
-  .slide-counter span { color: var(--gray-500); }
+/* ── STAT PILLS ── */
+.stat-row { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1rem; }
+.stat-chip { background:var(--off-white); border:1px solid var(--gray-100); border-radius:12px; padding:10px 16px; display:flex; flex-direction:column; }
+.stat-chip .sn { font-family:var(--font-title); font-weight:900; font-size:22px; letter-spacing:-0.03em; color:var(--purple); line-height:1; }
+.stat-chip .sl { font-family:var(--font-body); font-size:10.5px; color:var(--gray-500); margin-top:3px; line-height:1.4; max-width:130px; }
 
-  /* ============================================================ */
-  /* SLIDE 1 — TITLE (fixed hero visual)                           */
-  /* ============================================================ */
-  #s1 .grid-2 { grid-template-columns: 1.15fr 1fr; }
-  #s1 .hero-visual {
-    aspect-ratio: 1/1; max-height: 400px;
-    background: radial-gradient(120% 120% at 80% 0%, var(--purple-light) 0%, var(--white) 60%);
-    border-radius: 24px; border: 1px solid var(--gray-100);
-    position: relative; overflow: hidden;
-    box-shadow: var(--shadow-lg);
-    display: flex; flex-direction: column;
-    justify-content: space-between;
-    padding: 26px 22px;
-  }
-  /* CSS-only dashed spine: avoids the SVG misalignment bug */
-  #s1 .hero-visual::before {
-    content: "";
-    position: absolute;
-    left: 50%; top: 70px; bottom: 70px;
-    width: 1px;
-    background-image: linear-gradient(to bottom, var(--purple-mid) 50%, transparent 50%);
-    background-size: 1px 9px;
-    background-repeat: repeat-y;
-    transform: translateX(-0.5px);
-    opacity: 0.55;
-    z-index: 0;
-  }
-  #s1 .opp-row {
-    position: relative; z-index: 1;
-    display: flex; justify-content: center; gap: 10px; align-items: center;
-  }
-  #s1 .opp-pill {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 11px; padding: 9px 12px;
-    font-family: var(--font-body); font-weight: 600; font-size: 11.5px;
-    color: var(--black);
-    display: inline-flex; align-items: center; gap: 7px;
-    box-shadow: var(--shadow-md);
-    line-height: 1.2;
-  }
-  #s1 .opp-pill .pico {
-    width: 22px; height: 22px; border-radius: 6px;
-    background: var(--purple-light); color: var(--purple);
-    display: grid; place-items: center; flex-shrink: 0;
-  }
-  #s1 .opp-pill .pico svg { width: 12px; height: 12px; }
-  #s1 .opp-pill.student {
-    background: var(--black); color: var(--white); border-color: var(--black);
-    padding: 11px 14px;
-  }
-  #s1 .opp-pill.student .pico { background: rgba(255,255,255,0.10); color: var(--purple-mid); }
-  #s1 .opp-pill span.sub {
-    font-weight: 400; color: var(--gray-500); font-size: 10px; display: block;
-  }
-  #s1 .opp-pill.student span.sub { color: rgba(255,255,255,0.65); }
-  #s1 .opp-center {
-    position: relative; z-index: 1;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    justify-content: center;
-  }
-  #s1 .opp-center .knock-logo { width: 92px; height: 92px; background: var(--white); }
-  #s1 .opp-center .clbl {
-    font-family: var(--font-title); font-weight: 900; font-size: 14px;
-    letter-spacing: -0.02em; color: var(--purple);
-  }
+/* ── SLIDE 4 — SOLUTION LAYERS ── */
+.layer-stack { display:flex; flex-direction:column; gap:.8rem; }
+.layer { display:flex; align-items:stretch; border:1px solid var(--gray-100); border-radius:14px; overflow:hidden; background:var(--white); box-shadow:var(--shadow-xs); transition:box-shadow .2s; }
+.layer:hover { box-shadow:var(--shadow-md); }
+.layer-num { width:52px; flex-shrink:0; background:var(--purple); color:var(--white); display:flex; align-items:center; justify-content:center; font-family:var(--font-title); font-weight:900; font-size:22px; }
+.layer-num.dim { background:var(--gray-100); color:var(--gray-500); }
+.layer-body { flex:1; padding:14px 18px; }
+.layer-body h4 { font-family:var(--font-head); font-weight:700; font-size:15px; color:var(--black); margin-bottom:4px; }
+.layer-body p { font-size:12.5px; color:var(--gray-700); line-height:1.55; }
+.layer-badge { flex-shrink:0; display:flex; align-items:center; padding:0 16px; font-size:10px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; white-space:nowrap; border-left:1px solid var(--gray-100); }
+.layer-badge.now { color:var(--purple); background:var(--purple-light); }
+.layer-badge.later { color:var(--gray-500); background:var(--off-white); }
 
-  /* ============================================================ */
-  /* SLIDE 2 — MANIFESTO                                            */
-  /* ============================================================ */
-  #s2 {
-    background: var(--purple); color: var(--white);
-    border-color: var(--purple); padding: 2.4rem 2.8rem;
-  }
-  #s2 .watermark-k {
-    position: absolute; right: -90px; bottom: -90px;
-    width: 520px; height: 520px; opacity: 0.09; pointer-events: none;
-  }
-  #s2 .slide-header { border-bottom: 1px solid rgba(255,255,255,0.12); }
-  #s2 .header-right .slide-meta { color: rgba(255,255,255,0.65); }
-  #s2 .slide-body { align-items: center; justify-content: center; text-align: center; position: relative; z-index: 1; }
-  #s2 .manifesto-eyebrow {
-    font-family: var(--font-body); font-weight: 600; font-size: 11px;
-    letter-spacing: 0.18em; text-transform: uppercase; color: var(--purple-mid);
-    margin-bottom: 1.4rem;
-  }
-  #s2 .manifesto-text {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: clamp(38px, 5.2vw, 74px);
-    line-height: 1.04; letter-spacing: -0.035em;
-    max-width: 980px; color: var(--white);
-  }
-  #s2 .manifesto-text em { font-style: normal; color: var(--purple-mid); display: block; margin-top: 0.4em; }
-  #s2 .manifesto-tag {
-    margin-top: 2.2rem; font-family: var(--font-body); font-weight: 500;
-    font-size: 14px; color: rgba(255,255,255,0.7); letter-spacing: 0.02em;
-  }
+/* ── SLIDE 5 — TEAM ── */
+.team-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.4rem; }
+.team-card { background:var(--white); border:1px solid var(--gray-100); border-radius:16px; padding:1.2rem; box-shadow:var(--shadow-xs); display:flex; flex-direction:column; align-items:flex-start; }
+.team-card:hover { box-shadow:var(--shadow-md); border-color:var(--purple-mid); transition:all .2s; }
+.team-avatar { width:44px; height:44px; border-radius:12px; background:var(--purple); display:flex; align-items:center; justify-content:center; font-family:var(--font-title); font-weight:900; font-size:18px; color:var(--white); margin-bottom:10px; }
+.team-avatar.a2 { background:linear-gradient(135deg,var(--purple),#9560FF); }
+.team-avatar.a3 { background:linear-gradient(135deg,#10B981,var(--purple)); }
+.team-avatar.a4 { background:linear-gradient(135deg,#0EA5E9,var(--purple)); }
+.team-name { font-family:var(--font-head); font-weight:700; font-size:14px; color:var(--black); margin-bottom:3px; }
+.team-role { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--purple); margin-bottom:8px; }
+.team-desc { font-size:12px; color:var(--gray-700); line-height:1.5; }
 
-  /* ============================================================ */
-  /* SLIDE 3 — STRUCTURAL DISCONNECT                                */
-  /* ============================================================ */
-  .pipeline-row {
-    display: grid; grid-template-columns: 1fr auto 1fr;
-    gap: 1.6rem; align-items: center; margin-top: 0.6rem;
-  }
-  .disconnect-card {
-    background: var(--white); border: 1.5px solid var(--gray-100);
-    border-radius: 18px; padding: 1.4rem;
-    box-shadow: var(--shadow-sm); position: relative;
-  }
-  .disconnect-card.left  { border-color: var(--purple-mid); }
-  .disconnect-card.right { border-color: var(--black); }
-  .disconnect-card .tag {
-    display: inline-block; font-family: var(--font-head);
-    font-weight: 600; font-size: 10.5px; letter-spacing: 0.10em;
-    text-transform: uppercase; padding: 5px 10px; border-radius: 6px;
-    margin-bottom: 0.7rem;
-  }
-  .disconnect-card.left .tag  { background: var(--purple-light); color: var(--purple); }
-  .disconnect-card.right .tag { background: var(--off-white); color: var(--black); }
-  .disconnect-quote {
-    font-family: var(--font-body); font-style: italic; font-size: 13.5px;
-    color: var(--gray-700); line-height: 1.55;
-    padding: 0.3rem 0 0.8rem 0; position: relative;
-  }
-  .disconnect-quote::before {
-    content: "\201C"; font-family: var(--font-title);
-    font-weight: 900; font-size: 36px; line-height: 0;
-    color: var(--purple-mid); margin-right: 4px; vertical-align: -14px;
-  }
-  .disconnect-promise {
-    margin-top: 0.5rem; padding-top: 0.8rem;
-    border-top: 1px solid var(--gray-100);
-    font-family: var(--font-head); font-weight: 700; font-size: 12.5px;
-    color: var(--purple); line-height: 1.45;
-  }
-  .disconnect-card.right .disconnect-promise { color: var(--black); }
-  .pipeline-hub {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 8px; position: relative;
-  }
-  .pipeline-hub::before, .pipeline-hub::after {
-    content: ""; position: absolute; top: 50%;
-    width: 32px; height: 2px; background: var(--purple-mid); border-radius: 2px;
-  }
-  .pipeline-hub::before { left: -32px; }
-  .pipeline-hub::after  { right: -32px; }
-  .pipeline-hub .knock-logo { width: 60px; height: 60px; }
-  .pipeline-hub .hub-label {
-    font-family: var(--font-title); font-weight: 900; font-size: 12.5px;
-    letter-spacing: -0.02em; color: var(--purple);
-  }
+.proof-box { background:linear-gradient(135deg,var(--purple-light),var(--white)); border:1.5px solid var(--purple-mid); border-radius:18px; padding:1.3rem 1.6rem; display:grid; grid-template-columns:auto 1fr; gap:1.4rem; align-items:center; box-shadow:var(--shadow-sm); }
+.proof-ico { width:48px; height:48px; background:var(--purple); border-radius:14px; display:grid; place-items:center; flex-shrink:0; box-shadow:0 6px 18px rgba(94,23,235,.25); }
+.proof-ico svg { width:24px; height:24px; color:var(--white); }
+.proof-title { font-family:var(--font-head); font-weight:700; font-size:15px; color:var(--black); margin-bottom:4px; }
+.proof-body { font-size:13px; color:var(--gray-700); line-height:1.55; }
+.proof-companies { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.co-chip { font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; background:var(--white); border:1px solid var(--gray-100); color:var(--black); }
 
-  /* ============================================================ */
-  /* SLIDE 4 — FIBRE NETWORK / 3 PILLARS                            */
-  /* ============================================================ */
-  #s4 .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 1rem; }
-  #s4 .pillar {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 16px; padding: 1.3rem;
-    position: relative; overflow: hidden;
-    box-shadow: var(--shadow-xs);
-    display: flex; flex-direction: column;
-  }
-  #s4 .pillar:hover {
-    transform: translateY(-2px); box-shadow: var(--shadow-md);
-    border-color: var(--purple-light); transition: all .22s ease;
-  }
-  #s4 .pillar .num-tag {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 42px; line-height: 1; color: var(--purple-light);
-    position: absolute; top: 12px; right: 16px; letter-spacing: -0.04em;
-  }
-  #s4 .pillar .ico {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: var(--purple); color: var(--white);
-    display: grid; place-items: center; margin-bottom: 11px; z-index: 1;
-    box-shadow: 0 6px 14px rgba(94,23,235,0.22);
-  }
-  #s4 .pillar .ico svg { width: 17px; height: 17px; }
-  #s4 .pillar h3 { font-family: var(--font-head); font-weight: 700; font-size: 15.5px; margin-bottom: 5px; letter-spacing: -0.01em; }
-  #s4 .pillar p { font-family: var(--font-body); font-size: 12px; line-height: 1.55; color: var(--gray-700); margin-bottom: 12px; }
-  #s4 .pillar .demo {
-    margin-top: auto; background: var(--off-white);
-    border-radius: 10px; padding: 10px; border: 1px solid var(--gray-100);
-  }
-  .mock-transcript { display: flex; flex-direction: column; gap: 4px; font-family: var(--font-mono); font-size: 10.5px; color: var(--gray-700); line-height: 1.4; }
-  .mock-transcript .row { display: flex; align-items: center; gap: 7px; }
-  .mock-transcript .k { color: var(--purple); font-weight: 600; }
-  .mock-transcript .file {
-    background: var(--white); border: 1px solid var(--gray-100);
-    padding: 3px 6px; border-radius: 5px;
-    display: inline-flex; align-items: center; gap: 5px; font-size: 10px;
-  }
-  .mock-transcript .file svg { width: 10px; height: 10px; }
-  .mock-card {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 9px; padding: 10px; font-family: var(--font-body);
-  }
-  .mock-card .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-  .mock-card .anon { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 11px; }
-  .mock-card .anon .av {
-    width: 19px; height: 19px; border-radius: 5px;
-    background: var(--gray-100); color: var(--gray-500);
-    display: grid; place-items: center;
-    font-family: var(--font-mono); font-size: 8.5px;
-  }
-  .mock-card .skills { display: flex; gap: 4px; flex-wrap: wrap; margin: 5px 0 6px; }
-  .mock-card .skill { background: var(--purple-light); color: var(--purple); font-weight: 600; font-size: 9.5px; padding: 2px 7px; border-radius: 999px; }
-  .mock-card .stats { display: flex; gap: 11px; padding-top: 6px; border-top: 1px solid var(--gray-100); font-size: 10px; color: var(--gray-700); }
-  .mock-card .stats b { font-family: var(--font-title); font-weight: 900; color: var(--black); letter-spacing: -0.02em; }
-  .mock-wa-pillar { display: flex; flex-direction: column; gap: 4px; }
-  .mock-wa-pillar .wa-in, .mock-wa-pillar .wa-out {
-    font-family: var(--font-body); font-size: 11px; line-height: 1.4;
-    padding: 7px 10px; max-width: 92%;
-  }
-  .mock-wa-pillar .wa-in {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 11px 11px 11px 4px; align-self: flex-start; color: var(--gray-700);
-  }
-  .mock-wa-pillar .wa-out {
-    background: #DCF8C6; border-radius: 11px 11px 4px 11px;
-    align-self: flex-end; color: #0D4513;
-  }
-  .mock-wa-pillar .wa-meta { font-size: 9px; color: var(--gray-500); }
-  .mock-wa-pillar .wa-meta.out { text-align: right; }
+/* ── SLIDE 6 — GTM ── */
+.funnel-step { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; border:1px solid var(--gray-100); background:var(--white); box-shadow:var(--shadow-xs); }
+.funnel-step.active { background:var(--purple-light); border-color:var(--purple-mid); }
+.funnel-step.result { background:var(--do-bg); border-color:rgba(8,80,65,.2); }
+.funnel-icon { font-size:18px; flex-shrink:0; }
+.funnel-text { font-size:13px; color:var(--gray-700); }
+.funnel-text strong { color:var(--black); }
+.funnel-arrow { color:var(--purple-mid); font-size:14px; text-align:center; padding:2px 0; }
+.uni-chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:.9rem; }
+.uni-chip { font-size:12px; font-weight:600; padding:7px 14px; border-radius:999px; background:var(--purple-light); border:1px solid var(--purple-mid); color:var(--purple); }
 
-  /* ============================================================ */
-  /* SLIDE 5 — GTM WEDGE / LIVE COUNTER                             */
-  /* ============================================================ */
-  #s5 .grid-2 { grid-template-columns: 1.05fr 1fr; }
-  .live-card {
-    background: linear-gradient(180deg, var(--purple-light) 0%, var(--white) 100%);
-    border: 1px solid var(--purple-light);
-    border-radius: 20px; padding: 1.8rem 1.6rem;
-    text-align: center; position: relative; overflow: hidden;
-    box-shadow: var(--shadow-sm);
-  }
-  .live-card .live-eyebrow {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-family: var(--font-body); font-weight: 600;
-    font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase;
-    color: var(--purple); background: var(--white);
-    padding: 6px 12px; border-radius: 999px;
-    border: 1px solid var(--purple-light); margin-bottom: 1.2rem;
-  }
-  .live-card .live-eyebrow .pulse {
-    width: 7px; height: 7px; background: var(--purple); border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(94,23,235,0.6); animation: pulse 1.6s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(94,23,235,0.6); }
-    70% { box-shadow: 0 0 0 9px rgba(94,23,235,0); }
-    100% { box-shadow: 0 0 0 0 rgba(94,23,235,0); }
-  }
-  .live-card .live-label { font-family: var(--font-body); font-weight: 500; font-size: 13px; color: var(--gray-700); margin-bottom: 0.3rem; }
-  .live-card .live-number {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: clamp(58px, 6.5vw, 88px);
-    color: var(--purple); letter-spacing: -0.04em; line-height: 1; margin: 0.5rem 0;
-  }
-  .live-card .live-sub { font-family: var(--font-body); font-size: 11px; color: var(--gray-500); margin-top: 0.3rem; }
-  .live-card .live-foot {
-    margin-top: 1.3rem; padding-top: 1rem;
-    border-top: 1px dashed var(--gray-100);
-    display: flex; justify-content: space-around; gap: 1rem;
-    font-family: var(--font-body); font-size: 11px; color: var(--gray-500);
-  }
-  .live-card .live-foot b {
-    display: block; font-family: var(--font-title); font-weight: 900;
-    font-size: 18px; color: var(--black); letter-spacing: -0.02em; margin-bottom: 2px;
-  }
+/* ── SLIDE 7 — MARKET ── */
+.market-strip { display:flex; flex-direction:column; gap:.7rem; }
+.mrow { display:flex; align-items:center; gap:1rem; background:var(--white); border:1px solid var(--gray-100); border-radius:12px; padding:12px 16px; box-shadow:var(--shadow-xs); }
+.mrow-label { font-family:var(--font-head); font-weight:700; font-size:13px; color:var(--black); min-width:150px; }
+.mrow-bar-bg { flex:1; height:6px; background:var(--gray-100); border-radius:3px; overflow:hidden; }
+.mrow-bar { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--purple),#9560FF); }
+.mrow-val { font-family:var(--font-title); font-weight:900; font-size:16px; color:var(--purple); min-width:72px; text-align:right; letter-spacing:-0.02em; }
+.mrow-tag { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; padding:3px 8px; border-radius:999px; min-width:60px; text-align:center; }
+.mrow-tag.now   { background:var(--do-bg); color:var(--do-ink); }
+.mrow-tag.later { background:var(--warn-bg); color:var(--warn-ink); }
 
-  /* ============================================================ */
-  /* SLIDE 6 — VENTURE MODEL  (icons fixed)                         */
-  /* ============================================================ */
-  #s6 .grid-2 { grid-template-columns: 1fr 1fr; align-items: start; }
-  #s6 .model-stack { display: flex; flex-direction: column; gap: 1rem; }
-  #s6 .model-card {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 16px; padding: 1.4rem;
-    box-shadow: var(--shadow-xs); position: relative;
-  }
-  #s6 .model-card.purple { background: var(--purple-light); border-color: var(--purple-light); }
-  /* THE FIX: explicit ico-soft styles for model-card */
-  #s6 .model-card .ico-soft {
-    width: 38px; height: 38px; border-radius: 11px;
-    background: var(--purple); color: var(--white);
-    display: grid; place-items: center;
-    margin-bottom: 12px;
-    box-shadow: 0 6px 14px rgba(94,23,235,0.22);
-  }
-  #s6 .model-card .ico-soft svg { width: 18px; height: 18px; }
-  #s6 .model-card.purple .ico-soft {
-    background: var(--white); color: var(--purple);
-    box-shadow: 0 4px 12px rgba(94,23,235,0.18);
-  }
-  #s6 .model-card h3 { font-size: 15.5px; margin-bottom: 6px; letter-spacing: -0.01em; }
-  #s6 .model-card p { font-size: 13px; line-height: 1.55; color: var(--gray-700); }
+/* ── SLIDE 8 — BBBEE ── */
+.bbbee-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.2rem; }
+.bbbee-card { background:var(--white); border:1px solid var(--gray-100); border-radius:14px; padding:1.1rem; text-align:center; box-shadow:var(--shadow-xs); }
+.bbbee-num { font-family:var(--font-title); font-weight:900; font-size:clamp(32px,3.5vw,48px); color:var(--purple); line-height:1; letter-spacing:-0.03em; }
+.bbbee-label { font-size:11px; color:var(--gray-500); margin-top:5px; line-height:1.4; }
 
-  /* ============================================================ */
-  /* SLIDE 7 — FINANCIAL SLIDER                                     */
-  /* ============================================================ */
-  #s7 .slider-container {
-    margin-top: 0.6rem; background: var(--white);
-    padding: 1.4rem 1.6rem 1.2rem; border-radius: 18px;
-    border: 1px solid var(--gray-100); box-shadow: var(--shadow-xs);
-  }
-  #s7 .slider-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
-  #s7 .slider-top .lbl-left, #s7 .slider-top .lbl-right {
-    font-family: var(--font-body); font-size: 11px; font-weight: 600;
-    color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.08em;
-  }
-  #s7 .slider-top .lbl-mid {
-    font-family: var(--font-title); font-weight: 900; font-size: 16px;
-    color: var(--purple); letter-spacing: -0.02em;
-  }
-  #s7 input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; height: 28px; cursor: pointer; }
-  #s7 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: var(--purple); cursor: pointer; margin-top: -8px; box-shadow: 0 4px 10px rgba(94,23,235,0.35); border: 2px solid var(--white); }
-  #s7 input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: var(--gray-100); border-radius: 3px; }
-  #s7 input[type=range]::-moz-range-thumb { height: 22px; width: 22px; border-radius: 50%; background: var(--purple); cursor: pointer; box-shadow: 0 4px 10px rgba(94,23,235,0.35); border: 2px solid var(--white); }
-  #s7 input[type=range]::-moz-range-track { width: 100%; height: 6px; background: var(--gray-100); border-radius: 3px; }
-  #s7 .snap-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.8rem; }
-  #s7 .snap-chip {
-    background: var(--white); border: 1px solid var(--gray-100);
-    color: var(--gray-700); font-family: var(--font-body); font-weight: 600;
-    font-size: 11px; padding: 6px 11px; border-radius: 999px; cursor: pointer;
-    transition: all 0.18s ease; display: inline-flex; align-items: center; gap: 6px;
-  }
-  #s7 .snap-chip:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
-  #s7 .snap-chip.active { background: var(--purple); color: var(--white); border-color: var(--purple); }
-  #s7 .snap-chip.active .dot { background: var(--white); }
-  #s7 .snap-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); }
-  #s7 .slider-metrics {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 0.8rem; margin-top: 1.3rem;
-  }
-  #s7 .metric-box {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 12px; padding: 1rem 1.05rem;
-  }
-  #s7 .metric-box .lbl {
-    font-family: var(--font-body); font-weight: 600; font-size: 9.5px;
-    color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.10em;
-    margin-bottom: 6px;
-  }
-  #s7 .metric-box .val {
-    font-family: var(--font-title); font-weight: 900; font-size: 27px;
-    color: var(--black); letter-spacing: -0.025em; line-height: 1;
-  }
-  #s7 .metric-box .val small { font-size: 13px; font-weight: 700; color: var(--gray-500); margin-left: 3px; }
-  #s7 .metric-box .sub-note {
-    font-family: var(--font-body); font-size: 10.5px;
-    color: var(--gray-500); margin-top: 6px; line-height: 1.4;
-  }
-  #s7 .metric-box.cps { background: var(--purple-light); border-color: var(--purple-light); }
-  #s7 .metric-box.cps .lbl { color: var(--purple); }
-  #s7 .metric-box.cps .val { color: var(--purple-deep); }
-  #s7 .metric-box.cps .val small { color: var(--purple); }
-  #s7 .metric-box.cps .sub-note { color: var(--purple); }
-  #s7 .metric-box.cum { background: var(--black); }
-  #s7 .metric-box.cum .lbl { color: var(--purple-mid); }
-  #s7 .metric-box.cum .val { color: var(--white); }
-  #s7 .metric-box.cum .val small { color: rgba(255,255,255,0.65); }
-  #s7 .metric-box.cum .sub-note { color: rgba(255,255,255,0.6); }
-  #s7 .source-note {
-    margin-top: 0.55rem; font-family: var(--font-body);
-    font-size: 10.5px; color: var(--gray-500); text-align: right;
-  }
+.company-math { background:var(--purple-light); border:1.5px solid var(--purple-mid); border-radius:16px; padding:1.3rem 1.6rem; }
+.company-math h3 { font-family:var(--font-head); font-weight:700; font-size:15px; margin-bottom:.4rem; }
+.company-math p { font-size:13px; color:var(--gray-700); line-height:1.6; }
+.company-math strong { color:var(--purple); }
 
-  /* ============================================================ */
-  /* SLIDE 8 — TEAM (4 named people)                                */
-  /* ============================================================ */
-  #s8 .team-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.9rem;
-    margin-top: 1rem;
-  }
-  #s8 .team-card {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 16px; padding: 1.2rem 1.1rem;
-    box-shadow: var(--shadow-xs);
-    border-top: 4px solid var(--purple);
-    display: flex; flex-direction: column;
-    gap: 0.7rem; min-height: 0;
-  }
-  #s8 .team-card.lead   { border-top-color: var(--purple); }
-  #s8 .team-card.sales  { border-top-color: var(--purple-mid); }
-  #s8 .team-card.ops    { border-top-color: var(--black); }
-  #s8 .team-card.cto    { border-top-color: var(--do-ink); }
-  #s8 .team-card .avatar {
-    width: 42px; height: 42px; border-radius: 11px;
-    background: var(--purple-light); color: var(--purple);
-    font-family: var(--font-title); font-weight: 900; font-size: 14px;
-    display: grid; place-items: center;
-    letter-spacing: -0.02em; flex-shrink: 0;
-  }
-  #s8 .team-card.lead   .avatar { background: var(--purple); color: var(--white); }
-  #s8 .team-card.sales  .avatar { background: var(--purple-mid); color: var(--purple-deep); }
-  #s8 .team-card.ops    .avatar { background: var(--black); color: var(--white); }
-  #s8 .team-card.cto    .avatar { background: var(--do-bg); color: var(--do-ink); }
-  #s8 .role-meta {
-    font-family: var(--font-body); font-size: 9.5px;
-    font-weight: 600; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--gray-500);
-  }
-  #s8 .team-card h3 {
-    font-family: var(--font-head); font-weight: 700; font-size: 15px;
-    letter-spacing: -0.01em; color: var(--black); line-height: 1.2;
-  }
-  #s8 .team-card .creds {
-    font-family: var(--font-body); font-size: 12px; line-height: 1.5;
-    color: var(--gray-700);
-  }
-  #s8 .team-card .stake {
-    margin-top: auto;
-    background: var(--off-white);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-family: var(--font-body);
-    font-size: 11px;
-    color: var(--gray-700);
-    line-height: 1.4;
-    border: 1px solid var(--gray-100);
-  }
-  #s8 .team-card .stake b {
-    font-family: var(--font-head);
-    font-weight: 700;
-    color: var(--purple);
-    font-size: 10.5px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 2px;
-  }
+.knock-offer { background:var(--white); border:1px solid var(--gray-100); border-radius:14px; padding:1.1rem 1.3rem; box-shadow:var(--shadow-xs); }
+.knock-offer h4 { font-family:var(--font-head); font-weight:700; font-size:14px; margin-bottom:.7rem; }
+.offer-item { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--gray-700); padding:5px 0; border-bottom:1px solid var(--gray-100); }
+.offer-item:last-child { border-bottom:none; }
+.offer-item .ok { color:var(--do-ink); font-weight:700; font-size:14px; }
 
-  /* ============================================================ */
-  /* SLIDE 9 — COMPLIANCE MOAT                                      */
-  /* ============================================================ */
-  #s9 .grid-2 { grid-template-columns: 1fr 1.05fr; align-items: start; }
-  #s9 .moat-stack { display: flex; flex-direction: column; gap: 0.9rem; }
-  #s9 .moat-card {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-left: 4px solid var(--purple); border-radius: 14px;
-    padding: 1.2rem; box-shadow: var(--shadow-xs);
-    display: grid; grid-template-columns: 38px 1fr; gap: 13px; align-items: flex-start;
-  }
-  #s9 .moat-card.green { border-left-color: var(--do-ink); }
-  #s9 .moat-card .ico-soft {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: var(--purple-light); color: var(--purple);
-    display: grid; place-items: center; margin: 0;
-  }
-  #s9 .moat-card.green .ico-soft { background: var(--do-bg); color: var(--do-ink); }
-  #s9 .moat-card .ico-soft svg { width: 18px; height: 18px; }
-  #s9 .moat-card h3 { font-family: var(--font-head); font-weight: 700; font-size: 14.5px; margin-bottom: 4px; }
-  #s9 .moat-card p { font-family: var(--font-body); font-size: 12.5px; line-height: 1.55; color: var(--gray-700); }
+/* ── SLIDE 9 — FINANCIALS ── */
+.unit-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.8rem; margin-bottom:1.2rem; }
+.unit-box { background:var(--white); border:1px solid var(--gray-100); border-radius:12px; padding:1rem; box-shadow:var(--shadow-xs); }
+.unit-box .un { font-family:var(--font-title); font-weight:900; font-size:24px; color:var(--purple); letter-spacing:-0.03em; line-height:1; }
+.unit-box .ul { font-size:11px; color:var(--gray-500); margin-top:4px; line-height:1.4; }
 
-  /* ============================================================ */
-  /* SLIDE 10 — THE ASK · R500k                                     */
-  /* ============================================================ */
-  #s10 .ask-grid {
-    display: grid; grid-template-columns: 1.05fr 1fr;
-    gap: 1.6rem; align-items: stretch; margin-top: 0.5rem;
-  }
-  #s10 .ask-hero {
-    background: var(--black); color: var(--white);
-    border-radius: 22px; padding: 1.7rem 1.8rem 1.5rem;
-    position: relative; overflow: hidden;
-    display: flex; flex-direction: column;
-  }
-  #s10 .ask-hero::after {
-    content: ""; position: absolute;
-    width: 360px; height: 360px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(94,23,235,0.55) 0%, rgba(94,23,235,0) 70%);
-    right: -140px; bottom: -140px;
-  }
-  #s10 .ask-hero .watermark-k {
-    position: absolute; right: -40px; top: -40px;
-    width: 250px; height: 250px; opacity: 0.10; pointer-events: none;
-  }
-  #s10 .ask-hero .eyebrow { color: var(--purple-mid); position: relative; z-index: 1; }
-  #s10 .ask-hero .amount {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: clamp(56px, 6vw, 88px);
-    line-height: 0.95; letter-spacing: -0.035em;
-    margin: 4px 0 4px 0; position: relative; z-index: 1;
-  }
-  #s10 .ask-hero .amount sup {
-    font-size: 22px; vertical-align: top;
-    color: var(--purple-mid); font-weight: 800; margin-right: 4px;
-  }
-  #s10 .ask-hero .for {
-    font-family: var(--font-body); font-weight: 500; font-size: 13.5px;
-    color: rgba(255,255,255,0.78); margin-bottom: 1.1rem;
-    position: relative; z-index: 1; line-height: 1.5;
-  }
-  #s10 .use-of-funds {
-    display: grid; gap: 8px;
-    margin-top: auto; position: relative; z-index: 1;
-  }
-  #s10 .uof {
-    display: grid; grid-template-columns: 60px 1fr auto;
-    align-items: center; gap: 12px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-    padding: 10px 13px; border-radius: 10px;
-  }
-  #s10 .uof .pct {
-    font-family: var(--font-title); font-weight: 900;
-    color: var(--purple-mid); font-size: 12.5px;
-    letter-spacing: -0.01em;
-  }
-  #s10 .uof .what {
-    font-family: var(--font-body); font-weight: 500;
-    font-size: 12px; color: var(--white); line-height: 1.4;
-  }
-  #s10 .uof .what span {
-    display: block;
-    font-size: 10.5px; font-weight: 400;
-    color: rgba(255,255,255,0.55); margin-top: 2px;
-  }
-  #s10 .uof .amt {
-    font-family: var(--font-title); font-weight: 800;
-    font-size: 13px; color: rgba(255,255,255,0.85);
-    letter-spacing: -0.02em; text-align: right;
-  }
-  #s10 .ask-right {
-    display: flex; flex-direction: column; gap: 1rem;
-  }
-  #s10 .ask-detail {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 16px; padding: 1.2rem 1.3rem;
-    box-shadow: var(--shadow-xs);
-  }
-  #s10 .ask-detail h3 {
-    font-family: var(--font-head); font-weight: 700;
-    font-size: 13.5px; letter-spacing: -0.01em;
-    margin-bottom: 0.8rem; color: var(--black);
-  }
-  #s10 .detail-row {
-    display: grid; grid-template-columns: 1fr auto;
-    align-items: baseline;
-    padding: 7px 0;
-    border-top: 1px solid var(--gray-100);
-    gap: 14px;
-  }
-  #s10 .detail-row:first-of-type { border-top: none; padding-top: 0; }
-  #s10 .detail-row .lbl {
-    font-family: var(--font-body); font-weight: 500;
-    font-size: 12px; color: var(--gray-700);
-  }
-  #s10 .detail-row .lbl span {
-    display: block;
-    font-size: 10.5px; color: var(--gray-500);
-    font-weight: 400;
-    margin-top: 1px;
-  }
-  #s10 .detail-row .val {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 13px; color: var(--purple);
-    letter-spacing: -0.02em; text-align: right;
-  }
-  #s10 .ask-note {
-    background: var(--purple-light);
-    border-left: 3px solid var(--purple);
-    padding: 12px 16px; border-radius: 0 10px 10px 0;
-    font-family: var(--font-body); font-size: 12px;
-    line-height: 1.55; color: #3a0a9e;
-  }
-  #s10 .ask-note strong { font-weight: 600; }
+.rev-table { background:var(--white); border:1px solid var(--gray-100); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-xs); }
+.rev-row { display:flex; align-items:center; gap:12px; padding:9px 14px; border-bottom:1px solid var(--gray-100); }
+.rev-row:last-child { border-bottom:none; }
+.rev-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.rev-name { flex:1; font-size:13px; font-weight:600; color:var(--black); }
+.rev-price { font-family:var(--font-title); font-weight:900; font-size:14px; color:var(--purple); letter-spacing:-0.02em; white-space:nowrap; margin-right:8px; }
+.rev-when { font-size:9.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; white-space:nowrap; }
+.rev-when.now   { background:var(--do-bg); color:var(--do-ink); }
+.rev-when.later { background:var(--warn-bg); color:var(--warn-ink); }
 
-  /* ============================================================ */
-  /* SLIDE 11 — INTERACTIVE SANDBOX (was s10)                       */
-  /* ============================================================ */
-  #s11 .sandbox-grid {
-    display: grid; grid-template-columns: 320px 1fr;
-    gap: 1.1rem; background: var(--off-white);
-    padding: 1rem; border-radius: 18px;
-    border: 1px solid var(--gray-100); margin-top: 0.3rem;
-  }
-  #s11 .sb-section-label {
-    font-family: var(--font-body); font-weight: 700; font-size: 9.5px;
-    text-transform: uppercase; color: var(--gray-500);
-    letter-spacing: 0.10em; margin-bottom: 7px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  #s11 .sb-section-label .step-no {
-    width: 16px; height: 16px; border-radius: 50%;
-    background: var(--purple); color: var(--white);
-    display: grid; place-items: center;
-    font-family: var(--font-title); font-weight: 900; font-size: 9px;
-  }
-  #s11 .selector-row { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-  #s11 .select-btn {
-    background: var(--white); border: 1px solid var(--gray-100);
-    padding: 6px 11px; border-radius: 8px;
-    font-family: var(--font-body); font-size: 11.5px; font-weight: 600;
-    color: var(--gray-700); cursor: pointer; transition: all .18s ease;
-  }
-  #s11 .select-btn:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
-  #s11 .select-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+.proj-stack { display:flex; flex-direction:column; gap:.7rem; }
+.proj-row { background:var(--white); border:1px solid var(--gray-100); border-radius:12px; padding:12px 16px; box-shadow:var(--shadow-xs); }
+.proj-row.highlight { background:var(--purple-light); border-color:var(--purple-mid); }
+.proj-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.proj-top .py { font-size:11px; font-weight:700; color:var(--gray-500); letter-spacing:0.05em; text-transform:uppercase; }
+.proj-row.highlight .py { color:var(--purple); }
+.proj-top .pv { font-family:var(--font-title); font-weight:900; font-size:22px; color:var(--purple); letter-spacing:-0.02em; }
+.proj-bar-bg { height:5px; background:var(--gray-100); border-radius:3px; overflow:hidden; margin-bottom:6px; }
+.proj-row.highlight .proj-bar-bg { background:rgba(94,23,235,.15); }
+.proj-bar { height:100%; border-radius:3px; background:var(--purple); }
+.proj-note { font-size:11px; color:var(--gray-500); }
+.proj-row.highlight .proj-note { color:var(--purple-deep); font-weight:500; }
 
-  /* WhatsApp-styled phone */
-  #s11 .phone-mockup {
-    background: #1C1C1E; border-radius: 32px; padding: 7px;
-    border: 4px solid #2C2C2E; box-shadow: 0 20px 40px rgba(0,0,0,0.18);
-    height: 510px; display: flex; flex-direction: column;
-  }
-  #s11 .phone-screen {
-    background: var(--wa-bg); border-radius: 24px;
-    flex-grow: 1; overflow: hidden;
-    display: flex; flex-direction: column;
-    background-image:
-      radial-gradient(circle at 25% 30%, rgba(94,23,235,0.04) 0%, transparent 35%),
-      radial-gradient(circle at 75% 70%, rgba(94,23,235,0.03) 0%, transparent 30%);
-  }
-  #s11 .wa-header {
-    background: var(--wa-header); padding: 0.65rem 0.8rem;
-    display: flex; align-items: center; gap: 0.65rem; color: var(--white);
-  }
-  #s11 .wa-header .knock-logo { width: 28px; height: 28px; box-shadow: none; }
-  #s11 .wa-header .wa-name {
-    font-family: var(--font-body); font-weight: 700; font-size: 13px; line-height: 1;
-  }
-  #s11 .wa-header .wa-presence {
-    font-family: var(--font-body); font-size: 9.5px;
-    color: rgba(255,255,255,0.7); margin-top: 3px;
-    display: flex; align-items: center; gap: 5px;
-  }
-  #s11 .wa-header .wa-presence::before {
-    content: ""; width: 6px; height: 6px; border-radius: 50%; background: #4CD964;
-  }
-  #s11 .wa-chat {
-    flex-grow: 1; padding: 0.8rem; overflow-y: auto;
-    display: flex; flex-direction: column; gap: 0.45rem;
-  }
-  #s11 .msg {
-    max-width: 88%; padding: 0.45rem 0.65rem; border-radius: 10px;
-    line-height: 1.4; font-family: var(--font-body); font-size: 11.5px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.10); position: relative;
-  }
-  #s11 .msg--bot { background: var(--wa-in); color: #1F2C34; align-self: flex-start; border-bottom-left-radius: 3px; }
-  #s11 .msg--user { background: var(--wa-out); color: #1F2C34; align-self: flex-end; border-bottom-right-radius: 3px; }
+/* ── SLIDE 10 — ROADMAP ── */
+.road-line { position:relative; }
+.road-line::before { content:""; position:absolute; left:19px; top:24px; bottom:24px; width:2px; background:var(--gray-100); }
+.road-item { display:flex; gap:18px; padding:8px 0; position:relative; }
+.road-dot { width:40px; height:40px; border-radius:50%; flex-shrink:0; background:var(--gray-100); color:var(--gray-500); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-weight:800; font-size:10px; letter-spacing:0.04em; z-index:1; }
+.road-dot.live { background:var(--purple); color:var(--white); }
+.road-content { flex:1; padding-top:8px; }
+.road-period { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--purple); margin-bottom:3px; }
+.road-title { font-family:var(--font-head); font-weight:700; font-size:14.5px; color:var(--black); margin-bottom:6px; }
+.road-pills { display:flex; flex-wrap:wrap; gap:5px; }
+.road-pill { font-size:11px; font-weight:500; padding:4px 10px; border-radius:999px; background:var(--off-white); border:1px solid var(--gray-100); color:var(--gray-700); }
+.road-pill.done { background:var(--do-bg); border-color:rgba(8,80,65,.15); color:var(--do-ink); }
+.road-pill.key  { background:var(--purple-light); border-color:var(--purple-mid); color:var(--purple); font-weight:700; }
 
-  /* Corporate workspace */
-  #s11 .corp-workspace {
-    background: var(--white); border-radius: 14px;
-    border: 1px solid var(--gray-100); padding: 1rem;
-    display: flex; flex-direction: column;
-    height: 510px; box-shadow: var(--shadow-xs);
-  }
-  #s11 .corp-topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--gray-100);
-    padding-bottom: 0.55rem; margin-bottom: 0.65rem;
-  }
-  #s11 .corp-topbar .corp-title {
-    font-family: var(--font-head); font-weight: 700; font-size: 13px;
-    color: var(--black); letter-spacing: -0.01em;
-  }
-  #s11 .credit-badge {
-    background: var(--purple-light); color: var(--purple);
-    padding: 5px 9px; border-radius: 7px;
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 11.5px; letter-spacing: -0.01em;
-  }
-  #s11 .pricing-strip {
-    display: flex; gap: 6px;
-    margin-bottom: 0.65rem;
-    flex-wrap: wrap;
-  }
-  #s11 .pricing-strip .pp {
-    font-family: var(--font-body); font-size: 10px;
-    font-weight: 600; color: var(--gray-700);
-    background: var(--off-white);
-    border: 1px solid var(--gray-100);
-    border-radius: 6px;
-    padding: 4px 8px;
-    display: inline-flex; align-items: center; gap: 5px;
-  }
-  #s11 .pricing-strip .pp b {
-    font-family: var(--font-title); font-weight: 900;
-    color: var(--purple); letter-spacing: -0.01em;
-    font-size: 11px;
-  }
-  #s11 .corp-desc {
-    font-family: var(--font-body); font-size: 11.5px;
-    color: var(--gray-500); line-height: 1.5;
-    margin-bottom: 0.7rem;
-  }
-  #s11 .profile-list {
-    display: flex; flex-direction: column; gap: 0.4rem;
-    margin-bottom: 0.7rem;
-  }
-  #s11 .anonymised-row {
-    border: 1px solid var(--gray-100); border-radius: 9px;
-    padding: 0.7rem; display: grid;
-    grid-template-columns: 1fr auto; align-items: center;
-    background: var(--off-white); gap: 0.7rem;
-    transition: all .18s ease;
-  }
-  #s11 .anonymised-row:hover { border-color: var(--purple-mid); background: var(--white); }
-  #s11 .anonymised-row .row-top {
-    font-family: var(--font-body); font-weight: 700; font-size: 11.5px;
-    color: var(--black); display: flex; align-items: center; gap: 6px;
-  }
-  #s11 .anonymised-row .row-top svg { width: 12px; height: 12px; color: var(--purple); }
-  #s11 .anonymised-row .row-meta {
-    font-family: var(--font-body); font-size: 10px;
-    color: var(--gray-500); margin-top: 4px;
-  }
-  #s11 .anonymised-row .row-meta strong { color: var(--purple); font-weight: 700; }
-  #s11 .anonymised-row .row-meta .debt { color: #B11E1E; font-weight: 700; }
-  #s11 .action-btn {
-    background: var(--purple); color: var(--white);
-    border: none; padding: 7px 10px; border-radius: 7px;
-    font-family: var(--font-body); font-size: 10.5px; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-    transition: background .15s ease;
-  }
-  #s11 .action-btn:hover { background: var(--purple-deep); }
-  #s11 .action-btn.green { background: var(--do-ink); }
-  #s11 .action-btn.green:hover { background: #053b30; }
-  #s11 .action-btn.outline {
-    background: var(--white); color: var(--purple);
-    border: 1.5px solid var(--purple);
-  }
-  #s11 .action-btn.outline:hover { background: var(--purple-light); }
-  #s11 .corp-foot {
-    border-top: 1px solid var(--gray-100);
-    padding-top: 0.6rem; margin-top: auto;
-    font-family: var(--font-body); font-size: 10.5px;
-    font-weight: 600; color: var(--purple);
-    display: flex; align-items: center; gap: 6px;
-  }
-  #s11 .corp-foot svg { width: 12px; height: 12px; }
+.ask-box { background:var(--purple-light); border:1.5px solid var(--purple-mid); border-radius:18px; padding:1.4rem 1.6rem; }
+.ask-box h3 { font-family:var(--font-head); font-weight:700; font-size:16px; margin-bottom:.4rem; color:var(--black); }
+.ask-box p { font-size:13px; color:var(--gray-700); line-height:1.6; margin-bottom:.9rem; }
+.ask-chips { display:flex; flex-wrap:wrap; gap:7px; }
+.ask-chip { font-size:12px; font-weight:600; padding:7px 14px; border-radius:999px; background:var(--white); border:1px solid var(--gray-200); color:var(--black); }
+.ask-chip.main { background:var(--purple); color:var(--white); border-color:var(--purple); }
 
-  /* ANALYTICS PANEL — new */
-  #s11 .analytics-panel {
-    margin-top: 0.7rem;
-    background: var(--off-white);
-    border: 1px solid var(--gray-100);
-    border-radius: 10px;
-    padding: 0.7rem;
-  }
-  #s11 .analytics-head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 0.55rem;
-  }
-  #s11 .analytics-head .ah-label {
-    font-family: var(--font-body); font-weight: 700;
-    font-size: 9.5px; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--gray-500);
-    display: flex; align-items: center; gap: 5px;
-  }
-  #s11 .analytics-head .ah-label .step-no {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: var(--purple); color: var(--white);
-    display: grid; place-items: center;
-    font-family: var(--font-title); font-weight: 900; font-size: 8px;
-  }
-  #s11 .analytics-head .ah-period {
-    font-family: var(--font-body); font-weight: 500;
-    font-size: 9.5px; color: var(--gray-500);
-  }
-  #s11 .analytics-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  #s11 .a-tile {
-    background: var(--white); border: 1px solid var(--gray-100);
-    border-radius: 8px; padding: 0.55rem 0.65rem;
-  }
-  #s11 .a-tile .a-lbl {
-    font-family: var(--font-body); font-weight: 600;
-    font-size: 8.5px; letter-spacing: 0.10em;
-    text-transform: uppercase; color: var(--gray-500);
-    margin-bottom: 4px;
-  }
-  /* sentiment tile */
-  #s11 .a-tile.sentiment {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 9px; align-items: center;
-  }
-  #s11 .a-tile.sentiment .score-circle {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: grid; place-items: center;
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 13px; letter-spacing: -0.02em;
-    background: var(--do-bg); color: var(--do-ink);
-  }
-  #s11 .a-tile.sentiment .score-text { display: flex; flex-direction: column; gap: 1px; }
-  #s11 .a-tile.sentiment .score-text .a-lbl { margin-bottom: 0; }
-  #s11 .a-tile.sentiment .score-text .trend {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 11px; letter-spacing: -0.01em;
-    color: var(--do-ink);
-  }
-  /* benchmark tile */
-  #s11 .a-tile.bench .bench-vals {
-    display: flex; align-items: baseline; gap: 5px;
-    margin-bottom: 4px;
-  }
-  #s11 .a-tile.bench .bench-mine {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 16px; color: var(--purple); letter-spacing: -0.02em;
-  }
-  #s11 .a-tile.bench .bench-vs {
-    font-family: var(--font-body); font-size: 9px; color: var(--gray-500);
-  }
-  #s11 .a-tile.bench .bench-bar {
-    height: 4px; background: var(--gray-100);
-    border-radius: 999px; position: relative;
-  }
-  #s11 .a-tile.bench .bench-bar .fill {
-    height: 100%; background: var(--purple);
-    border-radius: 999px;
-  }
-  #s11 .a-tile.bench .bench-bar .marker {
-    position: absolute; top: -2px;
-    width: 2px; height: 8px;
-    background: var(--black); border-radius: 1px;
-  }
-  /* post performance sparkline */
-  #s11 .a-tile.posts .spark {
-    display: flex; align-items: flex-end; gap: 3px; height: 28px;
-  }
-  #s11 .a-tile.posts .bar {
-    flex: 1; background: var(--purple-light);
-    border-radius: 2px;
-    transition: background 0.18s ease;
-  }
-  #s11 .a-tile.posts .bar.hi { background: var(--purple); }
-  #s11 .a-tile.posts .pf-foot {
-    font-family: var(--font-body); font-size: 9.5px;
-    color: var(--gray-500); margin-top: 4px;
-  }
-  #s11 .a-tile.posts .pf-foot b {
-    font-family: var(--font-title); font-weight: 900;
-    color: var(--black); font-size: 10.5px;
-  }
-  /* funnel tile */
-  #s11 .a-tile.funnel .funnel-row {
-    display: grid; grid-template-columns: auto 1fr auto;
-    align-items: center; gap: 6px;
-    font-family: var(--font-body); font-size: 9.5px;
-    margin-bottom: 3px;
-  }
-  #s11 .a-tile.funnel .funnel-row:last-child { margin-bottom: 0; }
-  #s11 .a-tile.funnel .funnel-row .label { color: var(--gray-500); }
-  #s11 .a-tile.funnel .funnel-row .funnel-bar {
-    height: 5px; background: var(--purple-light); border-radius: 999px;
-  }
-  #s11 .a-tile.funnel .funnel-row .funnel-fill {
-    height: 100%; background: var(--purple); border-radius: 999px;
-  }
-  #s11 .a-tile.funnel .funnel-row .num {
-    font-family: var(--font-title); font-weight: 900;
-    font-size: 10px; color: var(--black); letter-spacing: -0.02em;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 1100px) {
-    .slide { padding: 1.8rem; min-height: 0; }
-    .grid-2, #s1 .grid-2, #s5 .grid-2, #s6 .grid-2, #s9 .grid-2, #s10 .ask-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-    .grid-3, .grid-4, #s4 .pillars, #s8 .team-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .pipeline-row { grid-template-columns: 1fr; }
-    .pipeline-hub::before, .pipeline-hub::after { display: none; }
-    #s7 .slider-metrics { grid-template-columns: 1fr 1fr; }
-    #s11 .sandbox-grid { grid-template-columns: 1fr; }
-    #s11 .analytics-grid { grid-template-columns: 1fr; }
-  }
+/* ── CONTROLS ── */
+.controls-outer { width:100%; background:var(--white); border-top:1px solid var(--gray-100); padding:.85rem 0; position:sticky; bottom:0; z-index:100; }
+.controls-inner { max-width:var(--slide-max-w); margin:0 auto; padding:0 1.5rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+.nav-buttons { display:flex; gap:.5rem; }
+.btn { background:var(--white); border:1px solid var(--gray-100); color:var(--black); font-family:var(--font-body); font-weight:600; font-size:.85rem; padding:.55rem 1.05rem; border-radius:8px; cursor:pointer; transition:all .2s ease; display:inline-flex; align-items:center; gap:6px; }
+.btn:hover { background:var(--purple-light); color:var(--purple); border-color:var(--purple-mid); }
+.btn--primary { background:var(--purple); color:var(--white); border-color:var(--purple); }
+.btn--primary:hover { background:var(--purple-deep); }
+.progress-container { flex-grow:1; max-width:420px; display:flex; align-items:center; gap:1rem; }
+.progress-bg { flex-grow:1; height:4px; background:var(--gray-100); border-radius:3px; overflow:hidden; }
+.progress-bar { height:100%; width:0%; background:var(--purple); border-radius:3px; transition:width .3s ease; }
+.slide-counter { font-family:var(--font-title); font-size:12px; font-weight:900; color:var(--black); white-space:nowrap; letter-spacing:.04em; }
+.slide-counter span { color:var(--gray-500); }
 </style>
 </head>
 <body>
 
-<!-- ============================================================ -->
-<!-- INLINE: real Knock logo SVGs                                   -->
-<!-- ============================================================ -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="logo-dark" viewBox="0 0 1180 1180">
-      <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
-      <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
-      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#FFFFFF"/>
-      <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#FFFFFF"/>
-      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#FFFFFF"/>
-      <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
-    </symbol>
-    <symbol id="logo-light" viewBox="0 0 1180 1180">
-      <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
-      <ellipse cx="541" cy="586" rx="491" ry="540" fill="#FFFFFF"/>
-      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
-      <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
-      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
-      <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#D9D9D9"/>
-    </symbol>
-  </defs>
+<!-- ── LOGO SYMBOLS ── -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <!-- logo-dark: purple oval with white K — for light backgrounds -->
+  <symbol id="logo-dark" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="white"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="white"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="white"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+  </symbol>
+  <!-- logo-light: white oval with purple K — for purple backgrounds -->
+  <symbol id="logo-light" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="white"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#D9D9D9"/>
+  </symbol>
 </svg>
 
 <div class="deck-container">
 
-  <!-- ============================================================ -->
-  <!-- SLIDE 1 — TITLE                                                -->
-  <!-- ============================================================ -->
-  <div class="slide active" id="s1">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">The Opportunity Layer</div>
-        <div class="slide-meta">EDHE Absa InnoVarsity 2026<br/>Category 5 · Innovative Industries</div>
-      </div>
+<!-- ══════════════════════════════════════
+     S1 — COVER
+══════════════════════════════════════ -->
+<div class="slide active" id="s1">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
     </div>
-
-    <div class="slide-body">
-      <div class="grid-2">
-        <div>
-          <div class="eyebrow">South Africa's Opportunity Layer</div>
-          <h1 class="display">Opportunity should<br/><em>find you.</em></h1>
-          <p class="lede">
-            Building South Africa's unbiased talent infrastructure layer to bridge the gap between
-            education, corporate capital, and true career access.
-          </p>
-          <div class="pill-cluster">
-            <span class="pill">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              Agentic transcript capturer
-            </span>
-            <span class="pill">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Democratised exposure
-            </span>
-            <span class="pill">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
-              Debt clearance mechanism
-            </span>
-          </div>
-        </div>
-
-        <div class="hero-visual" aria-hidden="true">
-          <div class="opp-row top">
-            <div class="opp-pill student">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
-              <div>SA Student<br/><span class="sub">verified identity</span></div>
-            </div>
-          </div>
-          <div class="opp-center">
-            <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-            <div class="clbl">the opportunity layer</div>
-          </div>
-          <div class="opp-row bottom" style="gap: 8px;">
-            <div class="opp-pill">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-              Funding
-            </div>
-            <div class="opp-pill">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-              Programmes
-            </div>
-            <div class="opp-pill">
-              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
-              Careers
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="header-right">
+      <div class="slide-tag">Category 5 · Innovative Industries</div>
+      <div class="slide-meta">EDHE Absa InnoVarsity 2026</div>
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- SLIDE 2 — MANIFESTO                                            -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s2">
-    <svg class="watermark-k" viewBox="0 0 1180 1180" aria-hidden="true"><use href="#logo-light"/></svg>
-    <div class="slide-header no-border">
-      <div class="lockup on-dark">
-        <div class="knock-logo"><svg><use href="#logo-light"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-meta" style="color: rgba(255,255,255,0.65)">EDHE Absa InnoVarsity 2026<br/>Category 5 · Innovative Industries</div>
-      </div>
-    </div>
-
-    <div class="slide-body">
-      <div class="manifesto-eyebrow">our north star</div>
-      <div class="manifesto-text">
-        It only takes 1 opportunity to change a life.
-        <em>We help it find you.</em>
-      </div>
-      <div class="manifesto-tag">— Knock · Where opportunity finds the student.</div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 3 — STRUCTURAL DISCONNECT                                -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s3">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">The Ecosystem Friction</div>
-        <div class="slide-meta">Bridging the divide</div>
-      </div>
-    </div>
-
-    <div class="slide-body top">
-      <div class="eyebrow">The Status Quo</div>
-      <h2 class="heading">The structural <em>disconnect.</em></h2>
-      <p class="lede">The market is fragmented. We lay the plumbing to connect supply directly to demand.</p>
-
-      <div class="pipeline-row">
-        <div class="disconnect-card left">
-          <span class="tag">The Student</span>
-          <div class="disconnect-quote">Attention is a premium — I can't waste time applying for things that don't apply to me. I'm not even aware of all the companies out there.</div>
-          <div class="disconnect-promise">→ We bring the right and wanted opportunities to your door.</div>
+  <div class="slide-body">
+    <div class="grid-2">
+      <div>
+        <div class="eyebrow">South Africa's opportunity layer</div>
+        <h1 class="display">The <em>infrastructure</em> for opportunity.</h1>
+        <p class="lede">Connecting South African industry and student talent through a verified, intent-driven network — from discovery to development to hire.</p>
+        <div class="pill-cluster">
+          <span class="pill solid">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            STEM Graduates
+          </span>
+          <span class="pill">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Industry
+          </span>
+          <span class="pill">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Transcript verified
+          </span>
+          <span class="pill">📱 WhatsApp-native</span>
         </div>
-
-        <div class="pipeline-hub">
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="opp-row top">
+          <div class="opp-pill dark">
+            <span class="pico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+            <div>STEM Student<br/><span class="sub">transcript verified</span></div>
+          </div>
+        </div>
+        <div class="opp-center">
           <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-          <div class="hub-label">KNOCK</div>
+          <div class="clbl">the opportunity layer</div>
         </div>
-
-        <div class="disconnect-card right">
-          <span class="tag">The Industry</span>
-          <div class="disconnect-quote">We're posting on platforms our target students aren't on. We're drowning in noise and need quality over quantity.</div>
-          <div class="disconnect-promise">→ We reach the quality talent you actually want.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 4 — FIBRE NETWORK / 3 PILLARS                            -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s4">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">Our Infrastructure Wedge</div>
-        <div class="slide-meta">System operation mapping</div>
-      </div>
-    </div>
-
-    <div class="slide-body top">
-      <div class="eyebrow">How the engine works</div>
-      <h2 class="heading">The fibre network <em>for opportunity.</em></h2>
-      <p class="lede">Knock constructs the foundational pipelines. We replace manual workflows with automated, verified, systemic infrastructure.</p>
-
-      <div class="pillars">
-        <div class="pillar">
-          <div class="num-tag">01</div>
-          <div class="ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+        <div class="opp-row" style="gap:8px;">
+          <div class="opp-pill">
+            <span class="pico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            Bursaries
           </div>
-          <h3>Extracting Signal</h3>
-          <p>Our agentic document parsing converts raw academic transcripts into verified, structured datasets — effortlessly.</p>
-          <div class="demo">
-            <div class="mock-transcript">
-              <div class="row"><span class="file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>transcript.pdf</span><span style="color: var(--gray-300);">→</span></div>
-              <div><span class="k">uni:</span> "UCT"</div>
-              <div><span class="k">degree:</span> "BSc CompSci"</div>
-              <div><span class="k">gpa:</span> 78</div>
-              <div style="margin-top: 5px;"><span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Transcript Verified</span></div>
-            </div>
+          <div class="opp-pill">
+            <span class="pico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+            Skills dev
           </div>
-        </div>
-
-        <div class="pillar">
-          <div class="num-tag">02</div>
-          <div class="ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <h3>Democratised Exposure</h3>
-          <p>Stripping PII ensures objective filtering — completely neutralising implicit bias in early recruitment.</p>
-          <div class="demo">
-            <div class="mock-card">
-              <div class="top">
-                <div class="anon"><span class="av">??</span>Candidate · UCT-CS-T10</div>
-                <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>PII locked</span>
-              </div>
-              <div class="skills"><span class="skill">Python</span><span class="skill">ML</span><span class="skill">SQL</span><span class="skill">+4</span></div>
-              <div class="stats"><div><b>78%</b> GPA</div><div><b>Yr 3</b></div><div><b>UCT</b></div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="pillar">
-          <div class="num-tag">03</div>
-          <div class="ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          </div>
-          <h3>Unified Plumbing</h3>
-          <p>Corporates plug into verified data clusters via targeted-audience WhatsApp drops and dynamic live-event tooling.</p>
-          <div class="demo">
-            <div class="mock-wa-pillar">
-              <div class="wa-in"><strong>Company A</strong> is hiring 5 Grad Data Engineers — you matched.</div>
-              <div class="wa-meta">via Knock · just now</div>
-              <div class="wa-out">Yes, interested! 🚀</div>
-              <div class="wa-meta out">read · 0.2s</div>
-            </div>
+          <div class="opp-pill">
+            <span class="pico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+            Careers
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 5 — GTM WEDGE / LIVE COUNTER                             -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s5">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">Go-To-Market</div>
-        <div class="slide-meta">Traction &amp; activity</div>
-      </div>
-    </div>
-
-    <div class="slide-body">
-      <div class="grid-2">
-        <div>
-          <div class="eyebrow">Our wedge</div>
-          <h2 class="heading">An aid to kick-start<br/><em>recruitment.</em></h2>
-          <p class="lede">
-            We are not an AI recruiter. Our initial wedge acts as a powerful assistant for HR teams —
-            cutting through the noise to pinpoint potential candidates instantly.
-          </p>
-          <div class="note">
-            <strong>How it lands:</strong> A recruiter at Company A opens Knock, selects "STEM grads · GPA ≥ 75%",
-            and sees a ranked list of verified, anonymised candidates in seconds. Viewing a list costs R200.
-            Unlocks cost R50. WhatsApp drops cost R2,500 per targeted-audience drop.
-          </div>
-        </div>
-
-        <div class="live-card">
-          <div class="live-eyebrow"><span class="pulse"></span> Live platform activity</div>
-          <div class="live-label">Verified transcripts parsed today</div>
-          <div class="live-number" id="liveCounter">142</div>
-          <div class="live-sub">across UCT, Wits and Stellenbosch pilots</div>
-          <div class="live-foot">
-            <div><b>27</b>active corp scans</div>
-            <div><b>9</b>audience drops queued</div>
-            <div><b>3</b>universities</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 6 — VENTURE MODEL                                        -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s6">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">Venture Model &amp; Impact</div>
-        <div class="slide-meta">Sustainable capital flows</div>
-      </div>
-    </div>
-
-    <div class="slide-body">
-      <div class="grid-2">
-        <div>
-          <div class="eyebrow">The financial moat</div>
-          <h2 class="heading">From compliance policy<br/>to <em>scalable impact.</em></h2>
-          <p class="lede">
-            We transform complex regulatory constraints into automated capital engines for student progression programmes.
-          </p>
-          <div class="note">
-            <strong>The flywheel:</strong> Corporates need B-BBEE points. Students need their debt cleared.
-            We route the same Rand through both — and own the data layer it runs on.
-          </div>
-        </div>
-
-        <div class="model-stack">
-          <div class="model-card purple">
-            <div class="ico-soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </div>
-            <h3>Consumption-led architecture</h3>
-            <p>High-margin monetisation driven by micro-transactions: list views (R200), profile unlocks (R50), targeted-audience WhatsApp drops (R2,500).</p>
-          </div>
-          <div class="model-card">
-            <div class="ico-soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </div>
-            <h3>The debt-clearance flywheel</h3>
-            <p>Enterprise capital pays a transaction premium routed directly into university accounts to settle outstanding student balances — securing B-BBEE points and releasing trapped value.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 7 — FINANCIAL SLIDER                                     -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s7">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">Financial Projections</div>
-        <div class="slide-meta">12-month rollout</div>
-      </div>
-    </div>
-
-    <div class="slide-body top">
-      <div class="eyebrow">Verified Unit Economics · Knock_Unit_Economics.xlsx</div>
-      <h2 class="heading">Projected revenue <em>scaling.</em></h2>
-      <p class="lede">
-        Real student-growth curve from our pilot model. Fixed monthly burn of <strong>R3,062</strong> against
-        consumption revenue: profile unlocks (<strong>R50</strong>) and targeted-audience WhatsApp drops (<strong>R2,500</strong>).
-      </p>
-
-      <div class="slider-container">
-        <div class="slider-top">
-          <span class="lbl-left">Launch · M1</span>
-          <span class="lbl-mid" id="sliderLabel">Month 1 · 50 students</span>
-          <span class="lbl-right">Year 1 · M12</span>
-        </div>
-        <input type="range" id="monthSlider" min="1" max="12" value="1" step="1" />
-
-        <div class="snap-row">
-          <button class="snap-chip" data-month="1"><span class="dot"></span>Pilot · M1 · 50 students</button>
-          <button class="snap-chip" data-month="7"><span class="dot"></span>Break-even · M7 · 250 students</button>
-          <button class="snap-chip" data-month="11"><span class="dot"></span>Scale · M11 · 1,000 students</button>
-          <button class="snap-chip" data-month="12"><span class="dot"></span>Year 1 close · M12 · 1,200 students</button>
-        </div>
-
-        <div class="slider-metrics">
-          <div class="metric-box">
-            <div class="lbl">Active Students</div>
-            <div class="val" id="valStudents">50</div>
-            <div class="sub-note">Per Excel growth curve</div>
-          </div>
-          <div class="metric-box cps">
-            <div class="lbl">Cost per Student</div>
-            <div class="val" id="valCps">R61.24<small>/mo</small></div>
-            <div class="sub-note" id="valCpsNote">R3,062 fixed burn ÷ active students</div>
-          </div>
-          <div class="metric-box">
-            <div class="lbl">Monthly Revenue</div>
-            <div class="val" id="valRevMonth">R150</div>
-            <div class="sub-note" id="valRevBreakdown">3 unlocks · 0 audience drops</div>
-          </div>
-          <div class="metric-box cum">
-            <div class="lbl">Cumulative YTD</div>
-            <div class="val" id="valRevTotal">R150</div>
-            <div class="sub-note" id="valRevTotalNote">vs R3,062 monthly burn</div>
-          </div>
-        </div>
-        <div class="source-note">Source: Knock_Unit_Economics.xlsx · PROJECTIONS sheet</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 8 — TEAM (4 named people)                                -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s8">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">The Execution Team</div>
-        <div class="slide-meta">Founders &amp; senior leads</div>
-      </div>
-    </div>
-
-    <div class="slide-body top">
-      <div class="eyebrow">Who's behind the build</div>
-      <h2 class="heading">Engineered to <em>implement.</em></h2>
-      <p class="lede">Four operators — each chosen for what only they can unlock. Network, sales, ops, engineering.</p>
-
-      <div class="team-grid">
-
-        <div class="team-card lead">
-          <div class="avatar">DT</div>
-          <div class="role-meta">Founder</div>
-          <h3>Dylan Tasdhary</h3>
-          <div class="creds">FinTech MSc · Allan Gray Orbis Fellow · UCT</div>
-          <div class="stake">
-            <b>What he unlocks</b>
-            Network access to industry &amp; premium UCT STEM grads
-          </div>
-        </div>
-
-        <div class="team-card sales">
-          <div class="avatar">CH</div>
-          <div class="role-meta">Head of Sales</div>
-          <h3>Chipo</h3>
-          <div class="creds">UCT IS Masters · ex-Airbnb (Manager)</div>
-          <div class="stake">
-            <b>What she unlocks</b>
-            Enterprise pipeline &amp; corporate sales execution
-          </div>
-        </div>
-
-        <div class="team-card ops">
-          <div class="avatar">MQ</div>
-          <div class="role-meta">Head of Operations</div>
-          <h3>Maqhobo</h3>
-          <div class="creds">UCT FinTech · Cenfri Research Intern</div>
-          <div class="stake">
-            <b>What he unlocks</b>
-            Regulatory &amp; compliance ops (POPIA &middot; B-BBEE)
-          </div>
-        </div>
-
-        <div class="team-card cto">
-          <div class="avatar">JR</div>
-          <div class="role-meta">CTO</div>
-          <h3>Jordy</h3>
-          <div class="creds">Fullstack engineer · ex-Entelect</div>
-          <div class="stake">
-            <b>What he unlocks</b>
-            Production AI &amp; infrastructure build velocity
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 9 — COMPLIANCE MOAT                                      -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s9">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">Compliance Moat</div>
-        <div class="slide-meta">Enterprise sovereignty</div>
-      </div>
-    </div>
-
-    <div class="slide-body">
-      <div class="grid-2">
-        <div>
-          <div class="eyebrow">Built for SA</div>
-          <h2 class="heading">Built for enterprise <em>sovereignty.</em></h2>
-          <p class="lede">
-            Knock is not just a connector — it's a compliance routing layer built strictly for South
-            Africa's regulatory frameworks.
-          </p>
-          <div class="note">
-            <strong>Why it's the moat:</strong> The B-BBEE + POPIA scaffolding is the part that's
-            hardest to copy and most expensive to build. Once corporates plug in, switching cost is real.
-          </div>
-        </div>
-
-        <div class="moat-stack">
-          <div class="moat-card green">
-            <div class="ico-soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <div>
-              <h3>B-BBEE Integration</h3>
-              <p>Automated routing of Skills Development and SED funds directly to student debt accounts. Companies secure tax points while unlocking premium talent.</p>
-            </div>
-          </div>
-          <div class="moat-card">
-            <div class="ico-soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            </div>
-            <div>
-              <h3>Privacy &amp; ethics (POPIA)</h3>
-              <p>Democratised exposure removes implicit bias. PII is locked until explicit student consent is granted, guaranteeing audit-ready data.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 10 — THE ASK · R500k                                     -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s10">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">The Ask</div>
-        <div class="slide-meta">12-month runway · pilot to scale</div>
-      </div>
-    </div>
-
-    <div class="slide-body top">
-      <div class="eyebrow">Our Ask</div>
-      <h2 class="heading">R500k to take Knock<br/>from pilot to <em>1,500 users.</em></h2>
-
-      <div class="ask-grid">
-
-        <div class="ask-hero">
-          <svg class="watermark-k" viewBox="0 0 1180 1180" aria-hidden="true"><use href="#logo-light"/></svg>
-          <div class="eyebrow">12-month grant ask</div>
-          <div class="amount"><sup>R</sup>500k</div>
-          <div class="for">12-month MVP grant · gets us to ~1,500 active students, cash-flow positive at month 7.</div>
-
-          <div class="use-of-funds">
-            <div class="uof">
-              <div class="pct">4%</div>
-              <div class="what">Pre-revenue burn · M1–6
-                <span>Operational cost serving up to 250 users/mo</span>
-              </div>
-              <div class="amt">R20k</div>
-            </div>
-            <div class="uof">
-              <div class="pct">48%</div>
-              <div class="what">Founder runway · 12 months
-                <span>R20k/mo Cape Town living — full-time involvement</span>
-              </div>
-              <div class="amt">R240k</div>
-            </div>
-            <div class="uof">
-              <div class="pct">38%</div>
-              <div class="what">Post-revenue burn · M6–12
-                <span>Scale to 1,500 users + legal + accounting</span>
-              </div>
-              <div class="amt">R190k</div>
-            </div>
-            <div class="uof">
-              <div class="pct">10%</div>
-              <div class="what">Contingency · ~17% buffer
-                <span>For overruns, regulatory shifts, opportunistic spend</span>
-              </div>
-              <div class="amt">R50k</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ask-right">
-          <div class="ask-detail">
-            <h3>Post-revenue burn breakdown (M6–12)</h3>
-            <div class="detail-row">
-              <div class="lbl">Co-founder stipend
-                <span>R10k/mo × 6 months</span>
-              </div>
-              <div class="val">R60k</div>
-            </div>
-            <div class="detail-row">
-              <div class="lbl">Operational burn
-                <span>Serving up to 1,500 active users</span>
-              </div>
-              <div class="val">R100k</div>
-            </div>
-            <div class="detail-row">
-              <div class="lbl">Legal fees
-                <span>POPIA, contracts, B-BBEE routing review</span>
-              </div>
-              <div class="val">R20k</div>
-            </div>
-            <div class="detail-row">
-              <div class="lbl">Accounting fees
-                <span>Bookkeeping, statutory returns</span>
-              </div>
-              <div class="val">R10k</div>
-            </div>
-          </div>
-
-          <div class="ask-note">
-            <strong>Why R500k is the right size:</strong> It covers full-time founder runway in Cape Town for 12 months,
-            scales operational infrastructure to 1,500 users, and leaves a 17% contingency buffer — without diluting equity.
-            Per our unit economics, we hit cash-flow positive at month 7 (~R3,888 net).
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SLIDE 11 — INTERACTIVE SANDBOX                                 -->
-  <!-- ============================================================ -->
-  <div class="slide" id="s11">
-    <div class="slide-header">
-      <div class="lockup">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div><div class="word">knock</div><div class="tag">talent intelligence</div></div>
-      </div>
-      <div class="header-right">
-        <div class="slide-tag">Interactive Sandbox</div>
-        <div class="slide-meta">Dual-sided production architecture</div>
-      </div>
-    </div>
-
-    <div class="slide-body top">
-      <div class="eyebrow">Try the system</div>
-      <h2 class="heading">Simulated dual-sided <em>architecture.</em></h2>
-
-      <div class="sandbox-grid">
-
-        <!-- LEFT: STUDENT WHATSAPP -->
-        <div>
-          <div class="sb-section-label"><span class="step-no">1</span>Select Student Profile</div>
-          <div class="selector-row">
-            <button class="select-btn active" id="btn-thabo" onclick="loadStudentPersona('thabo')">Thabo · CS</button>
-            <button class="select-btn" id="btn-priya" onclick="loadStudentPersona('priya')">Priya · Data</button>
-            <button class="select-btn" id="btn-alex" onclick="loadStudentPersona('alex')">Alex · Eng</button>
-          </div>
-
-          <div class="phone-mockup">
-            <div class="phone-screen">
-              <div class="wa-header">
-                <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-                <div>
-                  <div class="wa-name">Knock</div>
-                  <div class="wa-presence">verified signal layer</div>
-                </div>
-              </div>
-              <div class="wa-chat" id="telegramChatBox"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT: CORPORATE WORKSPACE -->
-        <div>
-          <div class="sb-section-label"><span class="step-no">2</span>Select Enterprise Buyer</div>
-          <div class="selector-row">
-            <button class="select-btn active" id="corp-bank" onclick="loadCorpPersona('bank')">Company A · Talent Team</button>
-            <button class="select-btn" id="corp-bbee" onclick="loadCorpPersona('bbee')">B-BBEE Compliance Officer</button>
-          </div>
-
-          <div class="corp-workspace">
-            <div class="corp-topbar">
-              <div class="corp-title" id="corpNameDisplay">Company A · talent portal</div>
-              <div class="credit-badge" id="creditCounter">Balance R4,500</div>
-            </div>
-
-            <div class="pricing-strip">
-              <span class="pp">View list <b>R200</b></span>
-              <span class="pp">Unlock <b>R50</b></span>
-              <span class="pp">Audience drop <b>R2,500</b></span>
-            </div>
-
-            <div class="corp-desc" id="corpDescriptionDisplay">
-              Searching for high-performance engineering candidates across verified pools.
-            </div>
-
-            <div class="profile-list" id="anonymisedProfileContainer"></div>
-
-            <!-- ANALYTICS PANEL -->
-            <div class="analytics-panel">
-              <div class="analytics-head">
-                <div class="ah-label"><span class="step-no">3</span>Brand &amp; Post Analytics</div>
-                <div class="ah-period">Last 30 days</div>
-              </div>
-              <div class="analytics-grid">
-                <div class="a-tile sentiment" id="aSentiment">
-                  <div class="score-circle" id="aScore">82</div>
-                  <div class="score-text">
-                    <div class="a-lbl">Brand sentiment</div>
-                    <div class="trend" id="aTrend">↑ +6 vs last 30d</div>
-                  </div>
-                </div>
-                <div class="a-tile bench" id="aBench">
-                  <div class="a-lbl">Engagement vs sector</div>
-                  <div class="bench-vals">
-                    <span class="bench-mine" id="aBenchMine">47%</span>
-                    <span class="bench-vs" id="aBenchSector">vs banking avg 22%</span>
-                  </div>
-                  <div class="bench-bar">
-                    <div class="fill" id="aBenchFill" style="width:78%;"></div>
-                    <div class="marker" id="aBenchMarker" style="left:36%;"></div>
-                  </div>
-                </div>
-                <div class="a-tile posts" id="aPosts">
-                  <div class="a-lbl">Post performance · last 7</div>
-                  <div class="spark" id="aSpark">
-                    <div class="bar" style="height:30%"></div>
-                    <div class="bar" style="height:55%"></div>
-                    <div class="bar hi" style="height:78%"></div>
-                    <div class="bar" style="height:42%"></div>
-                    <div class="bar" style="height:68%"></div>
-                    <div class="bar hi" style="height:90%"></div>
-                    <div class="bar" style="height:60%"></div>
-                  </div>
-                  <div class="pf-foot"><b>2,841</b> reach · 31% response</div>
-                </div>
-                <div class="a-tile funnel" id="aFunnel">
-                  <div class="a-lbl" style="margin-bottom: 6px;">Talent funnel · this campaign</div>
-                  <div class="funnel-row">
-                    <span class="label">Reached</span>
-                    <div class="funnel-bar"><div class="funnel-fill" style="width:100%"></div></div>
-                    <span class="num" id="aFun1">250</span>
-                  </div>
-                  <div class="funnel-row">
-                    <span class="label">Unlocked</span>
-                    <div class="funnel-bar"><div class="funnel-fill" style="width:35%"></div></div>
-                    <span class="num" id="aFun2">87</span>
-                  </div>
-                  <div class="funnel-row">
-                    <span class="label">Responded</span>
-                    <div class="funnel-bar"><div class="funnel-fill" style="width:12%"></div></div>
-                    <span class="num" id="aFun3">31</span>
-                  </div>
-                  <div class="funnel-row">
-                    <span class="label">Interviewed</span>
-                    <div class="funnel-bar"><div class="funnel-fill" style="width:4%"></div></div>
-                    <span class="num" id="aFun4">9</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="corp-foot" id="demoAlertStatus">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              Click an action to execute real-time routing logic.
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- ============================================================ -->
-<!-- FOOTER CONTROLS                                                -->
-<!-- ============================================================ -->
+<!-- ══════════════════════════════════════
+     S2 — NORTH STAR / MANIFESTO
+══════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <svg class="watermark-k" viewBox="0 0 1180 1180" aria-hidden="true"><use href="#logo-light"/></svg>
+  <div class="slide-header no-border">
+    <div class="lockup on-dark">
+      <div class="knock-logo"><svg><use href="#logo-light"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-meta" style="color:rgba(255,255,255,.65)">EDHE Absa InnoVarsity 2026<br/>Category 5 · Innovative Industries</div>
+    </div>
+  </div>
+  <div class="slide-body">
+    <div class="manifesto-eyebrow">our north star</div>
+    <div class="manifesto-text">
+      It only takes 1 opportunity to change a life.
+      <em>We help it find you.</em>
+    </div>
+    <div class="manifesto-tag">— Knock · Where opportunity finds the student.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S3 — THE PROBLEM
+══════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">The Problem</div>
+      <div class="slide-meta">9 student interviews · 7 industry conversations</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">Research-backed · SA's top universities · 2025</div>
+    <h2 class="heading">Opportunity exists. It just never<br/><em>reaches the people it's meant for.</em></h2>
+    <p class="lede" style="margin-bottom:1rem;">STEM students at SA's top universities aren't afraid of not finding a job — they're blind to what's out there. Industry isn't short of applications — they're drowning in the wrong ones.</p>
+    <div class="disconnect-pair">
+      <div class="disconnect-card left">
+        <span class="dtag">🎓 The Student</span>
+        <div class="dquote">"Attention is a premium — I can't waste time applying for things that don't apply to me. I'm not even aware of all the companies out there."</div>
+        <div class="dpromise">Doesn't know what exists · Can't tell what they qualify for · Searches endlessly through noise</div>
+      </div>
+      <div class="dhub">
+        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+        <div class="hub-label">the<br/>missing layer</div>
+      </div>
+      <div class="disconnect-card right">
+        <span class="dtag">🏢 The Industry</span>
+        <div class="dquote">"We're posting on platforms our target students aren't on. We're drowning in noise and need quality over quantity."</div>
+        <div class="dpromise">3,500 applications per role · BBBEE skills spend with no reliable way to target or track</div>
+      </div>
+    </div>
+    <div class="stat-row" style="margin-top:.9rem;">
+      <div class="stat-chip"><div class="sn">60–80%</div><div class="sl">of 3rd-year STEM students on or need external funding</div></div>
+      <div class="stat-chip"><div class="sn">5,065</div><div class="sl">fewer STEM grads than national target 2023/24</div></div>
+      <div class="stat-chip"><div class="sn">3,500</div><div class="sl">median applications per graduate vacancy — 80% noise</div></div>
+      <div class="stat-chip"><div class="sn">R250k+</div><div class="sl">median STEM grad starting salary — the talent is valuable</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S4 — THE SOLUTION
+══════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">The Solution</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">What Knock is</div>
+    <h2 class="heading">Knock is the infrastructure for connecting opportunities between <em>industry and student talent.</em></h2>
+    <div class="layer-stack" style="margin-top:.6rem;">
+      <!-- LAYER 1 — flow diagram -->
+      <div style="border:1px solid var(--gray-100);border-radius:14px;overflow:hidden;background:var(--white);box-shadow:var(--shadow-xs);">
+        <div style="display:flex;align-items:stretch;">
+          <div style="width:52px;flex-shrink:0;background:var(--purple);color:var(--white);display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-weight:900;font-size:22px;">1</div>
+          <div style="flex:1;padding:16px 20px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+              <h4 style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--black);">Discovery</h4>
+              <span style="font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--purple);background:var(--purple-light);padding:4px 11px;border-radius:999px;">GTM now</span>
+            </div>
+            <!-- flow row -->
+            <div style="display:flex;align-items:center;gap:12px;">
+              <!-- Student Profile block -->
+              <div style="flex:1;background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:10px;padding:11px 14px;">
+                <div style="font-family:var(--font-head);font-weight:700;font-size:12px;color:var(--purple);margin-bottom:5px;">Verified Student Profile</div>
+                <div style="font-size:11px;color:var(--gray-700);line-height:1.5;">Transcript · CV · Certifications<br/>LinkedIn · GPA band · Degree</div>
+              </div>
+              <!-- Arrow + Knock connector -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
+                <div style="width:2px;height:10px;background:var(--purple-mid);"></div>
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:1.5px solid var(--purple-mid);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><ellipse cx="11" cy="11" r="10" fill="var(--purple-light)"/><path d="M6.5 5.5C6.5 4.67 7.17 4 8 4c.84 0 1.52.69 1.5 1.53C9.41 10.1 9.42 12.5 9.5 16.4c.02.84-.66 1.53-1.5 1.53-.83 0-1.5-.72-1.5-1.56V5.5z" fill="var(--purple)"/><rect width="3.2" height="7" rx="1.6" transform="matrix(.7 .71 -.77.64 13.2 4)" fill="var(--purple)"/><path d="M9.76 13.4c-.65-.6-.65-1.58 0-2.18.65-.6 1.71-.6 2.36 0l4.7 4.33c.65.6.65 1.58 0 2.18-.65.6-1.71.6-2.36 0L9.76 13.4z" fill="var(--purple)"/></svg>
+                </div>
+                <div style="width:2px;height:10px;background:var(--purple-mid);"></div>
+              </div>
+              <!-- Arrow right -->
+              <div style="display:flex;align-items:center;flex-shrink:0;color:var(--purple-mid);">
+                <div style="width:28px;height:2px;background:var(--purple-mid);"></div>
+                <div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--purple-mid);"></div>
+              </div>
+              <!-- Opportunity block -->
+              <div style="flex:1;background:var(--off-white);border:1.5px solid var(--gray-200);border-radius:10px;padding:11px 14px;">
+                <div style="font-family:var(--font-head);font-weight:700;font-size:12px;color:var(--black);margin-bottom:5px;">Opportunity</div>
+                <div style="font-size:11px;color:var(--gray-700);line-height:1.5;">Role · Company · Requirements<br/>Degrees · GPA minimum · Deadline</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:12px;color:var(--gray-500);font-style:italic;">Everyone finds the right fit, without the noise — intent signals rank who genuinely wants the role.</div>
+          </div>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num dim">2</div>
+        <div class="layer-body">
+          <h4>Development — build the skills pipeline</h4>
+          <p>Industry creates skills workshops, hackathons, events. Students attend and are tracked. Knock provides a BBBEE-compliant audit trail. The pipeline every stakeholder has incentive to maintain — industry, students, and universities all benefit.</p>
+        </div>
+        <div class="layer-badge later">Year 2</div>
+      </div>
+      <div class="layer">
+        <div class="layer-num dim">3</div>
+        <div class="layer-body">
+          <h4>Activation — permission-first engagement</h4>
+          <p>Companies pay and request to contact a student — the student decides who gets through. Student debt financing matched to willing funders. The student has leverage for the first time.</p>
+        </div>
+        <div class="layer-badge later">Year 2+</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:1rem;">
+      <strong>The flywheel everyone maintains:</strong> industry funds students → students get skilled → students join the network → industry gets better matches → they invest more. Every stakeholder has stake in keeping the pipeline alive.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S5 — TEAM + UNFAIR ADVANTAGE
+══════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">The Team</div>
+      <div class="slide-meta">We've already done this by hand.</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">Four co-founders · four functions · one network</div>
+    <h2 class="heading" style="margin-bottom:1.2rem;">The people who <em>built this manually</em> — now building the platform.</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">D</div>
+        <div class="team-name">Dylan Tasdhary</div>
+        <div class="team-role">Operations</div>
+        <div class="team-desc">Platform operations, processes, POPIA compliance, CIPC, and keeping the machine running behind the scenes.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar a2">C</div>
+        <div class="team-name">Chipo Chidakwa</div>
+        <div class="team-role">Sales</div>
+        <div class="team-desc">Employer relationships, B2B pipeline, and converting intent data into paying campaigns and partnerships.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar a3">M</div>
+        <div class="team-name">Maqhobosheane Mohlepe</div>
+        <div class="team-role">Student Acquisition</div>
+        <div class="team-desc">Campus growth, WhatsApp community, student network, and the supply side of the marketplace.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar a4">J</div>
+        <div class="team-name">Jordy Kafwe</div>
+        <div class="team-role">Technical</div>
+        <div class="team-desc">Platform architecture, product, AI-native operations, and the intent-signal engine.</div>
+      </div>
+    </div>
+    <div class="proof-box">
+      <div class="proof-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      </div>
+      <div>
+        <div class="proof-title">Our unfair advantage: we already ran the manual version</div>
+        <div class="proof-body">The Knock founding team ran the exec of the <strong>UCT Developer Society</strong> — directly connecting industry to students by hand, at scale, across Cape Town's tech ecosystem. Knock is the platform version of something we've already proven works.</div>
+        <div class="proof-companies">
+          <span class="co-chip">Electrum</span>
+          <span class="co-chip">Entelect</span>
+          <span class="co-chip">BBD</span>
+          <span class="co-chip">FNB</span>
+          <span class="co-chip">RMB</span>
+          <span class="co-chip">Standard Bank</span>
+          <span class="co-chip">AWS</span>
+          <span class="co-chip" style="background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple);">Leading software consultancies</span>
+          <span class="co-chip" style="background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple);">Top consulting firms</span>
+          <span class="co-chip" style="background:var(--purple-light);border-color:var(--purple-mid);color:var(--purple);">Local technology companies</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S6 — GTM · LAYER 1
+══════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">GTM · Layer 1 — Now</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">How we're building the network</div>
+    <h2 class="heading">Start with the <em>sharpest signal</em> in SA — then scale the infrastructure.</h2>
+    <div class="grid-2 start" style="gap:2rem;margin-top:.6rem;">
+      <div>
+        <p class="body" style="margin-bottom:.9rem;">STEM students at UCT, Wits, and Stellenbosch are the most competed-for graduate cohort in South Africa. We build the verified network here, then the infrastructure architecture expands to every university and faculty.</p>
+        <div class="eyebrow" style="margin-bottom:.4rem;">Three university sub-communities — live now</div>
+        <div class="uni-chips">
+          <span class="uni-chip">UCT STEM</span>
+          <span class="uni-chip">Wits STEM</span>
+          <span class="uni-chip">Stellenbosch STEM</span>
+        </div>
+        <div style="margin-top:1rem;">
+          <div class="note">
+            <strong>Why WhatsApp?</strong> 26M+ SA users. Students live on it. Every opportunity is a trackable link — the click is our analytics layer and the intent signal we sell to employers.
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem;">The acquisition funnel</div>
+        <div class="funnel-step active" style="margin-bottom:4px;">
+          <span class="funnel-icon">📸</span>
+          <span class="funnel-text">Instagram bio / campus QR → <strong>intake form</strong></span>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step" style="margin-bottom:4px;">
+          <span class="funnel-icon">📝</span>
+          <span class="funnel-text"><strong>Gated form</strong> captures degree, GPA, university, WhatsApp number — POPIA-consented. Every member is verified before they join.</span>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step" style="margin-bottom:4px;">
+          <span class="funnel-icon">🔗</span>
+          <span class="funnel-text">Thank-you page reveals <strong>WhatsApp Community invite link</strong> — the gate</span>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step result">
+          <span class="funnel-icon">📊</span>
+          <span class="funnel-text">Daily trackable opportunity posts → <strong>every click is intent data</strong> logged in Notion</span>
+        </div>
+        <div style="margin-top:.9rem;padding:.8rem 1rem;background:var(--off-white);border:1px solid var(--gray-100);border-radius:10px;font-size:12.5px;color:var(--gray-700);line-height:1.5;">
+          <strong style="color:var(--black);">Industry entry:</strong> Post opportunities to the network for free. The intent data they receive — clicks by degree, GPA band, university — converts them to paying clients. The data sells the product.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S7 — MARKET SIZE
+══════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">Market Size · Bottom Up</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">The opportunity is massive — and partly legally mandated</div>
+    <h2 class="heading">Four revenue markets.<br/><em>One student cohort.</em></h2>
+    <div class="grid-2 start" style="gap:2.4rem;margin-top:.6rem;">
+      <div>
+        <p class="body" style="margin-bottom:.9rem;">Every STEM graduate on Knock is simultaneously addressable by four commercial markets. Acquisition cost is paid by the recruitment market. Every subsequent monetisation — skills software, financial services, advertising — is incremental revenue on an already-owned relationship.</p>
+        <div class="market-strip">
+          <div class="mrow">
+            <span class="mrow-label">Recruitment</span>
+            <div class="mrow-bar-bg"><div class="mrow-bar" style="width:44%;"></div></div>
+            <span class="mrow-val">R430M</span>
+            <span class="mrow-tag now">Y1</span>
+          </div>
+          <div class="mrow">
+            <span class="mrow-label">Career software</span>
+            <div class="mrow-bar-bg"><div class="mrow-bar" style="width:12%;"></div></div>
+            <span class="mrow-val">R120M+</span>
+            <span class="mrow-tag later">Y2</span>
+          </div>
+          <div class="mrow">
+            <span class="mrow-label">Financial services</span>
+            <div class="mrow-bar-bg"><div class="mrow-bar" style="width:100%;"></div></div>
+            <span class="mrow-val">R23B+</span>
+            <span class="mrow-tag later">Y2</span>
+          </div>
+          <div class="mrow">
+            <span class="mrow-label">Advertising (Gen Z)</span>
+            <div class="mrow-bar-bg"><div class="mrow-bar" style="width:85%;"></div></div>
+            <span class="mrow-val">R1.1T</span>
+            <span class="mrow-tag later">Y3</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:.6rem;">Bottom-up recruitment projection</div>
+        <div class="proj-stack">
+          <div class="proj-row">
+            <div class="proj-top"><span class="py">Year 1 · Launch</span><span class="pv">R682k</span></div>
+            <div class="proj-bar-bg"><div class="proj-bar" style="width:7%;"></div></div>
+            <div class="proj-note">30 employers · 5 SME retainers · UCT pilot. Cashflow positive: month 7.</div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-top"><span class="py">Year 2 · Scale</span><span class="pv">R3.1M</span></div>
+            <div class="proj-bar-bg"><div class="proj-bar" style="width:32%;"></div></div>
+            <div class="proj-note">3 university licences · 80 employers · placement fees unlocked (post-PEA)</div>
+          </div>
+          <div class="proj-row highlight">
+            <div class="proj-top"><span class="py">Year 3 · Infrastructure</span><span class="pv">R8.3M</span></div>
+            <div class="proj-bar-bg"><div class="proj-bar" style="width:100%;"></div></div>
+            <div class="proj-note">200 employers · 8 universities · financial services active · 68% recurring revenue</div>
+          </div>
+        </div>
+        <div style="margin-top:.8rem;font-size:12px;color:var(--gray-500);line-height:1.5;">
+          Conservative bottom-up assumptions: 5% employer market penetration Y1, growing to ~22% Y3. No optimistic multipliers applied.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S8 — BBBEE MANDATE
+══════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">The Enterprise Unlock</div>
+      <div class="slide-meta">B-BBEE · Code Series 300 · Statement 300</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">A legally mandated spend with no good solution — until now</div>
+    <h2 class="heading">Every large SA company must spend millions on skills development.<br/><em>Most have no way to find the right students.</em></h2>
+    <div class="bbbee-grid" style="margin-top:.8rem;">
+      <div class="bbbee-card">
+        <div class="bbbee-num">6%</div>
+        <div class="bbbee-label" style="font-weight:600;color:var(--gray-700);margin-bottom:5px;">of annual payroll — mandatory</div>
+        <div class="bbbee-label">A company with 500 staff at avg R400k salary = <strong style="color:var(--purple);">R12M/year</strong> legally required spend</div>
+      </div>
+      <div class="bbbee-card">
+        <div class="bbbee-num">2.5%</div>
+        <div class="bbbee-label" style="font-weight:600;color:var(--gray-700);margin-bottom:5px;">must go to student bursaries</div>
+        <div class="bbbee-label">Same company must put <strong style="color:var(--purple);">R5M/year</strong> specifically into students at universities — and most don't know who to give it to</div>
+      </div>
+      <div class="bbbee-card">
+        <div class="bbbee-num">25pts</div>
+        <div class="bbbee-label" style="font-weight:600;color:var(--gray-700);margin-bottom:5px;">= more contracts and revenue</div>
+        <div class="bbbee-label">Skills dev is 25 of 100 scorecard points. A better BBBEE level unlocks government tenders, corporate supplier programmes, and preferred client status — worth tens of millions annually</div>
+      </div>
+      <div class="bbbee-card">
+        <div class="bbbee-num">-1 lvl</div>
+        <div class="bbbee-label" style="font-weight:600;color:var(--gray-700);margin-bottom:5px;">= lose contracts overnight</div>
+        <div class="bbbee-label">Miss the skills sub-minimum and drop a full BBBEE level regardless of all other scores — Level 3 becomes Level 4. Major clients pull preferred supplier status immediately</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+      <div class="company-math">
+        <h3>The bottom line for any large SA company</h3>
+        <p>You have a legal obligation to spend millions on student skills development every year. If you can't prove you spent it on the right students — in a traceable, auditable way — you lose BBBEE points, lose a level, and lose contracts. <strong>Knock is the platform that makes this spend trackable, targeted, and compliant.</strong></p>
+      </div>
+      <div class="knock-offer">
+        <h4>What Knock delivers</h4>
+        <div class="offer-item"><span class="ok">✓</span> Find the right students by degree, GPA, and university — instantly</div>
+        <div class="offer-item"><span class="ok">✓</span> Run and track skills workshops with a verified attendance record</div>
+        <div class="offer-item"><span class="ok">✓</span> Full BBBEE audit trail — submit it at year-end, no spreadsheets</div>
+        <div class="offer-item"><span class="ok">✓</span> Hire directly from the students you funded and trained</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S9 — FINANCIALS
+══════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">Financial Projections</div>
+      <div class="slide-meta">Unit economics · Revenue model · 3-year build</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">Multiple streams · one growing network</div>
+    <h2 class="heading" style="margin-bottom:1rem;">Lean to start.<br/><em>Recurring revenue</em> as the network scales.</h2>
+    <div class="unit-grid" style="margin-bottom:1.1rem;">
+      <div class="unit-box"><div class="un">R3,062</div><div class="ul">Monthly fixed burn</div></div>
+      <div class="unit-box"><div class="un">R50</div><div class="ul">Revenue per profile unlock</div></div>
+      <div class="unit-box"><div class="un">R2,500</div><div class="ul">WhatsApp audience drop</div></div>
+      <div class="unit-box"><div class="un">R3,500</div><div class="ul">Featured campaign</div></div>
+    </div>
+    <div class="grid-2 start" style="gap:2rem;">
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem;">Revenue streams</div>
+        <div class="rev-table">
+          <div class="rev-row"><div class="rev-dot" style="background:var(--purple);"></div><span class="rev-name">Featured listing campaigns</span><span class="rev-price">R3,500</span><span class="rev-when now">Now</span></div>
+          <div class="rev-row"><div class="rev-dot" style="background:var(--purple);"></div><span class="rev-name">SME retainers</span><span class="rev-price">R2.5–5k/mo</span><span class="rev-when now">Now</span></div>
+          <div class="rev-row"><div class="rev-dot" style="background:var(--purple);"></div><span class="rev-name">Profile unlocks + audience drops</span><span class="rev-price">R50–R2,500</span><span class="rev-when now">Now</span></div>
+          <div class="rev-row"><div class="rev-dot" style="background:#10B981;"></div><span class="rev-name">University institutional licences</span><span class="rev-price">R120–400k/yr</span><span class="rev-when later">Year 2</span></div>
+          <div class="rev-row"><div class="rev-dot" style="background:#10B981;"></div><span class="rev-name">Placement fees (post-PEA licence)</span><span class="rev-price">R25–67k</span><span class="rev-when later">Year 2</span></div>
+          <div class="rev-row"><div class="rev-dot" style="background:#10B981;"></div><span class="rev-name">Financial services referrals</span><span class="rev-price">R200–2k/lead</span><span class="rev-when later">Year 2</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem;">3-year projection · Bottom up</div>
+        <div class="proj-stack">
+          <div class="proj-row">
+            <div class="proj-top"><span class="py">Year 1 · Launch</span><span class="pv">R682k</span></div>
+            <div class="proj-bar-bg"><div class="proj-bar" style="width:8%;"></div></div>
+            <div class="proj-note">Listings + drops + retainers. Path to cashflow positive: month 7.</div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-top"><span class="py">Year 2 · Scale</span><span class="pv">R3.1M</span></div>
+            <div class="proj-bar-bg"><div class="proj-bar" style="width:37%;"></div></div>
+            <div class="proj-note">3 uni licences · 80 employers · placement fees · financial referrals active</div>
+          </div>
+          <div class="proj-row highlight">
+            <div class="proj-top"><span class="py">Year 3 · Infrastructure</span><span class="pv">R8.3M</span></div>
+            <div class="proj-bar-bg"><div class="proj-bar" style="width:100%;"></div></div>
+            <div class="proj-note">200 employers · 8 universities · skills software · 68% recurring revenue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     S10 — ROADMAP + ASK
+══════════════════════════════════════ -->
+<div class="slide" id="s10">
+  <div class="slide-header">
+    <div class="lockup">
+      <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+      <div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div>
+    </div>
+    <div class="header-right">
+      <div class="slide-tag">6-Month Roadmap</div>
+      <div class="slide-meta">From vision to implementation</div>
+    </div>
+  </div>
+  <div class="slide-body top">
+    <div class="eyebrow">From vision to implementation — EDHE 2026 theme</div>
+    <h2 class="heading" style="margin-bottom:1.2rem;">Six months to <em>proof of infrastructure.</em></h2>
+    <div class="grid-2 start" style="gap:2rem;">
+      <div class="road-line">
+        <div class="road-item">
+          <div class="road-dot live">NOW</div>
+          <div class="road-content">
+            <div class="road-period">June 2026 — Active</div>
+            <div class="road-title">WhatsApp Community live</div>
+            <div class="road-pills">
+              <span class="road-pill done">✓ CIPC registered</span>
+              <span class="road-pill done">✓ Community structure</span>
+              <span class="road-pill done">✓ UCT / Wits / Stellenbosch groups</span>
+              <span class="road-pill done">✓ Gated intake form</span>
+              <span class="road-pill done">✓ POPIA IO registration</span>
+            </div>
+          </div>
+        </div>
+        <div class="road-item">
+          <div class="road-dot">AUG</div>
+          <div class="road-content">
+            <div class="road-period">August 2026</div>
+            <div class="road-title">First traction milestone</div>
+            <div class="road-pills">
+              <span class="road-pill key">300 verified students</span>
+              <span class="road-pill key">5 employer LOIs</span>
+              <span class="road-pill">Daily posting cadence</span>
+              <span class="road-pill">Intent data flowing</span>
+            </div>
+          </div>
+        </div>
+        <div class="road-item">
+          <div class="road-dot">SEP</div>
+          <div class="road-content">
+            <div class="road-period">September 2026</div>
+            <div class="road-title">Funding + validation</div>
+            <div class="road-pills">
+              <span class="road-pill key">E-squared Pathways application</span>
+              <span class="road-pill">First paid campaigns live</span>
+            </div>
+          </div>
+        </div>
+        <div class="road-item">
+          <div class="road-dot">OCT</div>
+          <div class="road-content">
+            <div class="road-period">October 2026</div>
+            <div class="road-title">Platform + API access</div>
+            <div class="road-pills">
+              <span class="road-pill key">Meta WhatsApp API verified</span>
+              <span class="road-pill">Platform MVP built</span>
+              <span class="road-pill">Intent dashboard live</span>
+              <span class="road-pill">PEA application filed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="ask-box">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem;">
+            <div>
+              <div class="eyebrow" style="margin-bottom:.3rem;">What we're asking for</div>
+              <h3>R500,000 seed investment</h3>
+            </div>
+            <div style="font-family:var(--font-title);font-weight:900;font-size:36px;color:var(--purple);letter-spacing:-0.03em;line-height:1;">R500k</div>
+          </div>
+          <!-- Breakdown rows -->
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:1rem;">
+            <div style="display:flex;align-items:flex-start;gap:12px;background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:10px 13px;">
+              <div style="width:5px;height:5px;border-radius:50%;background:var(--purple);margin-top:6px;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:700;color:var(--black);">Pre-revenue burn · Month 1–6 <span style="color:var(--purple);float:right;">R20,000</span></div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Projected total burn to serve up to 250 users monthly before revenue</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:10px 13px;">
+              <div style="width:5px;height:5px;border-radius:50%;background:var(--purple);margin-top:6px;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:700;color:var(--black);">Rent + living · 12 months Cape Town <span style="color:var(--purple);float:right;">R240,000</span></div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Full-time involvement for founders — no split-attention building</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:10px 13px;">
+              <div style="width:5px;height:5px;border-radius:50%;background:var(--purple);margin-top:6px;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:700;color:var(--black);">Post-revenue burn · Month 6–12 <span style="color:var(--purple);float:right;">R190,000</span></div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">R60k co-founder stipend · R100k ops for up to 1,500 users · R20k legal · R10k accounting</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;background:var(--off-white);border:1px solid var(--gray-100);border-radius:10px;padding:10px 13px;">
+              <div style="width:5px;height:5px;border-radius:50%;background:var(--gray-300);margin-top:6px;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:700;color:var(--gray-700);">Contingency (~17%) <span style="float:right;">R50,000</span></div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">Buffer for unexpected operational costs</div>
+              </div>
+            </div>
+          </div>
+          <div class="ask-chips">
+            <span class="ask-chip">🎓 University partnerships</span>
+            <span class="ask-chip">🏢 Corporate introductions</span>
+            <span class="ask-chip">📣 Student network reach</span>
+            <span class="ask-chip main">💜 EDHE network &amp; visibility</span>
+          </div>
+        </div>
+        <div style="margin-top:1rem;background:var(--off-white);border:1px solid var(--gray-100);border-radius:14px;padding:1.1rem 1.3rem;">
+          <div class="eyebrow" style="margin-bottom:.5rem;">December 2026 — Layer 2 foundation</div>
+          <div class="road-pills">
+            <span class="road-pill key">First university licence</span>
+            <span class="road-pill">1,000 students on platform</span>
+            <span class="road-pill">Cashflow positive</span>
+            <span class="road-pill">Skills workshop pilot</span>
+          </div>
+        </div>
+        <div style="margin-top:.9rem;" class="note">
+          <strong>The infrastructure metaphor holds:</strong> roads aren't profitable until cars use them consistently. We're building the road now. The traffic — and the revenue — compounds with every student verified and every employer converted.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.deck-container -->
+
+<!-- ── CONTROLS BAR ── -->
 <div class="controls-outer">
   <div class="controls-inner">
     <div class="nav-buttons">
-      <button class="btn" id="prev" title="Prev (←)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Prev
-      </button>
-      <button class="btn btn--primary" id="next" title="Next (→)">
-        Next
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+      <button class="btn" id="btnPrev" onclick="navigate(-1)">← Prev</button>
+      <button class="btn btn--primary" id="btnNext" onclick="navigate(1)">Next →</button>
     </div>
-
     <div class="progress-container">
       <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
-      <div class="slide-counter"><span id="curr">1</span> / <span id="total">11</span></div>
+    </div>
+    <div class="slide-counter">
+      <span id="curNum">1</span> <span>/ 10</span>
     </div>
   </div>
 </div>
 
 <script>
-  /* ========== NAVIGATION ========== */
-  const slides = document.querySelectorAll('.slide');
-  const total = slides.length;
-  const counter = document.getElementById('curr');
-  const totalEl = document.getElementById('total');
-  const bar = document.getElementById('progressBar');
-  let i = 0;
-  totalEl.textContent = total;
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total  = slides.length;
+let cur = 0;
 
-  function go(n) {
-    n = Math.max(0, Math.min(total - 1, n));
-    if (n === i) return;
-    slides[i].classList.remove('active');
-    slides[n].classList.add('active');
-    i = n;
-    counter.textContent = i + 1;
-    bar.style.width = ((i + 1) / total * 100) + '%';
-  }
-  document.getElementById('next').addEventListener('click', () => go(i + 1));
-  document.getElementById('prev').addEventListener('click', () => go(i - 1));
-  document.addEventListener('keydown', (e) => {
-    const tag = (e.target && e.target.tagName) || '';
-    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(i + 1); }
-    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(i - 1); }
-    else if (e.key === 'Home') { go(0); }
-    else if (e.key === 'End')  { go(total - 1); }
-    else if (e.key === 'f' || e.key === 'F') {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
-    }
-  });
-  bar.style.width = (1 / total * 100) + '%';
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(total - 1, n));
+  slides[cur].classList.add('active');
+  document.getElementById('progressBar').style.width = ((cur + 1) / total * 100) + '%';
+  document.getElementById('curNum').textContent = cur + 1;
+  document.getElementById('btnPrev').disabled = cur === 0;
+  document.getElementById('btnNext').textContent = cur === total - 1 ? '✓ Done' : 'Next →';
+}
 
-  /* ========== EXCEL-BASED SLIDER LOGIC ========== */
-  const STUDENT_CURVE = {1:50,2:60,3:70,4:80,5:100,6:150,7:250,8:400,9:600,10:800,11:1000,12:1200};
-  const FIXED_BURN = 3062;
-  const PRICE_UNLOCK = 50;
-  const PRICE_DROP   = 2500;
+function navigate(dir) { goTo(cur + dir); }
 
-  function unlocksForMonth(m) {
-    const students = STUDENT_CURVE[m];
-    const rate = Math.min(0.05 + 0.015 * m, 0.20);
-    return Math.round(students * rate);
-  }
-  function dropsForMonth(m) { return Math.max(0, Math.floor((m - 3) / 2)); }
-  function revenueForMonth(m) { return unlocksForMonth(m) * PRICE_UNLOCK + dropsForMonth(m) * PRICE_DROP; }
-  function cumulativeRev(m) { let t=0; for (let j=1; j<=m; j++) t+=revenueForMonth(j); return t; }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); navigate(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); navigate(-1); }
+});
 
-  const slider = document.getElementById('monthSlider');
-  const lblSlider = document.getElementById('sliderLabel');
-  const valStudents = document.getElementById('valStudents');
-  const valCps = document.getElementById('valCps');
-  const valCpsNote = document.getElementById('valCpsNote');
-  const valRevMonth = document.getElementById('valRevMonth');
-  const valRevBreakdown = document.getElementById('valRevBreakdown');
-  const valRevTotal = document.getElementById('valRevTotal');
-  const valRevTotalNote = document.getElementById('valRevTotalNote');
-  const snapChips = document.querySelectorAll('#s7 .snap-chip');
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+}, { passive: true });
 
-  slider.addEventListener('mousedown', e => e.stopPropagation());
-  slider.addEventListener('touchstart', e => e.stopPropagation());
-
-  function updateFinancials() {
-    const m = parseInt(slider.value);
-    const students = STUDENT_CURVE[m];
-    const cps = FIXED_BURN / students;
-    const unlocks = unlocksForMonth(m);
-    const drops = dropsForMonth(m);
-    const rev = revenueForMonth(m);
-    const cum = cumulativeRev(m);
-
-    lblSlider.textContent = `Month ${m} · ${students.toLocaleString()} students`;
-    valStudents.textContent = students.toLocaleString();
-    valCps.innerHTML = `R${cps.toFixed(2)}<small>/mo</small>`;
-
-    if (m === 7)      valCpsNote.textContent = '↓ 5× cheaper than M1 at 250 students';
-    else if (m === 11) valCpsNote.textContent = '↓ 20× cheaper than M1 at 1,000 students';
-    else if (m === 1)  valCpsNote.textContent = 'R3,062 fixed burn ÷ 50 students';
-    else               valCpsNote.textContent = `R3,062 burn ÷ ${students.toLocaleString()} students`;
-
-    valRevMonth.textContent = 'R' + rev.toLocaleString();
-    valRevBreakdown.textContent = `${unlocks} unlocks · ${drops} audience drop${drops===1?'':'s'}`;
-
-    valRevTotal.textContent = 'R' + cum.toLocaleString();
-    const net = rev - FIXED_BURN;
-    valRevTotalNote.textContent = net >= 0
-      ? `Month ${m} net: +R${net.toLocaleString()} · cash-flow positive`
-      : `Month ${m} net: -R${Math.abs(net).toLocaleString()} vs R3,062 burn`;
-
-    snapChips.forEach(c => c.classList.toggle('active', parseInt(c.dataset.month) === m));
-  }
-  slider.addEventListener('input', updateFinancials);
-  snapChips.forEach(c => c.addEventListener('click', () => {
-    slider.value = c.dataset.month;
-    updateFinancials();
-  }));
-  updateFinancials();
-
-  /* ========== LIVE TICKER (slide 5) ========== */
-  const liveCounterEl = document.getElementById('liveCounter');
-  let currentCount = 142;
-  setInterval(() => {
-    if (i === 4) {
-      currentCount += Math.floor(Math.random() * 2) + 1;
-      liveCounterEl.textContent = currentCount.toLocaleString();
-    }
-  }, 4200);
-
-  /* ========== SANDBOX DEMO (slide 11) ========== */
-  const studentData = {
-    thabo: {
-      name: "Thabo Ndlovu", school: "UCT", degree: "BSc CompSci", gpa: "81% GPA", status: "Debt · R42,000",
-      messages: [
-        { type: "user", text: "📤 Uploading: transcript_final.pdf" },
-        { type: "bot", text: "⚙️ Parsing structure vectors…" },
-        { type: "bot", text: "✅ <strong>Verified</strong><br/>• UCT · CompSci · 81.3%<br/>🔒 PII stripped for blind matching." }
-      ]
-    },
-    priya: {
-      name: "Priya Naidoo", school: "Wits", degree: "BSc Data Science", gpa: "78% GPA", status: "Bursary active",
-      messages: [
-        { type: "user", text: "📤 Uploading: Priya_Wits_Data.pdf" },
-        { type: "bot", text: "⚙️ Validating pipelines…" },
-        { type: "bot", text: "✅ <strong>Validated</strong><br/>• Wits · Data Science · 78.5%<br/>🔒 Anonymisation token active." }
-      ]
-    },
-    alex: {
-      name: "Alex vd Merwe", school: "Stellenbosch", degree: "BEng Mechatronics", gpa: "74% GPA", status: "Debt · R18,500",
-      messages: [
-        { type: "user", text: "📤 Uploading: Maties_Record.pdf" },
-        { type: "bot", text: "⚙️ Parsing academic tables…" },
-        { type: "bot", text: "✅ <strong>Parsed</strong><br/>• SU · Mechatronics · 74.0%<br/>🔒 PII data isolated." }
-      ]
-    }
-  };
-
-  const corpData = {
-    bank: {
-      title: "Company A · talent portal",
-      desc: "Searching for high-performance engineering candidates across verified pools.",
-      sentiment: 82, sentTrend: '↑ +6 vs last 30d', sentClass: 'good',
-      benchMine: 47, benchSector: 22, sectorLabel: 'banking',
-      posts: [30,55,78,42,68,90,60], reach: 2841, response: 31,
-      funnel: { reached: 250, unlocked: 87, responded: 31, interviewed: 9 }
-    },
-    bbee: {
-      title: "Enterprise B-BBEE Deck",
-      desc: "Targeting Skills Development fund allocation against verified student debt balances.",
-      sentiment: 91, sentTrend: '↑ +11 vs last 30d', sentClass: 'great',
-      benchMine: 58, benchSector: 19, sectorLabel: 'compliance',
-      posts: [40,70,55,82,95,68,88], reach: 1820, response: 44,
-      funnel: { reached: 320, unlocked: 142, responded: 67, interviewed: 18 }
-    }
-  };
-
-  let activeStudent = 'thabo';
-  let activeCorp = 'bank';
-  let availableBalance = 4500;  // R, not credits
-  let listViewed = false;
-
-  function loadStudentPersona(id) {
-    activeStudent = id;
-    ['thabo','priya','alex'].forEach(s => {
-      document.getElementById('btn-' + s).classList.toggle('active', s === id);
-    });
-
-    const chatBox = document.getElementById('telegramChatBox');
-    chatBox.innerHTML = '';
-    studentData[id].messages.forEach(m => {
-      const div = document.createElement('div');
-      div.className = `msg msg--${m.type}`;
-      div.innerHTML = m.text;
-      chatBox.appendChild(div);
-    });
-    chatBox.scrollTop = chatBox.scrollHeight;
-    listViewed = false;  // reset on student switch
-    renderCorporateList();
-  }
-
-  function loadCorpPersona(corpId) {
-    activeCorp = corpId;
-    document.getElementById('corp-bank').classList.toggle('active', corpId === 'bank');
-    document.getElementById('corp-bbee').classList.toggle('active', corpId === 'bbee');
-
-    const c = corpData[corpId];
-    document.getElementById('corpNameDisplay').textContent = c.title;
-    document.getElementById('corpDescriptionDisplay').textContent = c.desc;
-
-    // analytics swap
-    const scoreEl = document.getElementById('aScore');
-    scoreEl.textContent = c.sentiment;
-    if (c.sentiment >= 85)      { scoreEl.style.background = 'var(--do-bg)';   scoreEl.style.color = 'var(--do-ink)'; }
-    else if (c.sentiment >= 65) { scoreEl.style.background = 'var(--warn-bg)'; scoreEl.style.color = 'var(--warn-ink)'; }
-    else                        { scoreEl.style.background = 'var(--dont-bg)'; scoreEl.style.color = 'var(--dont-ink)'; }
-    document.getElementById('aTrend').textContent = c.sentTrend;
-
-    document.getElementById('aBenchMine').textContent = c.benchMine + '%';
-    document.getElementById('aBenchSector').textContent = `vs ${c.sectorLabel} avg ${c.benchSector}%`;
-    document.getElementById('aBenchFill').style.width = Math.min(100, c.benchMine / 60 * 100) + '%';
-    document.getElementById('aBenchMarker').style.left = Math.min(100, c.benchSector / 60 * 100) + '%';
-
-    const sparkEl = document.getElementById('aSpark');
-    sparkEl.innerHTML = '';
-    const maxBar = Math.max(...c.posts);
-    c.posts.forEach((v, idx) => {
-      const div = document.createElement('div');
-      div.className = 'bar' + (v === maxBar ? ' hi' : '');
-      div.style.height = (v) + '%';
-      sparkEl.appendChild(div);
-    });
-    document.querySelector('#aPosts .pf-foot').innerHTML = `<b>${c.reach.toLocaleString()}</b> reach · ${c.response}% response`;
-
-    document.getElementById('aFun1').textContent = c.funnel.reached;
-    document.getElementById('aFun2').textContent = c.funnel.unlocked;
-    document.getElementById('aFun3').textContent = c.funnel.responded;
-    document.getElementById('aFun4').textContent = c.funnel.interviewed;
-
-    listViewed = false;
-    renderCorporateList();
-  }
-
-  function renderCorporateList() {
-    const container = document.getElementById('anonymisedProfileContainer');
-    container.innerHTML = '';
-    const info = studentData[activeStudent];
-
-    if (!listViewed) {
-      // Show the "View list" gate first
-      const row = document.createElement('div');
-      row.className = 'anonymised-row';
-      row.innerHTML = `
-        <div>
-          <div class="row-top">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Matched talent pool
-          </div>
-          <div class="row-meta">${activeCorp === 'bank' ? 'STEM grads · GPA ≥ 75%' : 'Skills Dev candidates · debt &gt; R10k'} · <strong>${activeCorp === 'bank' ? '7 candidates' : '12 candidates'}</strong></div>
-        </div>
-        <button class="action-btn outline" onclick="viewTalentList()">View list · R200</button>
-      `;
-      container.appendChild(row);
-      return;
-    }
-
-    // List unlocked — show candidate
-    const row = document.createElement('div');
-    row.className = 'anonymised-row';
-    if (activeCorp === 'bank') {
-      row.innerHTML = `
-        <div>
-          <div class="row-top">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Candidate token
-          </div>
-          <div class="row-meta">${info.school} · ${info.degree} · <strong>${info.gpa}</strong></div>
-        </div>
-        <button class="action-btn" onclick="executeDemoAction('unlock')">Unlock · R50</button>
-      `;
-    } else {
-      row.innerHTML = `
-        <div>
-          <div class="row-top">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Compliance match
-          </div>
-          <div class="row-meta">${info.school} · <span class="debt">${info.status}</span></div>
-        </div>
-        <button class="action-btn green" onclick="executeDemoAction('clearDebt')">Clear debt</button>
-      `;
-    }
-    container.appendChild(row);
-  }
-
-  function viewTalentList() {
-    if (availableBalance < 200) return;
-    availableBalance -= 200;
-    document.getElementById('creditCounter').textContent = `Balance R${availableBalance.toLocaleString()}`;
-    listViewed = true;
-    const alertBar = document.getElementById('demoAlertStatus');
-    alertBar.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      List unlocked · R200 deducted · ${activeCorp === 'bank' ? '7' : '12'} anonymised tokens loaded.
-    `;
-    renderCorporateList();
-  }
-
-  function executeDemoAction(actionType) {
-    const alertBar = document.getElementById('demoAlertStatus');
-    const chatBox = document.getElementById('telegramChatBox');
-
-    if (actionType === 'unlock' && availableBalance >= 50) {
-      availableBalance -= 50;
-      document.getElementById('creditCounter').textContent = `Balance R${availableBalance.toLocaleString()}`;
-      alertBar.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Profile unlocked · R50 deducted · routing to student…
-      `;
-      const notice = document.createElement('div');
-      notice.className = 'msg msg--bot';
-      notice.style.borderLeft = '3px solid var(--purple)';
-      notice.innerHTML = `🔔 <strong>Update:</strong> An enterprise talent squad unlocked your profile!`;
-      chatBox.appendChild(notice);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    } else if (actionType === 'clearDebt') {
-      alertBar.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="color: var(--do-ink);"><polyline points="20 6 9 17 4 12"/></svg>
-        <span style="color: var(--do-ink);">Balance transferred · routed compliance funds to university.</span>
-      `;
-      const notice = document.createElement('div');
-      notice.className = 'msg msg--bot';
-      notice.style.borderLeft = '3px solid var(--do-ink)';
-      notice.innerHTML = `🎉 <strong>Alert:</strong> Corporate compliance funding cleared your university debt!`;
-      chatBox.appendChild(notice);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    loadCorpPersona('bank');  // sets up analytics
-    loadStudentPersona('thabo');
-  });
+goTo(0);
 </script>
 </body>
 </html>
