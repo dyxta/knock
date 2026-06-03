@@ -55,12 +55,11 @@
         function processScalableRoute() {
             const urlParams = new URLSearchParams(window.location.search);
             
-            // 1. Ingest Incoming Tracking Tags
             const sourceGroup = urlParams.get('utm_source') || 'organic_direct';
             const campaignPost = urlParams.get('utm_medium') || 'unknown_post';
             const encodedDestination = urlParams.get('dest');
             
-            let finalDestination = "https://knocktalent.co.za"; // Safe fallback
+            let finalDestination = "https://knocktalent.co.za"; 
 
             if (encodedDestination) {
                 try {
@@ -70,26 +69,30 @@
                 }
             }
 
-            // 2. Configure the Failsafe Race Condition
-            // If Mixpanel takes longer than 450ms or gets blocked by an ad-blocker, 
-            // the student drops into the application gateway regardless.
+            // Force Mixpanel to use the non-blocking background delivery method
+            mixpanel.set_config({ api_transport: 'sendBeacon' });
+
             let isRedirected = false;
             function executeOutboundBounce() {
                 if (!isRedirected) {
                     isRedirected = true;
+                    console.log("Executing bounce to:", finalDestination);
                     window.location.href = finalDestination;
                 }
             }
-            const fallbackTimeout = setTimeout(executeOutboundBounce, 450);
+            
+            // INCREASED to 1200ms (1.2 seconds) to guarantee the network handshake completes
+            const fallbackTimeout = setTimeout(executeOutboundBounce, 1200);
 
-            // 3. Fire the Intent Metrics Directly into the Mixpanel Cloud Vault
+            console.log("Attempting to fire Mixpanel track event...");
+
             mixpanel.track("Outbound Redirect Clicked", {
                 "Resolved Destination": finalDestination,
                 "WhatsApp Group": sourceGroup,
                 "Campaign Medium": campaignPost,
                 "Device User Agent": navigator.userAgent
             }, function() {
-                // Clear the fallback timeout timer because the call succeeded early
+                console.log("Mixpanel confirmed receipt! Bouncing immediately.");
                 clearTimeout(fallbackTimeout); 
                 executeOutboundBounce();
             });
