@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sourcing Core — Knock Intelligence</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #5E17EB;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loader {
+            border: 2px solid #111111;
+            border-top: 2px solid #5E17EB;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            animation: spin 0.7s linear infinite;
+            margin-bottom: 16px;
+        }
+        .status-text {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #444444;
+            font-weight: 600;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <script type="text/javascript">
+        (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b[h].push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var h="mixpanel";"mixpanel"!==d&&(h+="."+d);b||(h+=" (stub)");return h};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove group.set group.set_once group.unset group.increment group.append group.union".split(" ");
+        for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+
+        // Initialize Mixpanel with Knock's Project Token
+        mixpanel.init("149911c4782c80fa3448236494355475", { 
+            track_pageview: false,
+            persistence: "localStorage" 
+        });
+    </script>
+</head>
+<body>
+
+    <div class="loader"></div>
+    <div class="status-text">Verifying Academic Signal...</div>
+
+    <script>
+        function processScalableRoute() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // 1. Ingest Incoming Tracking Tags
+            const sourceGroup = urlParams.get('utm_source') || 'organic_direct';
+            const campaignPost = urlParams.get('utm_medium') || 'unknown_post';
+            const encodedDestination = urlParams.get('dest');
+            
+            let finalDestination = "https://knocktalent.co.za"; // Safe fallback
+
+            if (encodedDestination) {
+                try {
+                    finalDestination = decodeURIComponent(encodedDestination);
+                } catch (e) {
+                    console.error("[KNOCK ROUTER ERROR]: Link decode failure.", e);
+                }
+            }
+
+            // 2. Configure the Failsafe Race Condition
+            // If Mixpanel takes longer than 450ms or gets blocked by an ad-blocker, 
+            // the student drops into the application gateway regardless.
+            let isRedirected = false;
+            function executeOutboundBounce() {
+                if (!isRedirected) {
+                    isRedirected = true;
+                    window.location.href = finalDestination;
+                }
+            }
+            const fallbackTimeout = setTimeout(executeOutboundBounce, 450);
+
+            // 3. Fire the Intent Metrics Directly into the Mixpanel Cloud Vault
+            mixpanel.track("Outbound Redirect Clicked", {
+                "Resolved Destination": finalDestination,
+                "WhatsApp Group": sourceGroup,
+                "Campaign Medium": campaignPost,
+                "Device User Agent": navigator.userAgent
+            }, function() {
+                // Clear the fallback timeout timer because the call succeeded early
+                clearTimeout(fallbackTimeout); 
+                executeOutboundBounce();
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', processScalableRoute);
+    </script>
+</body>
+</html>
