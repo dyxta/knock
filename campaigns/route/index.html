@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,9 +38,9 @@
 
     <script type="text/javascript">
         (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b[h].push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var h="mixpanel";"mixpanel"!==d&&(h+="."+d);b||(h+=" (stub)");return h};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove group.set group.set_once group.unset group.increment group.append group.union".split(" ");
-        for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+        for(g=0;g<ilength;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
 
-        // Initialize Mixpanel with Knock's Project Token
+        // Initialize Mixpanel with Knock's Production Token
         mixpanel.init("149911c4782c80fa3448236494355475", { 
             track_pageview: false,
             persistence: "localStorage" 
@@ -53,52 +54,68 @@
 
     <script>
         function processScalableRoute() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            const sourceGroup = urlParams.get('utm_source') || 'organic_direct';
-            const campaignPost = urlParams.get('utm_medium') || 'unknown_post';
-            const encodedDestination = urlParams.get('dest');
-            
-            let finalDestination = "https://knocktalent.co.za"; 
-
-            if (encodedDestination) {
-                try {
-                    finalDestination = decodeURIComponent(encodedDestination);
-                } catch (e) {
-                    console.error("[KNOCK ROUTER ERROR]: Link decode failure.", e);
-                }
-            }
-
-            // Force Mixpanel to use the non-blocking background delivery method
-            mixpanel.set_config({ api_transport: 'sendBeacon' });
-
+            // 1. GUARANTEED FAILSAFE TIMING CLOCK (Starts instantly before anything can block execution)
             let isRedirected = false;
+            let finalDestination = "https://knocktalent.co.za"; // Default fallback route
+
             function executeOutboundBounce() {
                 if (!isRedirected) {
                     isRedirected = true;
-                    console.log("Executing bounce to:", finalDestination);
+                    console.log("[KNOCK ROUTER]: Redirecting to ->", finalDestination);
                     window.location.href = finalDestination;
                 }
             }
             
-            // INCREASED to 1200ms (1.2 seconds) to guarantee the network handshake completes
+            // Set 1.2 second ticking fuse. If network processing stalls, student drops forward regardless.
             const fallbackTimeout = setTimeout(executeOutboundBounce, 1200);
 
-            console.log("Attempting to fire Mixpanel track event...");
+            try {
+                // 2. Parse Incoming Campaign URL Target Elements
+                const urlParams = new URLSearchParams(window.location.search);
+                const sourceGroup = urlParams.get('utm_source') || 'organic_direct';
+                const campaignPost = urlParams.get('utm_medium') || 'unknown_post';
+                const encodedDestination = urlParams.get('dest');
+                
+                if (encodedDestination) {
+                    try {
+                        finalDestination = decodeURIComponent(encodedDestination);
+                    } catch (e) {
+                        console.error("[KNOCK ROUTER ERROR]: Failed to decode target link.", e);
+                    }
+                }
 
-            mixpanel.track("Outbound Redirect Clicked", {
-                "Resolved Destination": finalDestination,
-                "WhatsApp Group": sourceGroup,
-                "Campaign Medium": campaignPost,
-                "Device User Agent": navigator.userAgent
-            }, function() {
-                console.log("Mixpanel confirmed receipt! Bouncing immediately.");
-                clearTimeout(fallbackTimeout); 
-                executeOutboundBounce();
-            });
+                console.log("[KNOCK ROUTER]: Prepared Telemetry Payload.");
+                
+                // 3. Fire Metric Tracking via Native Browser Background Post-Boxes
+                if (typeof mixpanel !== 'undefined' && mixpanel.set_config) {
+                    
+                    // Force Mixpanel to use non-blocking background transport mechanisms
+                    mixpanel.set_config({ api_transport: 'sendBeacon' });
+                    
+                    mixpanel.track("Outbound Redirect Clicked", {
+                        "Resolved Destination": finalDestination,
+                        "WhatsApp Group": sourceGroup,
+                        "Campaign Medium": campaignPost,
+                        "Device User Agent": navigator.userAgent
+                    }, function() {
+                        console.log("[KNOCK ROUTER]: Mixpanel tracking accepted. Clearing timer.");
+                        clearTimeout(fallbackTimeout); 
+                        executeOutboundBounce();
+                    });
+                } else {
+                    console.warn("[KNOCK ROUTER]: Mixpanel global library undefined. Moving to fallback routing.");
+                }
+
+            } catch (error) {
+                // Catch errors so the student redirect script never stops functioning
+                console.error("[KNOCK ROUTER EXCEPTION CAUGHT]:", error);
+            }
         }
 
+        // Fire instantly when structural visual DOM assets load
         window.addEventListener('DOMContentLoaded', processScalableRoute);
     </script>
 </body>
 </html>
+
+```
