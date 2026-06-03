@@ -92,6 +92,93 @@
     input:focus { border-color: #5E17EB; background: #fff; }
     input::placeholder { color: #ccc; }
 
+    .hint {
+      font-size: 11px;
+      color: #bbb;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .hint strong { color: #999; font-weight: 600; }
+
+    .guide-box {
+      background: #fafafa;
+      border: 1px solid #ebebeb;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 580px) { .guide-box { grid-template-columns: 1fr; } }
+
+    .guide-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 10px;
+      grid-column: 1 / -1;
+    }
+
+    .guide-col h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .guide-col .format {
+      font-size: 12px;
+      font-family: monospace;
+      background: #f0f0f0;
+      border-radius: 4px;
+      padding: 3px 7px;
+      color: #555;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .guide-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .guide-col ul li {
+      font-size: 12px;
+      color: #aaa;
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guide-col ul li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ddd;
+      flex-shrink: 0;
+    }
+
+    .guide-col .example {
+      font-size: 11px;
+      margin-top: 8px;
+      color: #bbb;
+    }
+
+    .guide-col .example span {
+      font-family: monospace;
+      color: #5E17EB;
+      background: #f3eeff;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
     .gen-btn {
       background: #5E17EB;
       color: #fff;
@@ -322,13 +409,40 @@
           <div>
             <label>Group Name</label>
             <input id="source" type="text" placeholder="wits_commerce_2025" />
+            <div class="hint"><strong>Format:</strong> university_faculty_year</div>
           </div>
           <div>
             <label>Wave / Medium</label>
             <input id="medium" type="text" placeholder="wave1_core" />
+            <div class="hint"><strong>Format:</strong> wave#_type</div>
           </div>
           <div>
             <button class="gen-btn" id="gen-btn" onclick="generate()">Generate</button>
+          </div>
+        </div>
+
+        <div class="guide-box">
+          <div class="guide-title">Naming Convention</div>
+          <div class="guide-col">
+            <h4>Group Name</h4>
+            <div class="format">{university}_{faculty}_{year}</div>
+            <ul>
+              <li>Lowercase only, underscores between segments</li>
+              <li>University: wits, uct, stellenbosch, uj, up</li>
+              <li>Faculty: commerce, engineering, law, science, humanities</li>
+              <li>Year: 2025, 2026</li>
+            </ul>
+            <div class="example">e.g. <span>wits_commerce_2025</span></div>
+          </div>
+          <div class="guide-col">
+            <h4>Wave / Medium</h4>
+            <div class="format">wave{#}_{type}</div>
+            <ul>
+              <li>Increment wave number per posting cycle</li>
+              <li>Type: core (main post), follow (follow-up), final (last call)</li>
+              <li>Never reuse the same wave code for different opportunities</li>
+            </ul>
+            <div class="example">e.g. <span>wave1_core</span> &nbsp; <span>wave2_follow</span> &nbsp; <span>wave3_final</span></div>
           </div>
         </div>
 
