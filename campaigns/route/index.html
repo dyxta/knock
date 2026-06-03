@@ -55,15 +55,22 @@
 
             try { if (dest) target = decodeURIComponent(dest); } catch (e) {}
 
+            // Stable device identity — persists in localStorage across sessions
+            var deviceId = localStorage.getItem("knock_device_id");
+            if (!deviceId) {
+                deviceId = crypto.randomUUID();
+                localStorage.setItem("knock_device_id", deviceId);
+            }
+
             // Build PostHog capture payload (plain JSON — no encoding needed)
             var payload = JSON.stringify({
                 api_key:     POSTHOG_KEY,
                 event:       "Outbound Redirect Clicked",
-                distinct_id: utm_source,
+                distinct_id: deviceId,
                 properties: {
                     "Resolved Destination": target,
-                    "WhatsApp Group":       utm_source,
-                    "Campaign Medium":      utm_medium,
+                    utm_source:             utm_source,
+                    utm_medium:             utm_medium,
                     "Device User Agent":    navigator.userAgent,
                     "$current_url":         window.location.href
                 }
