@@ -42,10 +42,11 @@
 
     <script>
         (function () {
-            var MIXPANEL_TOKEN = "149911c4782c80fa3448236494355475";
-            var fallback = "https://knocktalent.co.za";
+            var POSTHOG_KEY      = "phc_xzm7oKEYjgwRCDbGZ6SE5aEaB3CQu6NufxRJXnjDrQi7";
+            var POSTHOG_ENDPOINT = "https://eu.i.posthog.com/capture/";
+            var fallback         = "https://knocktalent.co.za";
 
-            // --- 1. Parse params ---
+            // Parse params
             var params     = new URLSearchParams(window.location.search);
             var dest       = params.get("dest");
             var utm_source = params.get("utm_source") || "organic_direct";
@@ -54,45 +55,35 @@
 
             try { if (dest) target = decodeURIComponent(dest); } catch (e) {}
 
-            // --- 2. Build Mixpanel HTTP API payload ---
-            // Mixpanel expects: POST /track  body: data=<base64(JSON array)>
-            var event = [{
-                event: "Outbound Redirect Clicked",
+            // Build PostHog capture payload (plain JSON — no encoding needed)
+            var payload = JSON.stringify({
+                api_key:     POSTHOG_KEY,
+                event:       "Outbound Redirect Clicked",
+                distinct_id: utm_source,
                 properties: {
-                    token:                MIXPANEL_TOKEN,
-                    distinct_id:          utm_source,
                     "Resolved Destination": target,
                     "WhatsApp Group":       utm_source,
                     "Campaign Medium":      utm_medium,
                     "Device User Agent":    navigator.userAgent,
-                    "mp_lib":               "web-beacon"
+                    "$current_url":         window.location.href
                 }
-            }];
+            });
 
-            var json    = JSON.stringify(event);
-            var encoded = btoa(json);  // base64 — Mixpanel HTTP API requirement
+            console.log("[KNOCK] Firing PostHog event:", payload);
 
-            console.log("[KNOCK] Payload JSON:", json);
-            console.log("[KNOCK] Encoded:", encoded);
+            // Fire via fetch keepalive — completes in background after navigation
+            fetch(POSTHOG_ENDPOINT, {
+                method:    "POST",
+                keepalive: true,
+                headers:   { "Content-Type": "application/json" },
+                body:      payload
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (j) { console.log("[KNOCK] PostHog response:", j); })
+            .catch(function (e) { console.error("[KNOCK] PostHog error:", e); });
 
-            // --- 3. Fire via fetch keepalive (visible in DevTools, survives navigation) ---
-            try {
-                fetch("https://api.mixpanel.com/track", {
-                    method:    "POST",
-                    keepalive: true,
-                    headers:   { "Content-Type": "application/x-www-form-urlencoded" },
-                    body:      "data=" + encoded + "&verbose=1&ip=1"
-                })
-                .then(function (r) { return r.text(); })
-                .then(function (t) { console.log("[KNOCK] Mixpanel response:", t); })
-                .catch(function (e) { console.error("[KNOCK] Mixpanel fetch error:", e); });
-
-                console.log("[KNOCK] fetch dispatched. Redirecting to:", target);
-            } catch (e) {
-                console.error("[KNOCK] fetch failed:", e);
-            }
-
-            // --- 4. Redirect (fetch keepalive outlives navigation) ---
+            // Redirect immediately — keepalive fetch outlives navigation
+            console.log("[KNOCK] Redirecting to:", target);
             window.location.href = target;
         })();
     </script>
