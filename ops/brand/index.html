@@ -4,24 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Knock — Brand Guidelines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --purple: #5E17EB;
-      --purple-light: #F3EEFF;
-      --purple-mid: #C9AAFF;
-      --black: #000000;
-      --white: #FFFFFF;
-      --off-white: #F8F7F5;
-      --gray-100: #EDEDEB;
-      --gray-300: #BDBBB7;
-      --gray-500: #888580;
-      --gray-700: #444241;
+      --black:        #000000;
+      --white:        #FFFFFF;
+      --off-white:    #F8F7F5;
+      --purple:       #5E17EB;
+      --purple-light: #F0EBFF;
+      --purple-mid:   #C9AAFF;
+      --purple-deep:  #4A0FC1;
+      --gray-100:     #EDEDEB;
+      --gray-200:     #E0DEDA;
+      --gray-300:     #BDBBB7;
+      --gray-500:     #888580;
+      --gray-700:     #444241;
+      --shadow-xs:    0 1px 2px rgba(15,15,20,0.04);
+      --shadow-sm:    0 2px 8px rgba(15,15,20,0.06);
+      --shadow-md:    0 8px 24px rgba(15,15,20,0.08);
+      --shadow-logo:  0 6px 18px rgba(94,23,235,0.22), 0 2px 6px rgba(15,15,20,0.10);
+      --font-title:   "Cabinet Grotesk", system-ui, sans-serif;
+      --font-head:    "Poppins", system-ui, sans-serif;
+      --font-body:    "Switzer", system-ui, sans-serif;
     }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-body);
       background: var(--off-white);
       color: var(--black);
       font-size: 15px;
@@ -45,6 +59,7 @@
 
     .back-link {
       font-size: 12px;
+      font-weight: 600;
       color: var(--gray-500);
       text-decoration: none;
       display: flex;
@@ -65,6 +80,7 @@
       padding: 8px 16px;
       font-size: 12px;
       font-weight: 600;
+      font-family: var(--font-body);
       color: var(--gray-700);
       cursor: pointer;
       transition: all 0.15s;
@@ -72,13 +88,13 @@
     }
     .action-btn:hover { border-color: var(--purple); color: var(--purple); }
     .action-btn.purple { background: var(--purple); color: var(--white); border-color: var(--purple); }
-    .action-btn.purple:hover { opacity: 0.88; }
+    .action-btn.purple:hover { opacity: 0.88; color: var(--white); }
 
     /* ── Layout ── */
     .layout { display: flex; }
 
     .side-nav {
-      width: 200px;
+      width: 210px;
       flex-shrink: 0;
       position: sticky;
       top: 57px;
@@ -86,7 +102,7 @@
       overflow-y: auto;
       border-right: 1px solid var(--gray-100);
       background: var(--white);
-      padding: 28px 0;
+      padding: 24px 0;
     }
 
     .nav-section-label {
@@ -102,47 +118,80 @@
       display: block;
       padding: 7px 24px;
       font-size: 13px;
+      font-weight: 500;
       color: var(--gray-500);
       text-decoration: none;
       transition: color 0.15s;
       border-left: 2px solid transparent;
     }
     .side-nav a:hover { color: var(--black); }
-    .side-nav a.active { color: var(--purple); border-left-color: var(--purple); }
+    .side-nav a.active { color: var(--purple); border-left-color: var(--purple); font-weight: 600; }
 
     .main { flex: 1; min-width: 0; }
 
     /* ── Hero ── */
     .hero {
       background: var(--black);
+      background-image: radial-gradient(900px 600px at 100% 0%, rgba(94,23,235,0.18) 0%, transparent 60%);
       padding: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .knock-logo { display: inline-block; border-radius: 50%; box-shadow: var(--shadow-logo); flex-shrink: 0; }
+    .knock-logo svg { display: block; width: 100%; height: 100%; }
+
+    .hero-lockup-word {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: -1.5px;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .hero-lockup-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-mid);
+      margin-top: 4px;
     }
 
     .hero-eyebrow {
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 2px;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--purple);
+      color: var(--purple-mid);
       margin-bottom: 16px;
     }
 
     .hero h1 {
-      font-size: clamp(40px, 5vw, 72px);
+      font-family: var(--font-title);
       font-weight: 900;
+      font-size: clamp(40px, 5vw, 72px);
       color: var(--white);
-      letter-spacing: -2px;
-      line-height: 1;
+      letter-spacing: -0.035em;
+      line-height: 0.96;
       margin-bottom: 20px;
     }
 
-    .hero h1 span { color: var(--purple); }
+    .hero h1 span { color: var(--purple-mid); }
 
     .hero-sub {
       font-size: 15px;
-      color: var(--gray-300);
-      max-width: 480px;
-      line-height: 1.7;
+      color: rgba(255,255,255,0.5);
+      max-width: 500px;
+      line-height: 1.65;
     }
 
     .hero-meta {
@@ -151,21 +200,22 @@
       margin-top: 56px;
       padding-top: 40px;
       border-top: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: wrap;
     }
 
     .hero-meta-item label {
       display: block;
       font-size: 10px;
-      letter-spacing: 1.5px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--gray-500);
+      color: rgba(255,255,255,0.3);
       margin-bottom: 4px;
     }
 
     .hero-meta-item span {
       font-size: 13px;
-      font-weight: 500;
-      color: var(--gray-300);
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
     }
 
     /* ── Sections ── */
@@ -177,18 +227,21 @@
     .section-eyebrow {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--purple);
       margin-bottom: 8px;
     }
 
     .section-title {
-      font-size: 28px;
+      font-family: var(--font-head);
       font-weight: 700;
+      font-size: 28px;
+      letter-spacing: -0.02em;
       margin-bottom: 8px;
-      letter-spacing: -0.5px;
     }
+
+    .section-title em { font-style: normal; color: var(--purple); }
 
     .section-desc {
       font-size: 14px;
@@ -198,29 +251,30 @@
       line-height: 1.7;
     }
 
-    /* ── Colours ── */
+    /* ── Colour swatches ── */
     .colour-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
+      gap: 14px;
     }
 
-    .colour-swatch {
-      border-radius: 12px;
+    .colour-card {
+      border-radius: 14px;
       overflow: hidden;
       border: 1px solid var(--gray-100);
+      box-shadow: var(--shadow-xs);
     }
 
-    .swatch-block { height: 100px; }
+    .swatch { height: 96px; }
 
     .swatch-info {
       background: var(--white);
-      padding: 14px;
+      padding: 14px 16px;
     }
 
-    .swatch-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-    .swatch-hex { font-size: 11px; color: var(--gray-500); font-family: monospace; margin-bottom: 4px; }
-    .swatch-role { font-size: 11px; color: var(--gray-300); }
+    .swatch-name { font-size: 13px; font-weight: 700; color: var(--black); margin-bottom: 3px; }
+    .swatch-hex { font-size: 11px; color: var(--gray-500); font-family: monospace; margin-bottom: 3px; }
+    .swatch-use { font-size: 11px; color: var(--gray-300); }
 
     .copy-hex {
       font-size: 10px;
@@ -230,23 +284,94 @@
       border: none;
       padding: 0;
       font-weight: 600;
-      margin-top: 4px;
+      font-family: var(--font-body);
+      margin-top: 6px;
       display: block;
     }
     .copy-hex:hover { text-decoration: underline; }
 
+    /* ── Logo section ── */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .logo-card {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--gray-100);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .logo-preview {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .logo-info {
+      background: var(--white);
+      padding: 14px 16px;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .logo-info-name { font-size: 13px; font-weight: 700; }
+    .logo-info-sub { font-size: 11px; color: var(--gray-300); margin-top: 2px; }
+
+    .logo-lockup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-lockup-word {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 26px;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-lockup-tag {
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .logo-mark-only {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-mark-label {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+    }
+
     /* ── Typography ── */
-    .type-rows { display: flex; flex-direction: column; gap: 32px; }
+    .type-stack { display: flex; flex-direction: column; gap: 20px; }
 
     .type-row {
       background: var(--white);
       border: 1px solid var(--gray-100);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 28px 32px;
       display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 32px;
-      align-items: start;
+      grid-template-columns: 180px 1fr;
+      gap: 40px;
+      align-items: center;
+      box-shadow: var(--shadow-xs);
     }
 
     .type-meta label {
@@ -259,73 +384,43 @@
       margin-bottom: 6px;
     }
 
-    .type-meta p { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
-    .type-meta .font-name { font-size: 14px; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+    .type-font-name { font-size: 14px; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+    .type-font-sub { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
 
-    .type-preview-heading {
-      font-size: 42px;
+    .type-display {
+      font-family: var(--font-title);
       font-weight: 900;
-      letter-spacing: -1px;
-      line-height: 1.1;
+      font-size: 52px;
+      letter-spacing: -0.035em;
+      line-height: 0.96;
       color: var(--black);
     }
 
-    .type-preview-body {
+    .type-display em { font-style: normal; color: var(--purple); }
+
+    .type-body-sample {
+      font-family: var(--font-body);
       font-size: 16px;
-      line-height: 1.7;
+      line-height: 1.65;
       color: var(--gray-700);
     }
-
-    /* ── Logo ── */
-    .logo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px;
-    }
-
-    .logo-card {
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--gray-100);
-    }
-
-    .logo-preview {
-      height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -1px;
-    }
-
-    .logo-preview.dark { background: var(--black); color: var(--white); }
-    .logo-preview.light { background: var(--white); color: var(--black); }
-    .logo-preview.purple { background: var(--purple); color: var(--white); }
-
-    .logo-info {
-      background: var(--white);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .logo-info-name { font-size: 13px; font-weight: 600; }
-    .logo-info-sub { font-size: 11px; color: var(--gray-300); margin-top: 2px; }
 
     /* ── Voice ── */
     .voice-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
     }
+
+    @media (max-width: 600px) { .voice-grid { grid-template-columns: 1fr; } }
 
     .voice-card {
       background: var(--white);
       border: 1px solid var(--gray-100);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 24px;
+      box-shadow: var(--shadow-xs);
     }
 
     .voice-label {
@@ -333,473 +428,665 @@
       font-weight: 700;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .voice-label.do { color: #1a8f3c; }
     .voice-label.dont { color: #cc3333; }
 
     .voice-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
       font-size: 13px;
       color: var(--gray-700);
       padding: 6px 0;
       border-bottom: 1px solid var(--gray-100);
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
     }
     .voice-item:last-child { border-bottom: none; }
-    .voice-item::before { font-size: 11px; flex-shrink: 0; margin-top: 2px; }
-    .voice-card.do .voice-item::before { content: '✓'; color: #1a8f3c; }
-    .voice-card.dont .voice-item::before { content: '✕'; color: #cc3333; }
+    .voice-check { flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+    .voice-card.do .voice-check { color: #1a8f3c; }
+    .voice-card.dont .voice-check { color: #cc3333; }
 
-    /* ── Usage rules ── */
-    .rule-grid {
+    .example-box {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 14px;
+      padding: 28px 32px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 32px;
+      box-shadow: var(--shadow-xs);
     }
-    @media (max-width: 700px) { .rule-grid { grid-template-columns: 1fr; } }
+
+    @media (max-width: 600px) { .example-box { grid-template-columns: 1fr; } }
+
+    .example-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .example-label.good { color: #1a8f3c; }
+    .example-label.bad  { color: #cc3333; }
+
+    .example-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--gray-700);
+    }
+
+    /* ── Rules ── */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) { .rules-grid { grid-template-columns: 1fr; } }
 
     .rule-card {
       background: var(--white);
       border: 1px solid var(--gray-100);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 24px;
+      box-shadow: var(--shadow-xs);
     }
 
-    .rule-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
-    .rule-card ul { padding-left: 16px; }
-    .rule-card ul li { font-size: 13px; color: var(--gray-700); padding: 4px 0; }
+    .rule-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
 
-    /* ── AI context ── */
+    .rule-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--gray-700);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .rule-item:last-child { border-bottom: none; }
+    .rule-check { flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+    .rule-card.do .rule-check { color: #1a8f3c; }
+    .rule-card.dont .rule-check { color: #cc3333; }
+
+    /* ── North star ── */
+    .manifesto-block {
+      background: var(--purple);
+      border-radius: 18px;
+      padding: 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .manifesto-block::before {
+      content: '';
+      position: absolute;
+      right: -60px; bottom: -60px;
+      width: 320px; height: 320px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    .manifesto-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--purple-mid);
+      margin-bottom: 20px;
+    }
+
+    .manifesto-text {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .manifesto-text em { font-style: normal; color: var(--purple-mid); display: block; margin-top: 0.3em; }
+
+    .manifesto-tag {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* ── Assets ── */
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .asset-card {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .asset-icon { font-size: 24px; margin-bottom: 10px; }
+    .asset-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .asset-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+    /* ── AI text ── */
     #ai-text { display: none; }
   </style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <div class="top-left">
-      <a class="back-link" href="/">← Ops Hub</a>
-      <div class="top-title">Brand Guidelines</div>
-    </div>
-    <div class="top-actions">
-      <button class="action-btn" onclick="copyForAI()">Copy for AI</button>
-      <button class="action-btn" onclick="window.print()">Print / Save PDF</button>
-      <button class="action-btn" onclick="downloadHTML()">Download HTML</button>
-    </div>
+<!-- Logo symbols -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="logo-dark" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="white"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="white"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="white"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+  </symbol>
+  <symbol id="logo-light" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="white"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#D9D9D9"/>
+  </symbol>
+</svg>
+
+<div class="top-bar">
+  <div class="top-left">
+    <a class="back-link" href="/">← Ops Hub</a>
+    <div class="top-title">Brand Guidelines</div>
   </div>
-
-  <div class="layout">
-
-    <nav class="side-nav">
-      <div class="nav-section-label">Brand</div>
-      <a href="#identity">Identity</a>
-      <a href="#colours">Colours</a>
-      <a href="#typography">Typography</a>
-      <a href="#logo">Logo</a>
-      <div class="nav-section-label">Usage</div>
-      <a href="#voice">Voice &amp; Tone</a>
-      <a href="#assets">Assets</a>
-      <a href="#rules">Usage Rules</a>
-    </nav>
-
-    <main class="main">
-
-      <!-- Hero -->
-      <div class="hero">
-        <div class="hero-eyebrow">Knock Intelligence</div>
-        <h1>Brand<br><span>Guidelines</span></h1>
-        <p class="hero-sub">Everything needed to represent Knock consistently — in design, copy, and communication.</p>
-        <div class="hero-meta">
-          <div class="hero-meta-item">
-            <label>Version</label>
-            <span>2025.1</span>
-          </div>
-          <div class="hero-meta-item">
-            <label>Primary Colour</label>
-            <span>#5E17EB</span>
-          </div>
-          <div class="hero-meta-item">
-            <label>Primary Typeface</label>
-            <span>Cabinet Grotesk</span>
-          </div>
-          <div class="hero-meta-item">
-            <label>Instagram</label>
-            <span>@knock_talent</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Identity -->
-      <div class="section" id="identity">
-        <div class="section-eyebrow">01 — Identity</div>
-        <div class="section-title">Who We Are</div>
-        <div class="section-desc">Knock Intelligence is a student sourcing platform that connects companies with the right students through targeted, data-driven campaigns. We are precise, bold, and built for speed.</div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:24px;">
-            <div style="font-size:22px;margin-bottom:12px;">🎯</div>
-            <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Precise</div>
-            <div style="font-size:13px;color:#888580;">We deliver the right opportunity to the right student, not mass blasts.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:24px;">
-            <div style="font-size:22px;margin-bottom:12px;">⚡</div>
-            <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Fast</div>
-            <div style="font-size:13px;color:#888580;">Campaign creation to student click in under 60 seconds.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:24px;">
-            <div style="font-size:22px;margin-bottom:12px;">📊</div>
-            <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Data-driven</div>
-            <div style="font-size:13px;color:#888580;">Every campaign is tracked. Every click is measurable.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:24px;">
-            <div style="font-size:22px;margin-bottom:12px;">🤝</div>
-            <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Trusted</div>
-            <div style="font-size:13px;color:#888580;">Students trust the link. Companies trust the data.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Colours -->
-      <div class="section" id="colours">
-        <div class="section-eyebrow">02 — Colours</div>
-        <div class="section-title">Colour Palette</div>
-        <div class="section-desc">A minimal palette anchored by Electric Purple. Use black and white for structure — purple for energy and emphasis. Never introduce new colours.</div>
-
-        <div class="colour-grid">
-          <div class="colour-swatch">
-            <div class="swatch-block" style="background:#5E17EB;"></div>
-            <div class="swatch-info">
-              <div class="swatch-name">Electric Purple</div>
-              <div class="swatch-hex">#5E17EB</div>
-              <div class="swatch-role">Primary brand colour</div>
-              <button class="copy-hex" onclick="copyHex('#5E17EB', this)">Copy hex</button>
-            </div>
-          </div>
-          <div class="colour-swatch">
-            <div class="swatch-block" style="background:#000000;"></div>
-            <div class="swatch-info">
-              <div class="swatch-name">Black</div>
-              <div class="swatch-hex">#000000</div>
-              <div class="swatch-role">Backgrounds, headlines</div>
-              <button class="copy-hex" onclick="copyHex('#000000', this)">Copy hex</button>
-            </div>
-          </div>
-          <div class="colour-swatch">
-            <div class="swatch-block" style="background:#FFFFFF;border-bottom:1px solid #EDEDEB;"></div>
-            <div class="swatch-info">
-              <div class="swatch-name">White</div>
-              <div class="swatch-hex">#FFFFFF</div>
-              <div class="swatch-role">Text on dark, surfaces</div>
-              <button class="copy-hex" onclick="copyHex('#FFFFFF', this)">Copy hex</button>
-            </div>
-          </div>
-          <div class="colour-swatch">
-            <div class="swatch-block" style="background:#F3EEFF;"></div>
-            <div class="swatch-info">
-              <div class="swatch-name">Purple Tint</div>
-              <div class="swatch-hex">#F3EEFF</div>
-              <div class="swatch-role">Backgrounds, highlights</div>
-              <button class="copy-hex" onclick="copyHex('#F3EEFF', this)">Copy hex</button>
-            </div>
-          </div>
-          <div class="colour-swatch">
-            <div class="swatch-block" style="background:#C9AAFF;"></div>
-            <div class="swatch-info">
-              <div class="swatch-name">Purple Mid</div>
-              <div class="swatch-hex">#C9AAFF</div>
-              <div class="swatch-role">Accents on dark backgrounds</div>
-              <button class="copy-hex" onclick="copyHex('#C9AAFF', this)">Copy hex</button>
-            </div>
-          </div>
-          <div class="colour-swatch">
-            <div class="swatch-block" style="background:#F8F7F5;border-bottom:1px solid #EDEDEB;"></div>
-            <div class="swatch-info">
-              <div class="swatch-name">Off White</div>
-              <div class="swatch-hex">#F8F7F5</div>
-              <div class="swatch-role">Page backgrounds</div>
-              <button class="copy-hex" onclick="copyHex('#F8F7F5', this)">Copy hex</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Typography -->
-      <div class="section" id="typography">
-        <div class="section-eyebrow">03 — Typography</div>
-        <div class="section-title">Typefaces</div>
-        <div class="section-desc">Cabinet Grotesk for display and headlines — bold, modern, confident. Switzer for body copy — clean, readable, neutral. Never use decorative or serif fonts.</div>
-
-        <div class="type-rows">
-          <div class="type-row">
-            <div class="type-meta">
-              <label>Display / Headlines</label>
-              <div class="font-name">Cabinet Grotesk</div>
-              <p>Weight: Black (900)<br>Use for: Hero text, section titles, brand marks</p>
-            </div>
-            <div class="type-preview-heading">Knock.</div>
-          </div>
-          <div class="type-row">
-            <div class="type-meta">
-              <label>Body / UI</label>
-              <div class="font-name">Switzer</div>
-              <p>Weight: 300–600<br>Use for: Body copy, labels, descriptions, UI elements</p>
-            </div>
-            <div class="type-preview-body">We connect companies with the students they need — precisely, quickly, and with full visibility on performance.</div>
-          </div>
-          <div class="type-row">
-            <div class="type-meta">
-              <label>System Fallback</label>
-              <div class="font-name">-apple-system, Segoe UI</div>
-              <p>Use when brand fonts aren't available (emails, plain documents)</p>
-            </div>
-            <div class="type-preview-body" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">Student sourcing, powered by intelligence.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Logo -->
-      <div class="section" id="logo">
-        <div class="section-eyebrow">04 — Logo</div>
-        <div class="section-title">Logo Usage</div>
-        <div class="section-desc">The Knock wordmark is always set in Cabinet Grotesk Black. The period is part of the logo — never omit it. Use on approved background colours only.</div>
-
-        <div class="logo-grid">
-          <div class="logo-card">
-            <div class="logo-preview dark">Knock.</div>
-            <div class="logo-info">
-              <div><div class="logo-info-name">Primary — Dark</div><div class="logo-info-sub">White on black. Preferred.</div></div>
-            </div>
-          </div>
-          <div class="logo-card">
-            <div class="logo-preview light" style="border-bottom:1px solid #EDEDEB;">Knock.</div>
-            <div class="logo-info">
-              <div><div class="logo-info-name">Primary — Light</div><div class="logo-info-sub">Black on white.</div></div>
-            </div>
-          </div>
-          <div class="logo-card">
-            <div class="logo-preview purple">Knock.</div>
-            <div class="logo-info">
-              <div><div class="logo-info-name">On Purple</div><div class="logo-info-sub">White on Electric Purple.</div></div>
-            </div>
-          </div>
-          <div class="logo-card">
-            <div class="logo-preview" style="background:#5E17EB;color:#C9AAFF;">Knock.</div>
-            <div class="logo-info">
-              <div><div class="logo-info-name">Accent</div><div class="logo-info-sub">Purple Mid on Electric Purple.</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Voice -->
-      <div class="section" id="voice">
-        <div class="section-eyebrow">05 — Voice &amp; Tone</div>
-        <div class="section-title">How We Communicate</div>
-        <div class="section-desc">Knock speaks like a sharp colleague — direct, confident, and clear. We don't use corporate jargon or over-explain. We get to the point.</div>
-
-        <div class="voice-grid">
-          <div class="voice-card do">
-            <div class="voice-label do">We are</div>
-            <div class="voice-item">Direct and confident</div>
-            <div class="voice-item">Concise — one idea per sentence</div>
-            <div class="voice-item">Action-oriented — verbs over nouns</div>
-            <div class="voice-item">Human — we talk to people, not audiences</div>
-            <div class="voice-item">Data-backed when making claims</div>
-          </div>
-          <div class="voice-card dont">
-            <div class="voice-label dont">We are not</div>
-            <div class="voice-item">Corporate or jargon-heavy</div>
-            <div class="voice-item">Overly casual or informal</div>
-            <div class="voice-item">Vague ("solutions", "synergies")</div>
-            <div class="voice-item">Exclamation-mark heavy</div>
-            <div class="voice-item">Passive voice</div>
-          </div>
-        </div>
-
-        <div style="margin-top:24px;background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:28px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#BDBBB7;margin-bottom:16px;">Example Copy</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-            <div>
-              <div style="font-size:11px;font-weight:700;color:#1a8f3c;margin-bottom:8px;">✓ KNOCK VOICE</div>
-              <div style="font-size:14px;line-height:1.6;color:#444241;">"ABSA's grad programme is now open. Applications close 31 July — limited spots available."</div>
-            </div>
-            <div>
-              <div style="font-size:11px;font-weight:700;color:#cc3333;margin-bottom:8px;">✕ NOT KNOCK</div>
-              <div style="font-size:14px;line-height:1.6;color:#444241;">"We are excited to announce an amazing opportunity with one of South Africa's leading financial institutions!!!"</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Assets -->
-      <div class="section" id="assets">
-        <div class="section-eyebrow">06 — Assets</div>
-        <div class="section-title">Brand Assets</div>
-        <div class="section-desc">All assets are maintained in the Knock branding folder. Use the approved file for each context — never recreate logos or assets from scratch.</div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:20px;">
-            <div style="font-size:20px;margin-bottom:10px;">🖼</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Logo SVG</div>
-            <div style="font-size:12px;color:#888580;">Light and dark variants. Use SVG at all times — never raster for logos.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:20px;">
-            <div style="font-size:20px;margin-bottom:10px;">📧</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Email Signatures</div>
-            <div style="font-size:12px;color:#888580;">HTML signature templates. One per team member role.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:20px;">
-            <div style="font-size:20px;margin-bottom:10px;">🖥</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:4px;">LinkedIn Banners</div>
-            <div style="font-size:12px;color:#888580;">1584 × 396px. Optimised for company and personal profiles.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:20px;">
-            <div style="font-size:20px;margin-bottom:10px;">📱</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:4px;">WhatsApp Assets</div>
-            <div style="font-size:12px;color:#888580;">Profile images and post templates for WhatsApp group distribution.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:20px;">
-            <div style="font-size:20px;margin-bottom:10px;">📸</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Instagram Templates</div>
-            <div style="font-size:12px;color:#888580;">Post and story templates. 1080 × 1080px and 1080 × 1920px.</div>
-          </div>
-          <div style="background:#fff;border:1px solid #EDEDEB;border-radius:12px;padding:20px;">
-            <div style="font-size:20px;margin-bottom:10px;">👕</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Merch Files</div>
-            <div style="font-size:12px;color:#888580;">Print-ready files for shirts and physical brand items.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Rules -->
-      <div class="section" id="rules">
-        <div class="section-eyebrow">07 — Usage Rules</div>
-        <div class="section-title">Dos &amp; Don'ts</div>
-        <div class="section-desc">These rules exist so Knock always looks like Knock, regardless of who created the asset.</div>
-
-        <div class="rule-grid">
-          <div class="rule-card">
-            <h4 style="color:#1a8f3c;">✓ Always</h4>
-            <ul>
-              <li>Use the period in "Knock." in all brand marks</li>
-              <li>Use Electric Purple (#5E17EB) as the sole accent colour</li>
-              <li>Use Cabinet Grotesk Black for headlines</li>
-              <li>Use SVG format for logos in digital contexts</li>
-              <li>Maintain clear space around the logo equal to the height of the "K"</li>
-              <li>Use approved background colours only (black, white, purple)</li>
-            </ul>
-          </div>
-          <div class="rule-card">
-            <h4 style="color:#cc3333;">✕ Never</h4>
-            <ul>
-              <li>Stretch, skew, or rotate the logo</li>
-              <li>Use the logo on busy photographic backgrounds</li>
-              <li>Introduce new brand colours</li>
-              <li>Use serif or decorative fonts</li>
-              <li>Use low-resolution (raster) logo files</li>
-              <li>Add drop shadows or effects to the wordmark</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-    </main>
+  <div class="top-actions">
+    <button class="action-btn" onclick="copyForAI(this)">Copy for AI</button>
+    <button class="action-btn" onclick="window.print()">Print / Save PDF</button>
+    <button class="action-btn" onclick="downloadHTML()">Download HTML</button>
   </div>
+</div>
 
-  <!-- Hidden AI text -->
-  <div id="ai-text">
+<div class="layout">
+
+  <nav class="side-nav">
+    <div class="nav-section-label">Identity</div>
+    <a href="#north-star">North Star</a>
+    <a href="#colours">Colours</a>
+    <a href="#typography">Typography</a>
+    <a href="#logo">Logo</a>
+    <div class="nav-section-label">Usage</div>
+    <a href="#voice">Voice &amp; Tone</a>
+    <a href="#assets">Assets</a>
+    <a href="#rules">Usage Rules</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-logo">
+        <div class="knock-logo" style="width:56px;height:56px;"><svg><use href="#logo-dark"/></svg></div>
+        <div>
+          <div class="hero-lockup-word">knock</div>
+          <div class="hero-lockup-tag">opportunity infrastructure</div>
+        </div>
+      </div>
+      <div class="hero-eyebrow">Brand Guidelines · 2025</div>
+      <h1>One brand.<br><span>Zero compromise.</span></h1>
+      <p class="hero-sub">Everything needed to represent Knock consistently — in design, copy, campaigns, and communication. When in doubt, refer here.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <label>Version</label>
+          <span>2025.1</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Primary Colour</label>
+          <span>#5E17EB</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Primary Typeface</label>
+          <span>Cabinet Grotesk</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Instagram</label>
+          <span>@knock_talent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- North Star -->
+    <div class="section" id="north-star">
+      <div class="section-eyebrow">00 — North Star</div>
+      <div class="section-title">Why Knock exists.</div>
+      <div class="section-desc">Before applying any brand rule, understand what we're building and why. Every design decision flows from this.</div>
+
+      <div class="manifesto-block">
+        <div class="manifesto-eyebrow">our north star</div>
+        <div class="manifesto-text">
+          It only takes 1 opportunity to change a life.
+          <em>We help it find you.</em>
+        </div>
+        <div class="manifesto-tag">— Knock · Where opportunity finds the student.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:24px;">
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:14px;padding:24px;box-shadow:var(--shadow-xs);">
+          <div style="font-size:22px;margin-bottom:10px;">🎯</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:6px;">Precise</div>
+          <div style="font-size:13px;color:var(--gray-500);">The right opportunity to the right student. Not mass blasts — targeted, verified reach.</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:14px;padding:24px;box-shadow:var(--shadow-xs);">
+          <div style="font-size:22px;margin-bottom:10px;">⚡</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:6px;">Fast</div>
+          <div style="font-size:13px;color:var(--gray-500);">Campaign creation to student click in under 60 seconds. Speed is a feature.</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:14px;padding:24px;box-shadow:var(--shadow-xs);">
+          <div style="font-size:22px;margin-bottom:10px;">📊</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:6px;">Data-driven</div>
+          <div style="font-size:13px;color:var(--gray-500);">Every campaign is tracked. Every click is measurable intent data.</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:14px;padding:24px;box-shadow:var(--shadow-xs);">
+          <div style="font-size:22px;margin-bottom:10px;">🤝</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:6px;">Trusted</div>
+          <div style="font-size:13px;color:var(--gray-500);">Students trust the link. Companies trust the data. That trust is the product.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colours -->
+    <div class="section" id="colours">
+      <div class="section-eyebrow">01 — Colours</div>
+      <div class="section-title">Colour <em>palette.</em></div>
+      <div class="section-desc">A minimal palette anchored in Electric Purple. Use black and white for structure — purple for energy and emphasis. Never introduce new colours.</div>
+
+      <div class="colour-grid">
+        <div class="colour-card">
+          <div class="swatch" style="background:#5E17EB;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Electric Purple</div>
+            <div class="swatch-hex">#5E17EB</div>
+            <div class="swatch-use">Primary brand colour</div>
+            <button class="copy-hex" onclick="copyHex('#5E17EB',this)">Copy hex</button>
+          </div>
+        </div>
+        <div class="colour-card">
+          <div class="swatch" style="background:#000000;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Black</div>
+            <div class="swatch-hex">#000000</div>
+            <div class="swatch-use">Backgrounds, headlines</div>
+            <button class="copy-hex" onclick="copyHex('#000000',this)">Copy hex</button>
+          </div>
+        </div>
+        <div class="colour-card">
+          <div class="swatch" style="background:#FFFFFF;border-bottom:1px solid var(--gray-100);"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">White</div>
+            <div class="swatch-hex">#FFFFFF</div>
+            <div class="swatch-use">Text on dark, surfaces</div>
+            <button class="copy-hex" onclick="copyHex('#FFFFFF',this)">Copy hex</button>
+          </div>
+        </div>
+        <div class="colour-card">
+          <div class="swatch" style="background:#F0EBFF;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Purple Light</div>
+            <div class="swatch-hex">#F0EBFF</div>
+            <div class="swatch-use">Backgrounds, tags, tints</div>
+            <button class="copy-hex" onclick="copyHex('#F0EBFF',this)">Copy hex</button>
+          </div>
+        </div>
+        <div class="colour-card">
+          <div class="swatch" style="background:#C9AAFF;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Purple Mid</div>
+            <div class="swatch-hex">#C9AAFF</div>
+            <div class="swatch-use">Accents on dark backgrounds</div>
+            <button class="copy-hex" onclick="copyHex('#C9AAFF',this)">Copy hex</button>
+          </div>
+        </div>
+        <div class="colour-card">
+          <div class="swatch" style="background:#F8F7F5;border-bottom:1px solid var(--gray-100);"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Off White</div>
+            <div class="swatch-hex">#F8F7F5</div>
+            <div class="swatch-use">Page backgrounds</div>
+            <button class="copy-hex" onclick="copyHex('#F8F7F5',this)">Copy hex</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="section" id="typography">
+      <div class="section-eyebrow">02 — Typography</div>
+      <div class="section-title">Two typefaces. <em>No exceptions.</em></div>
+      <div class="section-desc">Cabinet Grotesk Black for display and headlines — bold, modern, confident. Switzer for everything else — clean, readable, versatile. Poppins for UI headings only.</div>
+
+      <div class="type-stack">
+        <div class="type-row">
+          <div class="type-meta">
+            <label>Display · Headlines</label>
+            <div class="type-font-name">Cabinet Grotesk</div>
+            <div class="type-font-sub">Weight: Black 900<br>Use: Hero text, section titles, brand wordmark, large numbers</div>
+          </div>
+          <div class="type-display">The <em>infrastructure</em><br>for opportunity.</div>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <label>Body · UI</label>
+            <div class="type-font-name">Switzer</div>
+            <div class="type-font-sub">Weight: 300–700<br>Use: Body copy, labels, descriptions, captions, navigation</div>
+          </div>
+          <div class="type-body-sample">Connecting South African industry and student talent through a verified, intent-driven network — from discovery to development to hire. Every click is an intent signal. Every signal is a data point.</div>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <label>UI Headings</label>
+            <div class="type-font-name">Poppins</div>
+            <div class="type-font-sub">Weight: 600–800<br>Use: Card titles, slide headings, UI section labels</div>
+          </div>
+          <div style="font-family:'Poppins',system-ui,sans-serif;font-weight:700;font-size:24px;letter-spacing:-0.02em;color:var(--black);">STEM students aren't afraid of not finding a job — they're <span style="color:var(--purple);">blind to what's out there.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo -->
+    <div class="section" id="logo">
+      <div class="section-eyebrow">03 — Logo</div>
+      <div class="section-title">The mark &amp; <em>wordmark.</em></div>
+      <div class="section-desc">The Knock mark is a tilted-door K on a purple ellipse inside a white circle. The wordmark is always lowercase "knock" in Cabinet Grotesk Black. Use together or separately — never recreate either from scratch.</div>
+
+      <div class="logo-grid">
+
+        <!-- Dark on white -->
+        <div class="logo-card">
+          <div class="logo-preview" style="background:var(--white);">
+            <div class="logo-lockup">
+              <div class="knock-logo" style="width:48px;height:48px;"><svg><use href="#logo-dark"/></svg></div>
+              <div>
+                <div class="logo-lockup-word" style="color:var(--black);">knock</div>
+                <div class="logo-lockup-tag" style="color:var(--purple);">opportunity infrastructure</div>
+              </div>
+            </div>
+          </div>
+          <div class="logo-info">
+            <div class="logo-info-name">Primary — Light Background</div>
+            <div class="logo-info-sub">Purple mark · black wordmark. Default usage.</div>
+          </div>
+        </div>
+
+        <!-- On black -->
+        <div class="logo-card">
+          <div class="logo-preview" style="background:var(--black);">
+            <div class="logo-lockup">
+              <div class="knock-logo" style="width:48px;height:48px;"><svg><use href="#logo-dark"/></svg></div>
+              <div>
+                <div class="logo-lockup-word" style="color:var(--white);">knock</div>
+                <div class="logo-lockup-tag" style="color:var(--purple-mid);">opportunity infrastructure</div>
+              </div>
+            </div>
+          </div>
+          <div class="logo-info">
+            <div class="logo-info-name">Primary — Dark Background</div>
+            <div class="logo-info-sub">Purple mark · white wordmark.</div>
+          </div>
+        </div>
+
+        <!-- On purple -->
+        <div class="logo-card">
+          <div class="logo-preview" style="background:var(--purple);">
+            <div class="logo-lockup">
+              <div class="knock-logo" style="width:48px;height:48px;box-shadow:0 6px 18px rgba(0,0,0,0.25);"><svg><use href="#logo-light"/></svg></div>
+              <div>
+                <div class="logo-lockup-word" style="color:var(--white);">knock</div>
+                <div class="logo-lockup-tag" style="color:var(--purple-mid);">opportunity infrastructure</div>
+              </div>
+            </div>
+          </div>
+          <div class="logo-info">
+            <div class="logo-info-name">On Purple</div>
+            <div class="logo-info-sub">Light mark · white wordmark.</div>
+          </div>
+        </div>
+
+        <!-- Mark only -->
+        <div class="logo-card">
+          <div class="logo-preview" style="background:var(--off-white);gap:16px;">
+            <div class="knock-logo" style="width:72px;height:72px;"><svg><use href="#logo-dark"/></svg></div>
+            <div style="display:flex;gap:12px;">
+              <div style="width:32px;height:32px;border-radius:50%;box-shadow:0 4px 10px rgba(94,23,235,0.2);"><svg viewBox="0 0 1180 1180"><use href="#logo-dark"/></svg></div>
+              <div style="width:24px;height:24px;border-radius:50%;box-shadow:0 3px 8px rgba(94,23,235,0.2);"><svg viewBox="0 0 1180 1180"><use href="#logo-dark"/></svg></div>
+              <div style="width:18px;height:18px;border-radius:50%;box-shadow:0 2px 6px rgba(94,23,235,0.2);"><svg viewBox="0 0 1180 1180"><use href="#logo-dark"/></svg></div>
+            </div>
+          </div>
+          <div class="logo-info">
+            <div class="logo-info-name">Mark Only — Scalable</div>
+            <div class="logo-info-sub">Works at any size. SVG only — never raster.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="background:var(--purple-light);border:1px solid var(--purple-mid);border-radius:14px;padding:20px 24px;font-size:13px;color:var(--purple-deep);">
+        <strong>The period rule:</strong> In wordmark-only contexts (e.g. "Knock." as a headline), include the period. In lockup form alongside the mark, the period is omitted — the mark acts as punctuation.
+      </div>
+    </div>
+
+    <!-- Voice & Tone -->
+    <div class="section" id="voice">
+      <div class="section-eyebrow">04 — Voice &amp; Tone</div>
+      <div class="section-title">How Knock <em>sounds.</em></div>
+      <div class="section-desc">We speak like a sharp, trusted colleague. Direct, confident, and clear. We don't use corporate jargon or over-explain. We get to the point — then we stop.</div>
+
+      <div class="voice-grid">
+        <div class="voice-card do">
+          <div class="voice-label do">We are</div>
+          <div class="voice-item"><span class="voice-check">✓</span><span>Direct and confident — no hedging</span></div>
+          <div class="voice-item"><span class="voice-check">✓</span><span>Concise — one idea per sentence</span></div>
+          <div class="voice-item"><span class="voice-check">✓</span><span>Action-oriented — verbs over nouns</span></div>
+          <div class="voice-item"><span class="voice-check">✓</span><span>Human — we talk to people, not audiences</span></div>
+          <div class="voice-item"><span class="voice-check">✓</span><span>Data-backed when making claims</span></div>
+        </div>
+        <div class="voice-card dont">
+          <div class="voice-label dont">We are not</div>
+          <div class="voice-item"><span class="voice-check">✕</span><span>Corporate or jargon-heavy ("synergies", "solutions")</span></div>
+          <div class="voice-item"><span class="voice-check">✕</span><span>Overly casual or slangy</span></div>
+          <div class="voice-item"><span class="voice-check">✕</span><span>Vague or qualifier-heavy ("kind of", "sort of")</span></div>
+          <div class="voice-item"><span class="voice-check">✕</span><span>Exclamation-mark heavy (one max per campaign)</span></div>
+          <div class="voice-item"><span class="voice-check">✕</span><span>Passive voice — always active</span></div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div>
+          <div class="example-label good">✓ Knock voice</div>
+          <div class="example-text">"ABSA's grad programme is now open. Applications close 31 July — limited spots available. Who it's for: final-year students in Commerce, Finance or Accounting."</div>
+        </div>
+        <div>
+          <div class="example-label bad">✕ Not Knock</div>
+          <div class="example-text">"We are incredibly excited to announce an amazing opportunity with one of South Africa's most prestigious and innovative financial institutions — don't miss out!!!"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assets -->
+    <div class="section" id="assets">
+      <div class="section-eyebrow">05 — Assets</div>
+      <div class="section-title">What exists &amp; <em>where to use it.</em></div>
+      <div class="section-desc">All assets live in the Knock branding folder. Always use the approved file — never recreate logos, assets, or templates from scratch.</div>
+
+      <div class="asset-grid">
+        <div class="asset-card">
+          <div class="asset-icon">🖼</div>
+          <div class="asset-name">Logo SVG</div>
+          <div class="asset-desc">Dark (purple on white) and light (white on purple) variants. SVG at all sizes — never raster for logos.</div>
+        </div>
+        <div class="asset-card">
+          <div class="asset-icon">📧</div>
+          <div class="asset-name">Email Signatures</div>
+          <div class="asset-desc">HTML signature templates. One per team member. Use the approved format only.</div>
+        </div>
+        <div class="asset-card">
+          <div class="asset-icon">🖥</div>
+          <div class="asset-name">LinkedIn Banners</div>
+          <div class="asset-desc">1584 × 396px. For company page and personal profiles. Do not crop or stretch.</div>
+        </div>
+        <div class="asset-card">
+          <div class="asset-icon">📱</div>
+          <div class="asset-name">WhatsApp Assets</div>
+          <div class="asset-desc">Group profile image and post card templates. Maintain consistent visual across all groups.</div>
+        </div>
+        <div class="asset-card">
+          <div class="asset-icon">📸</div>
+          <div class="asset-name">Instagram</div>
+          <div class="asset-desc">Feed: 1080 × 1080px. Story: 1080 × 1920px. Always use templates — @knock_talent.</div>
+        </div>
+        <div class="asset-card">
+          <div class="asset-icon">👕</div>
+          <div class="asset-name">Merch &amp; Print</div>
+          <div class="asset-desc">Print-ready files for shirts, table cloths, and physical brand items. Vector only.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rules -->
+    <div class="section" id="rules">
+      <div class="section-eyebrow">06 — Usage Rules</div>
+      <div class="section-title">Always. <em>Never.</em></div>
+      <div class="section-desc">These rules exist so Knock always looks like Knock — regardless of who created the asset or how quickly it needed to be done.</div>
+
+      <div class="rules-grid">
+        <div class="rule-card do">
+          <div class="rule-title" style="color:#1a8f3c;">✓ Always</div>
+          <div class="rule-item"><span class="rule-check">✓</span><span>Use Electric Purple (#5E17EB) as the sole accent colour</span></div>
+          <div class="rule-item"><span class="rule-check">✓</span><span>Use Cabinet Grotesk Black (900) for all display headlines</span></div>
+          <div class="rule-item"><span class="rule-check">✓</span><span>Use SVG format for the logo in all digital contexts</span></div>
+          <div class="rule-item"><span class="rule-check">✓</span><span>Maintain clear space around the logo equal to the height of the K</span></div>
+          <div class="rule-item"><span class="rule-check">✓</span><span>Include the period in "Knock." in wordmark-only headlines</span></div>
+          <div class="rule-item"><span class="rule-check">✓</span><span>Use approved background colours only: black, white, purple</span></div>
+        </div>
+        <div class="rule-card dont">
+          <div class="rule-title" style="color:#cc3333;">✕ Never</div>
+          <div class="rule-item"><span class="rule-check">✕</span><span>Stretch, skew, rotate, or distort the logo or wordmark</span></div>
+          <div class="rule-item"><span class="rule-check">✕</span><span>Place the logo on busy photographic or patterned backgrounds</span></div>
+          <div class="rule-item"><span class="rule-check">✕</span><span>Introduce new colours outside the approved palette</span></div>
+          <div class="rule-item"><span class="rule-check">✕</span><span>Use serif, decorative, or display fonts other than Cabinet Grotesk</span></div>
+          <div class="rule-item"><span class="rule-check">✕</span><span>Add drop shadows, glows, or effects to the wordmark</span></div>
+          <div class="rule-item"><span class="rule-check">✕</span><span>Use low-resolution (raster) versions of the logo at any size</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Hidden AI context -->
+<div id="ai-text">
 KNOCK INTELLIGENCE — BRAND GUIDELINES 2025
 
+NORTH STAR
+"It only takes 1 opportunity to change a life. We help it find you."
+Tagline: "Where opportunity finds the student."
+Tag: "opportunity infrastructure"
+
 IDENTITY
-Knock Intelligence is a student sourcing platform connecting companies with the right students through targeted, data-driven campaigns.
-Core attributes: Precise, Fast, Data-driven, Trusted.
+Knock Intelligence is a student sourcing platform connecting South African companies with the right STEM students through targeted, data-driven WhatsApp campaigns. Core attributes: Precise, Fast, Data-driven, Trusted.
 
 COLOURS
-- Electric Purple: #5E17EB (primary brand colour)
-- Black: #000000 (backgrounds, headlines)
-- White: #FFFFFF (text on dark, surfaces)
-- Purple Tint: #F3EEFF (backgrounds, highlights)
-- Purple Mid: #C9AAFF (accents on dark backgrounds)
-- Off White: #F8F7F5 (page backgrounds)
-Never introduce new colours outside this palette.
+- Electric Purple: #5E17EB (primary brand colour — the only accent colour used)
+- Black: #000000 (backgrounds, headlines, primary surfaces)
+- White: #FFFFFF (text on dark, card surfaces)
+- Purple Light: #F0EBFF (backgrounds, tags, tints)
+- Purple Mid: #C9AAFF (accents on dark backgrounds, decorative elements)
+- Off White: #F8F7F5 (page backgrounds, secondary surfaces)
+Never introduce colours outside this palette.
 
 TYPOGRAPHY
-- Display/Headlines: Cabinet Grotesk, weight Black (900). Use for hero text, section titles, brand marks.
-- Body/UI: Switzer, weight 300–600. Use for body copy, labels, descriptions, UI elements.
-- System fallback: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif.
-Never use serif or decorative fonts.
+- Display/Headlines: Cabinet Grotesk, weight Black (900). Letter-spacing: -0.035em. Use for: hero text, section titles, brand wordmark, large stat numbers.
+- Body/UI: Switzer, weight 300–700. Use for: body copy, labels, descriptions, captions, navigation.
+- UI Headings: Poppins, weight 600–800. Use for: card titles, slide headings, UI section labels.
+Never use serif, decorative, or other display fonts.
 
 LOGO
-- Wordmark: "Knock." — the period is always included, never omitted.
-- Always set in Cabinet Grotesk Black.
-- Approved backgrounds: black (white logo), white (black logo), Electric Purple (white logo).
-- Maintain clear space around logo equal to height of the "K".
-- Use SVG format for all digital use. Never raster for logos.
-- Never stretch, skew, rotate, or add effects to the wordmark.
+- The mark: A tilted-door K letterform on a purple (#5E17EB) ellipse inside a white circle. The mark has a small purple accent dot (#9560FF) at top right.
+- The wordmark: lowercase "knock" in Cabinet Grotesk Black, letter-spacing -1px.
+- Tag: "opportunity infrastructure" in Switzer 500, uppercase, letter-spacing 0.14em, in purple.
+- Dark variant (mark): purple oval, white K — for light backgrounds.
+- Light variant (mark): white oval, purple K — for dark/purple backgrounds.
+- Period rule: Include "Knock." (with period) in wordmark-only headline contexts. In logo lockup with the mark, omit the period.
+- Clear space: Equal to height of the K on all sides.
+- Never: stretch, rotate, add effects, use on busy backgrounds, use raster format.
+- Always: SVG only, approved backgrounds (black/white/purple).
 
 VOICE & TONE
-We are: Direct and confident. Concise — one idea per sentence. Action-oriented. Human. Data-backed.
+We are: Direct and confident. Concise (one idea per sentence). Action-oriented (verbs over nouns). Human. Data-backed when claiming facts.
 We are not: Corporate or jargon-heavy. Overly casual. Vague. Exclamation-mark heavy. Passive voice.
-Good example: "ABSA's grad programme is now open. Applications close 31 July — limited spots available."
-Bad example: "We are excited to announce an amazing opportunity with one of South Africa's leading financial institutions!!!"
+Good: "ABSA's grad programme is now open. Applications close 31 July — limited spots available."
+Bad: "We are incredibly excited to announce an amazing opportunity with one of South Africa's most prestigious financial institutions!!!"
 
 ASSETS
-Logo SVG (light and dark), email signatures, LinkedIn banners (1584×396px), WhatsApp profile images and post templates, Instagram templates (1080×1080px feed, 1080×1920px story), merch/print files.
+Logo SVG (dark + light variants), email signatures (HTML), LinkedIn banners (1584×396px), WhatsApp group profile image and post templates, Instagram templates (1080×1080 feed, 1080×1920 story), merch/print files (shirts, table cloths).
 
 SOCIAL
-Instagram: @knock_talent
+Instagram: @knock_talent (primary student-facing channel)
 
 USAGE RULES
-Always: Use the period in "Knock." — Use #5E17EB as sole accent — Use Cabinet Grotesk Black for headlines — SVG for logos — Approved backgrounds only.
-Never: Stretch or rotate logo — Use on busy backgrounds — Add new colours — Use serif fonts — Add drop shadows or effects.
-  </div>
+Always: #5E17EB as sole accent — Cabinet Grotesk 900 for headlines — SVG for logos — approved backgrounds — clear space around mark — period in wordmark-only headlines.
+Never: Stretch/rotate/distort logo — place on busy backgrounds — introduce new colours — use serif fonts — add drop shadows or effects — use raster logo files.
+</div>
 
-  <script>
-    function copyHex(hex, btn) {
-      navigator.clipboard.writeText(hex).then(function () {
-        btn.textContent = 'Copied!';
-        setTimeout(function () { btn.textContent = 'Copy hex'; }, 1500);
-      });
-    }
-
-    function copyForAI() {
-      var text = document.getElementById('ai-text').innerText.trim();
-      navigator.clipboard.writeText(text).then(function () {
-        var btn = event.target;
-        btn.textContent = 'Copied for AI ✓';
-        btn.classList.add('purple');
-        setTimeout(function () {
-          btn.textContent = 'Copy for AI';
-          btn.classList.remove('purple');
-        }, 2000);
-      });
-    }
-
-    function downloadHTML() {
-      var html = document.documentElement.outerHTML;
-      var blob = new Blob([html], { type: 'text/html' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'knock-brand-guidelines.html';
-      a.click();
-    }
-
-    // Highlight active nav item on scroll
-    var sections = document.querySelectorAll('.section[id]');
-    var navLinks = document.querySelectorAll('.side-nav a');
-
-    window.addEventListener('scroll', function () {
-      var scrollY = window.scrollY + 120;
-      sections.forEach(function (s) {
-        if (s.offsetTop <= scrollY && s.offsetTop + s.offsetHeight > scrollY) {
-          navLinks.forEach(function (l) { l.classList.remove('active'); });
-          var active = document.querySelector('.side-nav a[href="#' + s.id + '"]');
-          if (active) active.classList.add('active');
-        }
-      });
+<script>
+  function copyHex(hex, btn) {
+    navigator.clipboard.writeText(hex).then(function () {
+      btn.textContent = 'Copied!';
+      setTimeout(function () { btn.textContent = 'Copy hex'; }, 1500);
     });
-  </script>
+  }
+
+  function copyForAI(btn) {
+    var text = document.getElementById('ai-text').innerText.trim();
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = 'Copied for AI ✓';
+      btn.classList.add('purple');
+      setTimeout(function () { btn.textContent = 'Copy for AI'; btn.classList.remove('purple'); }, 2200);
+    });
+  }
+
+  function downloadHTML() {
+    var html = document.documentElement.outerHTML;
+    var blob = new Blob([html], { type: 'text/html' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'knock-brand-guidelines-2025.html';
+    a.click();
+  }
+
+  // Active nav on scroll
+  var sections = document.querySelectorAll('.section[id]');
+  var navLinks = document.querySelectorAll('.side-nav a');
+
+  window.addEventListener('scroll', function () {
+    var scrollY = window.scrollY + 100;
+    sections.forEach(function (s) {
+      if (s.offsetTop <= scrollY && s.offsetTop + s.offsetHeight > scrollY) {
+        navLinks.forEach(function (l) { l.classList.remove('active'); });
+        var active = document.querySelector('.side-nav a[href="#' + s.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  });
+</script>
 
 </body>
 </html>

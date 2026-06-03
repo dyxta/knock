@@ -4,13 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Knock — Ops Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black:        #000000;
+      --white:        #FFFFFF;
+      --off-white:    #F8F7F5;
+      --purple:       #5E17EB;
+      --purple-light: #F0EBFF;
+      --purple-mid:   #C9AAFF;
+      --purple-deep:  #4A0FC1;
+      --gray-100:     #EDEDEB;
+      --gray-300:     #BDBBB7;
+      --gray-500:     #888580;
+      --gray-700:     #444241;
+      --shadow-xs:    0 1px 2px rgba(15,15,20,0.04);
+      --shadow-sm:    0 2px 8px rgba(15,15,20,0.06);
+      --shadow-md:    0 8px 24px rgba(15,15,20,0.08), 0 2px 6px rgba(15,15,20,0.04);
+      --shadow-lg:    0 24px 60px rgba(94,23,235,0.14), 0 8px 24px rgba(15,15,20,0.06);
+      --shadow-logo:  0 6px 18px rgba(94,23,235,0.22), 0 2px 6px rgba(15,15,20,0.10);
+      --font-title:   "Cabinet Grotesk", system-ui, sans-serif;
+      --font-head:    "Poppins", system-ui, sans-serif;
+      --font-body:    "Switzer", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
 
     body {
-      background: #f5f5f5;
-      color: #111;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--black);
       min-height: 100vh;
     }
 
@@ -21,428 +47,861 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: #f5f5f5;
+      background: var(--black);
+      background-image: radial-gradient(900px 600px at 80% 20%, rgba(94,23,235,0.18) 0%, transparent 60%);
     }
 
     .lock-card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 16px;
-      padding: 40px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 44px;
       width: 100%;
       max-width: 380px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+      backdrop-filter: blur(12px);
     }
 
-    .lock-logo { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5E17EB; margin-bottom: 24px; }
-    .lock-card h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-    .lock-sub { font-size: 13px; color: #888; margin-bottom: 28px; }
+    .lock-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+    .lock-logo-mark { width: 36px; height: 36px; border-radius: 50%; box-shadow: var(--shadow-logo); flex-shrink: 0; }
+    .lock-logo-mark svg { display: block; width: 100%; height: 100%; }
+    .lock-wordmark { font-family: var(--font-title); font-weight: 900; font-size: 22px; letter-spacing: -1px; color: var(--white); line-height: 1; }
+    .lock-tag { font-family: var(--font-body); font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple-mid); margin-top: 2px; }
+
+    .lock-card h1 { font-family: var(--font-title); font-weight: 900; font-size: 28px; letter-spacing: -0.5px; color: var(--white); margin-bottom: 6px; }
+    .lock-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 28px; }
 
     input[type="password"] {
       width: 100%;
-      background: #fafafa;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 14px;
-      color: #111;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 15px;
+      color: var(--white);
       outline: none;
+      font-family: var(--font-body);
       transition: border-color 0.15s;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-    input[type="password"]:focus { border-color: #5E17EB; background: #fff; }
+    input[type="password"]:focus { border-color: var(--purple); }
+    input[type="password"]::placeholder { color: rgba(255,255,255,0.25); }
 
-    .primary-btn {
+    .lock-btn {
       width: 100%;
-      background: #5E17EB;
-      color: #fff;
+      background: var(--purple);
+      color: var(--white);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 13px;
       font-size: 14px;
       font-weight: 600;
+      font-family: var(--font-body);
       cursor: pointer;
       transition: opacity 0.15s;
     }
-    .primary-btn:hover { opacity: 0.88; }
+    .lock-btn:hover { opacity: 0.88; }
 
-    .error-bar {
+    .lock-error {
       display: none;
-      padding: 10px 14px;
-      background: #fff5f5;
-      border: 1px solid #fcc;
-      border-radius: 8px;
-      font-size: 13px;
-      color: #cc3333;
-      margin-bottom: 14px;
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-bottom: 12px;
     }
 
     /* ── App ── */
     #app-wrap { display: none; }
 
-    .top-bar {
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      padding: 16px 40px;
+    /* ── Hero ── */
+    .hero {
+      background: var(--black);
+      background-image:
+        radial-gradient(800px 500px at 100% 0%, rgba(94,23,235,0.14) 0%, transparent 60%),
+        radial-gradient(600px 400px at 0% 100%, rgba(94,23,235,0.06) 0%, transparent 55%);
+      padding: 32px 48px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .top-logo { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5E17EB; }
-    .top-tagline { font-size: 12px; color: #bbb; margin-left: 16px; }
-
-    .sign-out-btn {
-      font-size: 12px;
-      color: #bbb;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-    }
-    .sign-out-btn:hover { color: #555; }
-
-    /* ── Content ── */
-    .content { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
-
-    .welcome {
       margin-bottom: 48px;
     }
 
-    .welcome h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-    .welcome p { font-size: 14px; color: #888; }
+    .lockup { display: flex; align-items: center; gap: 12px; }
+    .knock-logo { display: inline-block; border-radius: 50%; box-shadow: var(--shadow-logo); flex-shrink: 0; }
+    .knock-logo svg { display: block; width: 100%; height: 100%; }
+    .lockup .knock-logo { width: 36px; height: 36px; }
+    .lockup .word { font-family: var(--font-title); font-weight: 900; font-size: 22px; letter-spacing: -1px; color: var(--white); line-height: 1; }
+    .lockup .tag  { font-family: var(--font-body); font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple-mid); margin-top: 2px; }
 
-    /* ── Sections ── */
-    .section { margin-bottom: 48px; }
+    .sign-out-btn {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 7px 14px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.15s;
+    }
+    .sign-out-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
 
-    .section-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
+    .hero-body { max-width: 640px; }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #bbb;
+      color: var(--purple-mid);
       margin-bottom: 16px;
     }
 
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 14px;
+    .hero-title {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: clamp(40px, 5vw, 68px);
+      color: var(--white);
+      letter-spacing: -0.035em;
+      line-height: 0.96;
+      margin-bottom: 20px;
     }
 
+    .hero-title em { font-style: normal; color: var(--purple-mid); }
+
+    .hero-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 32px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-meta-item label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 4px;
+    }
+
+    .hero-meta-item span {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── Content ── */
+    .content { max-width: 1040px; margin: 0 auto; padding: 56px 48px 100px; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 56px; }
+
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    /* ── Card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card-grid.team-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 900px) { .card-grid.team-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .card-grid.team-grid { grid-template-columns: 1fr; } }
+
+    /* ── Hub card ── */
     .hub-card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      padding: 22px;
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 18px;
+      overflow: hidden;
       cursor: pointer;
       text-decoration: none;
       color: inherit;
-      transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
       display: block;
+      box-shadow: var(--shadow-xs);
     }
     .hub-card:hover {
-      box-shadow: 0 4px 20px rgba(94,23,235,0.1);
-      border-color: #d4b8ff;
-      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--purple-mid);
+      transform: translateY(-2px);
     }
 
-    .card-icon { font-size: 24px; margin-bottom: 12px; }
+    .card-visual {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-body { padding: 20px 22px 22px; }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+      background: var(--purple-light);
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
 
     .card-title {
-      font-size: 14px;
+      font-family: var(--font-head);
       font-weight: 700;
-      margin-bottom: 4px;
-      color: #111;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      margin-bottom: 5px;
     }
 
     .card-desc {
-      font-size: 12px;
-      color: #888;
-      line-height: 1.5;
+      font-size: 12.5px;
+      color: var(--gray-500);
+      line-height: 1.55;
+      margin-bottom: 14px;
     }
 
-    .card-arrow {
+    .card-link {
       font-size: 12px;
-      color: #5E17EB;
-      margin-top: 14px;
       font-weight: 600;
-    }
-
-    .hub-card.finance-card { cursor: pointer; }
-
-    /* ── Finance modal ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: #fff;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 1100px;
-      height: 85vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.2);
-    }
-
-    .modal-header {
-      padding: 18px 24px;
-      border-bottom: 1px solid #eee;
+      color: var(--purple);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
+      gap: 5px;
     }
 
-    .modal-title { font-size: 15px; font-weight: 700; }
-    .modal-sub { font-size: 12px; color: #888; margin-top: 2px; }
+    /* ── Visual treatments per card ── */
 
-    .modal-close {
-      background: #f5f5f5;
-      border: none;
+    /* Campaign manager */
+    .visual-campaign {
+      background: var(--black);
+      background-image: radial-gradient(400px at 100% 0%, rgba(94,23,235,0.3) 0%, transparent 60%);
+    }
+
+    .mini-url {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 8px;
       padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #555;
-      cursor: pointer;
-    }
-    .modal-close:hover { background: #eee; }
-
-    .modal iframe {
-      flex: 1;
-      border: none;
-      width: 100%;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--purple-mid);
     }
 
-    .modal-note {
-      padding: 10px 24px;
+    /* PostHog */
+    .visual-posthog {
+      background: #1c1129;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      padding-bottom: 20px;
+    }
+
+    .mini-bar {
+      width: 14px;
+      background: var(--purple);
+      border-radius: 3px 3px 0 0;
+      opacity: 0.7;
+    }
+    .mini-bar.hi { background: var(--purple); opacity: 1; }
+    .mini-bar.lo { background: var(--purple-mid); opacity: 0.4; }
+
+    /* Guide */
+    .visual-guide {
+      background: var(--off-white);
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0 22px;
+      gap: 6px;
+    }
+
+    .step-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--purple);
+      color: var(--white);
       font-size: 11px;
-      color: #aaa;
-      border-top: 1px solid #eee;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
-    /* ── Divider ── */
-    .divider { height: 1px; background: #eee; margin-bottom: 48px; }
+    .step-line {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--gray-100);
+    }
+
+    /* Pitch */
+    .visual-pitch {
+      background: var(--black);
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pitch-wordmark {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: -1.5px;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .pitch-wordmark em { font-style: normal; color: var(--purple); }
+
+    .pitch-sub {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-mid);
+    }
+
+    /* LOI */
+    .visual-loi {
+      background: linear-gradient(135deg, var(--off-white) 0%, #fff 100%);
+      border-bottom: 1px solid var(--gray-100);
+      padding: 0 22px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .doc-line {
+      height: 6px;
+      background: var(--gray-100);
+      border-radius: 3px;
+    }
+
+    .doc-line.accent { background: var(--purple-light); border: 1px solid var(--purple-mid); }
+
+    /* Finance */
+    .visual-finance {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0a3a 100%);
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px 22px;
+    }
+
+    .fin-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .fin-label { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 600; min-width: 40px; }
+    .fin-bar-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+    .fin-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--purple), #9560FF); }
+    .fin-val { font-size: 11px; font-weight: 700; color: var(--purple-mid); font-family: var(--font-title); letter-spacing: -0.02em; }
+
+    /* Brand */
+    .visual-brand {
+      background: var(--black);
+      padding: 0 22px;
+      gap: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .swatch-row { display: flex; gap: 6px; }
+
+    .mini-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .brand-type {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 24px;
+      letter-spacing: -1px;
+      color: var(--white);
+    }
+
+    /* Instagram */
+    .visual-instagram {
+      background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ig-handle {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--white);
+    }
+
+    .ig-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Team cards */
+    .team-card {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: var(--shadow-xs);
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .team-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--purple-mid);
+      transform: translateY(-2px);
+    }
+
+    .team-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--white);
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(94,23,235,0.25);
+    }
+
+    .avatar-d { background: var(--purple); }
+    .avatar-c { background: linear-gradient(135deg, var(--purple), #9560FF); }
+    .avatar-m { background: linear-gradient(135deg, #10B981, var(--purple)); }
+    .avatar-j { background: linear-gradient(135deg, #0EA5E9, var(--purple)); }
+
+    .team-name {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+      margin-bottom: 3px;
+    }
+
+    .team-role {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--purple);
+      margin-bottom: 10px;
+    }
+
+    .team-desc {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.55;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--gray-100);
+      margin-bottom: 56px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Lock -->
-  <div id="lock-wrap">
-    <div class="lock-card">
-      <div class="lock-logo">Knock Intelligence</div>
-      <h1>Ops Hub</h1>
-      <p class="lock-sub">Founding team access only.</p>
-      <div class="error-bar" id="lock-error"></div>
-      <input type="password" id="pw-input" placeholder="••••••••" />
-      <button class="primary-btn" onclick="unlock()">Enter</button>
+<!-- Logo SVG symbols -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="logo-dark" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="white"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="white"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="white"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+  </symbol>
+  <symbol id="logo-light" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="white"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#D9D9D9"/>
+  </symbol>
+</svg>
+
+<!-- Lock screen -->
+<div id="lock-wrap">
+  <div class="lock-card">
+    <div class="lock-logo-wrap">
+      <div class="lock-logo-mark"><svg><use href="#logo-dark"/></svg></div>
+      <div>
+        <div class="lock-wordmark">knock</div>
+        <div class="lock-tag">ops hub</div>
+      </div>
     </div>
+    <h1>Team access</h1>
+    <p class="lock-sub">Founding team only.</p>
+    <div class="lock-error" id="lock-error"></div>
+    <input type="password" id="pw-input" placeholder="Password" />
+    <button class="lock-btn" onclick="unlock()">Enter →</button>
   </div>
+</div>
 
-  <!-- App -->
-  <div id="app-wrap">
+<!-- App -->
+<div id="app-wrap">
 
-    <div class="top-bar">
-      <div style="display:flex;align-items:center;">
-        <div class="top-logo">Knock Intelligence</div>
-        <span class="top-tagline">Ops Hub</span>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="lockup">
+        <div class="knock-logo" style="width:36px;height:36px;"><svg><use href="#logo-dark"/></svg></div>
+        <div>
+          <div class="word">knock</div>
+          <div class="tag">opportunity infrastructure</div>
+        </div>
       </div>
       <button class="sign-out-btn" onclick="signOut()">Sign out</button>
     </div>
 
-    <div class="content">
-
-      <div class="welcome">
-        <h1>Good to have you here.</h1>
-        <p>Everything the Knock founding team needs, in one place.</p>
-      </div>
-
-      <!-- Operations -->
-      <div class="section">
-        <div class="section-label">Operations</div>
-        <div class="card-grid">
-          <a class="hub-card" href="https://go.knocktalent.co.za" target="_blank">
-            <div class="card-icon">🔗</div>
-            <div class="card-title">Campaign Manager</div>
-            <div class="card-desc">Generate and track WhatsApp campaign links. View click counts per group and wave.</div>
-            <div class="card-arrow">go.knocktalent.co.za →</div>
-          </a>
-          <a class="hub-card" href="https://go.knocktalent.co.za/guide" target="_blank">
-            <div class="card-icon">📖</div>
-            <div class="card-title">Campaign Guide</div>
-            <div class="card-desc">Step-by-step guide for creating and posting campaigns. Share with any new team member.</div>
-            <div class="card-arrow">Open guide →</div>
-          </a>
-          <a class="hub-card" href="https://eu.posthog.com/project/193107" target="_blank">
-            <div class="card-icon">📊</div>
-            <div class="card-title">PostHog Analytics</div>
-            <div class="card-desc">Live event tracking. Click-through rates, unique devices, campaign performance over time.</div>
-            <div class="card-arrow">Open PostHog →</div>
-          </a>
+    <div class="hero-body">
+      <div class="hero-eyebrow">Founding team · Internal</div>
+      <div class="hero-title">The <em>ops</em><br>hub.</div>
+      <p class="hero-sub">Everything the Knock founding team needs in one place — campaigns, sales materials, brand, and analytics.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <label>Platform</label>
+          <span>ops.knocktalent.co.za</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Access</label>
+          <span>Founding team only</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Status</label>
+          <span style="color:#10B981;">● Live</span>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="divider"></div>
+  <div class="content">
 
-      <!-- Sales & Growth -->
-      <div class="section">
-        <div class="section-label">Sales &amp; Growth</div>
-        <div class="card-grid">
-          <a class="hub-card" href="https://innovarsity-deck.knocktalent.co.za" target="_blank">
-            <div class="card-icon">🚀</div>
-            <div class="card-title">Pitch Deck</div>
-            <div class="card-desc">Current investor and partner pitch deck. Always use the latest version from here.</div>
-            <div class="card-arrow">Open deck →</div>
-          </a>
-          <a class="hub-card" href="https://loi.knocktalent.co.za" target="_blank">
-            <div class="card-icon">📄</div>
+    <!-- Operations -->
+    <div class="section">
+      <div class="section-eyebrow">01 — Operations</div>
+      <div class="section-title">Run the machine.</div>
+      <div class="card-grid">
+
+        <a class="hub-card" href="https://go.knocktalent.co.za" target="_blank">
+          <div class="card-visual visual-campaign">
+            <div class="mini-url">go.knocktalent.co.za/absa-wits-wave1</div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Campaign Manager</div>
+            <div class="card-title">Generate &amp; Track Links</div>
+            <div class="card-desc">Build campaign URLs for WhatsApp groups. Track clicks per group, wave, and organisation in real time.</div>
+            <div class="card-link">Open Campaign Manager →</div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="https://go.knocktalent.co.za/guide" target="_blank">
+          <div class="card-visual visual-guide">
+            <div class="step-preview">
+              <div class="step-num">1</div>
+              <div class="step-line" style="width:80px;"></div>
+            </div>
+            <div class="step-preview">
+              <div class="step-num" style="background:var(--gray-100);color:var(--gray-500);">2</div>
+              <div class="step-line" style="width:60px;"></div>
+            </div>
+            <div class="step-preview">
+              <div class="step-num" style="background:var(--gray-100);color:var(--gray-500);">3</div>
+              <div class="step-line" style="width:70px;"></div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Team Guide</div>
+            <div class="card-title">Campaign Playbook</div>
+            <div class="card-desc">Step-by-step walkthrough for any team member posting an opportunity — URL, naming, wave, and group posting.</div>
+            <div class="card-link">Open Guide →</div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="https://eu.posthog.com/project/193107" target="_blank">
+          <div class="card-visual visual-posthog">
+            <div class="mini-bar lo" style="height:28px;"></div>
+            <div class="mini-bar" style="height:44px;"></div>
+            <div class="mini-bar lo" style="height:36px;"></div>
+            <div class="mini-bar hi" style="height:60px;"></div>
+            <div class="mini-bar" style="height:48px;"></div>
+            <div class="mini-bar lo" style="height:32px;"></div>
+            <div class="mini-bar hi" style="height:72px;"></div>
+            <div class="mini-bar" style="height:52px;"></div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Analytics</div>
+            <div class="card-title">PostHog Live Events</div>
+            <div class="card-desc">Live click tracking. Unique devices, click-through rates, and campaign performance over time.</div>
+            <div class="card-link">Open PostHog →</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Sales & Growth -->
+    <div class="section">
+      <div class="section-eyebrow">02 — Sales &amp; Growth</div>
+      <div class="section-title">Convert the pipeline.</div>
+      <div class="card-grid">
+
+        <a class="hub-card" href="https://innovarsity-pitch.knocktalent.co.za" target="_blank">
+          <div class="card-visual visual-pitch">
+            <div class="knock-logo" style="width:44px;height:44px;"><svg><use href="#logo-dark"/></svg></div>
+            <div>
+              <div class="pitch-wordmark">knock<em>.</em></div>
+              <div class="pitch-sub">opportunity infrastructure</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Pitch Deck</div>
+            <div class="card-title">InnoVarsity 2026</div>
+            <div class="card-desc">Current investor and partner pitch — 10 slides covering the problem, solution, team, GTM, market, and ask.</div>
+            <div class="card-link">Open Deck →</div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="https://loi.knocktalent.co.za" target="_blank">
+          <div class="card-visual visual-loi">
+            <div style="width:100%;">
+              <div class="doc-line accent" style="width:55%;margin-bottom:7px;height:7px;"></div>
+              <div class="doc-line" style="width:85%;margin-bottom:5px;"></div>
+              <div class="doc-line" style="width:70%;margin-bottom:5px;"></div>
+              <div class="doc-line" style="width:80%;margin-bottom:5px;"></div>
+              <div class="doc-line" style="width:60%;"></div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Legal</div>
             <div class="card-title">Letter of Intent</div>
-            <div class="card-desc">Standard LOI template for company partnerships. Review before sending to any client.</div>
-            <div class="card-arrow">Open LOI →</div>
-          </a>
-          <div class="hub-card finance-card" onclick="openFinance()">
-            <div class="card-icon">💰</div>
+            <div class="card-desc">Standard LOI template for company partnerships. Review before sending to any prospective client.</div>
+            <div class="card-link">Open LOI →</div>
+          </div>
+        </a>
+
+        <div class="hub-card" onclick="window.open('https://docs.google.com/spreadsheets/d/1c71wtZh7UDsU4gFqB9-aP21wNHTf6dp-/edit','_blank')">
+          <div class="card-visual visual-finance">
+            <div class="fin-row">
+              <span class="fin-label">Y1</span>
+              <div class="fin-bar-bg"><div class="fin-bar" style="width:8%;"></div></div>
+              <span class="fin-val">R682k</span>
+            </div>
+            <div class="fin-row">
+              <span class="fin-label">Y2</span>
+              <div class="fin-bar-bg"><div class="fin-bar" style="width:37%;"></div></div>
+              <span class="fin-val">R3.1M</span>
+            </div>
+            <div class="fin-row">
+              <span class="fin-label">Y3</span>
+              <div class="fin-bar-bg"><div class="fin-bar" style="width:100%;"></div></div>
+              <span class="fin-val">R8.3M</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Finance</div>
             <div class="card-title">Financial Model</div>
-            <div class="card-desc">Revenue projections, unit economics, and scenario planning. Read-only view.</div>
-            <div class="card-arrow">View model →</div>
+            <div class="card-desc">3-year revenue projections, unit economics, burn rate, and scenario planning. Opens in Google Sheets.</div>
+            <div class="card-link">Open in Google Sheets →</div>
           </div>
         </div>
+
       </div>
+    </div>
 
-      <div class="divider"></div>
+    <div class="divider"></div>
 
-      <!-- Brand & Presence -->
-      <div class="section">
-        <div class="section-label">Brand &amp; Presence</div>
-        <div class="card-grid">
-          <a class="hub-card" href="/brand" target="_blank">
-            <div class="card-icon">🎨</div>
-            <div class="card-title">Brand Guidelines</div>
-            <div class="card-desc">Logo, colours, typography, tone of voice, and asset usage rules. Downloadable for AI.</div>
-            <div class="card-arrow">Open guidelines →</div>
-          </a>
-          <a class="hub-card" href="https://instagram.com/knock_talent" target="_blank">
-            <div class="card-icon">📸</div>
+    <!-- Brand & Presence -->
+    <div class="section">
+      <div class="section-eyebrow">03 — Brand &amp; Presence</div>
+      <div class="section-title">Look like Knock.</div>
+      <div class="card-grid">
+
+        <a class="hub-card" href="/brand" target="_blank">
+          <div class="card-visual visual-brand">
+            <div class="swatch-row">
+              <div class="mini-swatch" style="background:#5E17EB;"></div>
+              <div class="mini-swatch" style="background:#000000;"></div>
+              <div class="mini-swatch" style="background:#FFFFFF;border-color:rgba(255,255,255,0.15);"></div>
+              <div class="mini-swatch" style="background:#C9AAFF;"></div>
+              <div class="mini-swatch" style="background:#F0EBFF;"></div>
+            </div>
+            <div class="brand-type">Knock<span style="color:var(--purple);">.</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Brand Guidelines</div>
+            <div class="card-title">Visual Identity</div>
+            <div class="card-desc">Logo, colours, typography, tone of voice, asset usage. Downloadable as HTML or PDF. Copyable for AI.</div>
+            <div class="card-link">Open Guidelines →</div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="https://instagram.com/knock_talent" target="_blank">
+          <div class="card-visual visual-instagram">
+            <div class="ig-handle">@knock_talent</div>
+            <div class="ig-sub">Instagram · Student-facing</div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Social</div>
             <div class="card-title">Instagram</div>
-            <div class="card-desc">@knock_talent — our primary student-facing social channel.</div>
-            <div class="card-arrow">Open Instagram →</div>
-          </a>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- Team -->
-      <div class="section">
-        <div class="section-label">Team</div>
-        <div class="card-grid">
-          <div class="hub-card" style="cursor:default;">
-            <div class="card-icon">👤</div>
-            <div class="card-title">Dylan Tasdhary</div>
-            <div class="card-desc" style="margin-bottom:8px;">Co-Founder</div>
+            <div class="card-desc">Our primary student-facing channel. All campaign awareness and brand-building runs through here.</div>
+            <div class="card-link">Open Instagram →</div>
           </div>
-        </div>
+        </a>
+
       </div>
-
     </div>
-  </div>
 
-  <!-- Financial model modal -->
-  <div class="modal-overlay" id="finance-modal" onclick="closeFinance(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">Financial Model</div>
-          <div class="modal-sub">Read-only view — open in Google Sheets to edit</div>
+    <div class="divider"></div>
+
+    <!-- Team -->
+    <div class="section">
+      <div class="section-eyebrow">04 — Team</div>
+      <div class="section-title">The founding four.</div>
+      <div class="card-grid team-grid">
+
+        <div class="team-card">
+          <div class="team-avatar avatar-d">D</div>
+          <div class="team-name">Dylan Tasdhary</div>
+          <div class="team-role">Operations</div>
+          <div class="team-desc">Platform operations, processes, POPIA compliance, CIPC, and keeping the machine running behind the scenes.</div>
         </div>
-        <button class="modal-close" onclick="closeFinanceBtn()">Close ✕</button>
+
+        <div class="team-card">
+          <div class="team-avatar avatar-c">C</div>
+          <div class="team-name">Chipo Chidakwa</div>
+          <div class="team-role">Sales</div>
+          <div class="team-desc">Employer relationships, B2B pipeline, and converting intent data into paying campaigns and partnerships.</div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar avatar-m">M</div>
+          <div class="team-name">Maqhobosheane Mohlepe</div>
+          <div class="team-role">Student Acquisition</div>
+          <div class="team-desc">Campus growth, WhatsApp community, student network, and the supply side of the marketplace.</div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar avatar-j">J</div>
+          <div class="team-name">Jordy Kafwe</div>
+          <div class="team-role">Technical</div>
+          <div class="team-desc">Platform architecture, product, AI-native operations, and the intent-signal engine.</div>
+        </div>
+
       </div>
-      <iframe
-        src="https://docs.google.com/spreadsheets/d/1c71wtZh7UDsU4gFqB9-aP21wNHTf6dp-/preview"
-        allowfullscreen>
-      </iframe>
-      <div class="modal-note">Displaying a read-only preview. Data refreshes when the sheet is updated in Google Drive.</div>
     </div>
+
   </div>
+</div>
 
-  <script>
-    var SESSION_KEY  = 'knock_ops_authed';
-    var PASSWORD_KEY = 'knock_ops_pw';
+<script>
+  var SESSION_KEY  = 'knock_ops_authed';
+  var PASSWORD_KEY = 'knock_ops_pw';
 
-    function unlock() {
-      var pw = document.getElementById('pw-input').value.trim();
-      var errEl = document.getElementById('lock-error');
-      errEl.style.display = 'none';
-      if (!pw) { errEl.textContent = 'Please enter the password.'; errEl.style.display = 'block'; return; }
+  function unlock() {
+    var pw = document.getElementById('pw-input').value.trim();
+    var errEl = document.getElementById('lock-error');
+    errEl.style.display = 'none';
+    if (!pw) { errEl.textContent = 'Please enter the password.'; errEl.style.display = 'block'; return; }
 
-      fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw })
-      }).then(function (r) {
-        if (r.status === 401) {
-          errEl.textContent = 'Incorrect password.';
-          errEl.style.display = 'block';
-        } else {
-          sessionStorage.setItem(SESSION_KEY, '1');
-          sessionStorage.setItem(PASSWORD_KEY, pw);
-          showApp();
-        }
-      }).catch(function () {
-        errEl.textContent = 'Could not connect. Try again.';
+    fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    }).then(function (r) {
+      if (r.status === 401) {
+        errEl.textContent = 'Incorrect password.';
         errEl.style.display = 'block';
-      });
-    }
-
-    function signOut() {
-      sessionStorage.clear();
-      document.getElementById('app-wrap').style.display = 'none';
-      document.getElementById('lock-wrap').style.display = 'flex';
-      document.getElementById('pw-input').value = '';
-    }
-
-    function showApp() {
-      document.getElementById('lock-wrap').style.display = 'none';
-      document.getElementById('app-wrap').style.display = 'block';
-    }
-
-    if (sessionStorage.getItem(SESSION_KEY)) showApp();
-
-    function openFinance() {
-      document.getElementById('finance-modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeFinanceBtn() {
-      document.getElementById('finance-modal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function closeFinance(e) {
-      if (e.target === document.getElementById('finance-modal')) closeFinanceBtn();
-    }
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeFinanceBtn();
-      if (e.key === 'Enter' && document.getElementById('lock-wrap').style.display !== 'none') unlock();
+      } else {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        sessionStorage.setItem(PASSWORD_KEY, pw);
+        showApp();
+      }
+    }).catch(function () {
+      errEl.textContent = 'Could not connect. Try again.';
+      errEl.style.display = 'block';
     });
-  </script>
+  }
+
+  function signOut() {
+    sessionStorage.clear();
+    document.getElementById('app-wrap').style.display = 'none';
+    document.getElementById('lock-wrap').style.display = 'flex';
+    document.getElementById('pw-input').value = '';
+  }
+
+  function showApp() {
+    document.getElementById('lock-wrap').style.display = 'none';
+    document.getElementById('app-wrap').style.display = 'block';
+  }
+
+  if (sessionStorage.getItem(SESSION_KEY)) showApp();
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') unlock();
+  });
+</script>
 
 </body>
 </html>
