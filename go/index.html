@@ -179,6 +179,24 @@
       border-radius: 3px;
     }
 
+    select {
+      width: 100%;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 11px 13px;
+      font-size: 14px;
+      color: #111;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    select:focus { border-color: #5E17EB; background-color: #fff; }
+
     .gen-btn {
       background: #5E17EB;
       color: #fff;
@@ -403,20 +421,34 @@
 
         <div class="form-row">
           <div>
+            <label>Organisation</label>
+            <input id="org" type="text" placeholder="absa" />
+            <div class="hint"><strong>Format:</strong> lowercase, no spaces</div>
+          </div>
+          <div>
             <label>Opportunity URL</label>
             <input id="dest" type="url" placeholder="https://absa.co.za/grad" />
           </div>
           <div>
             <label>Group Name</label>
-            <input id="source" type="text" placeholder="wits_commerce_2025" />
-            <div class="hint"><strong>Format:</strong> university_faculty_year</div>
+            <input id="source" type="text" placeholder="wits_commerce" />
+            <div class="hint"><strong>Format:</strong> university_faculty</div>
           </div>
           <div>
-            <label>Wave / Medium</label>
-            <input id="medium" type="text" placeholder="wave1_core" />
+            <label>Channel</label>
+            <select id="medium">
+              <option value="" disabled selected>Select channel</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="webapp">Web App</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+          <div>
+            <label>Wave</label>
+            <input id="wave" type="text" placeholder="wave1_core" />
             <div class="hint"><strong>Format:</strong> wave#_type</div>
           </div>
-          <div>
+          <div style="display:flex;align-items:flex-end;">
             <button class="gen-btn" id="gen-btn" onclick="generate()">Generate</button>
           </div>
         </div>
@@ -424,23 +456,39 @@
         <div class="guide-box">
           <div class="guide-title">Naming Convention</div>
           <div class="guide-col">
-            <h4>Group Name</h4>
-            <div class="format">{university}_{faculty}_{year}</div>
+            <h4>Organisation</h4>
+            <div class="format">{org}</div>
             <ul>
-              <li>Lowercase only, underscores between segments</li>
-              <li>University: wits, uct, stellenbosch, uj, up</li>
-              <li>Faculty: commerce, engineering, law, science, humanities</li>
-              <li>Year: 2025, 2026</li>
+              <li>Lowercase, no spaces or special characters</li>
+              <li>Use underscores for multi-word names</li>
             </ul>
-            <div class="example">e.g. <span>wits_commerce_2025</span></div>
+            <div class="example">e.g. <span>absa</span> &nbsp; <span>standard_bank</span> &nbsp; <span>deloitte</span></div>
           </div>
           <div class="guide-col">
-            <h4>Wave / Medium</h4>
+            <h4>Group Name</h4>
+            <div class="format">{university}_{faculty}</div>
+            <ul>
+              <li>University: wits, uct, stellenbosch, uj, up</li>
+              <li>Faculty: commerce, engineering, law, science, humanities</li>
+            </ul>
+            <div class="example">e.g. <span>wits_commerce</span> &nbsp; <span>uct_engineering</span></div>
+          </div>
+          <div class="guide-col">
+            <h4>Channel</h4>
+            <div class="format">whatsapp / webapp / personal</div>
+            <ul>
+              <li>whatsapp — posted to a WhatsApp group</li>
+              <li>webapp — linked from the Knock platform</li>
+              <li>personal — sent directly to a student</li>
+            </ul>
+          </div>
+          <div class="guide-col">
+            <h4>Wave</h4>
             <div class="format">wave{#}_{type}</div>
             <ul>
               <li>Increment wave number per posting cycle</li>
-              <li>Type: core (main post), follow (follow-up), final (last call)</li>
-              <li>Never reuse the same wave code for different opportunities</li>
+              <li>Type: core (main), follow (follow-up), final (last call)</li>
+              <li>Never reuse the same wave for different opportunities</li>
             </ul>
             <div class="example">e.g. <span>wave1_core</span> &nbsp; <span>wave2_follow</span> &nbsp; <span>wave3_final</span></div>
           </div>
@@ -521,9 +569,11 @@
     // ── Generate ─────────────────────────────────────────────────────────────
 
     async function generate() {
+      var org    = document.getElementById('org').value.trim();
       var dest   = document.getElementById('dest').value.trim();
       var source = document.getElementById('source').value.trim();
       var medium = document.getElementById('medium').value.trim();
+      var wave   = document.getElementById('wave').value.trim();
       var pw     = sessionStorage.getItem(PASSWORD_KEY) || '';
 
       var errEl    = document.getElementById('gen-error');
@@ -533,8 +583,8 @@
       errEl.style.display = 'none';
       resultEl.classList.remove('show');
 
-      if (!dest || !source || !medium) {
-        errEl.textContent = 'All three fields are required.';
+      if (!org || !dest || !source || !medium || !wave) {
+        errEl.textContent = 'All fields are required.';
         errEl.style.display = 'block';
         return;
       }
@@ -546,7 +596,7 @@
         var res = await fetch('/api/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ dest: dest, source: source, medium: medium, password: pw })
+          body: JSON.stringify({ org: org, dest: dest, source: source, medium: medium, wave: wave, password: pw })
         });
 
         if (res.status === 401) { signOut(); return; }
@@ -558,10 +608,11 @@
         resultEl.classList.add('show');
         navigator.clipboard.writeText(data.shortUrl).catch(function () {});
 
-        // Clear form fields
-        document.getElementById('dest').value = '';
+        document.getElementById('org').value    = '';
+        document.getElementById('dest').value   = '';
         document.getElementById('source').value = '';
         document.getElementById('medium').value = '';
+        document.getElementById('wave').value   = '';
 
         loadLinks();
       } catch (err) {
@@ -621,12 +672,14 @@
       var rows = links.map(function (l) {
         var date = l.createdAt ? new Date(l.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
         var dest = l.dest || '';
-        var shortDest = dest.replace(/^https?:\/\//, '').slice(0, 40) + (dest.length > 40 ? '…' : '');
+        var shortDest = dest.replace(/^https?:\/\//, '').slice(0, 35) + (dest.length > 35 ? '…' : '');
         return '<tr>' +
           '<td class="td-code"><a href="' + l.shortUrl + '" target="_blank" style="color:#5E17EB;text-decoration:none;">' + l.code + '</a></td>' +
+          '<td class="td-meta"><span class="pill">' + (l.org || '—') + '</span></td>' +
           '<td class="td-dest" title="' + dest + '">' + shortDest + '</td>' +
           '<td class="td-meta"><span class="pill">' + (l.source || '—') + '</span></td>' +
           '<td class="td-meta"><span class="pill">' + (l.medium || '—') + '</span></td>' +
+          '<td class="td-meta"><span class="pill">' + (l.wave || '—') + '</span></td>' +
           '<td class="td-clicks">' + (l.clicks || 0) + '</td>' +
           '<td class="td-date">' + date + '</td>' +
           '<td class="td-copy"><button class="row-copy" onclick="copyText(\'' + l.shortUrl + '\', this)">Copy</button></td>' +
@@ -635,7 +688,7 @@
 
       wrap.innerHTML = '<table>' +
         '<thead><tr>' +
-          '<th>Code</th><th>Destination</th><th>Group</th><th>Wave</th><th style="text-align:right">Clicks</th><th>Created</th><th></th>' +
+          '<th>Link</th><th>Org</th><th>Destination</th><th>Group</th><th>Channel</th><th>Wave</th><th style="text-align:right">Clicks</th><th>Created</th><th></th>' +
         '</tr></thead>' +
         '<tbody>' + rows + '</tbody>' +
       '</table>';

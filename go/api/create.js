@@ -9,10 +9,11 @@ function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function buildCode(source, medium) {
-  const src = slugify(source).split('-')[0].slice(0, 8);
-  const med = slugify(medium).slice(0, 8);
-  return `${src}-${med}`;
+function buildCode(org, source, wave) {
+  const o = slugify(org).split('-')[0].slice(0, 10);
+  const u = slugify(source).split('-')[0].slice(0, 10);
+  const w = (wave.match(/wave\d+/) || [slugify(wave).slice(0, 8)])[0];
+  return `${o}-${u}-${w}`;
 }
 
 module.exports = async function handler(req, res) {
@@ -23,19 +24,18 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { dest, source, medium, password, _auth_check } = req.body;
+  const { dest, org, source, medium, wave, password, _auth_check } = req.body;
 
   const validPassword = process.env.KNOCK_PASSWORD;
   if (!validPassword) return res.status(500).json({ error: 'KNOCK_PASSWORD not set' });
   if (password !== validPassword) return res.status(401).json({ error: 'Unauthorized' });
   if (_auth_check) return res.status(200).json({ ok: true });
 
-  if (!dest || !source || !medium) {
-    return res.status(400).json({ error: 'dest, source and medium are required' });
+  if (!dest || !org || !source || !medium || !wave) {
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // Find a unique code
-  const base = buildCode(source, medium);
+  const base = buildCode(org, source, wave);
   let code = base;
   let attempt = 0;
   while (await redis.get(`link:${code}`) !== null) {
@@ -44,7 +44,7 @@ module.exports = async function handler(req, res) {
     if (attempt > 20) { code = `${base}-${Date.now().toString(36)}`; break; }
   }
 
-  const record = { dest, source, medium, createdAt: new Date().toISOString() };
+  const record = { dest, org, source, medium, wave, createdAt: new Date().toISOString() };
   await redis.set(`link:${code}`, record);
   await redis.lpush('all_links', code);
 

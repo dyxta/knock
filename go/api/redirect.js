@@ -12,15 +12,15 @@ module.exports = async function handler(req, res) {
   const data = await redis.get(`link:${code}`);
   if (!data) return res.status(404).send('Link not found');
 
-  // Increment click counter
   await redis.incr(`clicks:${code}`);
 
-  const { dest, source, medium } = data;
+  const { dest, org, source, medium, wave } = data;
   const fullUrl =
-    'https://campaigns.knocktalent.co.za/?dest=' +
-    encodeURIComponent(dest) +
-    '&utm_source=' + encodeURIComponent(source) +
-    '&utm_medium=' + encodeURIComponent(medium);
+    'https://campaigns.knocktalent.co.za/?dest=' + encodeURIComponent(dest) +
+    '&utm_source='   + encodeURIComponent(source) +
+    '&utm_medium='   + encodeURIComponent(medium) +
+    '&utm_campaign=' + encodeURIComponent(org) +
+    '&utm_content='  + encodeURIComponent(wave);
 
   res.setHeader('Cache-Control', 'no-store');
   return res.redirect(302, fullUrl);

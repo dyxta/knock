@@ -15,11 +15,9 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  // Fetch all codes (up to 200)
   const codes = await redis.lrange('all_links', 0, 199);
   if (!codes || !codes.length) return res.status(200).json({ links: [] });
 
-  // Fetch all link records and click counts in parallel
   const [records, clicks] = await Promise.all([
     Promise.all(codes.map(c => redis.get(`link:${c}`))),
     Promise.all(codes.map(c => redis.get(`clicks:${c}`)))
@@ -30,10 +28,12 @@ module.exports = async function handler(req, res) {
     if (!rec) return null;
     return {
       code,
-      shortUrl: `https://go.knocktalent.co.za/${code}`,
+      shortUrl:  `https://go.knocktalent.co.za/${code}`,
       dest:      rec.dest,
+      org:       rec.org,
       source:    rec.source,
       medium:    rec.medium,
+      wave:      rec.wave,
       createdAt: rec.createdAt,
       clicks:    parseInt(clicks[i] || 0, 10)
     };
