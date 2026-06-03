@@ -34,18 +34,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
-
-    <script type="text/javascript">
-        (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b[h].push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var h="mixpanel";"mixpanel"!==d&&(h+="."+d);b||(h+=" (stub)");return h};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove group.set group.set_once group.unset group.increment group.append group.union".split(" ");
-        for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
-
-        // Initialize Mixpanel with Knock's Production Token
-        mixpanel.init("149911c4782c80fa3448236494355475", {
-            track_pageview: false,
-            persistence: "localStorage",
-            api_transport: "sendBeacon"
-        });
-    </script>
 </head>
 <body>
 
@@ -54,9 +42,8 @@
 
     <script>
         function processScalableRoute() {
-            // 1. GUARANTEED FAILSAFE TIMING CLOCK (Starts instantly before anything can block execution)
-            let isRedirected = false;
-            let finalDestination = "https://knocktalent.co.za"; // Default fallback route
+            var isRedirected = false;
+            var finalDestination = "https://knocktalent.co.za";
 
             function executeOutboundBounce() {
                 if (!isRedirected) {
@@ -65,51 +52,63 @@
                     window.location.href = finalDestination;
                 }
             }
-            
-            // Set 1.2 second ticking fuse. If network processing stalls, student drops forward regardless.
-            const fallbackTimeout = setTimeout(executeOutboundBounce, 1200);
+
+            // 1.2s failsafe — fires if anything above stalls
+            var fallbackTimeout = setTimeout(executeOutboundBounce, 1200);
 
             try {
-                // 2. Parse Incoming Campaign URL Target Elements
-                const urlParams = new URLSearchParams(window.location.search);
-                const sourceGroup = urlParams.get('utm_source') || 'organic_direct';
-                const campaignPost = urlParams.get('utm_medium') || 'unknown_post';
-                const encodedDestination = urlParams.get('dest');
-                
-                if (encodedDestination) {
+                // Parse campaign parameters
+                var urlParams = new URLSearchParams(window.location.search);
+                var sourceGroup  = urlParams.get('utm_source')  || 'organic_direct';
+                var campaignPost = urlParams.get('utm_medium')  || 'unknown_post';
+                var encodedDest  = urlParams.get('dest');
+
+                if (encodedDest) {
                     try {
-                        finalDestination = decodeURIComponent(encodedDestination);
+                        finalDestination = decodeURIComponent(encodedDest);
                     } catch (e) {
-                        console.error("[KNOCK ROUTER ERROR]: Failed to decode target link.", e);
+                        console.error("[KNOCK ROUTER ERROR]: Failed to decode dest.", e);
                     }
                 }
 
-                console.log("[KNOCK ROUTER]: Prepared Telemetry Payload.");
-                
-                // 3. Fire Metric Tracking via sendBeacon (fire-and-forget; survives navigation)
-                if (typeof mixpanel !== 'undefined' && typeof mixpanel.track === 'function') {
-                    mixpanel.track("Outbound Redirect Clicked", {
-                        "Resolved Destination": finalDestination,
-                        "WhatsApp Group": sourceGroup,
-                        "Campaign Medium": campaignPost,
-                        "Device User Agent": navigator.userAgent
-                    });
-                    console.log("[KNOCK ROUTER]: Mixpanel track dispatched via sendBeacon.");
+                // Fire tracking directly via navigator.sendBeacon → Mixpanel HTTP API.
+                // This bypasses the JS SDK entirely, so there is no async library load
+                // race condition — the beacon is queued by the browser before navigation.
+                if (navigator.sendBeacon) {
+                    try {
+                        var payload = JSON.stringify([{
+                            event: "Outbound Redirect Clicked",
+                            properties: {
+                                token: "149911c4782c80fa3448236494355475",
+                                distinct_id: sourceGroup,
+                                "Resolved Destination": finalDestination,
+                                "WhatsApp Group": sourceGroup,
+                                "Campaign Medium": campaignPost,
+                                "Device User Agent": navigator.userAgent
+                            }
+                        }]);
+
+                        var encoded = btoa(unescape(encodeURIComponent(payload)));
+                        var body = new URLSearchParams({ data: encoded });
+
+                        var sent = navigator.sendBeacon("https://api.mixpanel.com/track", body);
+                        console.log("[KNOCK ROUTER]: sendBeacon dispatched ->", sent);
+                    } catch (trackErr) {
+                        console.error("[KNOCK ROUTER]: Beacon build failed.", trackErr);
+                    }
                 } else {
-                    console.warn("[KNOCK ROUTER]: Mixpanel unavailable. Falling back to timer redirect.");
+                    console.warn("[KNOCK ROUTER]: sendBeacon not supported, skipping tracking.");
                 }
 
-                // Redirect immediately after firing the beacon — sendBeacon completes in background
+                // Redirect immediately — beacon survives page navigation
                 clearTimeout(fallbackTimeout);
                 executeOutboundBounce();
 
             } catch (error) {
-                // Catch errors so the student redirect script never stops functioning
                 console.error("[KNOCK ROUTER EXCEPTION CAUGHT]:", error);
             }
         }
 
-        // Fire instantly when structural visual DOM assets load
         window.addEventListener('DOMContentLoaded', processScalableRoute);
     </script>
 </body>
