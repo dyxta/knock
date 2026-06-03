@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knock — Campaign Manager Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f5f5f5;
+      color: #111;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Lock ──────────────────────────────────────────────────────────────── */
+    #lock-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .lock-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+    }
+
+    .logo { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5E17EB; margin-bottom: 24px; }
+    .lock-card h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .lock-sub { font-size: 13px; color: #888; margin-bottom: 28px; }
+
+    input[type="password"], input[type="text"], input[type="url"] {
+      width: 100%;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #111;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 16px;
+    }
+    input:focus { border-color: #5E17EB; background: #fff; }
+
+    .btn {
+      width: 100%;
+      background: #5E17EB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .error-msg {
+      display: none;
+      padding: 10px 14px;
+      background: #fff5f5;
+      border: 1px solid #fcc;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #cc3333;
+      margin-bottom: 14px;
+    }
+
+    /* ── App shell ─────────────────────────────────────────────────────────── */
+    #app-wrap { display: none; }
+
+    .top-bar {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .top-logo { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5E17EB; }
+
+    .signout-btn {
+      font-size: 12px;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .signout-btn:hover { color: #555; }
+
+    /* ── Progress bar ──────────────────────────────────────────────────────── */
+    .progress-wrap {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 20px 32px;
+    }
+
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      max-width: 700px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    .step-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .step-dot:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: #eee;
+      z-index: 0;
+      transition: background 0.3s;
+    }
+
+    .step-dot.done:not(:last-child)::after { background: #5E17EB; }
+
+    .dot-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #e0e0e0;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #bbb;
+      z-index: 1;
+      transition: all 0.3s;
+    }
+
+    .step-dot.active .dot-circle {
+      border-color: #5E17EB;
+      background: #5E17EB;
+      color: #fff;
+    }
+
+    .step-dot.done .dot-circle {
+      border-color: #5E17EB;
+      background: #5E17EB;
+      color: #fff;
+    }
+
+    .dot-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #bbb;
+      text-align: center;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+
+    .step-dot.active .dot-label, .step-dot.done .dot-label { color: #5E17EB; }
+
+    /* ── Step content ──────────────────────────────────────────────────────── */
+    .content-wrap {
+      max-width: 780px;
+      margin: 40px auto;
+      padding: 0 24px 80px;
+    }
+
+    .step-panel {
+      display: none;
+      animation: fadeSlide 0.3s ease;
+    }
+    .step-panel.active { display: block; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #5E17EB;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-title h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .step-title p { font-size: 14px; color: #666; line-height: 1.6; }
+
+    /* ── Illustration cards ─────────────────────────────────────────────────── */
+    .illustration {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .illus-bar {
+      background: #f0f0f0;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .illus-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .d-red   { background: #ff5f57; }
+    .d-yellow{ background: #febc2e; }
+    .d-green { background: #28c840; }
+
+    .illus-url {
+      flex: 1;
+      background: #fff;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #888;
+      margin-left: 8px;
+    }
+
+    .illus-body { padding: 24px; }
+
+    /* Mock form */
+    .mock-field { margin-bottom: 14px; }
+    .mock-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; margin-bottom: 5px; }
+    .mock-input {
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-size: 13px;
+      color: #333;
+      width: 100%;
+    }
+    .mock-input.highlight { border-color: #5E17EB; background: #f8f3ff; color: #5E17EB; font-weight: 600; }
+    .mock-input.dropdown::after { content: '▾'; }
+
+    .mock-btn {
+      background: #5E17EB;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .mock-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .mock-row { grid-template-columns: 1fr; } }
+
+    /* Mock result */
+    .mock-result {
+      background: #f3eeff;
+      border: 1px solid #d4b8ff;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .mock-result-url { flex: 1; font-size: 13px; font-weight: 700; color: #5E17EB; }
+    .mock-copy-btn {
+      background: #fff;
+      border: 1px solid #c9a5ff;
+      border-radius: 5px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #5E17EB;
+    }
+
+    /* WhatsApp mock */
+    .wa-mock {
+      background: #e5ddd5;
+      border-radius: 10px;
+      padding: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' opacity='0.03'%3E%3Ctext y='50' font-size='40'%3E💬%3C/text%3E%3C/svg%3E");
+    }
+
+    .wa-bubble {
+      background: #fff;
+      border-radius: 0 10px 10px 10px;
+      padding: 12px 16px;
+      max-width: 85%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 13px;
+      line-height: 1.6;
+      color: #111;
+    }
+
+    .wa-link { color: #5E17EB; font-weight: 600; font-size: 12px; display: block; margin-top: 6px; }
+    .wa-time { font-size: 10px; color: #aaa; text-align: right; margin-top: 6px; }
+
+    /* ── Checklist ─────────────────────────────────────────────────────────── */
+    .checklist {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .checklist-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 14px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+      cursor: pointer;
+      user-select: none;
+    }
+    .check-item:last-child { border-bottom: none; }
+
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      margin-top: 1px;
+    }
+
+    .check-item.checked .check-box {
+      background: #5E17EB;
+      border-color: #5E17EB;
+    }
+
+    .check-item.checked .check-box::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(1px, -1px);
+      display: block;
+    }
+
+    .check-text { font-size: 14px; color: #333; line-height: 1.5; }
+    .check-item.checked .check-text { color: #aaa; text-decoration: line-through; }
+
+    .check-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
+
+    /* ── Tip box ───────────────────────────────────────────────────────────── */
+    .tip {
+      background: #f3eeff;
+      border-left: 3px solid #5E17EB;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .tip strong { color: #5E17EB; }
+
+    /* ── Naming table ──────────────────────────────────────────────────────── */
+    .naming-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .naming-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #aaa;
+      padding: 0 12px 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .naming-table td {
+      padding: 10px 12px 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+      vertical-align: top;
+    }
+    .naming-table tr:last-child td { border-bottom: none; }
+    .mono {
+      font-family: monospace;
+      background: #f0f0f0;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 12px;
+      color: #333;
+    }
+    .mono.purple { background: #f3eeff; color: #5E17EB; }
+
+    /* ── Nav buttons ───────────────────────────────────────────────────────── */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .nav-back {
+      background: none;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .nav-back:hover { border-color: #5E17EB; color: #5E17EB; }
+    .nav-back:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .nav-next {
+      background: #5E17EB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .nav-next:hover { opacity: 0.88; }
+    .nav-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .step-counter { font-size: 12px; color: #aaa; font-weight: 600; }
+
+    /* ── Finish ────────────────────────────────────────────────────────────── */
+    .finish-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .finish-icon { font-size: 48px; margin-bottom: 20px; }
+    .finish-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+    .finish-card p { font-size: 14px; color: #666; margin-bottom: 28px; line-height: 1.6; }
+
+    .finish-btn {
+      display: inline-block;
+      background: #5E17EB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .finish-btn:hover { opacity: 0.88; }
+  </style>
+</head>
+<body>
+
+  <!-- Lock screen -->
+  <div id="lock-wrap">
+    <div class="lock-card">
+      <div class="logo">Knock Intelligence</div>
+      <h1>Team Guide</h1>
+      <p class="lock-sub">Enter the Knock team password to access the campaign guide.</p>
+      <div class="error-msg" id="lock-error"></div>
+      <input type="password" id="pw-input" placeholder="••••••••" />
+      <button class="btn" onclick="unlock()">Continue</button>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app-wrap">
+
+    <div class="top-bar">
+      <div class="top-logo">Knock Intelligence — Campaign Guide</div>
+      <button class="signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-steps" id="progress-steps">
+        <div class="step-dot active" onclick="goTo(0)">
+          <div class="dot-circle">1</div>
+          <div class="dot-label">Find URL</div>
+        </div>
+        <div class="step-dot" onclick="goTo(1)">
+          <div class="dot-circle">2</div>
+          <div class="dot-label">Log In</div>
+        </div>
+        <div class="step-dot" onclick="goTo(2)">
+          <div class="dot-circle">3</div>
+          <div class="dot-label">Fill Form</div>
+        </div>
+        <div class="step-dot" onclick="goTo(3)">
+          <div class="dot-circle">4</div>
+          <div class="dot-label">Generate</div>
+        </div>
+        <div class="step-dot" onclick="goTo(4)">
+          <div class="dot-circle">5</div>
+          <div class="dot-label">Post</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+
+      <!-- ── Step 1: Find the URL ── -->
+      <div class="step-panel active" id="step-0">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <div class="step-title">
+            <h2>Find the Opportunity URL</h2>
+            <p>Before opening the campaign manager, you need the direct URL to the opportunity — the exact page a student should land on after clicking the link.</p>
+          </div>
+        </div>
+
+        <div class="tip"><strong>What is the destination URL?</strong> It's the public link to the opportunity — a company's careers page, an application form, or a Knock listing. Copy it from your browser's address bar.</div>
+
+        <div class="illustration">
+          <div class="illus-bar">
+            <div class="illus-dot d-red"></div>
+            <div class="illus-dot d-yellow"></div>
+            <div class="illus-dot d-green"></div>
+            <div class="illus-url">🔒 absa.co.za/careers/grad-programme-2025</div>
+          </div>
+          <div class="illus-body">
+            <div style="font-size:18px;font-weight:700;margin-bottom:8px;">ABSA Grad Programme 2025</div>
+            <div style="font-size:13px;color:#666;margin-bottom:16px;">Applications open for the 2025 Graduate Programme across Finance, Technology and Operations.</div>
+            <div style="background:#5E17EB;color:#fff;display:inline-block;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;">Apply Now</div>
+          </div>
+        </div>
+
+        <div class="checklist" id="checklist-0">
+          <div class="checklist-title">Before you continue</div>
+          <div class="check-item" onclick="toggleCheck(this, 0)">
+            <div class="check-box"></div>
+            <div class="check-text">I have the opportunity URL copied from my browser
+              <div class="check-sub">e.g. https://absa.co.za/careers/grad-programme-2025</div>
+            </div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 0)">
+            <div class="check-box"></div>
+            <div class="check-text">The URL goes directly to the opportunity — not a homepage or login page</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 0)">
+            <div class="check-box"></div>
+            <div class="check-text">The page is publicly accessible — students can open it without logging in</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-back" disabled>Back</button>
+          <span class="step-counter">Step 1 of 5</span>
+          <button class="nav-next" id="next-0" disabled onclick="goTo(1)">Next →</button>
+        </div>
+      </div>
+
+      <!-- ── Step 2: Log In ── -->
+      <div class="step-panel" id="step-1">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <div class="step-title">
+            <h2>Open &amp; Log Into Campaign Manager</h2>
+            <p>The campaign manager is a private internal tool. Only the Knock team can access it.</p>
+          </div>
+        </div>
+
+        <div class="tip"><strong>URL:</strong> <span style="font-family:monospace;color:#5E17EB;">go.knocktalent.co.za</span> — bookmark this. You'll use it every time you post an opportunity.</div>
+
+        <div class="illustration">
+          <div class="illus-bar">
+            <div class="illus-dot d-red"></div>
+            <div class="illus-dot d-yellow"></div>
+            <div class="illus-dot d-green"></div>
+            <div class="illus-url">🔒 go.knocktalent.co.za</div>
+          </div>
+          <div class="illus-body" style="max-width:340px;margin:0 auto;">
+            <div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#5E17EB;margin-bottom:16px;">Knock Intelligence</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:4px;">Team Access</div>
+            <div style="font-size:12px;color:#aaa;margin-bottom:16px;">Enter the Knock team password to continue.</div>
+            <div class="mock-field">
+              <div class="mock-label">Password</div>
+              <div class="mock-input">••••••••</div>
+            </div>
+            <div class="mock-btn" style="display:block;text-align:center;border-radius:7px;">Continue</div>
+          </div>
+        </div>
+
+        <div class="checklist" id="checklist-1">
+          <div class="checklist-title">Before you continue</div>
+          <div class="check-item" onclick="toggleCheck(this, 1)">
+            <div class="check-box"></div>
+            <div class="check-text">I've opened go.knocktalent.co.za in my browser</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 1)">
+            <div class="check-box"></div>
+            <div class="check-text">I've entered the team password and the campaign manager is visible</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-back" onclick="goTo(0)">← Back</button>
+          <span class="step-counter">Step 2 of 5</span>
+          <button class="nav-next" id="next-1" disabled onclick="goTo(2)">Next →</button>
+        </div>
+      </div>
+
+      <!-- ── Step 3: Fill the Form ── -->
+      <div class="step-panel" id="step-2">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <div class="step-title">
+            <h2>Fill In the Campaign Details</h2>
+            <p>Every field matters — they feed directly into the analytics. Consistent naming is critical so the data stays clean.</p>
+          </div>
+        </div>
+
+        <div class="illustration">
+          <div class="illus-bar">
+            <div class="illus-dot d-red"></div>
+            <div class="illus-dot d-yellow"></div>
+            <div class="illus-dot d-green"></div>
+            <div class="illus-url">🔒 go.knocktalent.co.za</div>
+          </div>
+          <div class="illus-body">
+            <div class="mock-row">
+              <div class="mock-field">
+                <div class="mock-label">Organisation</div>
+                <div class="mock-input highlight">absa</div>
+              </div>
+              <div class="mock-field">
+                <div class="mock-label">Opportunity URL</div>
+                <div class="mock-input highlight">absa.co.za/careers/grad-2025</div>
+              </div>
+            </div>
+            <div class="mock-row">
+              <div class="mock-field">
+                <div class="mock-label">Group Name</div>
+                <div class="mock-input highlight">wits_commerce</div>
+              </div>
+              <div class="mock-field">
+                <div class="mock-label">Channel</div>
+                <div class="mock-input highlight">whatsapp ▾</div>
+              </div>
+            </div>
+            <div class="mock-field" style="max-width:50%">
+              <div class="mock-label">Wave</div>
+              <div class="mock-input highlight">wave1_core</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip" style="margin-bottom:20px;"><strong>The short link code is built from your inputs:</strong> org + university + wave number → <span style="font-family:monospace;background:#f3eeff;color:#5E17EB;padding:2px 6px;border-radius:3px;">absa-wits-wave1</span></div>
+
+        <table class="naming-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Format</th>
+              <th>Example</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Organisation</strong></td>
+              <td><span class="mono">orgname</span></td>
+              <td><span class="mono purple">absa</span> <span class="mono purple">standard_bank</span></td>
+              <td>Lowercase, underscores for spaces</td>
+            </tr>
+            <tr>
+              <td><strong>Group Name</strong></td>
+              <td><span class="mono">university_faculty</span></td>
+              <td><span class="mono purple">wits_commerce</span> <span class="mono purple">uct_engineering</span></td>
+              <td>University: wits, uct, stellenbosch, uj, up</td>
+            </tr>
+            <tr>
+              <td><strong>Channel</strong></td>
+              <td>dropdown</td>
+              <td><span class="mono purple">whatsapp</span> <span class="mono purple">webapp</span> <span class="mono purple">personal</span></td>
+              <td>Select from the dropdown — never type manually</td>
+            </tr>
+            <tr>
+              <td><strong>Wave</strong></td>
+              <td><span class="mono">wave#_type</span></td>
+              <td><span class="mono purple">wave1_core</span> <span class="mono purple">wave2_follow</span></td>
+              <td>core = first post · follow = reminder · final = last call</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="checklist" id="checklist-2">
+          <div class="checklist-title">Before you continue</div>
+          <div class="check-item" onclick="toggleCheck(this, 2)">
+            <div class="check-box"></div>
+            <div class="check-text">Organisation is lowercase with underscores — no capitals or special characters</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 2)">
+            <div class="check-box"></div>
+            <div class="check-text">Group name follows the format: university_faculty
+              <div class="check-sub">e.g. wits_commerce, uct_engineering, stellenbosch_law</div>
+            </div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 2)">
+            <div class="check-box"></div>
+            <div class="check-text">Channel is selected from the dropdown — not typed in</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 2)">
+            <div class="check-box"></div>
+            <div class="check-text">Wave follows wave#_type format and has not been reused for a different opportunity</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-back" onclick="goTo(1)">← Back</button>
+          <span class="step-counter">Step 3 of 5</span>
+          <button class="nav-next" id="next-2" disabled onclick="goTo(3)">Next →</button>
+        </div>
+      </div>
+
+      <!-- ── Step 4: Generate ── -->
+      <div class="step-panel" id="step-3">
+        <div class="step-header">
+          <div class="step-number">4</div>
+          <div class="step-title">
+            <h2>Generate &amp; Copy Your Link</h2>
+            <p>Once all fields are filled, click Generate. The short link is created instantly and auto-copied to your clipboard.</p>
+          </div>
+        </div>
+
+        <div class="illustration">
+          <div class="illus-bar">
+            <div class="illus-dot d-red"></div>
+            <div class="illus-dot d-yellow"></div>
+            <div class="illus-dot d-green"></div>
+            <div class="illus-url">🔒 go.knocktalent.co.za</div>
+          </div>
+          <div class="illus-body">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+              <div class="mock-btn">Generate</div>
+            </div>
+            <div class="mock-result">
+              <span class="mock-result-url">go.knocktalent.co.za/absa-wits-wave1</span>
+              <span class="mock-copy-btn">Copied ✓</span>
+            </div>
+            <div style="font-size:11px;color:#aaa;margin-top:10px;text-align:center;">Link is now in your clipboard — the form clears automatically</div>
+          </div>
+        </div>
+
+        <div class="tip">
+          <strong>The link is already copied.</strong> You don't need to manually select and copy — it's done automatically the moment it generates. Head straight to WhatsApp and paste.
+        </div>
+
+        <div class="tip" style="border-left-color:#34A853;background:#f0faf3;">
+          <strong>Check the campaigns table below the form.</strong> Your new link should appear as the first row with 0 clicks. If it doesn't appear, hit Refresh.
+        </div>
+
+        <div class="checklist" id="checklist-3">
+          <div class="checklist-title">Before you continue</div>
+          <div class="check-item" onclick="toggleCheck(this, 3)">
+            <div class="check-box"></div>
+            <div class="check-text">I clicked Generate and the purple link appeared below the form</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 3)">
+            <div class="check-box"></div>
+            <div class="check-text">The short link code matches the format — org-university-wave#
+              <div class="check-sub">e.g. absa-wits-wave1</div>
+            </div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 3)">
+            <div class="check-box"></div>
+            <div class="check-text">The new campaign row is visible in the table below with 0 clicks</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-back" onclick="goTo(2)">← Back</button>
+          <span class="step-counter">Step 4 of 5</span>
+          <button class="nav-next" id="next-3" disabled onclick="goTo(4)">Next →</button>
+        </div>
+      </div>
+
+      <!-- ── Step 5: Post to WhatsApp ── -->
+      <div class="step-panel" id="step-4">
+        <div class="step-header">
+          <div class="step-number">5</div>
+          <div class="step-title">
+            <h2>Post to the WhatsApp Group</h2>
+            <p>Open the correct group, paste your link, and add a short message. Keep it concise — students scroll fast.</p>
+          </div>
+        </div>
+
+        <div class="illustration">
+          <div class="illus-bar">
+            <div class="illus-dot d-red"></div>
+            <div class="illus-dot d-yellow"></div>
+            <div class="illus-dot d-green"></div>
+            <div class="illus-url" style="color:#555;">Wits Commerce 2025 — Knock</div>
+          </div>
+          <div class="illus-body" style="padding:16px;">
+            <div class="wa-mock">
+              <div class="wa-bubble">
+                <div style="font-weight:700;margin-bottom:6px;">🚀 ABSA Grad Programme 2025</div>
+                <div>ABSA's graduate programme is now open. Applications close 31 July — limited spots available.</div>
+                <div style="margin-top:8px;font-weight:600;">Who it's for:</div>
+                <div>Final-year students in Commerce, Finance or Accounting.</div>
+                <span class="wa-link">go.knocktalent.co.za/absa-wits-wave1</span>
+                <div class="wa-time">09:14 ✓✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip"><strong>Keep the message short.</strong> One line of context, who it's for, and the link. Students don't read long messages in group chats.</div>
+
+        <div class="checklist" id="checklist-4">
+          <div class="checklist-title">Final checks</div>
+          <div class="check-item" onclick="toggleCheck(this, 4)">
+            <div class="check-box"></div>
+            <div class="check-text">I've opened the correct WhatsApp group for this campaign</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 4)">
+            <div class="check-box"></div>
+            <div class="check-text">I've pasted the short link and verified it looks correct before sending</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 4)">
+            <div class="check-box"></div>
+            <div class="check-text">The message includes who the opportunity is for</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this, 4)">
+            <div class="check-box"></div>
+            <div class="check-text">I've sent the message and can see clicks starting to appear in the campaign table</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-back" onclick="goTo(3)">← Back</button>
+          <span class="step-counter">Step 5 of 5</span>
+          <button class="nav-next" id="next-4" disabled onclick="finish()">Done ✓</button>
+        </div>
+      </div>
+
+      <!-- ── Finish ── -->
+      <div class="step-panel" id="step-5">
+        <div class="finish-card">
+          <div class="finish-icon">🎉</div>
+          <h2>Campaign live.</h2>
+          <p>The link is out, PostHog is tracking every click, and the campaigns table will update in real time.<br><br>Come back to <strong>go.knocktalent.co.za</strong> at any time to check how the campaign is performing.</p>
+          <a href="https://go.knocktalent.co.za" class="finish-btn">Go to Campaign Manager</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    var SESSION_KEY  = 'knock_authed';
+    var PASSWORD_KEY = 'knock_pw';
+    var current = 0;
+    var checkCounts = [0, 0, 0, 0, 0];
+    var checkRequired = [3, 2, 4, 3, 4];
+
+    // ── Auth ─────────────────────────────────────────────────────────────────
+
+    function unlock() {
+      var pw = document.getElementById('pw-input').value.trim();
+      var errEl = document.getElementById('lock-error');
+      errEl.style.display = 'none';
+      if (!pw) { errEl.textContent = 'Please enter the password.'; errEl.style.display = 'block'; return; }
+
+      fetch('/api/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _auth_check: true, password: pw })
+      }).then(function (r) {
+        if (r.status === 401) {
+          errEl.textContent = 'Incorrect password.';
+          errEl.style.display = 'block';
+        } else {
+          sessionStorage.setItem(SESSION_KEY, '1');
+          sessionStorage.setItem(PASSWORD_KEY, pw);
+          showApp();
+        }
+      }).catch(function () {
+        errEl.textContent = 'Could not connect. Try again.';
+        errEl.style.display = 'block';
+      });
+    }
+
+    function signOut() {
+      sessionStorage.clear();
+      document.getElementById('app-wrap').style.display = 'none';
+      document.getElementById('lock-wrap').style.display = 'flex';
+      document.getElementById('pw-input').value = '';
+    }
+
+    function showApp() {
+      document.getElementById('lock-wrap').style.display = 'none';
+      document.getElementById('app-wrap').style.display = 'block';
+    }
+
+    if (sessionStorage.getItem(SESSION_KEY)) showApp();
+
+    // ── Checklist ────────────────────────────────────────────────────────────
+
+    function toggleCheck(el, stepIdx) {
+      var wasChecked = el.classList.contains('checked');
+      el.classList.toggle('checked');
+      checkCounts[stepIdx] += wasChecked ? -1 : 1;
+      var nextBtn = document.getElementById('next-' + stepIdx);
+      if (nextBtn) nextBtn.disabled = checkCounts[stepIdx] < checkRequired[stepIdx];
+    }
+
+    // ── Navigation ───────────────────────────────────────────────────────────
+
+    function goTo(idx) {
+      if (idx > current && checkCounts[current] < checkRequired[current]) return;
+
+      document.getElementById('step-' + current).classList.remove('active');
+      document.getElementById('step-' + idx).classList.add('active');
+
+      var dots = document.querySelectorAll('.step-dot');
+      dots.forEach(function (d, i) {
+        d.classList.remove('active', 'done');
+        if (i < idx) d.classList.add('done');
+        if (i === idx) d.classList.add('active');
+      });
+
+      current = idx;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function finish() {
+      document.getElementById('step-4').classList.remove('active');
+      document.getElementById('step-5').classList.add('active');
+      var dots = document.querySelectorAll('.step-dot');
+      dots.forEach(function (d) { d.classList.remove('active'); d.classList.add('done'); });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && document.getElementById('lock-wrap').style.display !== 'none') unlock();
+    });
+  </script>
+
+</body>
+</html>
