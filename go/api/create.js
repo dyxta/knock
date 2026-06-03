@@ -18,12 +18,24 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { dest, source, medium } = req.body;
+  const { dest, source, medium, password, _auth_check } = req.body;
+
+  // Validate password against environment variable
+  const validPassword = process.env.KNOCK_PASSWORD;
+  if (!validPassword) {
+    return res.status(500).json({ error: 'Server misconfiguration: KNOCK_PASSWORD not set' });
+  }
+  if (password !== validPassword) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // Auth check only — no link creation needed
+  if (_auth_check) return res.status(200).json({ ok: true });
+
   if (!dest || !source || !medium) {
     return res.status(400).json({ error: 'dest, source and medium are required' });
   }
 
-  // Build a readable code, increment suffix on collision
   const base = buildCode(source, medium);
   let code = base;
   let attempt = 0;
