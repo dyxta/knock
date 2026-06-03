@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Knock — Campaign Link Generator</title>
+  <title>Knock — Campaign Manager</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,21 +12,16 @@
       color: #111;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      padding: 40px 24px;
     }
 
-    .card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 16px;
-      padding: 40px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    .container { max-width: 900px; margin: 0 auto; }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
     }
 
     .logo {
@@ -35,20 +30,42 @@
       letter-spacing: 3px;
       text-transform: uppercase;
       color: #5E17EB;
-      margin-bottom: 28px;
     }
 
-    h1 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #111;
-      margin-bottom: 6px;
+    .sign-out {
+      font-size: 12px;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      width: auto;
+      margin: 0;
     }
+    .sign-out:hover { color: #555; }
 
-    .subtitle {
-      font-size: 13px;
-      color: #888;
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 36px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
       margin-bottom: 32px;
+    }
+
+    h2 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 28px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    @media (max-width: 680px) {
+      .form-row { grid-template-columns: 1fr; }
     }
 
     label {
@@ -58,313 +75,334 @@
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: #888;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
     }
-
-    .field { margin-bottom: 20px; }
 
     input {
       width: 100%;
       background: #fafafa;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
-      padding: 12px 14px;
+      padding: 11px 13px;
       font-size: 14px;
       color: #111;
       outline: none;
       transition: border-color 0.15s;
     }
-
     input:focus { border-color: #5E17EB; background: #fff; }
-    input::placeholder { color: #bbb; }
+    input::placeholder { color: #ccc; }
 
-    button {
-      width: 100%;
+    .gen-btn {
       background: #5E17EB;
       color: #fff;
       border: none;
       border-radius: 8px;
-      padding: 14px;
+      padding: 11px 20px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
+      white-space: nowrap;
       transition: opacity 0.15s;
+      width: auto;
+      margin: 0;
     }
+    .gen-btn:hover { opacity: 0.88; }
+    .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    button:hover { opacity: 0.88; }
-    button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    /* Lock screen */
-    #lock-screen { display: block; }
-    #main-screen { display: none; }
-
-    .lock-icon {
-      font-size: 28px;
-      margin-bottom: 16px;
-    }
-
-    .result {
-      margin-top: 28px;
+    .result-bar {
       display: none;
-    }
-
-    .result-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 10px;
-    }
-
-    .result-box {
-      display: flex;
+      margin-top: 20px;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       background: #f3eeff;
       border: 1px solid #d4b8ff;
       border-radius: 8px;
-      padding: 12px 14px;
+      padding: 12px 16px;
     }
-
-    .result-url {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 600;
-      color: #5E17EB;
-      word-break: break-all;
-    }
+    .result-bar.show { display: flex; }
+    .result-url { flex: 1; font-size: 14px; font-weight: 600; color: #5E17EB; word-break: break-all; }
 
     .copy-btn {
       background: #fff;
       border: 1px solid #c9a5ff;
       border-radius: 6px;
-      padding: 6px 12px;
+      padding: 7px 14px;
       font-size: 12px;
       font-weight: 600;
       color: #5E17EB;
       cursor: pointer;
       white-space: nowrap;
       width: auto;
-      margin-top: 0;
+      margin: 0;
       transition: background 0.15s;
     }
-
     .copy-btn:hover { background: #f3eeff; }
     .copy-btn.copied { color: #1a8f3c; border-color: #1a8f3c; background: #f0faf3; }
 
-    .error {
+    .error-bar {
+      display: none;
       margin-top: 16px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       background: #fff5f5;
       border: 1px solid #fcc;
       border-radius: 8px;
       font-size: 13px;
       color: #cc3333;
-      display: none;
     }
 
-    .recent {
-      margin-top: 32px;
-      border-top: 1px solid #eee;
-      padding-top: 24px;
-      display: none;
-    }
-
-    .recent-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #aaa;
-      margin-bottom: 14px;
-    }
-
-    .recent-item {
+    /* ── Campaigns table ── */
+    .table-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #f0f0f0;
-      gap: 12px;
+      margin-bottom: 16px;
     }
 
-    .recent-item:last-child { border-bottom: none; }
-
-    .recent-meta { flex: 1; min-width: 0; }
-    .recent-code { font-size: 13px; font-weight: 600; color: #5E17EB; }
-    .recent-detail { font-size: 11px; color: #aaa; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .recent-copy {
+    .refresh-btn {
+      font-size: 12px;
+      color: #888;
       background: none;
-      border: 1px solid #ddd;
+      border: 1px solid #e0e0e0;
       border-radius: 6px;
-      padding: 5px 10px;
+      padding: 5px 12px;
+      cursor: pointer;
+      width: auto;
+      margin: 0;
+    }
+    .refresh-btn:hover { border-color: #5E17EB; color: #5E17EB; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #aaa;
+      padding: 0 12px 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr { border-bottom: 1px solid #f5f5f5; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fafafa; }
+
+    td {
+      padding: 13px 12px 13px 0;
+      vertical-align: middle;
+    }
+
+    .td-code { font-weight: 600; color: #5E17EB; white-space: nowrap; }
+    .td-dest { color: #555; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .td-meta { color: #888; }
+    .td-clicks { font-weight: 700; color: #111; text-align: right; padding-right: 0; }
+    .td-date { color: #aaa; white-space: nowrap; }
+
+    .pill {
+      display: inline-block;
+      background: #f0f0f0;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 11px;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .td-copy {
+      white-space: nowrap;
+    }
+
+    .row-copy {
+      background: none;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      padding: 4px 10px;
       font-size: 11px;
       color: #888;
       cursor: pointer;
       width: auto;
-      margin-top: 0;
-      white-space: nowrap;
+      margin: 0;
+    }
+    .row-copy:hover { border-color: #5E17EB; color: #5E17EB; }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #bbb;
+      font-size: 13px;
     }
 
-    .recent-copy:hover { border-color: #5E17EB; color: #5E17EB; }
+    .loading-state {
+      text-align: center;
+      padding: 40px;
+      color: #bbb;
+      font-size: 13px;
+    }
+
+    /* ── Lock screen ── */
+    #lock-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .lock-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+    }
+
+    .lock-logo { font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5E17EB; margin-bottom: 24px; }
+    .lock-card h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .lock-sub { font-size: 13px; color: #888; margin-bottom: 28px; }
+    .lock-field { margin-bottom: 20px; }
+
+    .submit-btn {
+      width: 100%;
+      background: #5E17EB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.88; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="logo">Knock Intelligence</div>
-
-    <!-- Lock screen -->
-    <div id="lock-screen">
-      <div class="lock-icon">🔒</div>
+  <!-- Lock screen -->
+  <div id="lock-wrap">
+    <div class="lock-card">
+      <div class="lock-logo">Knock Intelligence</div>
       <h1>Team Access</h1>
-      <p class="subtitle" style="margin-bottom:24px;">Enter the Knock team password to continue.</p>
-      <div class="field">
+      <p class="lock-sub">Enter the Knock team password to continue.</p>
+      <div class="lock-field">
         <label>Password</label>
-        <input id="password-input" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlock()" />
+        <input id="pw-input" type="password" placeholder="••••••••" />
       </div>
-      <div class="error" id="lock-error"></div>
-      <button onclick="unlock()">Continue</button>
+      <div class="error-bar" id="lock-error"></div>
+      <button class="submit-btn" onclick="unlock()">Continue</button>
     </div>
+  </div>
 
-    <!-- Main screen -->
-    <div id="main-screen">
-      <h1>Campaign Link Generator</h1>
-      <p class="subtitle">Fill in the three fields — your short link builds instantly.</p>
+  <!-- Main app -->
+  <div id="app-wrap" style="display:none;">
+    <div class="container">
 
-      <div class="field">
-        <label>Opportunity URL</label>
-        <input id="dest" type="url" placeholder="https://absa.co.za/grad-programme" />
+      <div class="top-bar">
+        <div class="logo">Knock Intelligence</div>
+        <button class="sign-out" onclick="signOut()">Sign out</button>
       </div>
 
-      <div class="field">
-        <label>Group Name</label>
-        <input id="source" type="text" placeholder="wits_commerce_2025" />
-      </div>
+      <!-- Generator -->
+      <div class="card">
+        <h2>Generate Campaign Link</h2>
+        <p class="subtitle">Fill in the three fields and your short link is ready to paste into WhatsApp.</p>
 
-      <div class="field">
-        <label>Wave / Medium</label>
-        <input id="medium" type="text" placeholder="wave1_core" />
-      </div>
+        <div class="form-row">
+          <div>
+            <label>Opportunity URL</label>
+            <input id="dest" type="url" placeholder="https://absa.co.za/grad" />
+          </div>
+          <div>
+            <label>Group Name</label>
+            <input id="source" type="text" placeholder="wits_commerce_2025" />
+          </div>
+          <div>
+            <label>Wave / Medium</label>
+            <input id="medium" type="text" placeholder="wave1_core" />
+          </div>
+          <div>
+            <button class="gen-btn" id="gen-btn" onclick="generate()">Generate</button>
+          </div>
+        </div>
 
-      <button id="generate-btn" onclick="generate()">Generate Link</button>
+        <div class="error-bar" id="gen-error"></div>
 
-      <div class="error" id="gen-error"></div>
-
-      <div class="result" id="result">
-        <div class="result-label">Your campaign link</div>
-        <div class="result-box">
+        <div class="result-bar" id="result-bar">
           <span class="result-url" id="result-url"></span>
-          <button class="copy-btn" id="copy-btn" onclick="copy()">Copy</button>
+          <button class="copy-btn" id="copy-btn" onclick="copyResult()">Copy</button>
         </div>
       </div>
 
-      <div class="recent" id="recent">
-        <div class="recent-label">Recent links</div>
-        <div id="recent-list"></div>
+      <!-- Campaigns table -->
+      <div class="card">
+        <div class="table-header">
+          <div>
+            <h2>Campaigns</h2>
+            <p class="subtitle" style="margin-bottom:0;">All generated links and their click counts.</p>
+          </div>
+          <button class="refresh-btn" onclick="loadLinks()">Refresh</button>
+        </div>
+
+        <div id="table-wrap">
+          <div class="loading-state">Loading campaigns…</div>
+        </div>
       </div>
+
     </div>
   </div>
 
   <script>
-    var RECENT_KEY   = 'knock_recent_links';
     var SESSION_KEY  = 'knock_authed';
     var PASSWORD_KEY = 'knock_pw';
 
     // ── Auth ────────────────────────────────────────────────────────────────
 
     function unlock() {
-      var pw = document.getElementById('password-input').value;
+      var pw = document.getElementById('pw-input').value.trim();
       var errEl = document.getElementById('lock-error');
       errEl.style.display = 'none';
+      if (!pw) { errEl.textContent = 'Please enter the password.'; errEl.style.display = 'block'; return; }
 
-      if (!pw) {
-        errEl.textContent = 'Please enter the password.';
-        errEl.style.display = 'block';
-        return;
-      }
-
-      // Store the password in sessionStorage and send a test request to validate
-      sessionStorage.setItem(SESSION_KEY, '1');
-      sessionStorage.setItem(PASSWORD_KEY, pw);
-
-      // Validate by hitting /api/create with a dry-run flag
       fetch('/api/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ _auth_check: true, password: pw })
       }).then(function (r) {
         if (r.status === 401) {
-          sessionStorage.clear();
           errEl.textContent = 'Incorrect password.';
           errEl.style.display = 'block';
         } else {
-          showMain();
+          sessionStorage.setItem(SESSION_KEY, '1');
+          sessionStorage.setItem(PASSWORD_KEY, pw);
+          showApp();
         }
       }).catch(function () {
-        // Network error — still let them through, API will reject bad password
-        showMain();
+        errEl.textContent = 'Could not connect. Try again.';
+        errEl.style.display = 'block';
       });
     }
 
-    function showMain() {
-      document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('main-screen').style.display = 'block';
-      renderRecent();
+    function signOut() {
+      sessionStorage.clear();
+      document.getElementById('app-wrap').style.display = 'none';
+      document.getElementById('lock-wrap').style.display = 'flex';
+      document.getElementById('pw-input').value = '';
     }
 
-    // Auto-login if already authed this session
-    if (sessionStorage.getItem(SESSION_KEY)) showMain();
-
-    // ── Recent links ────────────────────────────────────────────────────────
-
-    function getRecent() {
-      try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; }
-      catch (e) { return []; }
+    function showApp() {
+      document.getElementById('lock-wrap').style.display = 'none';
+      document.getElementById('app-wrap').style.display = 'block';
+      loadLinks();
     }
 
-    function saveRecent(entry) {
-      var list = getRecent();
-      list.unshift(entry);
-      if (list.length > 8) list = list.slice(0, 8);
-      localStorage.setItem(RECENT_KEY, JSON.stringify(list));
-    }
-
-    function renderRecent() {
-      var list = getRecent();
-      var section = document.getElementById('recent');
-      var container = document.getElementById('recent-list');
-      if (!list.length) { section.style.display = 'none'; return; }
-      section.style.display = 'block';
-      container.innerHTML = list.map(function (item) {
-        return '<div class="recent-item">' +
-          '<div class="recent-meta">' +
-            '<div class="recent-code">' + item.shortUrl + '</div>' +
-            '<div class="recent-detail">' + item.source + ' · ' + item.medium + '</div>' +
-          '</div>' +
-          '<button class="recent-copy" onclick="copyText(\'' + item.shortUrl + '\', this)">Copy</button>' +
-        '</div>';
-      }).join('');
-    }
-
-    function copyText(text, btn) {
-      navigator.clipboard.writeText(text).then(function () {
-        if (btn) { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1800); }
-      });
-    }
-
-    function copy() {
-      var url = document.getElementById('result-url').textContent;
-      var btn = document.getElementById('copy-btn');
-      navigator.clipboard.writeText(url).then(function () {
-        btn.textContent = 'Copied';
-        btn.classList.add('copied');
-        setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
-      });
-    }
+    if (sessionStorage.getItem(SESSION_KEY)) showApp();
 
     // ── Generate ─────────────────────────────────────────────────────────────
 
@@ -374,16 +412,16 @@
       var medium = document.getElementById('medium').value.trim();
       var pw     = sessionStorage.getItem(PASSWORD_KEY) || '';
 
-      var errorEl  = document.getElementById('gen-error');
-      var resultEl = document.getElementById('result');
-      var btn      = document.getElementById('generate-btn');
+      var errEl    = document.getElementById('gen-error');
+      var resultEl = document.getElementById('result-bar');
+      var btn      = document.getElementById('gen-btn');
 
-      errorEl.style.display = 'none';
-      resultEl.style.display = 'none';
+      errEl.style.display = 'none';
+      resultEl.classList.remove('show');
 
       if (!dest || !source || !medium) {
-        errorEl.textContent = 'All three fields are required.';
-        errorEl.style.display = 'block';
+        errEl.textContent = 'All three fields are required.';
+        errEl.style.display = 'block';
         return;
       }
 
@@ -397,35 +435,102 @@
           body: JSON.stringify({ dest: dest, source: source, medium: medium, password: pw })
         });
 
-        if (res.status === 401) {
-          sessionStorage.clear();
-          document.getElementById('main-screen').style.display = 'none';
-          document.getElementById('lock-screen').style.display = 'block';
-          return;
-        }
+        if (res.status === 401) { signOut(); return; }
 
         var data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Something went wrong');
 
         document.getElementById('result-url').textContent = data.shortUrl;
-        resultEl.style.display = 'block';
-
-        saveRecent({ shortUrl: data.shortUrl, source: source, medium: medium });
-        renderRecent();
-
+        resultEl.classList.add('show');
         navigator.clipboard.writeText(data.shortUrl).catch(function () {});
 
+        // Clear form fields
+        document.getElementById('dest').value = '';
+        document.getElementById('source').value = '';
+        document.getElementById('medium').value = '';
+
+        loadLinks();
       } catch (err) {
-        errorEl.textContent = err.message;
-        errorEl.style.display = 'block';
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Generate Link';
+        btn.textContent = 'Generate';
       }
     }
 
+    // ── Copy ─────────────────────────────────────────────────────────────────
+
+    function copyResult() {
+      var url = document.getElementById('result-url').textContent;
+      var btn = document.getElementById('copy-btn');
+      navigator.clipboard.writeText(url).then(function () {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+      });
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
+      });
+    }
+
+    // ── Campaigns table ──────────────────────────────────────────────────────
+
+    async function loadLinks() {
+      var pw = sessionStorage.getItem(PASSWORD_KEY) || '';
+      var wrap = document.getElementById('table-wrap');
+      wrap.innerHTML = '<div class="loading-state">Loading…</div>';
+
+      try {
+        var res = await fetch('/api/links', {
+          headers: { 'x-knock-password': pw }
+        });
+        if (res.status === 401) { signOut(); return; }
+        var data = await res.json();
+        renderTable(data.links || []);
+      } catch (err) {
+        wrap.innerHTML = '<div class="empty-state">Could not load campaigns.</div>';
+      }
+    }
+
+    function renderTable(links) {
+      var wrap = document.getElementById('table-wrap');
+      if (!links.length) {
+        wrap.innerHTML = '<div class="empty-state">No campaigns yet — generate your first link above.</div>';
+        return;
+      }
+
+      var rows = links.map(function (l) {
+        var date = l.createdAt ? new Date(l.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+        var dest = l.dest || '';
+        var shortDest = dest.replace(/^https?:\/\//, '').slice(0, 40) + (dest.length > 40 ? '…' : '');
+        return '<tr>' +
+          '<td class="td-code"><a href="' + l.shortUrl + '" target="_blank" style="color:#5E17EB;text-decoration:none;">' + l.code + '</a></td>' +
+          '<td class="td-dest" title="' + dest + '">' + shortDest + '</td>' +
+          '<td class="td-meta"><span class="pill">' + (l.source || '—') + '</span></td>' +
+          '<td class="td-meta"><span class="pill">' + (l.medium || '—') + '</span></td>' +
+          '<td class="td-clicks">' + (l.clicks || 0) + '</td>' +
+          '<td class="td-date">' + date + '</td>' +
+          '<td class="td-copy"><button class="row-copy" onclick="copyText(\'' + l.shortUrl + '\', this)">Copy</button></td>' +
+        '</tr>';
+      }).join('');
+
+      wrap.innerHTML = '<table>' +
+        '<thead><tr>' +
+          '<th>Code</th><th>Destination</th><th>Group</th><th>Wave</th><th style="text-align:right">Clicks</th><th>Created</th><th></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>';
+    }
+
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && document.getElementById('main-screen').style.display !== 'none') generate();
+      if (e.key !== 'Enter') return;
+      if (document.getElementById('app-wrap').style.display !== 'none') generate();
+      else unlock();
     });
   </script>
 

@@ -1,15 +1,16 @@
-const { kv } = require('@vercel/kv');
+const { Redis } = require('@upstash/redis');
+
+const redis = Redis.fromEnv();
 
 module.exports = async function handler(req, res) {
   const { code } = req.query;
-
   if (!code) return res.status(400).send('Missing code');
 
-  const data = await kv.get(code);
+  const data = await redis.get(`link:${code}`);
+  if (!data) return res.status(404).send('Link not found');
 
-  if (!data) {
-    return res.status(404).send('Link not found');
-  }
+  // Increment click counter
+  await redis.incr(`clicks:${code}`);
 
   const { dest, source, medium } = data;
   const fullUrl =

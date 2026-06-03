@@ -1,4 +1,6 @@
-const { kv } = require('@vercel/kv');
+const { Redis } = require('@upstash/redis');
+
+const redis = Redis.fromEnv();
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -20,42 +22,28 @@ module.exports = async function handler(req, res) {
 
   const { dest, source, medium, password, _auth_check } = req.body;
 
-  // Validate password against environment variable
   const validPassword = process.env.KNOCK_PASSWORD;
-  if (!validPassword) {
-    return res.status(500).json({ error: 'Server misconfiguration: KNOCK_PASSWORD not set' });
-  }
-  if (password !== validPassword) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  // Auth check only — no link creation needed
+  if (!validPassword) return res.status(500).json({ error: 'KNOCK_PASSWORD not set' });
+  if (password !== validPassword) return res.status(401).json({ error: 'Unauthorized' });
   if (_auth_check) return res.status(200).json({ ok: true });
 
   if (!dest || !source || !medium) {
     return res.status(400).json({ error: 'dest, source and medium are required' });
   }
 
+  // Find a unique code
   const base = buildCode(source, medium);
   let code = base;
   let attempt = 0;
-
-  while (await kv.get(code) !== null) {
+  while (await redis.get(`link:${code}`) !== null) {
     attempt++;
     code = `${base}-${attempt}`;
-    if (attempt > 20) {
-      code = `${base}-${Date.now().toString(36)}`;
-      break;
-    }
+    if (attempt > 20) { code = `${base}-${Date.now().toString(36)}`; break; }
   }
 
-  await kv.set(code, {
-    dest,
-    source,
-    medium,
-    createdAt: new Date().toISOString()
-  });
+  const record = { dest, source, medium, createdAt: new Date().toISOString() };
+  await redis.set(`link:${code}`, record);
+  await redis.lpush('all_links', code);
 
-  const shortUrl = `https://go.knocktalent.co.za/${code}`;
-  return res.status(200).json({ shortUrl, code });
+  return res.status(200).json({ shortUrl: `https://go.knocktalent.co.za/${code}`, code });
 };
