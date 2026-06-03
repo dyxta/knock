@@ -94,6 +94,23 @@
 
     .top-logo { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #5E17EB; }
 
+    .top-nav { display: flex; align-items: center; gap: 4px; }
+
+    .nav-tab {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-tab:hover { background: #f0f0f0; color: #111; }
+    .nav-tab.active { background: #f3eeff; color: #5E17EB; }
+
     .signout-btn {
       font-size: 12px;
       color: #aaa;
@@ -101,6 +118,7 @@
       background: none;
       border: none;
       padding: 0;
+      margin-left: 12px;
     }
     .signout-btn:hover { color: #555; }
 
@@ -526,8 +544,12 @@
   <div id="app-wrap">
 
     <div class="top-bar">
-      <div class="top-logo">Knock Intelligence — Campaign Guide</div>
-      <button class="signout-btn" onclick="signOut()">Sign out</button>
+      <div class="top-logo">Knock Intelligence</div>
+      <div class="top-nav">
+        <a class="nav-tab" href="/">Campaigns</a>
+        <a class="nav-tab active" href="/guide">Guide</a>
+        <button class="signout-btn" onclick="signOut()">Sign out</button>
+      </div>
     </div>
 
     <!-- Progress -->
