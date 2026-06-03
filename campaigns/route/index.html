@@ -41,75 +41,60 @@
     <div class="status-text">Verifying Academic Signal...</div>
 
     <script>
-        function processScalableRoute() {
-            var isRedirected = false;
-            var finalDestination = "https://knocktalent.co.za";
+        (function () {
+            var MIXPANEL_TOKEN = "149911c4782c80fa3448236494355475";
+            var fallback = "https://knocktalent.co.za";
 
-            function executeOutboundBounce() {
-                if (!isRedirected) {
-                    isRedirected = true;
-                    console.log("[KNOCK ROUTER]: Redirecting to ->", finalDestination);
-                    window.location.href = finalDestination;
+            // --- 1. Parse params ---
+            var params     = new URLSearchParams(window.location.search);
+            var dest       = params.get("dest");
+            var utm_source = params.get("utm_source") || "organic_direct";
+            var utm_medium = params.get("utm_medium") || "unknown_post";
+            var target     = fallback;
+
+            try { if (dest) target = decodeURIComponent(dest); } catch (e) {}
+
+            // --- 2. Build Mixpanel HTTP API payload ---
+            // Mixpanel expects: POST /track  body: data=<base64(JSON array)>
+            var event = [{
+                event: "Outbound Redirect Clicked",
+                properties: {
+                    token:                MIXPANEL_TOKEN,
+                    distinct_id:          utm_source,
+                    "Resolved Destination": target,
+                    "WhatsApp Group":       utm_source,
+                    "Campaign Medium":      utm_medium,
+                    "Device User Agent":    navigator.userAgent,
+                    "mp_lib":               "web-beacon"
                 }
-            }
+            }];
 
-            // 1.2s failsafe — fires if anything above stalls
-            var fallbackTimeout = setTimeout(executeOutboundBounce, 1200);
+            var json    = JSON.stringify(event);
+            var encoded = btoa(json);  // base64 — Mixpanel HTTP API requirement
 
+            console.log("[KNOCK] Payload JSON:", json);
+            console.log("[KNOCK] Encoded:", encoded);
+
+            // --- 3. Fire via fetch keepalive (visible in DevTools, survives navigation) ---
             try {
-                // Parse campaign parameters
-                var urlParams = new URLSearchParams(window.location.search);
-                var sourceGroup  = urlParams.get('utm_source')  || 'organic_direct';
-                var campaignPost = urlParams.get('utm_medium')  || 'unknown_post';
-                var encodedDest  = urlParams.get('dest');
+                fetch("https://api.mixpanel.com/track", {
+                    method:    "POST",
+                    keepalive: true,
+                    headers:   { "Content-Type": "application/x-www-form-urlencoded" },
+                    body:      "data=" + encoded + "&verbose=1&ip=1"
+                })
+                .then(function (r) { return r.text(); })
+                .then(function (t) { console.log("[KNOCK] Mixpanel response:", t); })
+                .catch(function (e) { console.error("[KNOCK] Mixpanel fetch error:", e); });
 
-                if (encodedDest) {
-                    try {
-                        finalDestination = decodeURIComponent(encodedDest);
-                    } catch (e) {
-                        console.error("[KNOCK ROUTER ERROR]: Failed to decode dest.", e);
-                    }
-                }
-
-                // Fire tracking directly via navigator.sendBeacon → Mixpanel HTTP API.
-                // This bypasses the JS SDK entirely, so there is no async library load
-                // race condition — the beacon is queued by the browser before navigation.
-                if (navigator.sendBeacon) {
-                    try {
-                        var payload = JSON.stringify([{
-                            event: "Outbound Redirect Clicked",
-                            properties: {
-                                token: "149911c4782c80fa3448236494355475",
-                                distinct_id: sourceGroup,
-                                "Resolved Destination": finalDestination,
-                                "WhatsApp Group": sourceGroup,
-                                "Campaign Medium": campaignPost,
-                                "Device User Agent": navigator.userAgent
-                            }
-                        }]);
-
-                        var encoded = btoa(unescape(encodeURIComponent(payload)));
-                        var body = new URLSearchParams({ data: encoded });
-
-                        var sent = navigator.sendBeacon("https://api.mixpanel.com/track", body);
-                        console.log("[KNOCK ROUTER]: sendBeacon dispatched ->", sent);
-                    } catch (trackErr) {
-                        console.error("[KNOCK ROUTER]: Beacon build failed.", trackErr);
-                    }
-                } else {
-                    console.warn("[KNOCK ROUTER]: sendBeacon not supported, skipping tracking.");
-                }
-
-                // Redirect immediately — beacon survives page navigation
-                clearTimeout(fallbackTimeout);
-                executeOutboundBounce();
-
-            } catch (error) {
-                console.error("[KNOCK ROUTER EXCEPTION CAUGHT]:", error);
+                console.log("[KNOCK] fetch dispatched. Redirecting to:", target);
+            } catch (e) {
+                console.error("[KNOCK] fetch failed:", e);
             }
-        }
 
-        window.addEventListener('DOMContentLoaded', processScalableRoute);
+            // --- 4. Redirect (fetch keepalive outlives navigation) ---
+            window.location.href = target;
+        })();
     </script>
 </body>
 </html>
