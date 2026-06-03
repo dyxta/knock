@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knock — Campaign Link Generator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #5E17EB;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 32px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .field { margin-bottom: 20px; }
+
+    input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus { border-color: #5E17EB; }
+    input::placeholder { color: #333; }
+
+    button {
+      width: 100%;
+      background: #5E17EB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s;
+    }
+
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .result {
+      margin-top: 28px;
+      display: none;
+    }
+
+    .result-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .result-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0f0a1a;
+      border: 1px solid #2a1a4a;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .result-url {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: #5E17EB;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: #1a0a30;
+      border: 1px solid #3a1a6a;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #5E17EB;
+      cursor: pointer;
+      white-space: nowrap;
+      width: auto;
+      margin-top: 0;
+      transition: background 0.15s;
+    }
+
+    .copy-btn:hover { background: #2a1a50; }
+    .copy-btn.copied { color: #34A853; border-color: #34A853; background: #0a1a0f; }
+
+    .error {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: #1a0a0a;
+      border: 1px solid #4a1a1a;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #e05555;
+      display: none;
+    }
+
+    .recent {
+      margin-top: 32px;
+      border-top: 1px solid #1a1a1a;
+      padding-top: 24px;
+      display: none;
+    }
+
+    .recent-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #333;
+      margin-bottom: 14px;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #111;
+      gap: 12px;
+    }
+
+    .recent-item:last-child { border-bottom: none; }
+
+    .recent-meta { flex: 1; min-width: 0; }
+    .recent-code { font-size: 13px; font-weight: 600; color: #5E17EB; }
+    .recent-detail { font-size: 11px; color: #444; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .recent-copy {
+      background: none;
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: #555;
+      cursor: pointer;
+      width: auto;
+      margin-top: 0;
+      white-space: nowrap;
+    }
+
+    .recent-copy:hover { border-color: #5E17EB; color: #5E17EB; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="logo">Knock Intelligence</div>
+    <h1>Campaign Link Generator</h1>
+    <p class="subtitle">Fill in the three fields — your short link builds instantly.</p>
+
+    <div class="field">
+      <label>Opportunity URL</label>
+      <input id="dest" type="url" placeholder="https://absa.co.za/grad-programme" />
+    </div>
+
+    <div class="field">
+      <label>Group Name</label>
+      <input id="source" type="text" placeholder="wits_commerce_2025" />
+    </div>
+
+    <div class="field">
+      <label>Wave / Medium</label>
+      <input id="medium" type="text" placeholder="wave1_core" />
+    </div>
+
+    <button id="generate-btn" onclick="generate()">Generate Link</button>
+
+    <div class="error" id="error"></div>
+
+    <div class="result" id="result">
+      <div class="result-label">Your campaign link</div>
+      <div class="result-box">
+        <span class="result-url" id="result-url"></span>
+        <button class="copy-btn" id="copy-btn" onclick="copy()">Copy</button>
+      </div>
+    </div>
+
+    <div class="recent" id="recent">
+      <div class="recent-label">Recent links</div>
+      <div id="recent-list"></div>
+    </div>
+  </div>
+
+  <script>
+    var RECENT_KEY = 'knock_recent_links';
+
+    function getRecent() {
+      try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; }
+      catch (e) { return []; }
+    }
+
+    function saveRecent(entry) {
+      var list = getRecent();
+      list.unshift(entry);
+      if (list.length > 8) list = list.slice(0, 8);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list));
+    }
+
+    function renderRecent() {
+      var list = getRecent();
+      var section = document.getElementById('recent');
+      var container = document.getElementById('recent-list');
+      if (!list.length) { section.style.display = 'none'; return; }
+      section.style.display = 'block';
+      container.innerHTML = list.map(function (item) {
+        return '<div class="recent-item">' +
+          '<div class="recent-meta">' +
+            '<div class="recent-code">' + item.shortUrl + '</div>' +
+            '<div class="recent-detail">' + item.source + ' · ' + item.medium + '</div>' +
+          '</div>' +
+          '<button class="recent-copy" onclick="copyText(\'' + item.shortUrl + '\', this)">Copy</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(function () {
+        if (btn) { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1800); }
+      });
+    }
+
+    function copy() {
+      var url = document.getElementById('result-url').textContent;
+      var btn = document.getElementById('copy-btn');
+      navigator.clipboard.writeText(url).then(function () {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    }
+
+    async function generate() {
+      var dest   = document.getElementById('dest').value.trim();
+      var source = document.getElementById('source').value.trim();
+      var medium = document.getElementById('medium').value.trim();
+
+      var errorEl  = document.getElementById('error');
+      var resultEl = document.getElementById('result');
+      var btn      = document.getElementById('generate-btn');
+
+      errorEl.style.display = 'none';
+      resultEl.style.display = 'none';
+
+      if (!dest || !source || !medium) {
+        errorEl.textContent = 'All three fields are required.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Generating…';
+
+      try {
+        var res = await fetch('/api/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dest: dest, source: source, medium: medium })
+        });
+
+        var data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Something went wrong');
+
+        document.getElementById('result-url').textContent = data.shortUrl;
+        resultEl.style.display = 'block';
+
+        saveRecent({ shortUrl: data.shortUrl, source: source, medium: medium });
+        renderRecent();
+
+        // Auto-copy
+        navigator.clipboard.writeText(data.shortUrl).catch(function () {});
+
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate Link';
+      }
+    }
+
+    // Allow Enter key to submit
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') generate();
+    });
+
+    renderRecent();
+  </script>
+
+</body>
+</html>
