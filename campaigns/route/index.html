@@ -40,9 +40,10 @@
         for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
 
         // Initialize Mixpanel with Knock's Production Token
-        mixpanel.init("149911c4782c80fa3448236494355475", { 
+        mixpanel.init("149911c4782c80fa3448236494355475", {
             track_pageview: false,
-            persistence: "localStorage" 
+            persistence: "localStorage",
+            api_transport: "sendBeacon"
         });
     </script>
 </head>
@@ -85,25 +86,22 @@
 
                 console.log("[KNOCK ROUTER]: Prepared Telemetry Payload.");
                 
-                // 3. Fire Metric Tracking via Native Browser Background Post-Boxes
-                if (typeof mixpanel !== 'undefined' && mixpanel.set_config) {
-                    
-                    // Force Mixpanel to use non-blocking background transport mechanisms
-                    mixpanel.set_config({ api_transport: 'sendBeacon' });
-                    
+                // 3. Fire Metric Tracking via sendBeacon (fire-and-forget; survives navigation)
+                if (typeof mixpanel !== 'undefined' && typeof mixpanel.track === 'function') {
                     mixpanel.track("Outbound Redirect Clicked", {
                         "Resolved Destination": finalDestination,
                         "WhatsApp Group": sourceGroup,
                         "Campaign Medium": campaignPost,
                         "Device User Agent": navigator.userAgent
-                    }, function() {
-                        console.log("[KNOCK ROUTER]: Mixpanel tracking accepted. Clearing timer.");
-                        clearTimeout(fallbackTimeout); 
-                        executeOutboundBounce();
                     });
+                    console.log("[KNOCK ROUTER]: Mixpanel track dispatched via sendBeacon.");
                 } else {
-                    console.warn("[KNOCK ROUTER]: Mixpanel global library undefined. Moving to fallback routing.");
+                    console.warn("[KNOCK ROUTER]: Mixpanel unavailable. Falling back to timer redirect.");
                 }
+
+                // Redirect immediately after firing the beacon — sendBeacon completes in background
+                clearTimeout(fallbackTimeout);
+                executeOutboundBounce();
 
             } catch (error) {
                 // Catch errors so the student redirect script never stops functioning
