@@ -4,14 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#5E17EB" />
-<meta name="description" content="Knock · Get found by SA's top corporates. For STEM students." />
+<meta name="description" content="Knock · Opportunities from SA Industry is knocking. We make sure to bring them to your door. Built for STEM students (for now)." />
 
-<!-- Social share -->
-<meta property="og:title" content="Knock · Get found." />
-<meta property="og:description" content="Top SA corporates are hiring. We bring you to them. For STEM students with verified transcripts." />
+<meta property="og:title" content="Knock · Opportunities are knocking." />
+<meta property="og:description" content="Opportunities from SA Industry are knocking. We bring them to your door. Built for STEM students (for now)." />
 <meta property="og:type" content="website" />
 
-<title>Knock · Get found.</title>
+<title>Knock · Opportunities are knocking.</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,23 +18,22 @@
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300,400,500,600,700&display=swap" rel="stylesheet" />
 
 <!-- ============================================================
-     ANALYTICS HOOK POINTS — uncomment / paste in your snippet
-     ============================================================
-     PLAUSIBLE (recommended, privacy-friendly, free tier):
-     <script defer data-domain="knocktalent.co.za" src="https://plausible.io/js/script.js"></script>
+     CONFIG — fill in once
+     ============================================================ -->
+<script>
+  /* === BACKEND === Replace with your Google Apps Script /exec URL.
+     Until set, submissions are saved to localStorage only.            */
+  window.KNOCK_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxI8CeMbboWYqMeRLzgiCRfV-V55kv2J26enSWLWTYDqGk3K_Sx5Fikv25ehhQsY7F7Dw/exec'; // e.g. 'https://script.google.com/macros/s/AKfycb.../exec'
 
-     GOOGLE ANALYTICS 4:
-     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
-     <script>
-       window.dataLayer = window.dataLayer || [];
-       function gtag(){dataLayer.push(arguments);}
-       gtag('js', new Date()); gtag('config', 'G-XXXXXXX');
-     </script>
+  /* === STATS PASSWORD === Update this to whatever you want.
+     The ops team enters this to access ?stats=1.                      */
+  window.KNOCK_STATS_PASSWORD = 'knock-ops-2026';
 
-     CLOUDFLARE WEB ANALYTICS (lightweight, free):
-     <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
-       data-cf-beacon='{"token": "YOUR_TOKEN"}'></script>
-============================================================ -->
+  /* === SOCIALS === Update these.                                     */
+  window.KNOCK_INSTAGRAM = 'https://instagram.com/knock_talent';
+  window.KNOCK_WEBSITE   = 'https://knocktalent.co.za';
+  window.KNOCK_LINKEDIN  = 'https://linkedin.com/company/knocktalent';
+</script>
 
 <style>
   :root {
@@ -53,6 +51,8 @@
     --gray-700: #444241;
     --do-bg:  #E1F5EE;
     --do-ink: #085041;
+    --warn-bg: #FFF4DD;
+    --warn-ink: #8A5A00;
     --wa-green: #25D366;
     --wa-green-dark: #128C7E;
     --err-bg: #FCEBEB;
@@ -64,21 +64,31 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overscroll-behavior: none; }
+
+  /* ============================================================
+     BACKGROUND — solid purple + large low-opacity K watermark
+     (centre-right) — matching the deck's manifesto slide
+     ============================================================ */
   body {
-    background: var(--white);
-    color: var(--black);
+    background: var(--purple);  /* solid, no gradient */
+    color: var(--white);
     font-family: var(--font-body);
     overflow-x: hidden;
     position: relative;
+    min-height: 100vh;
   }
-
-  /* Ambient purple wash */
-  body::before {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
-    background:
-      radial-gradient(900px 600px at 100% 0%, rgba(94,23,235,0.07) 0%, rgba(94,23,235,0) 60%),
-      radial-gradient(700px 500px at 0% 100%, rgba(94,23,235,0.04) 0%, rgba(94,23,235,0) 55%);
+  .bg-watermark {
+    position: fixed;
+    right: -8vh;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 95vh;
+    height: 95vh;
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
   }
+  .bg-watermark svg { width: 100%; height: 100%; }
 
   /* ==========  STAGE / CARDS  ========== */
   .stage {
@@ -86,25 +96,54 @@
     display: flex; align-items: center; justify-content: center;
     padding: 1.5rem;
     position: relative;
+    z-index: 1;
   }
   .card {
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     background: var(--white);
+    color: var(--black);
     border: 1px solid var(--gray-100);
-    border-radius: 24px;
-    box-shadow: 0 24px 60px rgba(15,15,20,0.08), 0 8px 24px rgba(15,15,20,0.04);
-    padding: 2rem 1.6rem 1.6rem;
+    border-radius: 22px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.20), 0 8px 24px rgba(0,0,0,0.10);
+    padding: 1.9rem 1.5rem 1.5rem;
     position: relative;
     overflow: hidden;
   }
   .card[hidden] { display: none !important; }
-
-  /* All cards stack opacity-transition */
   .card { animation: cardEnter 460ms cubic-bezier(.22,.61,.36,1); }
   @keyframes cardEnter {
     from { opacity: 0; transform: translateY(14px) scale(0.99); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Door-close / door-open animations */
+  @keyframes doorKnock {
+    0%, 100% { transform: rotate(0); }
+    15%      { transform: rotate(-9deg) translateX(-2px); }
+    30%      { transform: rotate(8deg)  translateX(2px); }
+    45%      { transform: rotate(-9deg) translateX(-2px); }
+    60%      { transform: rotate(8deg)  translateX(2px); }
+    75%      { transform: rotate(0); }
+  }
+  .is-knocking { animation: doorKnock 820ms ease-in-out; }
+
+  @keyframes doorClose {
+    0%   { transform: perspective(1100px) rotateY(0) translateZ(0); opacity: 1; }
+    100% { transform: perspective(1100px) rotateY(-94deg) translateZ(-40px); opacity: 0; }
+  }
+  .is-door-closing {
+    animation: doorClose 540ms cubic-bezier(.55,0,.95,.5) forwards;
+    transform-origin: left center;
+  }
+  @keyframes doorOpen {
+    0%   { transform: perspective(1100px) rotateY(95deg) translateZ(-40px); opacity: 0; }
+    60%  { opacity: 1; }
+    100% { transform: perspective(1100px) rotateY(0) translateZ(0); opacity: 1; }
+  }
+  .is-door-opening {
+    animation: doorOpen 720ms cubic-bezier(.16,1,.36,1) forwards;
+    transform-origin: left center;
   }
 
   /* ==========  KNOCK LOGO  ========== */
@@ -115,10 +154,9 @@
     box-shadow: 0 6px 18px rgba(94,23,235,0.20), 0 2px 6px rgba(15,15,20,0.08);
   }
   .knock-logo svg { display: block; width: 100%; height: 100%; }
-
   .lockup-row {
     display: flex; align-items: center; gap: 10px;
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.2rem;
   }
   .lockup-row .knock-logo { width: 36px; height: 36px; }
   .lockup-row .word {
@@ -144,12 +182,12 @@
   /* ============================================================ */
   #cardHero {
     text-align: center;
-    padding-top: 2.4rem;
-    padding-bottom: 2rem;
+    padding-top: 2.1rem;
+    padding-bottom: 1.5rem;
   }
   #cardHero .hero-logo {
-    width: 72px; height: 72px;
-    margin: 0 auto 1.2rem;
+    width: 68px; height: 68px;
+    margin: 0 auto 1.1rem;
     display: block;
     animation: heroLogoFloat 4s ease-in-out infinite;
   }
@@ -160,38 +198,21 @@
   #cardHero h1 {
     font-family: var(--font-title);
     font-weight: 900;
-    font-size: clamp(48px, 12vw, 64px);
-    letter-spacing: -0.045em;
-    line-height: 0.96;
+    font-size: clamp(26px, 7vw, 34px);
+    letter-spacing: -0.035em;
+    line-height: 1.08;
     color: var(--black);
     margin-bottom: 0.6rem;
   }
-  #cardHero h1 .acc {
-    color: var(--purple);
-    display: inline-block;
-    position: relative;
-  }
-  #cardHero h1 .acc::after {
-    content: "";
-    position: absolute;
-    bottom: -4px; left: 0; right: 0;
-    height: 4px;
-    background: var(--purple);
-    border-radius: 4px;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: underlineIn 0.7s ease 0.45s forwards;
-  }
-  @keyframes underlineIn { to { transform: scaleX(1); } }
-
+  #cardHero h1 .acc { color: var(--purple); }
   #cardHero .sub {
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 13.5px;
     font-weight: 400;
     color: var(--gray-700);
     line-height: 1.5;
-    margin-bottom: 1.7rem;
-    max-width: 320px;
+    margin-bottom: 1.3rem;
+    max-width: 340px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -199,10 +220,10 @@
 
   #cardHero .pill-row {
     display: flex; justify-content: center; flex-wrap: wrap;
-    gap: 5px; margin-bottom: 1.7rem;
+    gap: 5px; margin-bottom: 1.2rem;
   }
   #cardHero .pill-row .pill {
-    background: var(--white);
+    background: var(--off-white);
     border: 1px solid var(--gray-100);
     padding: 5px 10px;
     border-radius: 999px;
@@ -223,11 +244,11 @@
     background: var(--purple);
     color: var(--white);
     border: none;
-    padding: 16px 18px;
-    border-radius: 14px;
+    padding: 15px 18px;
+    border-radius: 13px;
     font-family: var(--font-head);
     font-weight: 700;
-    font-size: 15.5px;
+    font-size: 15px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -246,7 +267,7 @@
   .cta-btn:hover:not(:disabled) svg { transform: translateX(3px); }
 
   #cardHero .meta {
-    margin-top: 1rem;
+    margin-top: 0.85rem;
     font-family: var(--font-body);
     font-size: 11px;
     color: var(--gray-500);
@@ -254,11 +275,136 @@
   #cardHero .meta strong { color: var(--purple); font-weight: 600; }
 
   /* ============================================================ */
+  /* VISION DECK (3-slide carousel inside the hero)                 */
+  /* ============================================================ */
+  .vision-wrap {
+    margin: 0.6rem 0 1.2rem;
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .vision-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.6rem 0.8rem 0.55rem;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .vision-head::-webkit-details-marker { display: none; }
+  .vision-head .v-l {
+    display: flex; align-items: center; gap: 7px;
+  }
+  .vision-head .v-ico {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+  }
+  .vision-head .v-ico svg { width: 11px; height: 11px; }
+  .vision-head .v-label {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: -0.01em;
+    color: var(--black);
+  }
+  .vision-head .v-sub {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--gray-500);
+    margin-top: 1px;
+  }
+  .vision-head .v-chev { color: var(--gray-500); transition: transform .18s; }
+  details[open] .vision-head .v-chev { transform: rotate(180deg); color: var(--purple); }
+
+  .vision-body { padding: 0 0.55rem 0.6rem; }
+  .vision-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    border-radius: 10px;
+  }
+  .vision-track::-webkit-scrollbar { display: none; }
+  .vision-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    background: var(--white);
+    border-radius: 9px;
+    padding: 0.85rem 1rem;
+    text-align: left;
+  }
+  .vision-slide .vs-num {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+  .vision-slide .vs-title {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: -0.025em;
+    color: var(--black);
+    margin-bottom: 5px;
+    line-height: 1.12;
+  }
+  .vision-slide .vs-title em {
+    font-style: normal;
+    color: var(--purple);
+  }
+  .vision-slide .vs-body {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--gray-700);
+  }
+  .vision-slide .vs-body strong { color: var(--black); font-weight: 600; }
+  .vision-nav {
+    display: flex; justify-content: center; align-items: center;
+    gap: 5px; padding: 0.4rem 0 0.1rem;
+  }
+  .vision-nav .v-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gray-300); cursor: pointer;
+    transition: all .15s ease; border: none; padding: 0;
+  }
+  .vision-nav .v-dot.active { background: var(--purple); width: 16px; border-radius: 999px; }
+
+  /* ============================================================ */
+  /* SOCIAL ICONS                                                   */
+  /* ============================================================ */
+  .social-row {
+    display: flex; justify-content: center; align-items: center;
+    gap: 6px; margin-top: 1rem;
+  }
+  .social-link {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    display: grid; place-items: center;
+    transition: all .15s ease;
+    text-decoration: none;
+  }
+  .social-link:hover {
+    background: var(--purple-light); color: var(--purple);
+    border-color: var(--purple-mid);
+    transform: translateY(-1px);
+  }
+  .social-link svg { width: 16px; height: 16px; }
+
+  /* ============================================================ */
   /* FORM CARD                                                      */
   /* ============================================================ */
   #cardForm .top-bar {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.7rem;
   }
   #cardForm .back-btn {
     background: var(--off-white);
@@ -272,39 +418,26 @@
   }
   #cardForm .back-btn:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
   #cardForm .back-btn svg { width: 14px; height: 14px; }
-  #cardForm .step-label {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 10.5px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--purple);
-  }
-  #cardForm .step-label .step-curr {
-    font-family: var(--font-title);
-    font-weight: 900;
-    color: var(--black);
-  }
 
   #cardForm h2 {
     font-family: var(--font-title);
     font-weight: 900;
-    font-size: 28px;
+    font-size: 26px;
     line-height: 1.04;
     letter-spacing: -0.03em;
     color: var(--black);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.35rem;
   }
   #cardForm h2 em { font-style: normal; color: var(--purple); }
   #cardForm .form-sub {
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--gray-500);
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.2rem;
     line-height: 1.5;
   }
 
-  .form-field { margin-bottom: 1rem; position: relative; }
+  .form-field { margin-bottom: 0.9rem; position: relative; }
   .form-field .label {
     display: flex; align-items: center; justify-content: space-between;
     font-family: var(--font-body);
@@ -313,7 +446,7 @@
     letter-spacing: 0.10em;
     text-transform: uppercase;
     color: var(--gray-700);
-    margin-bottom: 7px;
+    margin-bottom: 6px;
   }
   .form-field .label .hint {
     color: var(--gray-300);
@@ -322,14 +455,14 @@
     letter-spacing: 0;
     font-size: 11px;
   }
-  .form-field input {
+  .form-field input, .form-field select {
     width: 100%;
     background: var(--off-white);
     border: 1.5px solid var(--gray-100);
     border-radius: 11px;
-    padding: 13px 14px;
+    padding: 12px 13px;
     font-family: var(--font-body);
-    font-size: 16px;  /* 16px+ prevents iOS auto-zoom */
+    font-size: 16px;
     font-weight: 500;
     color: var(--black);
     transition: all .15s ease;
@@ -337,14 +470,14 @@
     -webkit-appearance: none;
   }
   .form-field input::placeholder { color: var(--gray-300); font-weight: 400; }
-  .form-field input:hover { border-color: var(--purple-mid); }
-  .form-field input:focus {
+  .form-field input:hover, .form-field select:hover { border-color: var(--purple-mid); }
+  .form-field input:focus, .form-field select:focus {
     border-color: var(--purple);
     background: var(--white);
     box-shadow: 0 0 0 4px rgba(94,23,235,0.10);
   }
-  .form-field input.has-value { background: var(--white); }
-  .form-field.invalid input {
+  .form-field input.has-value, .form-field select.has-value { background: var(--white); }
+  .form-field.invalid input, .form-field.invalid select {
     border-color: var(--err-ink);
     background: var(--err-bg);
   }
@@ -356,6 +489,8 @@
     display: none;
   }
   .form-field.invalid .err-msg { display: block; }
+  .followup { margin-top: 6px; }
+  .followup[hidden] { display: none; }
 
   /* Phone field with prefix */
   .phone-field {
@@ -375,6 +510,29 @@
     color: var(--gray-700);
   }
 
+  /* Email field — username + locked domain badge */
+  .email-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .email-row input { width: 100%; }
+  .email-domain {
+    background: var(--purple-light);
+    border: 1.5px solid var(--purple-mid);
+    color: var(--purple-deep);
+    border-radius: 11px;
+    padding: 12px 13px;
+    font-family: var(--font-mono, "Menlo", monospace);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex; align-items: center;
+    white-space: nowrap;
+  }
+  .email-row.free .email-domain { display: none; }
+  .email-row.free input { grid-column: 1 / -1; }
+
   /* Chip group */
   .chip-group {
     display: flex;
@@ -385,7 +543,7 @@
     background: var(--off-white);
     border: 1.5px solid var(--gray-100);
     border-radius: 999px;
-    padding: 9px 14px;
+    padding: 9px 13px;
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 13px;
@@ -403,6 +561,56 @@
     transform: scale(1.03);
   }
   .chip.selected:hover { background: var(--purple-deep); border-color: var(--purple-deep); }
+  .chip.multi.selected::before {
+    content: "✓ ";
+  }
+
+  /* Optional toggle */
+  .optional-toggle {
+    background: var(--off-white);
+    border: 1px dashed var(--purple-mid);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .optional-toggle summary {
+    cursor: pointer; list-style: none;
+    padding: 0.7rem 0.9rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 0.6rem;
+    user-select: none;
+  }
+  .optional-toggle summary::-webkit-details-marker { display: none; }
+  .optional-toggle .ot-l {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .optional-toggle .ot-ico {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+  }
+  .optional-toggle .ot-ico svg { width: 11px; height: 11px; }
+  .optional-toggle .ot-label {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 11.5px;
+    color: var(--black);
+    letter-spacing: -0.01em;
+  }
+  .optional-toggle .ot-sub {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--gray-500);
+    margin-top: 1px;
+  }
+  .optional-toggle .ot-chev { color: var(--gray-500); transition: transform .18s; }
+  .optional-toggle[open] .ot-chev { transform: rotate(180deg); color: var(--purple); }
+  .optional-toggle .ot-body {
+    padding: 0.5rem 0.9rem 0.9rem;
+    border-top: 1px solid var(--gray-100);
+  }
+  .optional-toggle .ot-body .form-field { margin-bottom: 0.7rem; }
+  .optional-toggle .ot-body .form-field:last-child { margin-bottom: 0; }
 
   /* Consent checkbox */
   .consent {
@@ -410,8 +618,8 @@
     grid-template-columns: 22px 1fr;
     gap: 10px;
     align-items: flex-start;
-    margin: 1rem 0 1.2rem;
-    padding: 12px 14px;
+    margin: 1rem 0 1.1rem;
+    padding: 11px 13px;
     background: var(--off-white);
     border: 1.5px solid var(--gray-100);
     border-radius: 11px;
@@ -445,9 +653,22 @@
   .consent .text strong { color: var(--black); font-weight: 600; }
   .consent.invalid { border-color: var(--err-ink); background: var(--err-bg); }
 
-  /* Footer micro-text */
+  /* Submit error banner */
+  .submit-banner {
+    background: var(--err-bg);
+    color: var(--err-ink);
+    border: 1px solid var(--err-ink);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    margin-bottom: 0.7rem;
+    display: none;
+  }
+  .submit-banner.show { display: block; }
+
   .micro {
-    margin-top: 0.9rem;
+    margin-top: 0.85rem;
     text-align: center;
     font-family: var(--font-body);
     font-size: 10.5px;
@@ -461,52 +682,50 @@
   /* ============================================================ */
   #cardDone {
     text-align: center;
-    padding-top: 2rem;
-    padding-bottom: 1.6rem;
+    padding-top: 1.8rem;
+    padding-bottom: 1.5rem;
   }
   #cardDone .check-badge {
-    width: 64px; height: 64px;
-    margin: 0 auto 1.2rem;
+    width: 60px; height: 60px;
+    margin: 0 auto 1rem;
     background: var(--do-bg);
     border-radius: 50%;
     display: grid;
     place-items: center;
     animation: checkPop 700ms cubic-bezier(.22,1.36,.36,1) both;
   }
-  #cardDone .check-badge svg { width: 32px; height: 32px; color: var(--do-ink); }
+  #cardDone .check-badge svg { width: 30px; height: 30px; color: var(--do-ink); }
   @keyframes checkPop {
     0% { opacity: 0; transform: scale(0.3); }
     60% { opacity: 1; transform: scale(1.12); }
     100% { transform: scale(1); }
   }
-
   #cardDone h2 {
     font-family: var(--font-title);
     font-weight: 900;
-    font-size: clamp(32px, 8vw, 40px);
+    font-size: clamp(28px, 7vw, 36px);
     letter-spacing: -0.035em;
     line-height: 1.05;
     color: var(--black);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
   #cardDone h2 em { font-style: normal; color: var(--purple); }
   #cardDone .done-sub {
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--gray-700);
     line-height: 1.5;
-    max-width: 320px;
-    margin: 0 auto 1.5rem;
+    max-width: 340px;
+    margin: 0 auto 1.3rem;
   }
   #cardDone .done-sub strong { color: var(--black); font-weight: 600; }
-
   #cardDone .next-list {
     text-align: left;
     background: var(--off-white);
     border: 1px solid var(--gray-100);
     border-radius: 12px;
-    padding: 0.9rem 1rem;
-    margin-bottom: 1.3rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.2rem;
   }
   #cardDone .next-list .nl-label {
     font-family: var(--font-body);
@@ -515,14 +734,14 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--purple);
-    margin-bottom: 8px;
+    margin-bottom: 7px;
   }
   #cardDone .next-list .nl-item {
     display: grid;
     grid-template-columns: 22px 1fr;
     gap: 9px;
     align-items: flex-start;
-    padding: 5px 0;
+    padding: 4px 0;
     font-family: var(--font-body);
     font-size: 12.5px;
     color: var(--gray-700);
@@ -539,35 +758,27 @@
 
   /* Invite card */
   .invite-card {
-    background: linear-gradient(135deg, var(--purple) 0%, var(--purple-deep) 100%);
+    background: var(--purple);
     color: var(--white);
-    border-radius: 16px;
-    padding: 1.1rem 1.2rem;
-    margin-top: 0.6rem;
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    margin-top: 0.4rem;
     position: relative;
     overflow: hidden;
     text-align: left;
   }
-  .invite-card::after {
-    content: ""; position: absolute;
-    width: 180px; height: 180px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
-    right: -60px; top: -60px;
-  }
   .invite-card .ic-title {
     font-family: var(--font-title);
     font-weight: 900;
-    font-size: 17px;
+    font-size: 16px;
     letter-spacing: -0.02em;
-    margin-bottom: 4px;
-    position: relative; z-index: 1;
+    margin-bottom: 3px;
   }
   .invite-card .ic-sub {
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 11.5px;
     color: rgba(255,255,255,0.78);
-    margin-bottom: 0.85rem;
-    position: relative; z-index: 1;
+    margin-bottom: 0.75rem;
     line-height: 1.45;
   }
   .invite-card .ic-btn {
@@ -578,7 +789,7 @@
     border-radius: 10px;
     font-family: var(--font-body);
     font-weight: 700;
-    font-size: 13.5px;
+    font-size: 13px;
     width: 100%;
     cursor: pointer;
     display: inline-flex;
@@ -586,57 +797,95 @@
     justify-content: center;
     gap: 7px;
     transition: background .15s ease;
-    position: relative; z-index: 1;
     box-shadow: 0 4px 12px rgba(37,211,102,0.30);
     text-decoration: none;
   }
   .invite-card .ic-btn:hover { background: var(--wa-green-dark); }
-  .invite-card .ic-btn svg { width: 16px; height: 16px; }
-  .invite-card .ic-copy {
-    background: rgba(255,255,255,0.10);
-    color: var(--white);
-    border: 1px solid rgba(255,255,255,0.18);
-    padding: 9px 11px;
-    border-radius: 9px;
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 11.5px;
-    width: 100%;
-    cursor: pointer;
-    margin-top: 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    position: relative; z-index: 1;
-    transition: background .15s ease;
-  }
-  .invite-card .ic-copy:hover { background: rgba(255,255,255,0.18); }
-  .invite-card .ic-copy svg { width: 12px; height: 12px; }
+  .invite-card .ic-btn svg { width: 15px; height: 15px; }
 
-  /* ============================================================ */
-  /* CONFETTI                                                       */
-  /* ============================================================ */
+  /* ==========  CONFETTI  ========== */
   #confettiCanvas {
     position: fixed; inset: 0;
     pointer-events: none; z-index: 50;
   }
 
   /* ============================================================ */
-  /* ADMIN STATS VIEW (visible with ?stats=1)                       */
+  /* ADMIN STATS PANEL (?stats=1, password gated)                   */
   /* ============================================================ */
+  body.admin .stage { display: none; }
+  body.admin .bg-watermark { opacity: 0.04; }
+
+  #adminGate {
+    display: none;
+    max-width: 380px;
+    margin: 6vh auto 0;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.20);
+    position: relative;
+    z-index: 1;
+  }
+  body.admin #adminGate { display: block; }
+  body.admin.unlocked #adminGate { display: none; }
+  #adminGate h3 {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 22px; letter-spacing: -0.025em;
+    color: var(--black); margin-bottom: 6px;
+  }
+  #adminGate .gate-sub {
+    font-family: var(--font-body); font-size: 12px;
+    color: var(--gray-500); margin-bottom: 1rem;
+  }
+  #adminGate input {
+    width: 100%;
+    background: var(--off-white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 10px;
+    padding: 11px 13px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--black);
+    outline: none;
+    margin-bottom: 0.7rem;
+  }
+  #adminGate input:focus { border-color: var(--purple); background: var(--white); }
+  #adminGate .gate-err {
+    color: var(--err-ink);
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    margin-top: 4px;
+    display: none;
+  }
+  #adminGate.failed .gate-err { display: block; }
+  #adminGate button {
+    width: 100%;
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 11px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #adminGate button:hover { background: var(--purple-deep); }
+
   #adminPanel {
     display: none;
-    max-width: 920px;
+    max-width: 980px;
     margin: 1.5rem auto;
     background: var(--white);
     border: 1px solid var(--gray-100);
     border-radius: 16px;
     padding: 1.4rem 1.5rem;
-    box-shadow: 0 8px 24px rgba(15,15,20,0.06);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    position: relative;
+    z-index: 1;
   }
-  body.admin #adminPanel { display: block; }
-  body.admin .stage { min-height: 0; padding-bottom: 0; }
+  body.admin.unlocked #adminPanel { display: block; }
   #adminPanel h3 {
     font-family: var(--font-title);
     font-weight: 900;
@@ -663,21 +912,15 @@
     padding: 0.8rem 0.9rem;
   }
   #adminPanel .stat-tile .lbl {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 9.5px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--gray-500);
+    font-family: var(--font-body); font-weight: 600;
+    font-size: 9.5px; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--gray-500);
     margin-bottom: 5px;
   }
   #adminPanel .stat-tile .val {
-    font-family: var(--font-title);
-    font-weight: 900;
-    font-size: 26px;
-    letter-spacing: -0.025em;
-    color: var(--black);
-    line-height: 1;
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 26px; letter-spacing: -0.025em;
+    color: var(--black); line-height: 1;
   }
   #adminPanel .stat-tile .val small {
     font-size: 12px; font-weight: 700;
@@ -695,20 +938,16 @@
     margin-bottom: 1.2rem;
   }
   #adminPanel .breakdown h4 {
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: -0.01em;
-    color: var(--black);
-    margin-bottom: 0.7rem;
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 12px; letter-spacing: -0.01em;
+    color: var(--black); margin-bottom: 0.7rem;
   }
   #adminPanel .breakdown .row {
-    display: grid; grid-template-columns: 90px 1fr 36px;
+    display: grid; grid-template-columns: 110px 1fr 36px;
     align-items: center; gap: 11px;
     padding: 5px 0;
     border-top: 1px solid var(--gray-100);
-    font-family: var(--font-body);
-    font-size: 11.5px;
+    font-family: var(--font-body); font-size: 11.5px;
   }
   #adminPanel .breakdown .row:first-of-type { border-top: none; padding-top: 0; }
   #adminPanel .breakdown .row .key { color: var(--gray-700); font-weight: 500; }
@@ -722,7 +961,7 @@
     letter-spacing: -0.02em;
   }
   #adminPanel .actions {
-    display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap;
+    display: flex; gap: 8px; margin-top: 0.9rem; margin-bottom: 1rem; flex-wrap: wrap;
   }
   #adminPanel .actions button {
     background: var(--white);
@@ -735,52 +974,92 @@
     font-size: 11.5px;
     cursor: pointer;
     transition: all .15s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
   }
   #adminPanel .actions button:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
   #adminPanel .actions button.danger:hover { background: var(--err-bg); color: var(--err-ink); border-color: var(--err-ink); }
   #adminPanel .actions svg { width: 13px; height: 13px; }
-  #adminPanel .submissions-log {
+
+  #adminPanel .data-source {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 10px;
+    padding: 7px 11px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 7px;
+  }
+  #adminPanel .data-source .dot-status {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gray-300);
+  }
+  #adminPanel .data-source.online .dot-status { background: var(--do-ink); }
+  #adminPanel .data-source.offline .dot-status { background: var(--warn-ink); }
+
+  /* Submissions table with state management */
+  .subs-table {
     background: var(--off-white);
     border: 1px solid var(--gray-100);
     border-radius: 12px;
-    padding: 0.9rem 1rem;
-    max-height: 280px;
-    overflow-y: auto;
+    padding: 0.9rem;
+    margin-bottom: 1rem;
   }
-  #adminPanel .submissions-log h4 {
-    font-family: var(--font-head); font-weight: 700; font-size: 12px;
-    letter-spacing: -0.01em; color: var(--black); margin-bottom: 0.7rem;
+  .subs-table h4 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 12px; color: var(--black); margin-bottom: 0.7rem;
   }
-  #adminPanel .submissions-log .sub-item {
+  .sub-item {
     background: var(--white);
     border: 1px solid var(--gray-100);
-    border-radius: 8px;
-    padding: 8px 11px;
+    border-radius: 9px;
+    padding: 9px 11px;
     margin-bottom: 6px;
     font-family: var(--font-body);
     font-size: 11.5px;
     color: var(--gray-700);
     line-height: 1.45;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
   }
-  #adminPanel .submissions-log .sub-item:last-child { margin-bottom: 0; }
-  #adminPanel .submissions-log .sub-item strong { color: var(--black); font-weight: 600; }
-  #adminPanel .submissions-log .sub-item .meta { color: var(--gray-500); font-size: 10.5px; margin-top: 3px; }
-  #adminPanel .submissions-log .empty {
-    text-align: center; padding: 1.6rem 0;
-    font-family: var(--font-body); font-size: 12px;
-    color: var(--gray-500);
+  .sub-item:last-child { margin-bottom: 0; }
+  .sub-item strong { color: var(--black); font-weight: 600; }
+  .sub-item .si-meta { color: var(--gray-500); font-size: 10.5px; margin-top: 2px; }
+  .state-pills {
+    display: flex; gap: 4px;
   }
+  .state-pill {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    padding: 4px 9px;
+    border-radius: 7px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all .15s ease;
+  }
+  .state-pill:hover { border-color: var(--purple-mid); color: var(--purple); }
+  .state-pill.active.requested { background: var(--warn-bg); color: var(--warn-ink); border-color: var(--warn-ink); }
+  .state-pill.active.added     { background: var(--do-bg);    color: var(--do-ink);    border-color: var(--do-ink); }
+  .state-pill.active.left      { background: var(--err-bg);   color: var(--err-ink);   border-color: var(--err-ink); }
 
   /* Responsive */
   @media (max-width: 480px) {
     .stage { padding: 1rem; }
     .card { padding: 1.5rem 1.2rem 1.3rem; border-radius: 20px; }
-    #cardForm h2 { font-size: 25px; }
+    #cardForm h2 { font-size: 24px; }
+    #cardHero h1 { font-size: 26px; }
     #adminPanel { margin: 1rem; padding: 1rem; }
     #adminPanel .stats-grid { grid-template-columns: 1fr 1fr; }
+    .sub-item { grid-template-columns: 1fr; }
+    .state-pills { justify-content: flex-start; }
   }
 </style>
 </head>
@@ -799,209 +1078,52 @@
       <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#FFFFFF"/>
       <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
     </symbol>
+    <symbol id="logo-light" viewBox="0 0 1180 1180">
+      <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
+      <ellipse cx="541" cy="586" rx="491" ry="540" fill="#FFFFFF"/>
+      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+      <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+      <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#D9D9D9"/>
+    </symbol>
   </defs>
 </svg>
 
+<!-- BACKGROUND WATERMARK -->
+<div class="bg-watermark" aria-hidden="true">
+  <svg><use href="#logo-light"/></svg>
+</div>
+
 <canvas id="confettiCanvas"></canvas>
 
-<div class="stage">
-
-  <!-- ============================================================ -->
-  <!-- CARD: HERO                                                     -->
-  <!-- ============================================================ -->
-  <div class="card" id="cardHero">
-    <div class="knock-logo hero-logo"><svg><use href="#logo-dark"/></svg></div>
-    <h1>Get <span class="acc">found.</span></h1>
-    <p class="sub">
-      Top SA corporates are hiring. We bring you to them.
-      <strong>Built for STEM students.</strong>
-    </p>
-
-    <div class="pill-row">
-      <span class="pill">WhatsApp delivery</span>
-      <span class="pill">Verified profile</span>
-      <span class="pill">Free for students</span>
-    </div>
-
-    <button class="cta-btn" id="startBtn">
-      I'm in — get me found
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </button>
-
-    <div class="meta">Takes <strong>~30 seconds</strong> · we'll never share your data without consent</div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- CARD: FORM                                                     -->
-  <!-- ============================================================ -->
-  <div class="card" id="cardForm" hidden>
-    <div class="top-bar">
-      <button class="back-btn" id="backBtn" aria-label="Back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="lockup-row" style="margin-bottom: 0;">
-        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-        <div>
-          <div class="word">knock</div>
-          <div class="tag">talent intelligence</div>
-        </div>
-      </div>
-    </div>
-
-    <h2>One quick step. <em>That's it.</em></h2>
-    <p class="form-sub">Tell us who you are. We'll WhatsApp you when a match arrives.</p>
-
-    <form id="signupForm" novalidate>
-
-      <!-- University -->
-      <div class="form-field" data-field="university">
-        <div class="label">University <span class="hint">pick one</span></div>
-        <div class="chip-group" data-chip-group="university">
-          <button type="button" class="chip" data-value="UCT">UCT</button>
-          <button type="button" class="chip" data-value="Wits">Wits</button>
-          <button type="button" class="chip" data-value="Stellies">Stellies</button>
-          <button type="button" class="chip" data-value="Pretoria">Pretoria</button>
-          <button type="button" class="chip" data-value="UKZN">UKZN</button>
-          <button type="button" class="chip" data-value="Other SA">Other SA</button>
-        </div>
-        <div class="err-msg">Pick your university.</div>
-      </div>
-
-      <!-- Year -->
-      <div class="form-field" data-field="year">
-        <div class="label">Year</div>
-        <div class="chip-group" data-chip-group="year">
-          <button type="button" class="chip" data-value="Year 2">Year 2</button>
-          <button type="button" class="chip" data-value="Year 3">Year 3</button>
-          <button type="button" class="chip" data-value="Year 4">Year 4 / Final</button>
-          <button type="button" class="chip" data-value="Honours">Honours</button>
-          <button type="button" class="chip" data-value="Masters">Masters</button>
-          <button type="button" class="chip" data-value="Graduated">Just graduated</button>
-        </div>
-        <div class="err-msg">Pick your year.</div>
-      </div>
-
-      <!-- Field -->
-      <div class="form-field" data-field="field">
-        <div class="label">Field</div>
-        <div class="chip-group" data-chip-group="field">
-          <button type="button" class="chip" data-value="CompSci / Eng">CompSci / Eng</button>
-          <button type="button" class="chip" data-value="Maths / Stats">Maths / Stats</button>
-          <button type="button" class="chip" data-value="Physical Sciences">Physical Sciences</button>
-          <button type="button" class="chip" data-value="Other STEM">Other STEM</button>
-        </div>
-        <div class="err-msg">Pick your field.</div>
-      </div>
-
-      <!-- First name -->
-      <div class="form-field" data-field="name">
-        <div class="label">First name</div>
-        <input type="text" id="fName" autocomplete="given-name" placeholder="Thabo" />
-        <div class="err-msg">Tell us your first name.</div>
-      </div>
-
-      <!-- WhatsApp number -->
-      <div class="form-field" data-field="whatsapp">
-        <div class="label">WhatsApp number <span class="hint">we'll message you here</span></div>
-        <div class="phone-field">
-          <div class="prefix">+27</div>
-          <input type="tel" id="fPhone" autocomplete="tel-national" inputmode="numeric" placeholder="79 123 4567" maxlength="13" />
-        </div>
-        <div class="err-msg">A valid SA number please.</div>
-      </div>
-
-      <!-- Email -->
-      <div class="form-field" data-field="email">
-        <div class="label">Email</div>
-        <input type="email" id="fEmail" autocomplete="email" inputmode="email" placeholder="you@uct.ac.za" />
-        <div class="err-msg">A valid email please.</div>
-      </div>
-
-      <!-- Consent -->
-      <label class="consent" id="consentBox">
-        <input type="checkbox" id="fConsent" />
-        <div class="box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="text">
-          I consent to <strong>Knock</strong> sending me matched corporate opportunities via WhatsApp.
-          POPIA-aligned. Withdraw anytime.
-        </div>
-      </label>
-
-      <button type="submit" class="cta-btn" id="submitBtn">
-        Get me found
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </button>
-
-      <div class="micro">
-        Already signed up? <a href="mailto:sales@knocktalent.co.za">Update your details</a>
-      </div>
-    </form>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- CARD: CONFIRMATION                                             -->
-  <!-- ============================================================ -->
-  <div class="card" id="cardDone" hidden>
-    <div class="check-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-    </div>
-
-    <h2>You're <em>in.</em></h2>
-    <p class="done-sub">
-      Welcome to Knock, <strong id="doneName">friend</strong>.
-      We'll <strong>WhatsApp you shortly</strong> with your next step.
-    </p>
-
-    <div class="next-list">
-      <div class="nl-label">What happens next</div>
-      <div class="nl-item">
-        <div class="nl-num">1</div>
-        <div>We <strong>verify your profile</strong> within 24 hours.</div>
-      </div>
-      <div class="nl-item">
-        <div class="nl-num">2</div>
-        <div>You'll get a WhatsApp asking for your <strong>transcript</strong> (so we can match you accurately).</div>
-      </div>
-      <div class="nl-item">
-        <div class="nl-num">3</div>
-        <div>Corporate opportunities <strong>find you</strong> — direct on WhatsApp.</div>
-      </div>
-    </div>
-
-    <div class="invite-card">
-      <div class="ic-title">Bring a friend.</div>
-      <div class="ic-sub">Tag a STEM mate. Knock works better with more of you on it.</div>
-      <a id="waShareLink" href="#" class="ic-btn" rel="noopener" target="_blank">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-        Share on WhatsApp
-      </a>
-      <button id="copyInviteBtn" class="ic-copy" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy invite text
-      </button>
-    </div>
-
-    <div class="micro" style="margin-top: 1.1rem;">
-      Want to update your details? <a href="mailto:sales@knocktalent.co.za">Email sales@knocktalent.co.za</a>
-    </div>
-  </div>
-
+<!-- ============================================================ -->
+<!-- ADMIN GATE (visible only when ?stats=1)                        -->
+<!-- ============================================================ -->
+<div id="adminGate">
+  <h3>Knock · Ops stats</h3>
+  <div class="gate-sub">Enter the ops password to view signups + manage student states.</div>
+  <input type="password" id="gatePass" placeholder="Password" autocomplete="off" />
+  <div class="gate-err">Wrong password.</div>
+  <button id="gateUnlock">Unlock</button>
 </div>
 
 <!-- ============================================================ -->
-<!-- ADMIN PANEL (?stats=1 to view)                                  -->
+<!-- ADMIN PANEL                                                    -->
 <!-- ============================================================ -->
 <div id="adminPanel">
-  <h3>Knock signup analytics</h3>
-  <div class="panel-sub">Local analytics — refreshes from localStorage. Live values below.</div>
+  <h3>Knock signup stats</h3>
+  <div class="panel-sub">Live from Google Sheet · falls back to local cache if offline</div>
+
+  <div class="data-source" id="dataSourceInfo">
+    <span class="dot-status"></span>
+    <span id="dataSourceText">Source: checking…</span>
+  </div>
 
   <div class="stats-grid">
     <div class="stat-tile">
-      <div class="lbl">Page views</div>
+      <div class="lbl">Form views</div>
       <div class="val" id="aPageViews">0</div>
-      <div class="note">All-time unique loads</div>
+      <div class="note">Unique loads of the signup form only</div>
     </div>
     <div class="stat-tile">
       <div class="lbl">CTA clicks</div>
@@ -1011,7 +1133,7 @@
     <div class="stat-tile">
       <div class="lbl">Signups</div>
       <div class="val" id="aSignups">0</div>
-      <div class="note">Submitted forms</div>
+      <div class="note">All-time submissions</div>
     </div>
     <div class="stat-tile">
       <div class="lbl">Median submit</div>
@@ -1026,13 +1148,13 @@
   </div>
 
   <div class="breakdown">
-    <h4>University split</h4>
+    <h4>By university</h4>
     <div id="aUniSplit"></div>
   </div>
 
-  <div class="submissions-log">
-    <h4>Recent signups</h4>
-    <div id="aSubmissions"></div>
+  <div class="breakdown">
+    <h4>State breakdown</h4>
+    <div id="aStateSplit"></div>
   </div>
 
   <div class="actions">
@@ -1048,54 +1170,410 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Back to form
     </button>
-    <button class="danger" onclick="clearAnalytics()">
+    <button class="danger" onclick="clearLocalAnalytics()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
-      Clear all data
+      Clear local cache
     </button>
   </div>
+
+  <div class="subs-table">
+    <h4>Recent signups · click a state pill to update</h4>
+    <div id="aSubmissions"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- THE FORM STAGE                                                 -->
+<!-- ============================================================ -->
+<div class="stage">
+
+  <!-- ======================================================== -->
+  <!-- CARD: HERO                                                 -->
+  <!-- ======================================================== -->
+  <div class="card" id="cardHero">
+    <div class="knock-logo hero-logo"><svg><use href="#logo-dark"/></svg></div>
+
+    <h1>Opportunities from SA Industry<br/>is <span class="acc">knocking.</span></h1>
+    <p class="sub">
+      We make sure to bring them to your door.<br/>
+      <strong>Built for STEM students (for now).</strong>
+    </p>
+
+    <div class="pill-row">
+      <span class="pill">WhatsApp delivery</span>
+      <span class="pill">Verified profile</span>
+      <span class="pill">Free for students</span>
+    </div>
+
+    <!-- 3-slide vision deck -->
+    <details class="vision-wrap" id="visionDeck">
+      <summary class="vision-head">
+        <div class="v-l">
+          <span class="v-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </span>
+          <div style="text-align: left;">
+            <div class="v-label">Why Knock exists</div>
+            <div class="v-sub">3 slides · 60 seconds</div>
+          </div>
+        </div>
+        <svg class="v-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div class="vision-body">
+        <div class="vision-track" id="visionTrack">
+          <div class="vision-slide">
+            <div class="vs-num">01 · The vision</div>
+            <div class="vs-title">Opportunity <em>finds you.</em></div>
+            <div class="vs-body">
+              We bring relevant industry opportunities directly to your door —
+              and we put <strong>the power in your hands</strong> to choose which ones you want.
+            </div>
+          </div>
+          <div class="vision-slide">
+            <div class="vs-num">02 · What we're doing now</div>
+            <div class="vs-title">WhatsApp groups <em>for STEM students.</em></div>
+            <div class="vs-body">
+              We're launching simple, university-specific WhatsApp groups —
+              <strong>learning what's actually useful</strong>, while building the platform you'd want.
+            </div>
+          </div>
+          <div class="vision-slide">
+            <div class="vs-num">03 · Who we are</div>
+            <div class="vs-title">Students who've <em>been there.</em></div>
+            <div class="vs-body">
+              We lived the humiliation ritual — cold emails, ghosted applications, missed deadlines.
+              Knock exists so <strong>nobody has to do that again.</strong>
+            </div>
+          </div>
+        </div>
+        <div class="vision-nav" id="visionDots">
+          <button class="v-dot active" data-i="0" aria-label="Slide 1"></button>
+          <button class="v-dot" data-i="1" aria-label="Slide 2"></button>
+          <button class="v-dot" data-i="2" aria-label="Slide 3"></button>
+        </div>
+      </div>
+    </details>
+
+    <button class="cta-btn" id="startBtn">
+      I'm in — get me found
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+
+    <div class="meta">Takes <strong>~45 seconds</strong> · POPIA-aligned · we never share without consent</div>
+
+    <!-- Social icons -->
+    <div class="social-row">
+      <a id="sWebsite" href="#" target="_blank" rel="noopener" class="social-link" aria-label="Website">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </a>
+      <a id="sInstagram" href="#" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a id="sLinkedIn" href="#" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- CARD: FORM                                                 -->
+  <!-- ======================================================== -->
+  <div class="card" id="cardForm" hidden>
+    <div class="top-bar">
+      <button class="back-btn" id="backBtn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="lockup-row" style="margin-bottom: 0;">
+        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+        <div>
+          <div class="word">knock</div>
+          <div class="tag">talent intelligence</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Knock, knock. <em>Who's there?</em></h2>
+    <p class="form-sub">Tell us where you study. We'll add you to the right group.</p>
+
+    <form id="signupForm" novalidate>
+
+      <!-- University -->
+      <div class="form-field" data-field="university">
+        <div class="label">University <span class="hint">pick one</span></div>
+        <div class="chip-group" data-chip-group="university">
+          <button type="button" class="chip" data-value="UCT" data-domain="myuct.ac.za">UCT</button>
+          <button type="button" class="chip" data-value="Wits" data-domain="students.wits.ac.za">Wits</button>
+          <button type="button" class="chip" data-value="Stellies" data-domain="sun.ac.za">Stellies</button>
+          <button type="button" class="chip" data-value="Pretoria" data-domain="tuks.co.za">Pretoria</button>
+          <button type="button" class="chip" data-value="UKZN" data-domain="stu.ukzn.ac.za">UKZN</button>
+          <button type="button" class="chip" data-value="Other" data-domain="">Other</button>
+        </div>
+        <input type="text" class="followup" id="universityOther" placeholder="Which university?" hidden />
+        <div class="err-msg">Pick your university.</div>
+      </div>
+
+      <!-- Field -->
+      <div class="form-field" data-field="field">
+        <div class="label">Field</div>
+        <div class="chip-group" data-chip-group="field">
+          <button type="button" class="chip" data-value="STEM">STEM</button>
+          <button type="button" class="chip" data-value="Non-STEM">Non-STEM</button>
+        </div>
+        <input type="text" class="followup" id="fieldOther" placeholder="What do you study?" hidden />
+        <div class="err-msg">Pick your field.</div>
+      </div>
+
+      <!-- WhatsApp number -->
+      <div class="form-field" data-field="whatsapp">
+        <div class="label">WhatsApp number <span class="hint">we'll message you here</span></div>
+        <div class="phone-field">
+          <div class="prefix">+27</div>
+          <input type="tel" id="fPhone" autocomplete="tel-national" inputmode="numeric" placeholder="79 123 4567" maxlength="13" />
+        </div>
+        <div class="err-msg">A valid SA number please.</div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-field" data-field="email">
+        <div class="label" id="emailLabel">University email</div>
+        <div class="email-row" id="emailRow">
+          <input type="text" id="fEmail" autocomplete="email" placeholder="your.username" />
+          <div class="email-domain" id="emailDomain">@myuct.ac.za</div>
+        </div>
+        <div class="err-msg">A valid email please.</div>
+      </div>
+
+      <!-- Optional details toggle -->
+      <details class="optional-toggle" id="optionalToggle">
+        <summary>
+          <div class="ot-l">
+            <span class="ot-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </span>
+            <div>
+              <div class="ot-label">Help us match you better</div>
+              <div class="ot-sub">Optional · ~15 seconds · improves your matches</div>
+            </div>
+          </div>
+          <svg class="ot-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="ot-body">
+
+          <!-- Year of study -->
+          <div class="form-field">
+            <div class="label">Year of study</div>
+            <div class="chip-group" data-chip-group="year">
+              <button type="button" class="chip" data-value="Year 1">Yr 1</button>
+              <button type="button" class="chip" data-value="Year 2">Yr 2</button>
+              <button type="button" class="chip" data-value="Year 3">Yr 3</button>
+              <button type="button" class="chip" data-value="Year 4">Yr 4 / Final</button>
+              <button type="button" class="chip" data-value="Honours">Hons</button>
+              <button type="button" class="chip" data-value="Masters">Masters</button>
+              <button type="button" class="chip" data-value="Graduated">Just grad'd</button>
+            </div>
+          </div>
+
+          <!-- GPA bands -->
+          <div class="form-field">
+            <div class="label">GPA band</div>
+            <div class="chip-group" data-chip-group="gpa">
+              <button type="button" class="chip" data-value="50-60">50–60%</button>
+              <button type="button" class="chip" data-value="60-65">60–65%</button>
+              <button type="button" class="chip" data-value="65-70">65–70%</button>
+              <button type="button" class="chip" data-value="70-75">70–75%</button>
+              <button type="button" class="chip" data-value="75-80">75–80%</button>
+              <button type="button" class="chip" data-value="80+">80%+</button>
+            </div>
+          </div>
+
+          <!-- Looking for (multi-select) -->
+          <div class="form-field">
+            <div class="label">What you're looking for <span class="hint">pick as many as you want</span></div>
+            <div class="chip-group" data-chip-group="lookingFor" data-multi="true">
+              <button type="button" class="chip multi" data-value="Internships">Internships</button>
+              <button type="button" class="chip multi" data-value="Jobs">Jobs</button>
+              <button type="button" class="chip multi" data-value="Bursaries">Bursaries</button>
+              <button type="button" class="chip multi" data-value="Career advice">Career advice</button>
+              <button type="button" class="chip multi" data-value="Talks">Talks</button>
+              <button type="button" class="chip multi" data-value="Workshops">Workshops</button>
+              <button type="button" class="chip multi" data-value="Job roles & industries">Learning roles &amp; industries</button>
+            </div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- Consent -->
+      <label class="consent" id="consentBox">
+        <input type="checkbox" id="fConsent" />
+        <div class="box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="text">
+          I consent to <strong>Knock</strong> adding me to a relevant group and sending me matched opportunities via WhatsApp.
+          POPIA-aligned. Withdraw anytime.
+        </div>
+      </label>
+
+      <div class="submit-banner" id="submitBanner"></div>
+
+      <button type="submit" class="cta-btn" id="submitBtn">
+        Get me found
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+
+      <div class="micro">
+        Already signed up? <a href="mailto:sales@knocktalent.co.za">Update your details</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- CARD: CONFIRMATION                                         -->
+  <!-- ======================================================== -->
+  <div class="card" id="cardDone" hidden>
+    <div class="check-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+
+    <h2>You're <em>in.</em></h2>
+    <p class="done-sub">
+      We've got your details. We'll <strong>add you to your group on WhatsApp shortly</strong>.
+    </p>
+
+    <div class="next-list">
+      <div class="nl-label">What happens next</div>
+      <div class="nl-item">
+        <div class="nl-num">1</div>
+        <div>We <strong>verify your profile</strong> within 24 hours.</div>
+      </div>
+      <div class="nl-item">
+        <div class="nl-num">2</div>
+        <div>We <strong>add you to your university's Knock group</strong> on WhatsApp.</div>
+      </div>
+      <div class="nl-item">
+        <div class="nl-num">3</div>
+        <div>We <strong>post relevant industry opportunities</strong> to your group.</div>
+      </div>
+    </div>
+
+    <div class="invite-card">
+      <div class="ic-title">Bring a friend.</div>
+      <div class="ic-sub">Tag a STEM mate. Knock works better with more of you on it.</div>
+      <a id="waShareLink" href="#" class="ic-btn" rel="noopener" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        Share on WhatsApp
+      </a>
+    </div>
+
+    <!-- Social icons on confirmation too -->
+    <div class="social-row">
+      <a href="#" id="sWebsite2" target="_blank" rel="noopener" class="social-link" aria-label="Website">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </a>
+      <a href="#" id="sInstagram2" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="#" id="sLinkedIn2" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <script>
   /* ============================================================
-     STATE
+     STATE / STORAGE KEYS
      ============================================================ */
   const STORAGE_FORM = 'knock_signup_form';
   const STORAGE_EVENTS = 'knock_signup_events';
   const STORAGE_SUBMISSIONS = 'knock_signup_submissions';
+  const STORAGE_STATES = 'knock_signup_states';
+  const SESSION_VIEW_KEY = 'knock_form_view_logged';
+  const SESSION_ADMIN_KEY = 'knock_admin_unlocked';
 
   let formData = JSON.parse(localStorage.getItem(STORAGE_FORM) || '{}');
   let formStartedAt = null;
   const pageLoadedAt = Date.now();
 
-  /* ============================================================
-     ANALYTICS TRACKER
-     - Logs events to localStorage
-     - Hooks for Plausible / GA4 / Cloudflare (see <head>)
-     ============================================================ */
-  function track(eventName, props) {
-    const evt = {
-      e: eventName,
-      t: Date.now(),
-      p: props || {}
-    };
-    const log = JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]');
-    log.push(evt);
-    // Keep last 5000 events to avoid bloat
-    if (log.length > 5000) log.splice(0, log.length - 5000);
-    localStorage.setItem(STORAGE_EVENTS, JSON.stringify(log));
-
-    // Hook: Plausible (if enabled in <head>)
-    if (window.plausible) window.plausible(eventName, { props: props || {} });
-
-    // Hook: GA4 (if gtag enabled in <head>)
-    if (window.gtag) window.gtag('event', eventName, props || {});
+  function isAdminPage() {
+    return new URLSearchParams(window.location.search).get('stats') === '1';
   }
 
+  /* ============================================================
+     ANALYTICS — only fires on the signup form page (never admin)
+     ============================================================ */
+  function track(eventName, props) {
+    if (isAdminPage()) return; // Critical: never log views/events from admin
+    const evt = { e: eventName, t: Date.now(), p: props || {} };
+    const log = JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]');
+    log.push(evt);
+    if (log.length > 5000) log.splice(0, log.length - 5000);
+    localStorage.setItem(STORAGE_EVENTS, JSON.stringify(log));
+    if (window.plausible) window.plausible(eventName, { props: props || {} });
+    if (window.gtag) window.gtag('event', eventName, props || {});
+  }
   function getEvents() { return JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]'); }
-  function getSubmissions() { return JSON.parse(localStorage.getItem(STORAGE_SUBMISSIONS) || '[]'); }
+  function getLocalSubmissions() { return JSON.parse(localStorage.getItem(STORAGE_SUBMISSIONS) || '[]'); }
+  function getStates() { return JSON.parse(localStorage.getItem(STORAGE_STATES) || '{}'); }
+  function setStateFor(ref, state) {
+    const states = getStates();
+    states[ref] = state;
+    localStorage.setItem(STORAGE_STATES, JSON.stringify(states));
+  }
 
   /* ============================================================
-     STATE TRANSITIONS
+     PAGE-LOAD: only log form views, never admin views
+     ============================================================ */
+  if (!isAdminPage()) {
+    // Only fire one page_view per session (not on every refresh)
+    if (!sessionStorage.getItem(SESSION_VIEW_KEY)) {
+      track('page_view', {
+        referrer: document.referrer || 'direct',
+        viewport: window.innerWidth + 'x' + window.innerHeight
+      });
+      sessionStorage.setItem(SESSION_VIEW_KEY, '1');
+    }
+    window.addEventListener('beforeunload', () => {
+      const ms = Date.now() - pageLoadedAt;
+      track('page_unload', { ms_on_page: ms });
+    });
+  }
+
+  /* ============================================================
+     SOCIAL ICON LINKS
+     ============================================================ */
+  ['sWebsite','sWebsite2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.KNOCK_WEBSITE) el.href = window.KNOCK_WEBSITE;
+  });
+  ['sInstagram','sInstagram2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.KNOCK_INSTAGRAM) el.href = window.KNOCK_INSTAGRAM;
+  });
+  ['sLinkedIn','sLinkedIn2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.KNOCK_LINKEDIN) el.href = window.KNOCK_LINKEDIN;
+  });
+
+  /* ============================================================
+     VISION DECK CAROUSEL
+     ============================================================ */
+  const visionTrack = document.getElementById('visionTrack');
+  const visionDots = document.querySelectorAll('#visionDots .v-dot');
+  visionDots.forEach(d => d.addEventListener('click', () => {
+    const i = parseInt(d.dataset.i);
+    const slide = visionTrack.children[i];
+    visionTrack.scrollTo({ left: slide.offsetLeft, behavior: 'smooth' });
+  }));
+  visionTrack.addEventListener('scroll', () => {
+    const i = Math.round(visionTrack.scrollLeft / visionTrack.clientWidth);
+    visionDots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+  });
+
+  /* ============================================================
+     CARD TRANSITIONS
      ============================================================ */
   const cardHero = document.getElementById('cardHero');
   const cardForm = document.getElementById('cardForm');
@@ -1104,22 +1582,14 @@
   function showCard(which) {
     [cardHero, cardForm, cardDone].forEach(c => c.hidden = true);
     document.getElementById(which).hidden = false;
-    // Force animation restart
-    document.getElementById(which).style.animation = 'none';
-    void document.getElementById(which).offsetWidth;
-    document.getElementById(which).style.animation = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ============================================================
-     HERO → FORM
-     ============================================================ */
   document.getElementById('startBtn').addEventListener('click', () => {
     track('hero_cta_clicked', { ms_to_click: Date.now() - pageLoadedAt });
     formStartedAt = Date.now();
     showCard('cardForm');
     track('form_started');
-    // Restore any partial form data
     restoreForm();
   });
 
@@ -1129,34 +1599,102 @@
   });
 
   /* ============================================================
-     CHIP GROUPS
+     CHIP GROUPS (single + multi)
      ============================================================ */
   document.querySelectorAll('.chip-group').forEach(group => {
     const fieldName = group.dataset.chipGroup;
+    const isMulti = group.dataset.multi === 'true';
     group.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', () => {
-        group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-        chip.classList.add('selected');
-        formData[fieldName] = chip.dataset.value;
+        if (isMulti) {
+          chip.classList.toggle('selected');
+          const selected = Array.from(group.querySelectorAll('.chip.selected')).map(c => c.dataset.value);
+          formData[fieldName] = selected;
+        } else {
+          group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          formData[fieldName] = chip.dataset.value;
+
+          // University → email-domain swap + Other follow-up
+          if (fieldName === 'university') {
+            handleUniversityChange(chip.dataset.value, chip.dataset.domain || '');
+          }
+          // Field → Non-STEM follow-up
+          if (fieldName === 'field') {
+            handleFieldChange(chip.dataset.value);
+          }
+        }
         persistForm();
-        track('field_completed', { field: fieldName, value: chip.dataset.value });
-        // Clear validation error
+        track('field_completed', { field: fieldName, value: formData[fieldName] });
         group.closest('.form-field').classList.remove('invalid');
       });
     });
   });
 
   /* ============================================================
+     UNIVERSITY → EMAIL DOMAIN
+     ============================================================ */
+  const emailRow = document.getElementById('emailRow');
+  const emailDomainEl = document.getElementById('emailDomain');
+  const fEmail = document.getElementById('fEmail');
+  const emailLabel = document.getElementById('emailLabel');
+  const uniOther = document.getElementById('universityOther');
+
+  function handleUniversityChange(value, domain) {
+    if (value === 'Other') {
+      uniOther.hidden = false;
+      // Email becomes free input
+      emailRow.classList.add('free');
+      emailDomainEl.textContent = '';
+      emailLabel.textContent = 'Email';
+      fEmail.placeholder = 'you@your.uni.email';
+      fEmail.type = 'email';
+    } else {
+      uniOther.hidden = true;
+      formData.universityOther = '';
+      // Email becomes split username + locked domain
+      emailRow.classList.remove('free');
+      emailDomainEl.textContent = '@' + domain;
+      emailLabel.textContent = 'University email';
+      fEmail.placeholder = 'your.username';
+      fEmail.type = 'text';
+    }
+    persistForm();
+  }
+
+  uniOther.addEventListener('input', () => {
+    formData.universityOther = uniOther.value.trim();
+    persistForm();
+  });
+
+  /* ============================================================
+     FIELD → Non-STEM follow-up
+     ============================================================ */
+  const fieldOther = document.getElementById('fieldOther');
+  function handleFieldChange(value) {
+    if (value === 'Non-STEM') {
+      fieldOther.hidden = false;
+    } else {
+      fieldOther.hidden = true;
+      formData.fieldOther = '';
+    }
+    persistForm();
+  }
+  fieldOther.addEventListener('input', () => {
+    formData.fieldOther = fieldOther.value.trim();
+    persistForm();
+  });
+
+  /* ============================================================
      TEXT INPUTS
      ============================================================ */
   const inputs = {
-    name:     document.getElementById('fName'),
     phone:    document.getElementById('fPhone'),
-    email:    document.getElementById('fEmail'),
+    email:    fEmail,
     consent:  document.getElementById('fConsent')
   };
 
-  ['name','phone','email'].forEach(k => {
+  ['phone','email'].forEach(k => {
     const inp = inputs[k];
     inp.addEventListener('focus', () => track('field_focused', { field: k }));
     inp.addEventListener('input', () => {
@@ -1178,218 +1716,283 @@
   });
 
   /* ============================================================
-     PERSIST + RESTORE
+     PERSIST / RESTORE
      ============================================================ */
   function persistForm() {
     localStorage.setItem(STORAGE_FORM, JSON.stringify(formData));
   }
 
   function restoreForm() {
-    // Chip groups
     document.querySelectorAll('.chip-group').forEach(group => {
       const f = group.dataset.chipGroup;
-      if (formData[f]) {
+      const isMulti = group.dataset.multi === 'true';
+      const val = formData[f];
+      if (!val) return;
+      if (isMulti && Array.isArray(val)) {
         group.querySelectorAll('.chip').forEach(c => {
-          c.classList.toggle('selected', c.dataset.value === formData[f]);
+          c.classList.toggle('selected', val.includes(c.dataset.value));
+        });
+      } else if (!isMulti) {
+        group.querySelectorAll('.chip').forEach(c => {
+          if (c.dataset.value === val) {
+            c.classList.add('selected');
+            if (f === 'university') handleUniversityChange(val, c.dataset.domain || '');
+            if (f === 'field') handleFieldChange(val);
+          }
         });
       }
     });
-    // Inputs
-    if (formData.name)  { inputs.name.value  = formData.name;  inputs.name.classList.add('has-value'); }
+    if (formData.universityOther) uniOther.value = formData.universityOther;
+    if (formData.fieldOther) fieldOther.value = formData.fieldOther;
     if (formData.phone) { inputs.phone.value = formData.phone; inputs.phone.classList.add('has-value'); }
     if (formData.email) { inputs.email.value = formData.email; inputs.email.classList.add('has-value'); }
     if (formData.consent) inputs.consent.checked = true;
   }
 
   /* ============================================================
-     VALIDATION + SUBMIT
+     VALIDATION
      ============================================================ */
   function validateForm() {
     let valid = true;
-    const errors = [];
-
     document.querySelectorAll('.form-field').forEach(f => f.classList.remove('invalid'));
     document.getElementById('consentBox').classList.remove('invalid');
 
-    const required = ['university','year','field','name','phone','email'];
-    required.forEach(field => {
-      const isChip = ['university','year','field'].includes(field);
-      const filled = isChip ? !!formData[field] : !!(inputs[field] && inputs[field].value.trim());
-      if (!filled) {
-        const node = isChip
-          ? document.querySelector(`.form-field[data-field="${field}"]`)
-          : inputs[field].closest('.form-field');
-        node.classList.add('invalid');
-        errors.push(field);
-        valid = false;
-      }
-    });
-
-    // Phone basic SA validity (7–10 digits after +27)
-    const phoneVal = (formData.phone || '').replace(/\D/g,'');
-    if (phoneVal && (phoneVal.length < 7 || phoneVal.length > 10)) {
-      inputs.phone.closest('.form-field').classList.add('invalid');
-      errors.push('phone_format');
+    // University
+    if (!formData.university) {
+      document.querySelector('.form-field[data-field="university"]').classList.add('invalid');
+      valid = false;
+    } else if (formData.university === 'Other' && !formData.universityOther) {
+      document.querySelector('.form-field[data-field="university"]').classList.add('invalid');
       valid = false;
     }
 
-    // Email basic check
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      inputs.email.closest('.form-field').classList.add('invalid');
-      errors.push('email_format');
+    // Field
+    if (!formData.field) {
+      document.querySelector('.form-field[data-field="field"]').classList.add('invalid');
       valid = false;
+    } else if (formData.field === 'Non-STEM' && !formData.fieldOther) {
+      document.querySelector('.form-field[data-field="field"]').classList.add('invalid');
+      valid = false;
+    }
+
+    // Phone
+    const phoneDigits = (formData.phone || '').replace(/\D/g,'');
+    if (phoneDigits.length < 7 || phoneDigits.length > 10) {
+      inputs.phone.closest('.form-field').classList.add('invalid');
+      valid = false;
+    }
+
+    // Email
+    if (!formData.email) {
+      inputs.email.closest('.form-field').classList.add('invalid');
+      valid = false;
+    } else if (formData.university === 'Other') {
+      // Full email validation
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        inputs.email.closest('.form-field').classList.add('invalid');
+        valid = false;
+      }
+    } else {
+      // Username only — letters, digits, dots, dashes, underscores
+      if (!/^[a-zA-Z0-9._-]+$/.test(formData.email)) {
+        inputs.email.closest('.form-field').classList.add('invalid');
+        valid = false;
+      }
     }
 
     // Consent
     if (!formData.consent) {
       document.getElementById('consentBox').classList.add('invalid');
-      errors.push('consent');
       valid = false;
     }
 
-    if (!valid) track('validation_failed', { errors });
+    if (!valid) track('validation_failed');
     return valid;
   }
 
-  document.getElementById('signupForm').addEventListener('submit', e => {
+  /* ============================================================
+     GROUP ROUTING
+     ============================================================ */
+  function determineGroup(uni, field) {
+    const isSTEM = field === 'STEM';
+    if (!isSTEM) return 'Waitlist'; // Non-STEM goes to waitlist
+    if (uni === 'UCT') return 'UCT STEM';
+    if (uni === 'Stellies') return 'Stellenbosch STEM';
+    return 'Waitlist'; // Other unis on waitlist for now
+  }
+
+  /* ============================================================
+     SUBMIT
+     ============================================================ */
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     track('submit_clicked');
     if (!validateForm()) {
-      // Scroll to first error
       const firstErr = document.querySelector('.form-field.invalid, .consent.invalid');
       if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
-    // Capture submission
+    // Compose the final email
+    const uniChip = document.querySelector('.chip[data-value="' + formData.university + '"]');
+    const uniDomain = uniChip ? uniChip.dataset.domain || '' : '';
+    const finalEmail = (formData.university === 'Other' || !uniDomain)
+      ? formData.email
+      : formData.email + '@' + uniDomain;
+
+    const finalUni = formData.university === 'Other'
+      ? (formData.universityOther || 'Other')
+      : formData.university;
+
+    const finalField = formData.field === 'Non-STEM'
+      ? 'Non-STEM (' + (formData.fieldOther || '?') + ')'
+      : formData.field;
+
+    const group = determineGroup(formData.university, formData.field);
+
     const submission = {
-      ...formData,
+      ref: 'KNK-' + Date.now().toString(36).toUpperCase(),
       submitted_at: new Date().toISOString(),
       time_to_complete_s: formStartedAt ? Math.round((Date.now() - formStartedAt) / 1000) : null,
-      ref: 'KNK-' + Date.now().toString(36).toUpperCase(),
-      priority: formData.university === 'UCT' ? 'pilot_priority' : 'waitlist'
+      university: finalUni,
+      field: finalField,
+      year: formData.year || '',
+      gpa: formData.gpa || '',
+      lookingFor: Array.isArray(formData.lookingFor) ? formData.lookingFor.join(', ') : '',
+      phone: '+27 ' + formData.phone,
+      email: finalEmail,
+      consent: !!formData.consent,
+      group: group,
+      state: 'requested' // initial state
     };
 
-    // Append to submissions log
-    const subs = getSubmissions();
+    // Save locally regardless of backend
+    const subs = getLocalSubmissions();
     subs.push(submission);
     localStorage.setItem(STORAGE_SUBMISSIONS, JSON.stringify(subs));
+    setStateFor(submission.ref, 'requested');
 
     track('submit_success', {
       university: submission.university,
-      year: submission.year,
       field: submission.field,
-      priority: submission.priority,
+      group: submission.group,
       time_to_complete_s: submission.time_to_complete_s
     });
 
-    // BACKEND HOOK ===============================================
-    // To wire to Tally / Formspree / your own endpoint, replace
-    // the sendSubmission() function below with a real fetch():
-    sendSubmission(submission);
-    // ============================================================
+    // Animate the door knock + open transition, in parallel with backend POST
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
 
-    // Confirmation
-    document.getElementById('doneName').textContent = submission.name || 'friend';
-    showCard('cardDone');
+    // Logo knock
+    const formLogo = cardForm.querySelector('.knock-logo');
+    if (formLogo) formLogo.classList.add('is-knocking');
 
-    // Build the WhatsApp share link with the recipient's name personalised
-    buildShareLink(submission.name || 'a STEM friend');
+    // Fire the backend POST without blocking the animation
+    sendToBackend(submission).catch(err => console.warn('Backend post failed (cached locally):', err));
 
-    // Celebrate
+    await wait(820);
+    if (formLogo) formLogo.classList.remove('is-knocking');
+
+    cardForm.classList.add('is-door-closing');
+    await wait(540);
+
+    cardForm.hidden = true;
+    cardForm.classList.remove('is-door-closing');
+    cardDone.hidden = false;
+    cardDone.classList.add('is-door-opening');
+
+    buildShareLink(submission.group);
     burstConfetti();
 
-    // Clear stored form draft (but keep submissions)
+    // ============================================================
+    // Group-request CTA: read selected University + Field chips,
+    // update the WhatsApp button text + href, and refresh the
+    // QR code image source. Strictly JS — no HTML/CSS changes.
+    // ============================================================
+    {
+      const uni = (submission.university || '').trim();
+      const field = (submission.field || '').trim();
+      const labelPair = [uni, field].filter(Boolean).join(' ');
+
+      const waBtn = document.getElementById('waShareLink');
+      if (waBtn) {
+        const newText = labelPair
+          ? ` Request to join ${labelPair} Group`
+          : ' Request to join Group';
+        let textNodeReplaced = false;
+        for (const node of waBtn.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            node.textContent = newText;
+            textNodeReplaced = true;
+            break;
+          }
+        }
+        if (!textNodeReplaced) waBtn.appendChild(document.createTextNode(newText));
+        const joinMsg = labelPair
+          ? `Hi Knock, I'd like to request to join the ${labelPair} group.`
+          : "Hi Knock, I'd like to request to join a group.";
+        waBtn.href = 'https://wa.me/27790617894?text=' + encodeURIComponent(joinMsg);
+      }
+
+      const qrImg = document.querySelector('#qrCode, .qr-code, img[data-qr]');
+      if (qrImg) {
+        const params = new URLSearchParams({ university: uni, field: field }).toString();
+        const joinUrl = 'https://join.knocktalent.co.za/group?' + params;
+        const qrApi = 'https://api.qrserver.com/v1/create-qr-code/'
+          + '?size=240x240'
+          + '&margin=8'
+          + '&data=' + encodeURIComponent(joinUrl);
+        qrImg.src = qrApi;
+        qrImg.alt = labelPair
+          ? `QR code to request joining the ${labelPair} group`
+          : 'QR code to request joining a group';
+      }
+    }
+
+    setTimeout(() => cardDone.classList.remove('is-door-opening'), 750);
     localStorage.removeItem(STORAGE_FORM);
   });
 
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
   /* ============================================================
-     SUBMISSION → BACKEND (currently mailto fallback)
+     BACKEND POST — Google Apps Script
      ============================================================ */
-  function sendSubmission(s) {
-    /*
-     * TODO: swap this for a real backend.
-     *
-     * --- Option A: Tally ---
-     * fetch('https://tally.so/api/embed/r/YOUR_FORM_ID', {
-     *   method: 'POST',
-     *   headers: {'Content-Type': 'application/json'},
-     *   body: JSON.stringify(s)
-     * });
-     *
-     * --- Option B: Formspree ---
-     * fetch('https://formspree.io/f/YOUR_FORM_ID', {
-     *   method: 'POST',
-     *   headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-     *   body: JSON.stringify(s)
-     * });
-     *
-     * --- Option C: Your own Cloudflare Worker / API ---
-     * fetch('https://api.knocktalent.co.za/signup', {
-     *   method: 'POST', headers: {'Content-Type': 'application/json'},
-     *   body: JSON.stringify(s)
-     * });
-     */
-
-    // FALLBACK: open mailto with the submission baked in.
-    // We do this in a hidden iframe so the user isn't bounced out of the app.
-    const lines = [
-      `Ref: ${s.ref}`,
-      `Submitted: ${s.submitted_at}`,
-      `Time to complete: ${s.time_to_complete_s}s`,
-      `Priority: ${s.priority}`,
-      ``,
-      `Name: ${s.name}`,
-      `University: ${s.university}`,
-      `Year: ${s.year}`,
-      `Field: ${s.field}`,
-      `WhatsApp: +27 ${s.phone}`,
-      `Email: ${s.email}`,
-      `Consent: ${s.consent ? 'YES' : 'NO'}`,
-    ].join('\n');
-    const url = 'mailto:sales@knocktalent.co.za' +
-      '?subject=' + encodeURIComponent('New Knock signup — ' + s.name + ' (' + s.university + ')') +
-      '&body=' + encodeURIComponent(lines);
-
-    // Use a hidden iframe so the page stays where it is
-    const ifr = document.createElement('iframe');
-    ifr.style.display = 'none';
-    ifr.src = url;
-    document.body.appendChild(ifr);
-    setTimeout(() => ifr.remove(), 2000);
+  async function sendToBackend(submission) {
+    const url = window.KNOCK_APPS_SCRIPT_URL;
+    if (!url) {
+      console.info('No backend URL set — submission saved locally only.');
+      return;
+    }
+    // Apps Script web apps don't support CORS preflight on JSON;
+    // use text/plain content-type to avoid preflight and let GAS
+    // parse e.postData.contents as JSON.
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ type: 'submission', data: submission })
+    });
   }
 
   /* ============================================================
-     INVITE-A-FRIEND SHARE LINK
+     INVITE LINK
      ============================================================ */
-  function buildShareLink(name) {
+  function buildShareLink(group) {
     const msg =
-`🚀 Just signed up for Knock — they connect SA STEM students directly with top corporates via WhatsApp.
+`🚀 Just signed up for Knock — they bring SA industry opportunities directly to your WhatsApp.
 
-It's free, and they verify your transcript so you get matched on real merit.
+It's free, built for STEM students, and they verify you so you get the right opportunities.
 
 Sign up here 👉 ${window.location.origin}${window.location.pathname}
 
-If you're STEM, you'll want in.`;
+You're going to want in.`;
     const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
     const link = document.getElementById('waShareLink');
-    link.href = url;
-
-    document.getElementById('copyInviteBtn').onclick = () => {
-      navigator.clipboard.writeText(msg).then(() => {
-        const btn = document.getElementById('copyInviteBtn');
-        const html = btn.innerHTML;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied';
-        setTimeout(() => btn.innerHTML = html, 1600);
-        track('invite_copied');
-      }).catch(() => alert(msg));
-    };
-
-    link.addEventListener('click', () => track('invite_shared'));
+    if (link) link.href = url;
   }
 
   /* ============================================================
-     CONFETTI (canvas based, no dependencies)
+     CONFETTI
      ============================================================ */
   function burstConfetti() {
     const canvas = document.getElementById('confettiCanvas');
@@ -1398,18 +2001,17 @@ If you're STEM, you'll want in.`;
     canvas.height = window.innerHeight;
     const colors = ['#5E17EB','#C9AAFF','#9560FF','#F0EBFF','#FFFFFF','#0D4513'];
     const pieces = [];
-    const N = 110;
-    for (let i = 0; i < N; i++) {
+    for (let i = 0; i < 110; i++) {
       pieces.push({
-        x: canvas.width / 2 + (Math.random() - 0.5) * 80,
-        y: canvas.height / 2 - 40,
-        vx: (Math.random() - 0.5) * 12,
-        vy: -Math.random() * 14 - 4,
-        g: 0.5 + Math.random() * 0.3,
-        r: 4 + Math.random() * 6,
-        c: colors[Math.floor(Math.random() * colors.length)],
-        rot: Math.random() * Math.PI,
-        vrot: (Math.random() - 0.5) * 0.3,
+        x: canvas.width/2 + (Math.random()-0.5)*80,
+        y: canvas.height/2 - 40,
+        vx: (Math.random()-0.5)*12,
+        vy: -Math.random()*14 - 4,
+        g: 0.5 + Math.random()*0.3,
+        r: 4 + Math.random()*6,
+        c: colors[Math.floor(Math.random()*colors.length)],
+        rot: Math.random()*Math.PI,
+        vrot: (Math.random()-0.5)*0.3,
         life: 0
       });
     }
@@ -1417,17 +2019,12 @@ If you're STEM, you'll want in.`;
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       pieces.forEach(p => {
-        p.vy += p.g;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rot += p.vrot;
-        p.life++;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
+        p.vy += p.g; p.x += p.vx; p.y += p.vy;
+        p.rot += p.vrot; p.life++;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
         ctx.fillStyle = p.c;
-        ctx.globalAlpha = Math.max(0, 1 - p.life / 110);
-        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r * 0.6);
+        ctx.globalAlpha = Math.max(0, 1 - p.life/110);
+        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
         ctx.restore();
       });
       frame++;
@@ -1438,42 +2035,76 @@ If you're STEM, you'll want in.`;
   }
 
   /* ============================================================
-     PAGE LOAD ANALYTICS
+     ADMIN: PASSWORD GATE
      ============================================================ */
-  track('page_view', {
-    referrer: document.referrer || 'direct',
-    viewport: window.innerWidth + 'x' + window.innerHeight,
-    ua: navigator.userAgent.slice(0, 100)
-  });
-
-  // Track time on page when leaving
-  window.addEventListener('beforeunload', () => {
-    const ms = Date.now() - pageLoadedAt;
-    track('page_unload', { ms_on_page: ms });
-  });
-
-  /* ============================================================
-     ADMIN VIEW (?stats=1)
-     ============================================================ */
-  function isAdmin() {
-    return new URLSearchParams(window.location.search).get('stats') === '1';
+  if (isAdminPage()) {
+    document.body.classList.add('admin');
+    if (sessionStorage.getItem(SESSION_ADMIN_KEY) === '1') {
+      document.body.classList.add('unlocked');
+      refreshAdmin();
+    }
+    const gateBtn = document.getElementById('gateUnlock');
+    const gateInp = document.getElementById('gatePass');
+    const gateEl  = document.getElementById('adminGate');
+    function attemptUnlock() {
+      if (gateInp.value === window.KNOCK_STATS_PASSWORD) {
+        sessionStorage.setItem(SESSION_ADMIN_KEY, '1');
+        document.body.classList.add('unlocked');
+        gateEl.classList.remove('failed');
+        refreshAdmin();
+      } else {
+        gateEl.classList.add('failed');
+      }
+    }
+    gateBtn.addEventListener('click', attemptUnlock);
+    gateInp.addEventListener('keydown', e => { if (e.key === 'Enter') attemptUnlock(); });
+    setTimeout(() => gateInp.focus(), 80);
   }
 
-  function refreshAdmin() {
-    if (!isAdmin()) return;
-    const events = getEvents();
-    const subs = getSubmissions();
+  /* ============================================================
+     ADMIN: PULL DATA (Apps Script GET → fallback to local cache)
+     ============================================================ */
+  async function fetchCentralSubmissions() {
+    const url = window.KNOCK_APPS_SCRIPT_URL;
+    const dataSrc = document.getElementById('dataSourceInfo');
+    const dataTxt = document.getElementById('dataSourceText');
+    if (!url) {
+      dataSrc.classList.add('offline');
+      dataSrc.classList.remove('online');
+      dataTxt.textContent = 'Source: local cache only (no Apps Script URL set in config)';
+      return getLocalSubmissions();
+    }
+    try {
+      const r = await fetch(url + '?action=list', { method: 'GET' });
+      const json = await r.json();
+      const subs = json.submissions || [];
+      dataSrc.classList.add('online');
+      dataSrc.classList.remove('offline');
+      dataTxt.textContent = `Source: Google Sheet (${subs.length} rows)`;
+      return subs;
+    } catch (err) {
+      dataSrc.classList.add('offline');
+      dataSrc.classList.remove('online');
+      dataTxt.textContent = 'Source: local cache (Sheet fetch failed — check Apps Script deployment)';
+      return getLocalSubmissions();
+    }
+  }
 
+  async function refreshAdmin() {
+    if (!document.body.classList.contains('unlocked')) return;
+    const events = getEvents();
+    const subs = await fetchCentralSubmissions();
+    const states = getStates();
+
+    // Events tiles (form-only)
     const pageViews = events.filter(e => e.e === 'page_view').length;
     const ctaClicks = events.filter(e => e.e === 'hero_cta_clicked').length;
     const formStarts = events.filter(e => e.e === 'form_started').length;
     const submits = events.filter(e => e.e === 'submit_success').length;
-
     document.getElementById('aPageViews').textContent = pageViews.toLocaleString();
     document.getElementById('aCtaClicks').textContent = ctaClicks.toLocaleString();
     document.getElementById('aSignups').textContent = subs.length.toLocaleString();
 
-    // Median submit time
     const times = subs.map(s => s.time_to_complete_s).filter(x => typeof x === 'number').sort((a,b) => a-b);
     const median = times.length ? times[Math.floor(times.length/2)] : 0;
     document.getElementById('aMedianTime').innerHTML = median + '<small>s</small>';
@@ -1482,25 +2113,24 @@ If you're STEM, you'll want in.`;
     const funnelEl = document.getElementById('aFunnel');
     funnelEl.innerHTML = '';
     const steps = [
-      { key: 'Page views', count: pageViews },
+      { key: 'Form views', count: pageViews },
       { key: 'CTA clicks', count: ctaClicks },
       { key: 'Form started', count: formStarts },
-      { key: 'Submitted', count: submits }
+      { key: 'Submitted', count: subs.length || submits }
     ];
     const max = Math.max(1, ...steps.map(s => s.count));
     steps.forEach(s => {
       const row = document.createElement('div');
       row.className = 'row';
-      const pct = (s.count / max * 100).toFixed(0);
       row.innerHTML = `
         <span class="key">${s.key}</span>
-        <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+        <div class="bar"><div class="fill" style="width:${(s.count / max * 100).toFixed(0)}%"></div></div>
         <span class="num">${s.count}</span>
       `;
       funnelEl.appendChild(row);
     });
 
-    // University split
+    // Uni split
     const uniEl = document.getElementById('aUniSplit');
     uniEl.innerHTML = '';
     const uniCounts = {};
@@ -1516,31 +2146,84 @@ If you're STEM, you'll want in.`;
       uniSorted.forEach(([u, n]) => {
         const row = document.createElement('div');
         row.className = 'row';
-        const pct = (n / maxU * 100).toFixed(0);
         row.innerHTML = `
-          <span class="key">${u}</span>
-          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          <span class="key">${escapeHtml(u)}</span>
+          <div class="bar"><div class="fill" style="width:${(n/maxU*100).toFixed(0)}%"></div></div>
           <span class="num">${n}</span>
         `;
         uniEl.appendChild(row);
       });
     }
 
-    // Recent submissions
+    // State split
+    const stateEl = document.getElementById('aStateSplit');
+    stateEl.innerHTML = '';
+    const stateCounts = { requested: 0, added: 0, left: 0 };
+    subs.forEach(s => {
+      const st = (states[s.ref] || s.state || 'requested').toLowerCase();
+      if (stateCounts[st] !== undefined) stateCounts[st]++;
+    });
+    Object.entries(stateCounts).forEach(([st, n]) => {
+      const max = Math.max(1, ...Object.values(stateCounts));
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <span class="key" style="text-transform: capitalize;">${st}</span>
+        <div class="bar"><div class="fill" style="width:${(n/max*100).toFixed(0)}%"></div></div>
+        <span class="num">${n}</span>
+      `;
+      stateEl.appendChild(row);
+    });
+
+    // Submissions list with state pills
     const subsEl = document.getElementById('aSubmissions');
     subsEl.innerHTML = '';
     if (subs.length === 0) {
-      subsEl.innerHTML = '<div class="empty">No signups yet — share the link to start collecting.</div>';
+      subsEl.innerHTML = '<div style="text-align: center; padding: 1.6rem 0; color: var(--gray-500); font-family: var(--font-body); font-size: 12px;">No signups yet — share the link.</div>';
     } else {
       subs.slice().reverse().forEach(s => {
+        const ref = s.ref;
+        const currentState = (states[ref] || s.state || 'requested').toLowerCase();
+        const when = s.submitted_at ? new Date(s.submitted_at).toLocaleString() : '';
         const item = document.createElement('div');
         item.className = 'sub-item';
-        const when = new Date(s.submitted_at).toLocaleString();
         item.innerHTML = `
-          <div><strong>${escapeHtml(s.name || '?')}</strong> · ${escapeHtml(s.university || '?')} · ${escapeHtml(s.year || '?')} · ${escapeHtml(s.field || '?')}</div>
-          <div class="meta">+27 ${escapeHtml(s.phone || '')} · ${escapeHtml(s.email || '')} · ${when} · ${s.time_to_complete_s}s · <strong>${s.priority}</strong></div>
+          <div>
+            <div><strong>${escapeHtml(s.university || '?')}</strong> · ${escapeHtml(s.field || '?')} · ${escapeHtml(s.group || 'Waitlist')}</div>
+            <div class="si-meta">${escapeHtml(s.phone || '')} · ${escapeHtml(s.email || '')} · ${when}${s.year ? ' · ' + escapeHtml(s.year) : ''}${s.gpa ? ' · GPA ' + escapeHtml(s.gpa) : ''}</div>
+          </div>
+          <div class="state-pills" data-ref="${escapeHtml(ref)}">
+            <button class="state-pill requested ${currentState === 'requested' ? 'active' : ''}" data-state="requested">Requested</button>
+            <button class="state-pill added ${currentState === 'added' ? 'active' : ''}" data-state="added">Added</button>
+            <button class="state-pill left ${currentState === 'left' ? 'active' : ''}" data-state="left">Left</button>
+          </div>
         `;
         subsEl.appendChild(item);
+      });
+
+      // Wire state pill clicks
+      subsEl.querySelectorAll('.state-pills').forEach(group => {
+        const ref = group.dataset.ref;
+        group.querySelectorAll('.state-pill').forEach(pill => {
+          pill.addEventListener('click', async () => {
+            const state = pill.dataset.state;
+            group.querySelectorAll('.state-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            setStateFor(ref, state);
+            // Push state update to backend if configured
+            const url = window.KNOCK_APPS_SCRIPT_URL;
+            if (url) {
+              try {
+                await fetch(url, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                  body: JSON.stringify({ type: 'state_update', ref, state })
+                });
+              } catch (e) { console.warn('State sync failed (local only)', e); }
+            }
+            refreshAdmin(); // re-tally
+          });
+        });
       });
     }
   }
@@ -1550,11 +2233,15 @@ If you're STEM, you'll want in.`;
     return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  function exportSignups() {
-    const subs = getSubmissions();
+  async function exportSignups() {
+    const subs = await fetchCentralSubmissions();
     if (!subs.length) { alert('No signups to export yet.'); return; }
-    const headers = ['ref','submitted_at','time_to_complete_s','priority','name','university','year','field','phone','email','consent'];
-    const rows = subs.map(s => headers.map(h => JSON.stringify(s[h] || '')).join(','));
+    const headers = ['ref','submitted_at','time_to_complete_s','group','state','university','field','year','gpa','lookingFor','phone','email','consent'];
+    const states = getStates();
+    const rows = subs.map(s => headers.map(h => {
+      if (h === 'state') return JSON.stringify(states[s.ref] || s.state || 'requested');
+      return JSON.stringify(s[h] !== undefined && s[h] !== null ? String(s[h]) : '');
+    }).join(','));
     const csv = headers.join(',') + '\n' + rows.join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
@@ -1562,24 +2249,20 @@ If you're STEM, you'll want in.`;
     a.download = 'knock_signups_' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
     URL.revokeObjectURL(a.href);
-    track('admin_export_csv', { count: subs.length });
   }
 
-  function clearAnalytics() {
-    if (!confirm('Clear ALL signups + events + draft form data? This cannot be undone.')) return;
+  function clearLocalAnalytics() {
+    if (!confirm('Clear LOCAL cache of submissions + events + draft form data?\n\nThis does NOT affect data already saved to Google Sheets.')) return;
     localStorage.removeItem(STORAGE_FORM);
     localStorage.removeItem(STORAGE_EVENTS);
     localStorage.removeItem(STORAGE_SUBMISSIONS);
+    localStorage.removeItem(STORAGE_STATES);
     refreshAdmin();
   }
 
   function exitAdmin() {
-    window.location.search = '';
-  }
-
-  if (isAdmin()) {
-    document.body.classList.add('admin');
-    refreshAdmin();
+    sessionStorage.removeItem(SESSION_ADMIN_KEY);
+    window.location.href = window.location.pathname;
   }
 </script>
 </body>
