@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#5E17EB" />
+<meta name="description" content="Knock · Get found by SA's top corporates. For STEM students." />
+
+<!-- Social share -->
+<meta property="og:title" content="Knock · Get found." />
+<meta property="og:description" content="Top SA corporates are hiring. We bring you to them. For STEM students with verified transcripts." />
+<meta property="og:type" content="website" />
+
+<title>Knock · Get found.</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300,400,500,600,700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================
+     ANALYTICS HOOK POINTS — uncomment / paste in your snippet
+     ============================================================
+     PLAUSIBLE (recommended, privacy-friendly, free tier):
+     <script defer data-domain="knocktalent.co.za" src="https://plausible.io/js/script.js"></script>
+
+     GOOGLE ANALYTICS 4:
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+     <script>
+       window.dataLayer = window.dataLayer || [];
+       function gtag(){dataLayer.push(arguments);}
+       gtag('js', new Date()); gtag('config', 'G-XXXXXXX');
+     </script>
+
+     CLOUDFLARE WEB ANALYTICS (lightweight, free):
+     <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+       data-cf-beacon='{"token": "YOUR_TOKEN"}'></script>
+============================================================ -->
+
+<style>
+  :root {
+    --black: #000000;
+    --white: #FFFFFF;
+    --off-white: #F8F7F5;
+    --purple: #5E17EB;
+    --purple-light: #F0EBFF;
+    --purple-mid: #C9AAFF;
+    --purple-deep: #4A0FC1;
+    --purple-planet: #9560FF;
+    --gray-100: #EDEDEB;
+    --gray-300: #BDBBB7;
+    --gray-500: #888580;
+    --gray-700: #444241;
+    --do-bg:  #E1F5EE;
+    --do-ink: #085041;
+    --wa-green: #25D366;
+    --wa-green-dark: #128C7E;
+    --err-bg: #FCEBEB;
+    --err-ink: #A32D2D;
+    --font-title: "Cabinet Grotesk", "Switzer", system-ui, sans-serif;
+    --font-head:  "Poppins", system-ui, sans-serif;
+    --font-body:  "Switzer", "Inter", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overscroll-behavior: none; }
+  body {
+    background: var(--white);
+    color: var(--black);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Ambient purple wash */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background:
+      radial-gradient(900px 600px at 100% 0%, rgba(94,23,235,0.07) 0%, rgba(94,23,235,0) 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(94,23,235,0.04) 0%, rgba(94,23,235,0) 55%);
+  }
+
+  /* ==========  STAGE / CARDS  ========== */
+  .stage {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+    position: relative;
+  }
+  .card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(15,15,20,0.08), 0 8px 24px rgba(15,15,20,0.04);
+    padding: 2rem 1.6rem 1.6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .card[hidden] { display: none !important; }
+
+  /* All cards stack opacity-transition */
+  .card { animation: cardEnter 460ms cubic-bezier(.22,.61,.36,1); }
+  @keyframes cardEnter {
+    from { opacity: 0; transform: translateY(14px) scale(0.99); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ==========  KNOCK LOGO  ========== */
+  .knock-logo {
+    display: inline-block;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 6px 18px rgba(94,23,235,0.20), 0 2px 6px rgba(15,15,20,0.08);
+  }
+  .knock-logo svg { display: block; width: 100%; height: 100%; }
+
+  .lockup-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1.4rem;
+  }
+  .lockup-row .knock-logo { width: 36px; height: 36px; }
+  .lockup-row .word {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 21px;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: var(--black);
+  }
+  .lockup-row .tag {
+    font-family: var(--font-body);
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-top: 3px;
+  }
+
+  /* ============================================================ */
+  /* HERO CARD                                                      */
+  /* ============================================================ */
+  #cardHero {
+    text-align: center;
+    padding-top: 2.4rem;
+    padding-bottom: 2rem;
+  }
+  #cardHero .hero-logo {
+    width: 72px; height: 72px;
+    margin: 0 auto 1.2rem;
+    display: block;
+    animation: heroLogoFloat 4s ease-in-out infinite;
+  }
+  @keyframes heroLogoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  #cardHero h1 {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: clamp(48px, 12vw, 64px);
+    letter-spacing: -0.045em;
+    line-height: 0.96;
+    color: var(--black);
+    margin-bottom: 0.6rem;
+  }
+  #cardHero h1 .acc {
+    color: var(--purple);
+    display: inline-block;
+    position: relative;
+  }
+  #cardHero h1 .acc::after {
+    content: "";
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 4px;
+    background: var(--purple);
+    border-radius: 4px;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: underlineIn 0.7s ease 0.45s forwards;
+  }
+  @keyframes underlineIn { to { transform: scaleX(1); } }
+
+  #cardHero .sub {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--gray-700);
+    line-height: 1.5;
+    margin-bottom: 1.7rem;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #cardHero .sub strong { color: var(--black); font-weight: 600; }
+
+  #cardHero .pill-row {
+    display: flex; justify-content: center; flex-wrap: wrap;
+    gap: 5px; margin-bottom: 1.7rem;
+  }
+  #cardHero .pill-row .pill {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gray-700);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  #cardHero .pill-row .pill::before {
+    content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--purple);
+  }
+
+  .cta-btn {
+    width: 100%;
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 16px 18px;
+    border-radius: 14px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 15.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 22px rgba(94,23,235,0.30);
+    transition: all .18s cubic-bezier(.22,.61,.36,1);
+    letter-spacing: -0.005em;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-btn:hover { background: var(--purple-deep); transform: translateY(-1px); box-shadow: 0 10px 28px rgba(94,23,235,0.35); }
+  .cta-btn:active { transform: translateY(0); }
+  .cta-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 4px 12px rgba(94,23,235,0.12); }
+  .cta-btn svg { width: 16px; height: 16px; transition: transform .18s ease; }
+  .cta-btn:hover:not(:disabled) svg { transform: translateX(3px); }
+
+  #cardHero .meta {
+    margin-top: 1rem;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--gray-500);
+  }
+  #cardHero .meta strong { color: var(--purple); font-weight: 600; }
+
+  /* ============================================================ */
+  /* FORM CARD                                                      */
+  /* ============================================================ */
+  #cardForm .top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  #cardForm .back-btn {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .15s ease;
+  }
+  #cardForm .back-btn:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
+  #cardForm .back-btn svg { width: 14px; height: 14px; }
+  #cardForm .step-label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--purple);
+  }
+  #cardForm .step-label .step-curr {
+    font-family: var(--font-title);
+    font-weight: 900;
+    color: var(--black);
+  }
+
+  #cardForm h2 {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    color: var(--black);
+    margin-bottom: 0.4rem;
+  }
+  #cardForm h2 em { font-style: normal; color: var(--purple); }
+  #cardForm .form-sub {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 1.4rem;
+    line-height: 1.5;
+  }
+
+  .form-field { margin-bottom: 1rem; position: relative; }
+  .form-field .label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--gray-700);
+    margin-bottom: 7px;
+  }
+  .form-field .label .hint {
+    color: var(--gray-300);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 11px;
+  }
+  .form-field input {
+    width: 100%;
+    background: var(--off-white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 11px;
+    padding: 13px 14px;
+    font-family: var(--font-body);
+    font-size: 16px;  /* 16px+ prevents iOS auto-zoom */
+    font-weight: 500;
+    color: var(--black);
+    transition: all .15s ease;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .form-field input::placeholder { color: var(--gray-300); font-weight: 400; }
+  .form-field input:hover { border-color: var(--purple-mid); }
+  .form-field input:focus {
+    border-color: var(--purple);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(94,23,235,0.10);
+  }
+  .form-field input.has-value { background: var(--white); }
+  .form-field.invalid input {
+    border-color: var(--err-ink);
+    background: var(--err-bg);
+  }
+  .form-field .err-msg {
+    color: var(--err-ink);
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    margin-top: 5px;
+    display: none;
+  }
+  .form-field.invalid .err-msg { display: block; }
+
+  /* Phone field with prefix */
+  .phone-field {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 6px;
+  }
+  .phone-field .prefix {
+    background: var(--off-white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--gray-700);
+  }
+
+  /* Chip group */
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    background: var(--off-white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 999px;
+    padding: 9px 14px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all .15s cubic-bezier(.22,.61,.36,1);
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--purple-mid); color: var(--purple); background: var(--purple-light); }
+  .chip.selected {
+    background: var(--purple);
+    color: var(--white);
+    border-color: var(--purple);
+    box-shadow: 0 4px 12px rgba(94,23,235,0.25);
+    transform: scale(1.03);
+  }
+  .chip.selected:hover { background: var(--purple-deep); border-color: var(--purple-deep); }
+
+  /* Consent checkbox */
+  .consent {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 1rem 0 1.2rem;
+    padding: 12px 14px;
+    background: var(--off-white);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .consent:hover { border-color: var(--purple-mid); background: var(--purple-light); }
+  .consent input { display: none; }
+  .consent .box {
+    width: 22px; height: 22px;
+    background: var(--white);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    margin-top: 1px;
+    transition: all .15s ease;
+  }
+  .consent .box svg { width: 13px; height: 13px; color: var(--white); opacity: 0; transition: opacity .15s ease; }
+  .consent input:checked + .box {
+    background: var(--purple);
+    border-color: var(--purple);
+  }
+  .consent input:checked + .box svg { opacity: 1; }
+  .consent .text {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--gray-700);
+  }
+  .consent .text strong { color: var(--black); font-weight: 600; }
+  .consent.invalid { border-color: var(--err-ink); background: var(--err-bg); }
+
+  /* Footer micro-text */
+  .micro {
+    margin-top: 0.9rem;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+  .micro a { color: var(--purple); text-decoration: none; font-weight: 500; }
+
+  /* ============================================================ */
+  /* CONFIRMATION CARD                                              */
+  /* ============================================================ */
+  #cardDone {
+    text-align: center;
+    padding-top: 2rem;
+    padding-bottom: 1.6rem;
+  }
+  #cardDone .check-badge {
+    width: 64px; height: 64px;
+    margin: 0 auto 1.2rem;
+    background: var(--do-bg);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    animation: checkPop 700ms cubic-bezier(.22,1.36,.36,1) both;
+  }
+  #cardDone .check-badge svg { width: 32px; height: 32px; color: var(--do-ink); }
+  @keyframes checkPop {
+    0% { opacity: 0; transform: scale(0.3); }
+    60% { opacity: 1; transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+
+  #cardDone h2 {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: clamp(32px, 8vw, 40px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+  }
+  #cardDone h2 em { font-style: normal; color: var(--purple); }
+  #cardDone .done-sub {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--gray-700);
+    line-height: 1.5;
+    max-width: 320px;
+    margin: 0 auto 1.5rem;
+  }
+  #cardDone .done-sub strong { color: var(--black); font-weight: 600; }
+
+  #cardDone .next-list {
+    text-align: left;
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.3rem;
+  }
+  #cardDone .next-list .nl-label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 8px;
+  }
+  #cardDone .next-list .nl-item {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 9px;
+    align-items: flex-start;
+    padding: 5px 0;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--gray-700);
+    line-height: 1.45;
+  }
+  #cardDone .next-list .nl-item .nl-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--purple); color: var(--white);
+    display: grid; place-items: center;
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 11px; letter-spacing: -0.02em;
+  }
+  #cardDone .next-list .nl-item strong { color: var(--black); font-weight: 600; }
+
+  /* Invite card */
+  .invite-card {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--purple-deep) 100%);
+    color: var(--white);
+    border-radius: 16px;
+    padding: 1.1rem 1.2rem;
+    margin-top: 0.6rem;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+  }
+  .invite-card::after {
+    content: ""; position: absolute;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
+    right: -60px; top: -60px;
+  }
+  .invite-card .ic-title {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    position: relative; z-index: 1;
+  }
+  .invite-card .ic-sub {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: rgba(255,255,255,0.78);
+    margin-bottom: 0.85rem;
+    position: relative; z-index: 1;
+    line-height: 1.45;
+  }
+  .invite-card .ic-btn {
+    background: var(--wa-green);
+    color: var(--white);
+    border: none;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 13.5px;
+    width: 100%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background .15s ease;
+    position: relative; z-index: 1;
+    box-shadow: 0 4px 12px rgba(37,211,102,0.30);
+    text-decoration: none;
+  }
+  .invite-card .ic-btn:hover { background: var(--wa-green-dark); }
+  .invite-card .ic-btn svg { width: 16px; height: 16px; }
+  .invite-card .ic-copy {
+    background: rgba(255,255,255,0.10);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 9px 11px;
+    border-radius: 9px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 11.5px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: relative; z-index: 1;
+    transition: background .15s ease;
+  }
+  .invite-card .ic-copy:hover { background: rgba(255,255,255,0.18); }
+  .invite-card .ic-copy svg { width: 12px; height: 12px; }
+
+  /* ============================================================ */
+  /* CONFETTI                                                       */
+  /* ============================================================ */
+  #confettiCanvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 50;
+  }
+
+  /* ============================================================ */
+  /* ADMIN STATS VIEW (visible with ?stats=1)                       */
+  /* ============================================================ */
+  #adminPanel {
+    display: none;
+    max-width: 920px;
+    margin: 1.5rem auto;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(15,15,20,0.06);
+  }
+  body.admin #adminPanel { display: block; }
+  body.admin .stage { min-height: 0; padding-bottom: 0; }
+  #adminPanel h3 {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.4rem;
+  }
+  #adminPanel .panel-sub {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-bottom: 1.2rem;
+  }
+  #adminPanel .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.7rem;
+    margin-bottom: 1.4rem;
+  }
+  #adminPanel .stat-tile {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 0.8rem 0.9rem;
+  }
+  #adminPanel .stat-tile .lbl {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 9.5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 5px;
+  }
+  #adminPanel .stat-tile .val {
+    font-family: var(--font-title);
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: -0.025em;
+    color: var(--black);
+    line-height: 1;
+  }
+  #adminPanel .stat-tile .val small {
+    font-size: 12px; font-weight: 700;
+    color: var(--gray-500); margin-left: 3px;
+  }
+  #adminPanel .stat-tile .note {
+    font-family: var(--font-body); font-size: 10.5px;
+    color: var(--gray-500); margin-top: 5px;
+  }
+  #adminPanel .breakdown {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.2rem;
+  }
+  #adminPanel .breakdown h4 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    margin-bottom: 0.7rem;
+  }
+  #adminPanel .breakdown .row {
+    display: grid; grid-template-columns: 90px 1fr 36px;
+    align-items: center; gap: 11px;
+    padding: 5px 0;
+    border-top: 1px solid var(--gray-100);
+    font-family: var(--font-body);
+    font-size: 11.5px;
+  }
+  #adminPanel .breakdown .row:first-of-type { border-top: none; padding-top: 0; }
+  #adminPanel .breakdown .row .key { color: var(--gray-700); font-weight: 500; }
+  #adminPanel .breakdown .row .bar {
+    height: 6px; background: var(--gray-100); border-radius: 999px; overflow: hidden;
+  }
+  #adminPanel .breakdown .row .fill { height: 100%; background: var(--purple); border-radius: 999px; }
+  #adminPanel .breakdown .row .num {
+    font-family: var(--font-title); font-weight: 900;
+    font-size: 12px; color: var(--purple); text-align: right;
+    letter-spacing: -0.02em;
+  }
+  #adminPanel .actions {
+    display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap;
+  }
+  #adminPanel .actions button {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #adminPanel .actions button:hover { background: var(--purple-light); color: var(--purple); border-color: var(--purple-mid); }
+  #adminPanel .actions button.danger:hover { background: var(--err-bg); color: var(--err-ink); border-color: var(--err-ink); }
+  #adminPanel .actions svg { width: 13px; height: 13px; }
+  #adminPanel .submissions-log {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  #adminPanel .submissions-log h4 {
+    font-family: var(--font-head); font-weight: 700; font-size: 12px;
+    letter-spacing: -0.01em; color: var(--black); margin-bottom: 0.7rem;
+  }
+  #adminPanel .submissions-log .sub-item {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 8px 11px;
+    margin-bottom: 6px;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    color: var(--gray-700);
+    line-height: 1.45;
+  }
+  #adminPanel .submissions-log .sub-item:last-child { margin-bottom: 0; }
+  #adminPanel .submissions-log .sub-item strong { color: var(--black); font-weight: 600; }
+  #adminPanel .submissions-log .sub-item .meta { color: var(--gray-500); font-size: 10.5px; margin-top: 3px; }
+  #adminPanel .submissions-log .empty {
+    text-align: center; padding: 1.6rem 0;
+    font-family: var(--font-body); font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .stage { padding: 1rem; }
+    .card { padding: 1.5rem 1.2rem 1.3rem; border-radius: 20px; }
+    #cardForm h2 { font-size: 25px; }
+    #adminPanel { margin: 1rem; padding: 1rem; }
+    #adminPanel .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- INLINE: real Knock logo SVG                                    -->
+<!-- ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo-dark" viewBox="0 0 1180 1180">
+      <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
+      <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#FFFFFF"/>
+      <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#FFFFFF"/>
+      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#FFFFFF"/>
+      <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+    </symbol>
+  </defs>
+</svg>
+
+<canvas id="confettiCanvas"></canvas>
+
+<div class="stage">
+
+  <!-- ============================================================ -->
+  <!-- CARD: HERO                                                     -->
+  <!-- ============================================================ -->
+  <div class="card" id="cardHero">
+    <div class="knock-logo hero-logo"><svg><use href="#logo-dark"/></svg></div>
+    <h1>Get <span class="acc">found.</span></h1>
+    <p class="sub">
+      Top SA corporates are hiring. We bring you to them.
+      <strong>Built for STEM students.</strong>
+    </p>
+
+    <div class="pill-row">
+      <span class="pill">WhatsApp delivery</span>
+      <span class="pill">Verified profile</span>
+      <span class="pill">Free for students</span>
+    </div>
+
+    <button class="cta-btn" id="startBtn">
+      I'm in — get me found
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+
+    <div class="meta">Takes <strong>~30 seconds</strong> · we'll never share your data without consent</div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD: FORM                                                     -->
+  <!-- ============================================================ -->
+  <div class="card" id="cardForm" hidden>
+    <div class="top-bar">
+      <button class="back-btn" id="backBtn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="lockup-row" style="margin-bottom: 0;">
+        <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
+        <div>
+          <div class="word">knock</div>
+          <div class="tag">talent intelligence</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>One quick step. <em>That's it.</em></h2>
+    <p class="form-sub">Tell us who you are. We'll WhatsApp you when a match arrives.</p>
+
+    <form id="signupForm" novalidate>
+
+      <!-- University -->
+      <div class="form-field" data-field="university">
+        <div class="label">University <span class="hint">pick one</span></div>
+        <div class="chip-group" data-chip-group="university">
+          <button type="button" class="chip" data-value="UCT">UCT</button>
+          <button type="button" class="chip" data-value="Wits">Wits</button>
+          <button type="button" class="chip" data-value="Stellies">Stellies</button>
+          <button type="button" class="chip" data-value="Pretoria">Pretoria</button>
+          <button type="button" class="chip" data-value="UKZN">UKZN</button>
+          <button type="button" class="chip" data-value="Other SA">Other SA</button>
+        </div>
+        <div class="err-msg">Pick your university.</div>
+      </div>
+
+      <!-- Year -->
+      <div class="form-field" data-field="year">
+        <div class="label">Year</div>
+        <div class="chip-group" data-chip-group="year">
+          <button type="button" class="chip" data-value="Year 2">Year 2</button>
+          <button type="button" class="chip" data-value="Year 3">Year 3</button>
+          <button type="button" class="chip" data-value="Year 4">Year 4 / Final</button>
+          <button type="button" class="chip" data-value="Honours">Honours</button>
+          <button type="button" class="chip" data-value="Masters">Masters</button>
+          <button type="button" class="chip" data-value="Graduated">Just graduated</button>
+        </div>
+        <div class="err-msg">Pick your year.</div>
+      </div>
+
+      <!-- Field -->
+      <div class="form-field" data-field="field">
+        <div class="label">Field</div>
+        <div class="chip-group" data-chip-group="field">
+          <button type="button" class="chip" data-value="CompSci / Eng">CompSci / Eng</button>
+          <button type="button" class="chip" data-value="Maths / Stats">Maths / Stats</button>
+          <button type="button" class="chip" data-value="Physical Sciences">Physical Sciences</button>
+          <button type="button" class="chip" data-value="Other STEM">Other STEM</button>
+        </div>
+        <div class="err-msg">Pick your field.</div>
+      </div>
+
+      <!-- First name -->
+      <div class="form-field" data-field="name">
+        <div class="label">First name</div>
+        <input type="text" id="fName" autocomplete="given-name" placeholder="Thabo" />
+        <div class="err-msg">Tell us your first name.</div>
+      </div>
+
+      <!-- WhatsApp number -->
+      <div class="form-field" data-field="whatsapp">
+        <div class="label">WhatsApp number <span class="hint">we'll message you here</span></div>
+        <div class="phone-field">
+          <div class="prefix">+27</div>
+          <input type="tel" id="fPhone" autocomplete="tel-national" inputmode="numeric" placeholder="79 123 4567" maxlength="13" />
+        </div>
+        <div class="err-msg">A valid SA number please.</div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-field" data-field="email">
+        <div class="label">Email</div>
+        <input type="email" id="fEmail" autocomplete="email" inputmode="email" placeholder="you@uct.ac.za" />
+        <div class="err-msg">A valid email please.</div>
+      </div>
+
+      <!-- Consent -->
+      <label class="consent" id="consentBox">
+        <input type="checkbox" id="fConsent" />
+        <div class="box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="text">
+          I consent to <strong>Knock</strong> sending me matched corporate opportunities via WhatsApp.
+          POPIA-aligned. Withdraw anytime.
+        </div>
+      </label>
+
+      <button type="submit" class="cta-btn" id="submitBtn">
+        Get me found
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+
+      <div class="micro">
+        Already signed up? <a href="mailto:sales@knocktalent.co.za">Update your details</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD: CONFIRMATION                                             -->
+  <!-- ============================================================ -->
+  <div class="card" id="cardDone" hidden>
+    <div class="check-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+
+    <h2>You're <em>in.</em></h2>
+    <p class="done-sub">
+      Welcome to Knock, <strong id="doneName">friend</strong>.
+      We'll <strong>WhatsApp you shortly</strong> with your next step.
+    </p>
+
+    <div class="next-list">
+      <div class="nl-label">What happens next</div>
+      <div class="nl-item">
+        <div class="nl-num">1</div>
+        <div>We <strong>verify your profile</strong> within 24 hours.</div>
+      </div>
+      <div class="nl-item">
+        <div class="nl-num">2</div>
+        <div>You'll get a WhatsApp asking for your <strong>transcript</strong> (so we can match you accurately).</div>
+      </div>
+      <div class="nl-item">
+        <div class="nl-num">3</div>
+        <div>Corporate opportunities <strong>find you</strong> — direct on WhatsApp.</div>
+      </div>
+    </div>
+
+    <div class="invite-card">
+      <div class="ic-title">Bring a friend.</div>
+      <div class="ic-sub">Tag a STEM mate. Knock works better with more of you on it.</div>
+      <a id="waShareLink" href="#" class="ic-btn" rel="noopener" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        Share on WhatsApp
+      </a>
+      <button id="copyInviteBtn" class="ic-copy" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy invite text
+      </button>
+    </div>
+
+    <div class="micro" style="margin-top: 1.1rem;">
+      Want to update your details? <a href="mailto:sales@knocktalent.co.za">Email sales@knocktalent.co.za</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- ADMIN PANEL (?stats=1 to view)                                  -->
+<!-- ============================================================ -->
+<div id="adminPanel">
+  <h3>Knock signup analytics</h3>
+  <div class="panel-sub">Local analytics — refreshes from localStorage. Live values below.</div>
+
+  <div class="stats-grid">
+    <div class="stat-tile">
+      <div class="lbl">Page views</div>
+      <div class="val" id="aPageViews">0</div>
+      <div class="note">All-time unique loads</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">CTA clicks</div>
+      <div class="val" id="aCtaClicks">0</div>
+      <div class="note">Hero → form</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">Signups</div>
+      <div class="val" id="aSignups">0</div>
+      <div class="note">Submitted forms</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">Median submit</div>
+      <div class="val" id="aMedianTime">0<small>s</small></div>
+      <div class="note">Time on form → submit</div>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <h4>Funnel</h4>
+    <div id="aFunnel"></div>
+  </div>
+
+  <div class="breakdown">
+    <h4>University split</h4>
+    <div id="aUniSplit"></div>
+  </div>
+
+  <div class="submissions-log">
+    <h4>Recent signups</h4>
+    <div id="aSubmissions"></div>
+  </div>
+
+  <div class="actions">
+    <button onclick="exportSignups()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+    <button onclick="refreshAdmin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      Refresh
+    </button>
+    <button onclick="exitAdmin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to form
+    </button>
+    <button class="danger" onclick="clearAnalytics()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+      Clear all data
+    </button>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     STATE
+     ============================================================ */
+  const STORAGE_FORM = 'knock_signup_form';
+  const STORAGE_EVENTS = 'knock_signup_events';
+  const STORAGE_SUBMISSIONS = 'knock_signup_submissions';
+
+  let formData = JSON.parse(localStorage.getItem(STORAGE_FORM) || '{}');
+  let formStartedAt = null;
+  const pageLoadedAt = Date.now();
+
+  /* ============================================================
+     ANALYTICS TRACKER
+     - Logs events to localStorage
+     - Hooks for Plausible / GA4 / Cloudflare (see <head>)
+     ============================================================ */
+  function track(eventName, props) {
+    const evt = {
+      e: eventName,
+      t: Date.now(),
+      p: props || {}
+    };
+    const log = JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]');
+    log.push(evt);
+    // Keep last 5000 events to avoid bloat
+    if (log.length > 5000) log.splice(0, log.length - 5000);
+    localStorage.setItem(STORAGE_EVENTS, JSON.stringify(log));
+
+    // Hook: Plausible (if enabled in <head>)
+    if (window.plausible) window.plausible(eventName, { props: props || {} });
+
+    // Hook: GA4 (if gtag enabled in <head>)
+    if (window.gtag) window.gtag('event', eventName, props || {});
+  }
+
+  function getEvents() { return JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]'); }
+  function getSubmissions() { return JSON.parse(localStorage.getItem(STORAGE_SUBMISSIONS) || '[]'); }
+
+  /* ============================================================
+     STATE TRANSITIONS
+     ============================================================ */
+  const cardHero = document.getElementById('cardHero');
+  const cardForm = document.getElementById('cardForm');
+  const cardDone = document.getElementById('cardDone');
+
+  function showCard(which) {
+    [cardHero, cardForm, cardDone].forEach(c => c.hidden = true);
+    document.getElementById(which).hidden = false;
+    // Force animation restart
+    document.getElementById(which).style.animation = 'none';
+    void document.getElementById(which).offsetWidth;
+    document.getElementById(which).style.animation = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ============================================================
+     HERO → FORM
+     ============================================================ */
+  document.getElementById('startBtn').addEventListener('click', () => {
+    track('hero_cta_clicked', { ms_to_click: Date.now() - pageLoadedAt });
+    formStartedAt = Date.now();
+    showCard('cardForm');
+    track('form_started');
+    // Restore any partial form data
+    restoreForm();
+  });
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    track('form_back_clicked');
+    showCard('cardHero');
+  });
+
+  /* ============================================================
+     CHIP GROUPS
+     ============================================================ */
+  document.querySelectorAll('.chip-group').forEach(group => {
+    const fieldName = group.dataset.chipGroup;
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        formData[fieldName] = chip.dataset.value;
+        persistForm();
+        track('field_completed', { field: fieldName, value: chip.dataset.value });
+        // Clear validation error
+        group.closest('.form-field').classList.remove('invalid');
+      });
+    });
+  });
+
+  /* ============================================================
+     TEXT INPUTS
+     ============================================================ */
+  const inputs = {
+    name:     document.getElementById('fName'),
+    phone:    document.getElementById('fPhone'),
+    email:    document.getElementById('fEmail'),
+    consent:  document.getElementById('fConsent')
+  };
+
+  ['name','phone','email'].forEach(k => {
+    const inp = inputs[k];
+    inp.addEventListener('focus', () => track('field_focused', { field: k }));
+    inp.addEventListener('input', () => {
+      formData[k] = inp.value.trim();
+      inp.classList.toggle('has-value', !!inp.value);
+      persistForm();
+      inp.closest('.form-field').classList.remove('invalid');
+    });
+    inp.addEventListener('blur', () => {
+      if (inp.value.trim()) track('field_completed', { field: k });
+    });
+  });
+
+  inputs.consent.addEventListener('change', () => {
+    formData.consent = inputs.consent.checked;
+    persistForm();
+    document.getElementById('consentBox').classList.remove('invalid');
+    if (inputs.consent.checked) track('field_completed', { field: 'consent' });
+  });
+
+  /* ============================================================
+     PERSIST + RESTORE
+     ============================================================ */
+  function persistForm() {
+    localStorage.setItem(STORAGE_FORM, JSON.stringify(formData));
+  }
+
+  function restoreForm() {
+    // Chip groups
+    document.querySelectorAll('.chip-group').forEach(group => {
+      const f = group.dataset.chipGroup;
+      if (formData[f]) {
+        group.querySelectorAll('.chip').forEach(c => {
+          c.classList.toggle('selected', c.dataset.value === formData[f]);
+        });
+      }
+    });
+    // Inputs
+    if (formData.name)  { inputs.name.value  = formData.name;  inputs.name.classList.add('has-value'); }
+    if (formData.phone) { inputs.phone.value = formData.phone; inputs.phone.classList.add('has-value'); }
+    if (formData.email) { inputs.email.value = formData.email; inputs.email.classList.add('has-value'); }
+    if (formData.consent) inputs.consent.checked = true;
+  }
+
+  /* ============================================================
+     VALIDATION + SUBMIT
+     ============================================================ */
+  function validateForm() {
+    let valid = true;
+    const errors = [];
+
+    document.querySelectorAll('.form-field').forEach(f => f.classList.remove('invalid'));
+    document.getElementById('consentBox').classList.remove('invalid');
+
+    const required = ['university','year','field','name','phone','email'];
+    required.forEach(field => {
+      const isChip = ['university','year','field'].includes(field);
+      const filled = isChip ? !!formData[field] : !!(inputs[field] && inputs[field].value.trim());
+      if (!filled) {
+        const node = isChip
+          ? document.querySelector(`.form-field[data-field="${field}"]`)
+          : inputs[field].closest('.form-field');
+        node.classList.add('invalid');
+        errors.push(field);
+        valid = false;
+      }
+    });
+
+    // Phone basic SA validity (7–10 digits after +27)
+    const phoneVal = (formData.phone || '').replace(/\D/g,'');
+    if (phoneVal && (phoneVal.length < 7 || phoneVal.length > 10)) {
+      inputs.phone.closest('.form-field').classList.add('invalid');
+      errors.push('phone_format');
+      valid = false;
+    }
+
+    // Email basic check
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      inputs.email.closest('.form-field').classList.add('invalid');
+      errors.push('email_format');
+      valid = false;
+    }
+
+    // Consent
+    if (!formData.consent) {
+      document.getElementById('consentBox').classList.add('invalid');
+      errors.push('consent');
+      valid = false;
+    }
+
+    if (!valid) track('validation_failed', { errors });
+    return valid;
+  }
+
+  document.getElementById('signupForm').addEventListener('submit', e => {
+    e.preventDefault();
+    track('submit_clicked');
+    if (!validateForm()) {
+      // Scroll to first error
+      const firstErr = document.querySelector('.form-field.invalid, .consent.invalid');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Capture submission
+    const submission = {
+      ...formData,
+      submitted_at: new Date().toISOString(),
+      time_to_complete_s: formStartedAt ? Math.round((Date.now() - formStartedAt) / 1000) : null,
+      ref: 'KNK-' + Date.now().toString(36).toUpperCase(),
+      priority: formData.university === 'UCT' ? 'pilot_priority' : 'waitlist'
+    };
+
+    // Append to submissions log
+    const subs = getSubmissions();
+    subs.push(submission);
+    localStorage.setItem(STORAGE_SUBMISSIONS, JSON.stringify(subs));
+
+    track('submit_success', {
+      university: submission.university,
+      year: submission.year,
+      field: submission.field,
+      priority: submission.priority,
+      time_to_complete_s: submission.time_to_complete_s
+    });
+
+    // BACKEND HOOK ===============================================
+    // To wire to Tally / Formspree / your own endpoint, replace
+    // the sendSubmission() function below with a real fetch():
+    sendSubmission(submission);
+    // ============================================================
+
+    // Confirmation
+    document.getElementById('doneName').textContent = submission.name || 'friend';
+    showCard('cardDone');
+
+    // Build the WhatsApp share link with the recipient's name personalised
+    buildShareLink(submission.name || 'a STEM friend');
+
+    // Celebrate
+    burstConfetti();
+
+    // Clear stored form draft (but keep submissions)
+    localStorage.removeItem(STORAGE_FORM);
+  });
+
+  /* ============================================================
+     SUBMISSION → BACKEND (currently mailto fallback)
+     ============================================================ */
+  function sendSubmission(s) {
+    /*
+     * TODO: swap this for a real backend.
+     *
+     * --- Option A: Tally ---
+     * fetch('https://tally.so/api/embed/r/YOUR_FORM_ID', {
+     *   method: 'POST',
+     *   headers: {'Content-Type': 'application/json'},
+     *   body: JSON.stringify(s)
+     * });
+     *
+     * --- Option B: Formspree ---
+     * fetch('https://formspree.io/f/YOUR_FORM_ID', {
+     *   method: 'POST',
+     *   headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+     *   body: JSON.stringify(s)
+     * });
+     *
+     * --- Option C: Your own Cloudflare Worker / API ---
+     * fetch('https://api.knocktalent.co.za/signup', {
+     *   method: 'POST', headers: {'Content-Type': 'application/json'},
+     *   body: JSON.stringify(s)
+     * });
+     */
+
+    // FALLBACK: open mailto with the submission baked in.
+    // We do this in a hidden iframe so the user isn't bounced out of the app.
+    const lines = [
+      `Ref: ${s.ref}`,
+      `Submitted: ${s.submitted_at}`,
+      `Time to complete: ${s.time_to_complete_s}s`,
+      `Priority: ${s.priority}`,
+      ``,
+      `Name: ${s.name}`,
+      `University: ${s.university}`,
+      `Year: ${s.year}`,
+      `Field: ${s.field}`,
+      `WhatsApp: +27 ${s.phone}`,
+      `Email: ${s.email}`,
+      `Consent: ${s.consent ? 'YES' : 'NO'}`,
+    ].join('\n');
+    const url = 'mailto:sales@knocktalent.co.za' +
+      '?subject=' + encodeURIComponent('New Knock signup — ' + s.name + ' (' + s.university + ')') +
+      '&body=' + encodeURIComponent(lines);
+
+    // Use a hidden iframe so the page stays where it is
+    const ifr = document.createElement('iframe');
+    ifr.style.display = 'none';
+    ifr.src = url;
+    document.body.appendChild(ifr);
+    setTimeout(() => ifr.remove(), 2000);
+  }
+
+  /* ============================================================
+     INVITE-A-FRIEND SHARE LINK
+     ============================================================ */
+  function buildShareLink(name) {
+    const msg =
+`🚀 Just signed up for Knock — they connect SA STEM students directly with top corporates via WhatsApp.
+
+It's free, and they verify your transcript so you get matched on real merit.
+
+Sign up here 👉 ${window.location.origin}${window.location.pathname}
+
+If you're STEM, you'll want in.`;
+    const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    const link = document.getElementById('waShareLink');
+    link.href = url;
+
+    document.getElementById('copyInviteBtn').onclick = () => {
+      navigator.clipboard.writeText(msg).then(() => {
+        const btn = document.getElementById('copyInviteBtn');
+        const html = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied';
+        setTimeout(() => btn.innerHTML = html, 1600);
+        track('invite_copied');
+      }).catch(() => alert(msg));
+    };
+
+    link.addEventListener('click', () => track('invite_shared'));
+  }
+
+  /* ============================================================
+     CONFETTI (canvas based, no dependencies)
+     ============================================================ */
+  function burstConfetti() {
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const colors = ['#5E17EB','#C9AAFF','#9560FF','#F0EBFF','#FFFFFF','#0D4513'];
+    const pieces = [];
+    const N = 110;
+    for (let i = 0; i < N; i++) {
+      pieces.push({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 80,
+        y: canvas.height / 2 - 40,
+        vx: (Math.random() - 0.5) * 12,
+        vy: -Math.random() * 14 - 4,
+        g: 0.5 + Math.random() * 0.3,
+        r: 4 + Math.random() * 6,
+        c: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * Math.PI,
+        vrot: (Math.random() - 0.5) * 0.3,
+        life: 0
+      });
+    }
+    let frame = 0;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.vy += p.g;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vrot;
+        p.life++;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.c;
+        ctx.globalAlpha = Math.max(0, 1 - p.life / 110);
+        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r * 0.6);
+        ctx.restore();
+      });
+      frame++;
+      if (frame < 140) requestAnimationFrame(draw);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    draw();
+  }
+
+  /* ============================================================
+     PAGE LOAD ANALYTICS
+     ============================================================ */
+  track('page_view', {
+    referrer: document.referrer || 'direct',
+    viewport: window.innerWidth + 'x' + window.innerHeight,
+    ua: navigator.userAgent.slice(0, 100)
+  });
+
+  // Track time on page when leaving
+  window.addEventListener('beforeunload', () => {
+    const ms = Date.now() - pageLoadedAt;
+    track('page_unload', { ms_on_page: ms });
+  });
+
+  /* ============================================================
+     ADMIN VIEW (?stats=1)
+     ============================================================ */
+  function isAdmin() {
+    return new URLSearchParams(window.location.search).get('stats') === '1';
+  }
+
+  function refreshAdmin() {
+    if (!isAdmin()) return;
+    const events = getEvents();
+    const subs = getSubmissions();
+
+    const pageViews = events.filter(e => e.e === 'page_view').length;
+    const ctaClicks = events.filter(e => e.e === 'hero_cta_clicked').length;
+    const formStarts = events.filter(e => e.e === 'form_started').length;
+    const submits = events.filter(e => e.e === 'submit_success').length;
+
+    document.getElementById('aPageViews').textContent = pageViews.toLocaleString();
+    document.getElementById('aCtaClicks').textContent = ctaClicks.toLocaleString();
+    document.getElementById('aSignups').textContent = subs.length.toLocaleString();
+
+    // Median submit time
+    const times = subs.map(s => s.time_to_complete_s).filter(x => typeof x === 'number').sort((a,b) => a-b);
+    const median = times.length ? times[Math.floor(times.length/2)] : 0;
+    document.getElementById('aMedianTime').innerHTML = median + '<small>s</small>';
+
+    // Funnel
+    const funnelEl = document.getElementById('aFunnel');
+    funnelEl.innerHTML = '';
+    const steps = [
+      { key: 'Page views', count: pageViews },
+      { key: 'CTA clicks', count: ctaClicks },
+      { key: 'Form started', count: formStarts },
+      { key: 'Submitted', count: submits }
+    ];
+    const max = Math.max(1, ...steps.map(s => s.count));
+    steps.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      const pct = (s.count / max * 100).toFixed(0);
+      row.innerHTML = `
+        <span class="key">${s.key}</span>
+        <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+        <span class="num">${s.count}</span>
+      `;
+      funnelEl.appendChild(row);
+    });
+
+    // University split
+    const uniEl = document.getElementById('aUniSplit');
+    uniEl.innerHTML = '';
+    const uniCounts = {};
+    subs.forEach(s => {
+      const u = s.university || 'Unknown';
+      uniCounts[u] = (uniCounts[u] || 0) + 1;
+    });
+    const uniSorted = Object.entries(uniCounts).sort((a,b) => b[1] - a[1]);
+    if (uniSorted.length === 0) {
+      uniEl.innerHTML = '<div style="color: var(--gray-500); font-family: var(--font-body); font-size: 12px;">No signups yet.</div>';
+    } else {
+      const maxU = uniSorted[0][1];
+      uniSorted.forEach(([u, n]) => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        const pct = (n / maxU * 100).toFixed(0);
+        row.innerHTML = `
+          <span class="key">${u}</span>
+          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          <span class="num">${n}</span>
+        `;
+        uniEl.appendChild(row);
+      });
+    }
+
+    // Recent submissions
+    const subsEl = document.getElementById('aSubmissions');
+    subsEl.innerHTML = '';
+    if (subs.length === 0) {
+      subsEl.innerHTML = '<div class="empty">No signups yet — share the link to start collecting.</div>';
+    } else {
+      subs.slice().reverse().forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'sub-item';
+        const when = new Date(s.submitted_at).toLocaleString();
+        item.innerHTML = `
+          <div><strong>${escapeHtml(s.name || '?')}</strong> · ${escapeHtml(s.university || '?')} · ${escapeHtml(s.year || '?')} · ${escapeHtml(s.field || '?')}</div>
+          <div class="meta">+27 ${escapeHtml(s.phone || '')} · ${escapeHtml(s.email || '')} · ${when} · ${s.time_to_complete_s}s · <strong>${s.priority}</strong></div>
+        `;
+        subsEl.appendChild(item);
+      });
+    }
+  }
+
+  function escapeHtml(s) {
+    if (typeof s !== 'string') return s;
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function exportSignups() {
+    const subs = getSubmissions();
+    if (!subs.length) { alert('No signups to export yet.'); return; }
+    const headers = ['ref','submitted_at','time_to_complete_s','priority','name','university','year','field','phone','email','consent'];
+    const rows = subs.map(s => headers.map(h => JSON.stringify(s[h] || '')).join(','));
+    const csv = headers.join(',') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'knock_signups_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    track('admin_export_csv', { count: subs.length });
+  }
+
+  function clearAnalytics() {
+    if (!confirm('Clear ALL signups + events + draft form data? This cannot be undone.')) return;
+    localStorage.removeItem(STORAGE_FORM);
+    localStorage.removeItem(STORAGE_EVENTS);
+    localStorage.removeItem(STORAGE_SUBMISSIONS);
+    refreshAdmin();
+  }
+
+  function exitAdmin() {
+    window.location.search = '';
+  }
+
+  if (isAdmin()) {
+    document.body.classList.add('admin');
+    refreshAdmin();
+  }
+</script>
+</body>
+</html>
