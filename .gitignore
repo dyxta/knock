@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor noise
+.vscode/
+*.swp
+
+# Local-only config
+config.local.js

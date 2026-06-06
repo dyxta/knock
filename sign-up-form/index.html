@@ -21,15 +21,17 @@
      CONFIG — fill in once
      ============================================================ -->
 <script>
-  /* === BACKEND === Replace with your Google Apps Script /exec URL.
+  /* === BACKEND === Google Apps Script /exec URL.
      Until set, submissions are saved to localStorage only.            */
-  window.KNOCK_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxI8CeMbboWYqMeRLzgiCRfV-V55kv2J26enSWLWTYDqGk3K_Sx5Fikv25ehhQsY7F7Dw/exec'; // e.g. 'https://script.google.com/macros/s/AKfycb.../exec'
+  window.KNOCK_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxI8CeMbboWYqMeRLzgiCRfV-V55kv2J26enSWLWTYDqGk3K_Sx5Fikv25ehhQsY7F7Dw/exec';
 
-  /* === STATS PASSWORD === Update this to whatever you want.
-     The ops team enters this to access ?stats=1.                      */
-  window.KNOCK_STATS_PASSWORD = 'knock-ops-2026';
+  /* === STATS PASSWORD === NO LONGER STORED IN HTML.
+     It now lives in Apps Script → Project Settings → Script Properties.
+     Key:   STATS_PASSWORD
+     Value: <your password>
+     To rotate: edit there. No code change, no redeploy of this file.   */
 
-  /* === SOCIALS === Update these.                                     */
+  /* === SOCIALS === */
   window.KNOCK_INSTAGRAM = 'https://instagram.com/knock_talent';
   window.KNOCK_WEBSITE   = 'https://knocktalent.co.za';
   window.KNOCK_LINKEDIN  = 'https://linkedin.com/company/knocktalent';
@@ -803,6 +805,92 @@
   .invite-card .ic-btn:hover { background: var(--wa-green-dark); }
   .invite-card .ic-btn svg { width: 15px; height: 15px; }
 
+  /* ============================================================
+     SHIMMER + GLOW for the "Request to join" CTA
+     ============================================================ */
+  .invite-card .shimmer-btn {
+    position: relative;
+    overflow: hidden;
+    background: var(--wa-green);
+    animation: pulseGlow 2.4s ease-in-out infinite;
+    isolation: isolate;
+  }
+  .invite-card .shimmer-btn .ic-btn-inner {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .invite-card .shimmer-btn .shimmer-overlay {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: -55%;
+    width: 55%;
+    z-index: 1;
+    background: linear-gradient(
+      100deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.55) 45%,
+      rgba(255,255,255,0.55) 55%,
+      rgba(255,255,255,0) 100%
+    );
+    transform: skewX(-20deg);
+    animation: shimmerSweep 2.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmerSweep {
+    0%   { left: -55%; }
+    60%  { left: 130%; }
+    100% { left: 130%; }
+  }
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow:
+        0 4px 12px rgba(37,211,102,0.35),
+        0 0 0 0 rgba(37,211,102,0.50);
+    }
+    50% {
+      box-shadow:
+        0 6px 22px rgba(37,211,102,0.55),
+        0 0 0 9px rgba(37,211,102,0);
+    }
+  }
+  .invite-card .shimmer-btn:hover {
+    animation: pulseGlow 2.4s ease-in-out infinite;
+    background: var(--wa-green-dark);
+  }
+
+  /* COPY-TO-SHARE BUTTON */
+  .invite-card .ic-copy-btn {
+    background: rgba(255,255,255,0.10);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 12.5px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .invite-card .ic-copy-btn:hover {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.30);
+  }
+  .invite-card .ic-copy-btn svg { width: 13px; height: 13px; }
+  .invite-card .ic-copy-btn.copied {
+    background: rgba(255,255,255,0.95);
+    color: var(--purple-deep);
+    border-color: var(--white);
+  }
+
   /* ==========  CONFETTI  ========== */
   #confettiCanvas {
     position: fixed; inset: 0;
@@ -905,6 +993,8 @@
     gap: 0.7rem;
     margin-bottom: 1.4rem;
   }
+  #adminPanel .stat-tile .note.growth-up { color: var(--do-ink); font-weight: 600; }
+  #adminPanel .stat-tile .note.growth-down { color: var(--err-ink); font-weight: 600; }
   #adminPanel .stat-tile {
     background: var(--off-white);
     border: 1px solid var(--gray-100);
@@ -1123,7 +1213,22 @@
     <div class="stat-tile">
       <div class="lbl">Form views</div>
       <div class="val" id="aPageViews">0</div>
-      <div class="note">Unique loads of the signup form only</div>
+      <div class="note">Unique loads · all time</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">Form views · 7d</div>
+      <div class="val" id="aPageViews7d">0</div>
+      <div class="note">Past 7 days</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">Signups</div>
+      <div class="val" id="aSignups">0</div>
+      <div class="note">All-time</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">Signups · 7d</div>
+      <div class="val" id="aSignups7d">0</div>
+      <div class="note" id="aSignupsGrowth">vs prev 7d</div>
     </div>
     <div class="stat-tile">
       <div class="lbl">CTA clicks</div>
@@ -1131,14 +1236,19 @@
       <div class="note">Hero → form</div>
     </div>
     <div class="stat-tile">
-      <div class="lbl">Signups</div>
-      <div class="val" id="aSignups">0</div>
-      <div class="note">All-time submissions</div>
+      <div class="lbl">Share actions</div>
+      <div class="val" id="aShareTotal">0</div>
+      <div class="note" id="aShareSplit">requests · copies</div>
     </div>
     <div class="stat-tile">
       <div class="lbl">Median submit</div>
       <div class="val" id="aMedianTime">0<small>s</small></div>
       <div class="note">Time on form → submit</div>
+    </div>
+    <div class="stat-tile">
+      <div class="lbl">Growth · 7d</div>
+      <div class="val" id="aGrowthPct">0<small>%</small></div>
+      <div class="note">this 7d vs prev 7d</div>
     </div>
   </div>
 
@@ -1293,7 +1403,7 @@
     </div>
 
     <h2>Knock, knock. <em>Who's there?</em></h2>
-    <p class="form-sub">tell us where you study. it helps us pick the right group for you.</p>
+    <p class="form-sub">Tell us where you study. It helps us pick the right group for you.</p>
 
     <form id="signupForm" novalidate>
 
@@ -1301,15 +1411,15 @@
       <div class="form-field" data-field="university">
         <div class="label">University <span class="hint">pick one</span></div>
         <div class="chip-group" data-chip-group="university">
-          <button type="button" class="chip" data-value="uct" data-domain="myuct.ac.za">uct</button>
-          <button type="button" class="chip" data-value="wits" data-domain="students.wits.ac.za">wits</button>
-          <button type="button" class="chip" data-value="stellies" data-domain="sun.ac.za">stellies</button>
-          <button type="button" class="chip" data-value="tuks" data-domain="tuks.co.za">tuks</button>
-          <button type="button" class="chip" data-value="ukzn" data-domain="stu.ukzn.ac.za">ukzn</button>
-          <button type="button" class="chip" data-value="Other" data-domain="">other</button>
+          <button type="button" class="chip" data-value="UCT" data-domain="myuct.ac.za">UCT</button>
+          <button type="button" class="chip" data-value="Wits" data-domain="students.wits.ac.za">Wits</button>
+          <button type="button" class="chip" data-value="Stellies" data-domain="sun.ac.za">Stellies</button>
+          <button type="button" class="chip" data-value="Pretoria" data-domain="tuks.co.za">Pretoria</button>
+          <button type="button" class="chip" data-value="UKZN" data-domain="stu.ukzn.ac.za">UKZN</button>
+          <button type="button" class="chip" data-value="Other" data-domain="">Other</button>
         </div>
         <input type="text" class="followup" id="universityOther" placeholder="Which university?" hidden />
-        <div class="err-msg">pick your university.</div>
+        <div class="err-msg">Pick your university.</div>
       </div>
 
       <!-- Field -->
@@ -1325,7 +1435,7 @@
 
       <!-- WhatsApp number -->
       <div class="form-field" data-field="whatsapp">
-        <div class="label">WhatsApp number <span class="hint">we use this to verify who accesses our groups</span></div>
+        <div class="label">WhatsApp number <span class="hint">we use this to verify who accesses our groups/span></div>
         <div class="phone-field">
           <div class="prefix">+27</div>
           <input type="tel" id="fPhone" autocomplete="tel-national" inputmode="numeric" placeholder="79 123 4567" maxlength="13" />
@@ -1369,8 +1479,27 @@
               <button type="button" class="chip" data-value="Year 4">Yr 4 / Final</button>
               <button type="button" class="chip" data-value="Honours">Hons</button>
               <button type="button" class="chip" data-value="Masters">Masters</button>
-              <button type="button" class="chip" data-value="Graduated">Just grad'd (< 12 months)</button>
+              <button type="button" class="chip" data-value="Graduated">Just grad'd (/< 1 year)</button>
             </div>
+          </div>
+
+          <!-- Degree -->
+          <div class="form-field" data-field="degree">
+            <div class="label">Degree / specialisation <span class="hint">pick the closest</span></div>
+            <div class="chip-group" data-chip-group="degree">
+              <button type="button" class="chip" data-value="CompSci / IS">CompSci / IS</button>
+              <button type="button" class="chip" data-value="Math / Data Sci / Stats">Math / Data Sci / Stats</button>
+              <button type="button" class="chip" data-value="Act Sci">Act Sci</button>
+              <button type="button" class="chip" data-value="Comp Eng">Comp Eng</button>
+              <button type="button" class="chip" data-value="Mechatronics">Mechatronics</button>
+              <button type="button" class="chip" data-value="Medicine">Medicine</button>
+              <button type="button" class="chip" data-value="Chem / Bio / Genetics">Chem / Bio / Genetics</button>
+              <button type="button" class="chip" data-value="AI">AI</button>
+              <button type="button" class="chip" data-value="FinTech">FinTech</button>
+              <button type="button" class="chip" data-value="Physics">Physics</button>
+              <button type="button" class="chip" data-value="Other">Other</button>
+            </div>
+            <input type="text" class="followup" id="degreeOther" placeholder="What's your degree?" hidden />
           </div>
 
           <!-- GPA bands -->
@@ -1436,34 +1565,44 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
 
-    <h2>You're <em>valid.</em></h2>
+    <h2>You're <em>vetted.</em></h2>
     <p class="done-sub">
-      We've got your details. We'll <strong>approve your group join request on WhatsApp shortly</strong>.
+      We've got your details. <strong>Request to join</strong> and we'll verify
+      you've registered and approve you.
     </p>
 
     <div class="next-list">
       <div class="nl-label">What happens next</div>
       <div class="nl-item">
         <div class="nl-num">1</div>
-        <div>We <strong>verify your profile</strong> within 24 hours. (we check the number you submitted is the one requesting to join)</div>
+        <div>We <strong>verify your profile</strong> within 24 hours.</div>
       </div>
       <div class="nl-item">
         <div class="nl-num">2</div>
-        <div>We <strong>have the button below to join your university's Knock group</strong> on WhatsApp.</div>
+        <div>You <strong>request to join your university's STEM group</strong> by clicking the button below&nbsp;↓</div>
       </div>
       <div class="nl-item">
         <div class="nl-num">3</div>
-        <div>We <strong>post relevant industry opportunities</strong> to your group twice a week - no spam.</div>
+        <div>We <strong>post relevant industry opportunities</strong>
+          (jobs, internships, bursaries) to your group. <em>No spam — 2× a week max.</em>
+        </div>
       </div>
     </div>
 
     <div class="invite-card">
-      <div class="ic-title">Bring a friend.</div>
-      <div class="ic-sub">Tag a STEM mate. Knock works better with more of you on it.</div>
-      <a id="waShareLink" href="#" class="ic-btn" rel="noopener" target="_blank">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-        Share on WhatsApp
+      <div class="ic-title">Knock, knock.</div>
+      <div class="ic-sub">Tap to message us — we'll verify and add you to the group.</div>
+      <a id="waShareLink" href="#" class="ic-btn shimmer-btn" rel="noopener" target="_blank">
+        <span class="shimmer-overlay" aria-hidden="true"></span>
+        <span class="ic-btn-inner">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+          Request to join group
+        </span>
       </a>
+      <button id="copyShareBtn" class="ic-copy-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span class="copy-label">Copy text to share with a STEM friend</span>
+      </button>
     </div>
 
     <!-- Social icons on confirmation too -->
@@ -1503,16 +1642,75 @@
 
   /* ============================================================
      ANALYTICS — only fires on the signup form page (never admin)
+     - Logs locally to STORAGE_EVENTS
+     - Queues important events to STORAGE_EVENT_QUEUE for backend POST
+     - Queue flushed periodically + on unload via navigator.sendBeacon
      ============================================================ */
+  const STORAGE_EVENT_QUEUE = 'knock_signup_event_queue';
+  // High-signal events worth shipping to the Sheet. Field focus/completed are
+  // noisy and stay local-only.
+  const BACKEND_EVENTS = new Set([
+    'page_view',
+    'hero_cta_clicked',
+    'form_started',
+    'submit_clicked',
+    'submit_success',
+    'validation_failed',
+    'share_clicked',
+    'share_copied'
+  ]);
+  // A session id helps us track unique sessions in the central log
+  let SESSION_ID = sessionStorage.getItem('knock_sess_id');
+  if (!SESSION_ID) {
+    SESSION_ID = 's_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+    sessionStorage.setItem('knock_sess_id', SESSION_ID);
+  }
+
   function track(eventName, props) {
     if (isAdminPage()) return; // Critical: never log views/events from admin
-    const evt = { e: eventName, t: Date.now(), p: props || {} };
+    const evt = { e: eventName, t: Date.now(), p: props || {}, s: SESSION_ID };
+    // Local log
     const log = JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]');
     log.push(evt);
     if (log.length > 5000) log.splice(0, log.length - 5000);
     localStorage.setItem(STORAGE_EVENTS, JSON.stringify(log));
+    // Backend queue (only high-signal events)
+    if (BACKEND_EVENTS.has(eventName) && window.KNOCK_APPS_SCRIPT_URL) {
+      const queue = JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE) || '[]');
+      queue.push(evt);
+      localStorage.setItem(STORAGE_EVENT_QUEUE, JSON.stringify(queue));
+      scheduleEventFlush();
+    }
     if (window.plausible) window.plausible(eventName, { props: props || {} });
     if (window.gtag) window.gtag('event', eventName, props || {});
+  }
+
+  let _eventFlushTimer = null;
+  function scheduleEventFlush() {
+    if (_eventFlushTimer) return;
+    _eventFlushTimer = setTimeout(async () => {
+      _eventFlushTimer = null;
+      await flushEventQueue();
+    }, 4000);
+  }
+  async function flushEventQueue() {
+    const url = window.KNOCK_APPS_SCRIPT_URL;
+    if (!url) return;
+    const queue = JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE) || '[]');
+    if (!queue.length) return;
+    // Clear optimistically; re-queue on failure
+    localStorage.setItem(STORAGE_EVENT_QUEUE, '[]');
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ type: 'events_batch', data: queue })
+      });
+    } catch (e) {
+      // Re-queue failures
+      const cur = JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE) || '[]');
+      localStorage.setItem(STORAGE_EVENT_QUEUE, JSON.stringify(queue.concat(cur)));
+    }
   }
   function getEvents() { return JSON.parse(localStorage.getItem(STORAGE_EVENTS) || '[]'); }
   function getLocalSubmissions() { return JSON.parse(localStorage.getItem(STORAGE_SUBMISSIONS) || '[]'); }
@@ -1538,6 +1736,17 @@
     window.addEventListener('beforeunload', () => {
       const ms = Date.now() - pageLoadedAt;
       track('page_unload', { ms_on_page: ms });
+      // Reliably flush queued events on unload via sendBeacon
+      const url = window.KNOCK_APPS_SCRIPT_URL;
+      const queue = JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE) || '[]');
+      if (url && queue.length && navigator.sendBeacon) {
+        const blob = new Blob(
+          [JSON.stringify({ type: 'events_batch', data: queue })],
+          { type: 'text/plain;charset=utf-8' }
+        );
+        navigator.sendBeacon(url, blob);
+        localStorage.setItem(STORAGE_EVENT_QUEUE, '[]');
+      }
     });
   }
 
@@ -1623,6 +1832,10 @@
           if (fieldName === 'field') {
             handleFieldChange(chip.dataset.value);
           }
+          // Degree → Other follow-up
+          if (fieldName === 'degree') {
+            handleDegreeChange(chip.dataset.value);
+          }
         }
         persistForm();
         track('field_completed', { field: fieldName, value: formData[fieldName] });
@@ -1686,6 +1899,26 @@
   });
 
   /* ============================================================
+     DEGREE → Other follow-up
+     ============================================================ */
+  const degreeOther = document.getElementById('degreeOther');
+  function handleDegreeChange(value) {
+    if (value === 'Other') {
+      degreeOther.hidden = false;
+    } else {
+      degreeOther.hidden = true;
+      formData.degreeOther = '';
+    }
+    persistForm();
+  }
+  if (degreeOther) {
+    degreeOther.addEventListener('input', () => {
+      formData.degreeOther = degreeOther.value.trim();
+      persistForm();
+    });
+  }
+
+  /* ============================================================
      TEXT INPUTS
      ============================================================ */
   const inputs = {
@@ -1738,12 +1971,14 @@
             c.classList.add('selected');
             if (f === 'university') handleUniversityChange(val, c.dataset.domain || '');
             if (f === 'field') handleFieldChange(val);
+            if (f === 'degree') handleDegreeChange(val);
           }
         });
       }
     });
     if (formData.universityOther) uniOther.value = formData.universityOther;
     if (formData.fieldOther) fieldOther.value = formData.fieldOther;
+    if (formData.degreeOther && degreeOther) degreeOther.value = formData.degreeOther;
     if (formData.phone) { inputs.phone.value = formData.phone; inputs.phone.classList.add('has-value'); }
     if (formData.email) { inputs.email.value = formData.email; inputs.email.classList.add('has-value'); }
     if (formData.consent) inputs.consent.checked = true;
@@ -1848,6 +2083,10 @@
       ? 'Non-STEM (' + (formData.fieldOther || '?') + ')'
       : formData.field;
 
+    const finalDegree = formData.degree === 'Other'
+      ? 'Other (' + (formData.degreeOther || '?') + ')'
+      : (formData.degree || '');
+
     const group = determineGroup(formData.university, formData.field);
 
     const submission = {
@@ -1856,6 +2095,7 @@
       time_to_complete_s: formStartedAt ? Math.round((Date.now() - formStartedAt) / 1000) : null,
       university: finalUni,
       field: finalField,
+      degree: finalDegree,
       year: formData.year || '',
       gpa: formData.gpa || '',
       lookingFor: Array.isArray(formData.lookingFor) ? formData.lookingFor.join(', ') : '',
@@ -1975,10 +2215,14 @@
   }
 
   /* ============================================================
-     INVITE LINK
+     SHARE TEXT (for the "Copy text to share with a STEM friend" btn)
+     Note: the waShareLink button itself is repurposed downstream as
+     the "Request to join group" CTA — see the Group-request block in
+     the submit handler. This text is used by copyShareBtn.
      ============================================================ */
+  let _shareMessage = '';
   function buildShareLink(group) {
-    const msg =
+    _shareMessage =
 `🚀 Just signed up for Knock — they bring SA industry opportunities directly to your WhatsApp.
 
 It's free, built for STEM students, and they verify you so you get the right opportunities.
@@ -1986,10 +2230,51 @@ It's free, built for STEM students, and they verify you so you get the right opp
 Sign up here 👉 ${window.location.origin}${window.location.pathname}
 
 You're going to want in.`;
-    const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
-    const link = document.getElementById('waShareLink');
-    if (link) link.href = url;
   }
+
+  // Track clicks on the "Request to join group" CTA
+  (function wireRequestClick() {
+    const link = document.getElementById('waShareLink');
+    if (!link) return;
+    link.addEventListener('click', () => {
+      track('share_clicked', { destination: 'join_request' });
+    });
+  })();
+
+  // Wire the "Copy text to share with a STEM friend" button
+  (function wireCopyShare() {
+    const btn = document.getElementById('copyShareBtn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      if (!_shareMessage) {
+        // buildShareLink hasn't fired yet — happens if user lands directly on
+        // cardDone via dev tools. Build a generic one.
+        buildShareLink('');
+      }
+      try {
+        await navigator.clipboard.writeText(_shareMessage);
+      } catch (e) {
+        // Fallback: select-and-copy via a temporary textarea
+        const ta = document.createElement('textarea');
+        ta.value = _shareMessage;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (_) {}
+        document.body.removeChild(ta);
+      }
+      btn.classList.add('copied');
+      const lbl = btn.querySelector('.copy-label');
+      const original = lbl ? lbl.textContent : '';
+      if (lbl) lbl.textContent = 'Copied — paste anywhere';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        if (lbl) lbl.textContent = original;
+      }, 2200);
+      track('share_copied', { method: 'clipboard' });
+    });
+  })();
 
   /* ============================================================
      CONFETTI
@@ -2035,25 +2320,55 @@ You're going to want in.`;
   }
 
   /* ============================================================
-     ADMIN: PASSWORD GATE
+     ADMIN: PASSWORD GATE  (server-side validated via Apps Script)
+     The password is stored in Apps Script → Project Settings →
+     Script Properties as STATS_PASSWORD. It is NEVER in this file.
      ============================================================ */
   if (isAdminPage()) {
     document.body.classList.add('admin');
-    if (sessionStorage.getItem(SESSION_ADMIN_KEY) === '1') {
+    // If we already have a session token from this browser session, skip the gate.
+    if (sessionStorage.getItem(SESSION_ADMIN_KEY)) {
       document.body.classList.add('unlocked');
       refreshAdmin();
     }
     const gateBtn = document.getElementById('gateUnlock');
     const gateInp = document.getElementById('gatePass');
     const gateEl  = document.getElementById('adminGate');
-    function attemptUnlock() {
-      if (gateInp.value === window.KNOCK_STATS_PASSWORD) {
-        sessionStorage.setItem(SESSION_ADMIN_KEY, '1');
-        document.body.classList.add('unlocked');
-        gateEl.classList.remove('failed');
-        refreshAdmin();
-      } else {
+
+    async function attemptUnlock() {
+      const url = window.KNOCK_APPS_SCRIPT_URL;
+      if (!url) {
         gateEl.classList.add('failed');
+        const errEl = gateEl.querySelector('.gate-err');
+        if (errEl) errEl.textContent = 'Backend URL not configured.';
+        return;
+      }
+      gateBtn.disabled = true;
+      gateBtn.textContent = 'Checking…';
+      try {
+        const r = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ type: 'auth', password: gateInp.value })
+        });
+        const data = await r.json();
+        if (data && data.ok && data.token) {
+          sessionStorage.setItem(SESSION_ADMIN_KEY, data.token);
+          document.body.classList.add('unlocked');
+          gateEl.classList.remove('failed');
+          refreshAdmin();
+        } else {
+          gateEl.classList.add('failed');
+          const errEl = gateEl.querySelector('.gate-err');
+          if (errEl) errEl.textContent = 'Wrong password.';
+        }
+      } catch (e) {
+        gateEl.classList.add('failed');
+        const errEl = gateEl.querySelector('.gate-err');
+        if (errEl) errEl.textContent = 'Could not reach backend. Check connection.';
+      } finally {
+        gateBtn.disabled = false;
+        gateBtn.textContent = 'Unlock';
       }
     }
     gateBtn.addEventListener('click', attemptUnlock);
@@ -2063,49 +2378,125 @@ You're going to want in.`;
 
   /* ============================================================
      ADMIN: PULL DATA (Apps Script GET → fallback to local cache)
+     Pulls both submissions and central events in one call when
+     the backend is configured.
      ============================================================ */
-  async function fetchCentralSubmissions() {
+  async function fetchCentralData() {
     const url = window.KNOCK_APPS_SCRIPT_URL;
     const dataSrc = document.getElementById('dataSourceInfo');
     const dataTxt = document.getElementById('dataSourceText');
     if (!url) {
-      dataSrc.classList.add('offline');
-      dataSrc.classList.remove('online');
-      dataTxt.textContent = 'Source: local cache only (no Apps Script URL set in config)';
-      return getLocalSubmissions();
+      if (dataSrc) {
+        dataSrc.classList.add('offline');
+        dataSrc.classList.remove('online');
+      }
+      if (dataTxt) dataTxt.textContent = 'Source: local cache only (no Apps Script URL configured)';
+      return { submissions: getLocalSubmissions(), events: getEvents().map(e => ({
+        timestamp: new Date(e.t).toISOString(), event: e.e, props: JSON.stringify(e.p || {}), session: e.s || ''
+      })) };
     }
     try {
-      const r = await fetch(url + '?action=list', { method: 'GET' });
+      const r = await fetch(url + '?action=full', { method: 'GET' });
       const json = await r.json();
       const subs = json.submissions || [];
-      dataSrc.classList.add('online');
-      dataSrc.classList.remove('offline');
-      dataTxt.textContent = `Source: Google Sheet (${subs.length} rows)`;
-      return subs;
+      const evts = json.events || [];
+      if (dataSrc) {
+        dataSrc.classList.add('online');
+        dataSrc.classList.remove('offline');
+      }
+      if (dataTxt) dataTxt.textContent = `Source: Google Sheet (${subs.length} signups · ${evts.length} events)`;
+      return { submissions: subs, events: evts };
     } catch (err) {
-      dataSrc.classList.add('offline');
-      dataSrc.classList.remove('online');
-      dataTxt.textContent = 'Source: local cache (Sheet fetch failed — check Apps Script deployment)';
-      return getLocalSubmissions();
+      if (dataSrc) {
+        dataSrc.classList.add('offline');
+        dataSrc.classList.remove('online');
+      }
+      if (dataTxt) dataTxt.textContent = 'Source: local cache (Sheet fetch failed — check Apps Script deployment)';
+      return { submissions: getLocalSubmissions(), events: getEvents().map(e => ({
+        timestamp: new Date(e.t).toISOString(), event: e.e, props: JSON.stringify(e.p || {}), session: e.s || ''
+      })) };
     }
+  }
+  // Backwards-compat shim used elsewhere in the file
+  async function fetchCentralSubmissions() {
+    const data = await fetchCentralData();
+    return data.submissions;
+  }
+
+  function _ts(v) {
+    if (!v) return 0;
+    const t = new Date(v).getTime();
+    return isNaN(t) ? 0 : t;
   }
 
   async function refreshAdmin() {
     if (!document.body.classList.contains('unlocked')) return;
-    const events = getEvents();
-    const subs = await fetchCentralSubmissions();
+    const { submissions: subs, events: centralEvents } = await fetchCentralData();
     const states = getStates();
 
-    // Events tiles (form-only)
-    const pageViews = events.filter(e => e.e === 'page_view').length;
-    const ctaClicks = events.filter(e => e.e === 'hero_cta_clicked').length;
-    const formStarts = events.filter(e => e.e === 'form_started').length;
-    const submits = events.filter(e => e.e === 'submit_success').length;
+    const now = Date.now();
+    const DAY = 24 * 60 * 60 * 1000;
+    const last7Cutoff = now - 7 * DAY;
+    const prev7Cutoff = now - 14 * DAY;
+
+    // Use central events when present, else fall back to local
+    const events = centralEvents.length ? centralEvents : getEvents().map(e => ({
+      timestamp: new Date(e.t).toISOString(), event: e.e, props: JSON.stringify(e.p || {}), session: e.s || ''
+    }));
+    const eventTime = e => _ts(e.timestamp || e.t);
+    const eventName = e => e.event || e.e;
+
+    const pageViewEvents = events.filter(e => eventName(e) === 'page_view');
+    const ctaEvents = events.filter(e => eventName(e) === 'hero_cta_clicked');
+    const formStartedEvents = events.filter(e => eventName(e) === 'form_started');
+    const submitSuccessEvents = events.filter(e => eventName(e) === 'submit_success');
+    const shareClickedEvents = events.filter(e => eventName(e) === 'share_clicked');
+    const shareCopiedEvents = events.filter(e => eventName(e) === 'share_copied');
+
+    const pageViews = pageViewEvents.length;
+    const pageViews7d = pageViewEvents.filter(e => eventTime(e) >= last7Cutoff).length;
+    const ctaClicks = ctaEvents.length;
+    const formStarts = formStartedEvents.length;
+    const submits = submitSuccessEvents.length;
+
+    // Signups 7d + prev 7d + growth
+    const signups7d = subs.filter(s => _ts(s.submitted_at) >= last7Cutoff).length;
+    const signupsPrev7d = subs.filter(s => {
+      const t = _ts(s.submitted_at);
+      return t >= prev7Cutoff && t < last7Cutoff;
+    }).length;
+    let growthPct = 0;
+    if (signupsPrev7d > 0) {
+      growthPct = ((signups7d - signupsPrev7d) / signupsPrev7d) * 100;
+    } else if (signups7d > 0) {
+      growthPct = 100; // arbitrary "new" indicator
+    }
+
+    // Share actions
+    const shareTotal = shareClickedEvents.length + shareCopiedEvents.length;
+
+    // Top tiles
     document.getElementById('aPageViews').textContent = pageViews.toLocaleString();
+    document.getElementById('aPageViews7d').textContent = pageViews7d.toLocaleString();
     document.getElementById('aCtaClicks').textContent = ctaClicks.toLocaleString();
     document.getElementById('aSignups').textContent = subs.length.toLocaleString();
+    document.getElementById('aSignups7d').textContent = signups7d.toLocaleString();
+    const growthNote = document.getElementById('aSignupsGrowth');
+    growthNote.textContent = signupsPrev7d
+      ? `vs ${signupsPrev7d} prev 7d`
+      : (signups7d ? 'first 7d — no prior baseline' : 'no signups yet');
+    document.getElementById('aShareTotal').textContent = shareTotal.toLocaleString();
+    document.getElementById('aShareSplit').textContent =
+      `${shareClickedEvents.length} request · ${shareCopiedEvents.length} copies`;
 
-    const times = subs.map(s => s.time_to_complete_s).filter(x => typeof x === 'number').sort((a,b) => a-b);
+    const growthEl = document.getElementById('aGrowthPct');
+    const growthRounded = Math.round(growthPct);
+    growthEl.innerHTML = (growthRounded >= 0 ? '+' : '') + growthRounded + '<small>%</small>';
+    growthEl.style.color = growthRounded > 0
+      ? 'var(--do-ink)'
+      : (growthRounded < 0 ? 'var(--err-ink)' : 'var(--black)');
+
+    const times = subs.map(s => s.time_to_complete_s).filter(x => typeof x === 'number' && x >= 0).sort((a,b) => a-b);
     const median = times.length ? times[Math.floor(times.length/2)] : 0;
     document.getElementById('aMedianTime').innerHTML = median + '<small>s</small>';
 
@@ -2236,7 +2627,7 @@ You're going to want in.`;
   async function exportSignups() {
     const subs = await fetchCentralSubmissions();
     if (!subs.length) { alert('No signups to export yet.'); return; }
-    const headers = ['ref','submitted_at','time_to_complete_s','group','state','university','field','year','gpa','lookingFor','phone','email','consent'];
+    const headers = ['ref','submitted_at','time_to_complete_s','group','state','university','field','degree','year','gpa','lookingFor','phone','email','consent'];
     const states = getStates();
     const rows = subs.map(s => headers.map(h => {
       if (h === 'state') return JSON.stringify(states[s.ref] || s.state || 'requested');
