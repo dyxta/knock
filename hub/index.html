@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>knock — hi.</title>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --purple:#5E17EB;--purple-mid:#C9AAFF;--purple-pale:#F0EBFF;
+  --black:#0A0A0A;--ink:#131313;--white:#FFFFFF;
+  --g400:rgba(255,255,255,0.55);--g500:rgba(255,255,255,0.35);
+  --wa:#25D366;--green:#1A7F5A;
+  --font-d:'Cabinet Grotesk',sans-serif;
+  --font-b:'Switzer',sans-serif;
+  --easing:cubic-bezier(0.22,0.61,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--black);overscroll-behavior:none;}
+body{font-family:var(--font-b);color:var(--white);-webkit-font-smoothing:antialiased;}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+/* ── VIEWS ──────────────────────────── */
+.view{
+  position:fixed;inset:0;overflow-y:auto;
+  background:var(--black);
+  transition:transform 0.32s var(--easing), opacity 0.28s ease;
+  will-change:transform;
+}
+.view.slide-left{transform:translateX(-30%);opacity:0;pointer-events:none;}
+.view.slide-right{transform:translateX(100%);pointer-events:none;}
+
+/* ── HUB HERO ───────────────────────── */
+.hub-hero{
+  background:var(--purple);
+  padding:env(safe-area-inset-top,20px) 24px 28px;
+  padding-top:calc(env(safe-area-inset-top,0px) + 44px);
+  position:relative;overflow:hidden;
+}
+.hub-brand{
+  display:flex;align-items:center;gap:8px;margin-bottom:20px;
+}
+.hub-kmark{width:28px;height:28px;flex-shrink:0;}
+.hub-kmark svg{width:100%;height:100%;}
+.hub-kname{font-family:var(--font-d);font-weight:900;font-size:16px;letter-spacing:-0.5px;}
+.hub-greeting{
+  font-family:var(--font-d);font-weight:900;
+  font-size:clamp(44px,13vw,60px);
+  line-height:0.95;letter-spacing:-0.04em;
+  color:var(--white);margin-bottom:12px;
+}
+.hub-greeting em{display:block;font-style:normal;color:rgba(255,255,255,0.88);}
+.hub-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px;}
+.hub-seg{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);
+  border-radius:999px;padding:5px 12px;
+  font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.9);
+}
+.hub-seg::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0;}
+.hub-wm{
+  position:absolute;right:-8%;top:50%;transform:translateY(-55%);
+  width:65%;aspect-ratio:1;opacity:0.07;pointer-events:none;
+}
+.hub-wm svg{width:100%;height:100%;}
+
+/* ── HUB CTA BLOCK ──────────────────── */
+.hub-cta{
+  padding:16px 20px 4px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.cta-state{display:none;flex-direction:column;gap:8px;}
+.cta-state.vis{display:flex;}
+.cta-btn{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:13px 16px;border-radius:12px;border:none;cursor:pointer;
+  font-family:var(--font-b);font-size:14px;font-weight:600;
+  transition:transform 0.15s;width:100%;text-align:left;
+}
+.cta-btn:active{transform:scale(0.98);}
+.cta-primary{background:var(--purple);color:var(--white);}
+.cta-secondary{background:rgba(255,255,255,0.07);color:var(--white);border:1px solid rgba(255,255,255,0.12);}
+.cta-done{background:rgba(26,127,90,0.15);color:#4ADE80;border:1px solid rgba(26,127,90,0.28);cursor:default;}
+.cta-done:active{transform:none;}
+.cta-t{flex:1;}
+.cta-sub{font-size:10px;opacity:0.6;margin-bottom:1px;font-weight:500;}
+.cta-m{line-height:1.25;}
+.cta-arr{opacity:0.5;}
+
+/* ── TILES GRID ──────────────────────── */
+.tiles{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;padding:16px 20px 32px;
+}
+.tile{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:18px;
+  padding:20px 18px;
+  cursor:pointer;
+  transition:background 0.15s,border-color 0.2s,transform 0.15s;
+  position:relative;
+  display:flex;flex-direction:column;gap:10px;
+  min-height:120px;
+}
+.tile:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.16);}
+.tile:active{transform:scale(0.96);}
+.tile-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+.t-about .tile-icon{background:rgba(94,23,235,0.2);color:var(--purple-mid);}
+.t-pack .tile-icon{background:rgba(255,200,50,0.12);color:#FFD060;}
+.t-join .tile-icon{background:rgba(37,211,102,0.12);color:var(--wa);}
+.t-share .tile-icon{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);}
+.tile-name{font-family:var(--font-d);font-weight:700;font-size:15px;color:var(--white);line-height:1.2;}
+.tile-desc{font-size:11.5px;color:var(--g500);line-height:1.5;}
+.tile-badge{
+  position:absolute;top:12px;right:12px;
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(26,127,90,0.9);
+  display:none;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--white);
+}
+.tile-badge.show{display:flex;}
+
+/* ── PANELS ──────────────────────────── */
+.panel{
+  position:fixed;inset:0;
+  background:var(--black);
+  transform:translateX(100%);
+  transition:transform 0.32s var(--easing);
+  overflow-y:auto;
+  z-index:50;
+}
+.panel.open{transform:translateX(0);}
+
+.panel-head{
+  position:sticky;top:0;
+  background:rgba(10,10,10,0.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  padding:env(safe-area-inset-top,0px) 20px 0;
+  padding-top:calc(env(safe-area-inset-top,0px) + 14px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  z-index:5;
+}
+.panel-head-inner{display:flex;align-items:center;gap:14px;padding-bottom:14px;}
+.back-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;transition:background 0.15s;
+}
+.back-btn:hover{background:rgba(255,255,255,0.12);}
+.panel-title{font-family:var(--font-d);font-weight:800;font-size:18px;flex:1;}
+.panel-body{padding:20px 20px 60px;}
+
+/* ── PANEL CONTENT ───────────────────── */
+.p-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--purple-mid);margin-bottom:10px;opacity:0.8;}
+.p-title{font-family:var(--font-d);font-weight:900;font-size:clamp(30px,8vw,42px);letter-spacing:-0.04em;line-height:1.02;color:var(--white);margin-bottom:14px;}
+.p-title em{font-style:normal;color:var(--purple-mid);}
+.p-body{font-size:14px;color:var(--g400);line-height:1.7;margin-bottom:20px;}
+.p-body strong{color:var(--white);}
+
+/* pack */
+.pack-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.pc{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:14px 16px;}
+.pc-co{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--purple-mid);margin-bottom:4px;}
+.pc-role{font-size:15px;font-weight:700;color:var(--white);margin-bottom:5px;line-height:1.25;}
+.pc-meta{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;}
+.pc-link{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--purple-mid);background:rgba(94,23,235,0.12);border:1px solid rgba(94,23,235,0.25);border-radius:7px;padding:7px 12px;text-decoration:none;cursor:pointer;font-family:var(--font-b);}
+.insight{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:10px;}
+.in-icon{font-size:20px;flex-shrink:0;}
+.in-title{font-size:13.5px;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.3;}
+.in-body{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.55;}
+.pd{height:1px;background:rgba(255,255,255,0.06);margin:14px 0;}
+
+/* form */
+.ff{margin-bottom:13px;}
+.fl{display:block;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.fi{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--white);font-family:var(--font-b);outline:none;transition:border-color 0.15s;}
+.fi:focus{border-color:var(--purple);}
+.fi::placeholder{color:rgba(255,255,255,0.2);}
+.fi[readonly]{opacity:0.55;cursor:default;}
+.ph-row{display:flex;}
+.ph-pre{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-right:none;border-radius:10px 0 0 10px;padding:11px 12px;font-size:14px;color:rgba(255,255,255,0.4);white-space:nowrap;}
+.ph-row .fi{border-radius:0 10px 10px 0;}
+.chips-r{display:flex;gap:7px;flex-wrap:wrap;}
+.ch{background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.55);cursor:pointer;font-family:var(--font-b);transition:all 0.15s;}
+.ch.sel{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.consent-r{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:11px 14px;cursor:pointer;margin-bottom:13px;}
+.cb{width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(255,255,255,0.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.cb.on{background:var(--purple);border-color:var(--purple);}
+.ct-txt{font-size:12.5px;color:rgba(255,255,255,0.45);line-height:1.55;}
+.ct-txt strong{color:rgba(255,255,255,0.75);}
+.sub-btn{width:100%;background:var(--purple);color:var(--white);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;font-family:var(--font-b);cursor:pointer;transition:opacity 0.15s;}
+.sub-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.form-done{display:none;text-align:center;padding:20px 0;}
+.fd-icon{font-size:44px;margin-bottom:10px;}
+.fd-title{font-family:var(--font-d);font-weight:800;font-size:20px;margin-bottom:6px;}
+.fd-sub{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:16px;}
+.wa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:var(--white);border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;text-decoration:none;}
+
+/* share panel */
+.share-big{display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px;font-size:15px;font-weight:700;color:var(--white);cursor:pointer;font-family:var(--font-b);width:100%;margin-bottom:10px;transition:background 0.15s;}
+.share-big:hover{background:rgba(255,255,255,0.12);}
+.copy-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 14px;}
+.copy-url{flex:1;font-size:12px;color:rgba(255,255,255,0.3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.copy-btn{font-size:12px;font-weight:700;color:var(--purple-mid);background:none;border:none;cursor:pointer;font-family:var(--font-b);white-space:nowrap;}
+
+/* ── TOAST ───────────────────────────── */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--white);color:var(--black);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all 0.25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="km-d" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#FFFFFF"/>
+    <rect width="138.762" height="302.898" rx="69.38" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#FFFFFF"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#FFFFFF"/>
+  </symbol>
+  <symbol id="km-w" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#FFFFFF"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+    <rect width="138.762" height="302.898" rx="69.38" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+  </symbol>
+</svg>
+
+<!-- ═══════ HUB VIEW ═══════ -->
+<div class="view" id="view-hub">
+
+  <div class="hub-hero">
+    <div class="hub-brand">
+      <div class="hub-kmark"><svg><use href="#km-d"/></svg></div>
+      <span class="hub-kname">knock.</span>
+    </div>
+    <h1 class="hub-greeting">hi,<em id="hub-uni">uct.</em></h1>
+    <p class="hub-sub">founding pilot — bringing verified sa industry opportunities to stem graduates on whatsapp. you're among the first.</p>
+    <div class="hub-seg" id="hub-seg">stem students</div>
+    <div class="hub-wm" aria-hidden="true"><svg><use href="#km-w"/></svg></div>
+  </div>
+
+  <div class="hub-cta" id="hub-cta">
+    <!-- state 1 -->
+    <div class="cta-state vis" id="hs1">
+      <button class="cta-btn cta-primary" onclick="openPanel('about')">
+        <div class="cta-t"><div class="cta-sub">free · no strings</div><div class="cta-m">open your starter pack</div></div>
+        <span class="cta-arr">→</span>
+      </button>
+      <button class="cta-btn cta-secondary" onclick="openPanel('join')">
+        <div class="cta-t"><div class="cta-sub">weekly drops · no noise</div><div class="cta-m">sign up to access campus group</div></div>
+        <span class="cta-arr">→</span>
+      </button>
+    </div>
+    <!-- state 2: pack done -->
+    <div class="cta-state" id="hs2">
+      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">done</div><div class="cta-m">starter pack ✓</div></div></div>
+      <button class="cta-btn cta-primary" onclick="openPanel('join')">
+        <div class="cta-t"><div class="cta-sub">one more step</div><div class="cta-m">sign up to access campus group</div></div>
+        <span class="cta-arr">→</span>
+      </button>
+    </div>
+    <!-- state 3: signed up, no pack -->
+    <div class="cta-state" id="hs3">
+      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">done</div><div class="cta-m">signed up ✓</div></div></div>
+      <button class="cta-btn cta-secondary" onclick="openPanel('pack')">
+        <div class="cta-t"><div class="cta-sub">free · yours to keep</div><div class="cta-m">grab the starter pack</div></div>
+        <span class="cta-arr">→</span>
+      </button>
+    </div>
+    <!-- state 4: both done -->
+    <div class="cta-state" id="hs4">
+      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're in</div><div class="cta-m">look out for knock on whatsapp ✓</div></div></div>
+      <button class="cta-btn cta-secondary" onclick="openPanel('share')">
+        <div class="cta-t"><div class="cta-sub">spread the word</div><div class="cta-m">share with your cohort</div></div>
+        <span class="cta-arr">→</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile t-about" onclick="openPanel('about')">
+      <div class="tile-badge" id="tb-about">✓</div>
+      <div class="tile-icon">◈</div>
+      <div>
+        <div class="tile-name">about</div>
+        <div class="tile-desc">what knock is and why it exists</div>
+      </div>
+    </div>
+    <div class="tile t-pack" onclick="openPanel('pack')">
+      <div class="tile-badge" id="tb-pack">✓</div>
+      <div class="tile-icon">⬡</div>
+      <div>
+        <div class="tile-name">starter pack</div>
+        <div class="tile-desc">5 open doors + 2 career insights</div>
+      </div>
+    </div>
+    <div class="tile t-join" onclick="openPanel('join')">
+      <div class="tile-badge" id="tb-join">✓</div>
+      <div class="tile-icon">◎</div>
+      <div>
+        <div class="tile-name">join</div>
+        <div class="tile-desc">sign up in 45 seconds</div>
+      </div>
+    </div>
+    <div class="tile t-share" onclick="openPanel('share')">
+      <div class="tile-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>
+      <div>
+        <div class="tile-name">share</div>
+        <div class="tile-desc">send to your cohort</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════ PANEL: ABOUT ═════ -->
+<div class="panel" id="panel-about">
+  <div class="panel-head">
+    <div class="panel-head-inner">
+      <button class="back-btn" onclick="closePanel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="panel-title">about</span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <p class="p-label">what this is</p>
+    <h2 class="p-title">the network<br><em>for you.</em></h2>
+    <div class="p-body">
+      <p>knock connects sa's best stem graduates to the companies that need them — delivered on whatsapp, the one channel where students actually are.</p>
+      <p>no portal to check. no inbox to monitor. <strong>one buzz. something real.</strong> every opportunity we post is verified and open right now.</p>
+      <p>we're in pilot. that means you're early, the groups are small, and every post is deliberate. no spam — 2× a week maximum.</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px 18px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:14px;">the numbers</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><div style="font-family:var(--font-d);font-weight:900;font-size:26px;letter-spacing:-0.5px;">UCT</div><div style="font-size:11px;color:rgba(255,255,255,0.4);">wits · stellies · up</div></div>
+        <div><div style="font-family:var(--font-d);font-weight:900;font-size:26px;letter-spacing:-0.5px;color:var(--purple-mid);">free</div><div style="font-size:11px;color:rgba(255,255,255,0.4);">always, for students</div></div>
+        <div><div style="font-family:var(--font-d);font-weight:900;font-size:26px;letter-spacing:-0.5px;">2×</div><div style="font-size:11px;color:rgba(255,255,255,0.4);">max per week, no noise</div></div>
+        <div><div style="font-family:var(--font-d);font-weight:900;font-size:26px;letter-spacing:-0.5px;">45s</div><div style="font-size:11px;color:rgba(255,255,255,0.4);">to join the group</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════ PANEL: PACK ═════ -->
+<div class="panel" id="panel-pack">
+  <div class="panel-head">
+    <div class="panel-head-inner">
+      <button class="back-btn" onclick="closePanel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="panel-title">starter pack</span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <p class="p-label">free · verified · open now</p>
+    <h2 class="p-title">open<br><em>doors.</em></h2>
+    <div class="p-body"><p>every listing is verified and open right now. <span id="pp-geo">biased toward your city, plus national.</span></p></div>
+    <div class="pack-cards">
+      <div class="pc">
+        <div class="pc-co" id="pp-co1">[ company ]</div>
+        <div class="pc-role">[ Graduate Developer Programme ]</div>
+        <div class="pc-meta" id="pp-city1">[ City ] · CompSci · IS · Engineering · Closes [ date ]</div>
+        <button class="pc-link pack-link" data-title="opp1" onclick="claimPack(event)">view &amp; apply →</button>
+      </div>
+      <div class="pc">
+        <div class="pc-co">[ company ]</div>
+        <div class="pc-role">[ Data Analyst Intern ]</div>
+        <div class="pc-meta">Johannesburg · Stats · Math · Data Sci · Closes [ date ]</div>
+        <button class="pc-link pack-link" data-title="opp2" onclick="claimPack(event)">view &amp; apply →</button>
+      </div>
+      <div class="pc">
+        <div class="pc-co">[ company ]</div>
+        <div class="pc-role">[ Product Manager Intern ]</div>
+        <div class="pc-meta">Cape Town · Any STEM · Closes [ date ]</div>
+        <button class="pc-link pack-link" data-title="opp3" onclick="claimPack(event)">view &amp; apply →</button>
+      </div>
+    </div>
+    <div class="pd"></div>
+    <div class="insight">
+      <div class="in-icon">⚡</div>
+      <div>
+        <div class="in-title">The ATS rejection most STEM grads don't know about</div>
+        <div class="in-body">A 64% overall GPA can trigger auto-rejection before a human reads your application — even with 90% in the exact skill the role needs. <button class="pack-link" data-title="insight-ats" onclick="claimPack(event)" style="color:var(--purple-mid);font-weight:700;background:none;border:none;cursor:pointer;font-family:var(--font-b);font-size:12px;">read →</button></div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="in-icon">🎯</div>
+      <div>
+        <div class="in-title">How to stand out when every application looks the same</div>
+        <div class="in-body">Most STEM grad applications are identical. One thing makes a recruiter stop. <button class="pack-link" data-title="insight-standout" onclick="claimPack(event)" style="color:var(--purple-mid);font-weight:700;background:none;border:none;cursor:pointer;font-family:var(--font-b);font-size:12px;">read →</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════ PANEL: JOIN ═════ -->
+<div class="panel" id="panel-join">
+  <div class="panel-head">
+    <div class="panel-head-inner">
+      <button class="back-btn" onclick="closePanel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="panel-title">join</span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <p class="p-label">45 seconds · popia-aligned</p>
+    <h2 class="p-title">get the weekly<br><em>drops.</em></h2>
+    <div id="join-form-body">
+      <div class="ff"><label class="fl">university</label><input class="fi" id="jf-uni" type="text" readonly/></div>
+      <div class="ff">
+        <label class="fl">field of study</label>
+        <div class="chips-r">
+          <button class="ch" data-v="STEM" onclick="jfChip(this)">stem</button>
+          <button class="ch" data-v="Non-STEM" onclick="jfChip(this)">non-stem</button>
+        </div>
+      </div>
+      <div class="ff">
+        <label class="fl">whatsapp number</label>
+        <div class="ph-row"><div class="ph-pre">+27</div><input class="fi" id="jf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div>
+      </div>
+      <div class="ff">
+        <label class="fl">university email <span style="opacity:0.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional</span></label>
+        <input class="fi" id="jf-email" type="email" placeholder="student@uct.ac.za"/>
+      </div>
+      <div class="consent-r" onclick="jfToggleConsent()" id="jf-consent-row">
+        <div class="cb" id="jf-cb"></div>
+        <div class="ct-txt">i consent to <strong>knock</strong> adding me to a relevant whatsapp group and sending me matched opportunities. popia-aligned. withdraw anytime.</div>
+      </div>
+      <button class="sub-btn" id="jf-submit" onclick="jfSubmit()">get me found ✓</button>
+      <p style="font-size:11.5px;color:rgba(255,255,255,0.3);text-align:center;margin-top:10px;line-height:1.6;">we review and approve within 24 hours.</p>
+    </div>
+    <div class="form-done" id="join-done">
+      <div class="fd-icon">🎉</div>
+      <div class="fd-title">you're vetted.</div>
+      <div class="fd-sub">request to join your campus group — we'll verify and approve you within 24 hours.</div>
+      <a class="wa-btn" id="jf-wa" href="#" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        request to join group
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═════ PANEL: SHARE ═════ -->
+<div class="panel" id="panel-share">
+  <div class="panel-head">
+    <div class="panel-head-inner">
+      <button class="back-btn" onclick="closePanel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="panel-title">share</span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <p class="p-label">spread the word</p>
+    <h2 class="p-title">know<br><em>someone?</em></h2>
+    <div class="p-body"><p>send them your link. same starter pack, same deal — their campus group.</p></div>
+    <button class="share-big" onclick="doShare()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      share this page
+    </button>
+    <div class="copy-row">
+      <span class="copy-url" id="share-url">join.knocktalent.co.za</span>
+      <button class="copy-btn" id="cp-btn" onclick="copyLink()">copy</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+window.KNOCK_APPS_SCRIPT_URL = '';
+const UNI = {
+  'uct':{'display':'UCT','full':'University of Cape Town','location':'Cape Town','emailHint':'student@uct.ac.za','waLink':'#'},
+  'wits':{'display':'Wits','full':'University of the Witwatersrand','location':'Johannesburg','emailHint':'student@students.wits.ac.za','waLink':'#'},
+  'stellies':{'display':'Stellies','full':'Stellenbosch University','location':'Stellenbosch','emailHint':'student@sun.ac.za','waLink':'#'},
+  'up':{'display':'UP','full':'University of Pretoria','location':'Pretoria','emailHint':'student@tuks.co.za','waLink':'#'},
+  'ukzn':{'display':'UKZN','full':'University of KwaZulu-Natal','location':'Durban','emailHint':'student@ukzn.ac.za','waLink':'#'},
+};
+const SEG = {'devsoc':'Developer Society','cs':'Computer Science','is':'Information Systems','honours':'Honours','compsci':'Computer Science','eng':'Engineering','data':'Data Science','math':'Mathematics','fintech':'FinTech','stem':'STEM students'};
+const KEY_PACK='knock_pack_v1', KEY_SIGNUP='knock_signup_v1';
+let PAGE_UNI='uct', PAGE_SEG='stem';
+let JF_CONSENT=false, JF_FIELD='';
+let ACTIVE_PANEL = null;
+
+(function init(){
+  const path = window.location.pathname.replace(/^\//,'');
+  const parts = path.split('-');
+  PAGE_UNI = parts[1] || 'uct';
+  PAGE_SEG = parts.slice(2).join('-') || 'stem';
+  const u = UNI[PAGE_UNI] || UNI['uct'];
+  const seg = SEG[PAGE_SEG] || PAGE_SEG.replace(/-/g,' ');
+  document.getElementById('hub-uni').textContent = u.display.toLowerCase() + '.';
+  document.getElementById('hub-seg').textContent = seg.toLowerCase();
+  document.getElementById('jf-uni').value = u.full;
+  document.getElementById('jf-email').placeholder = u.emailHint;
+  document.getElementById('jf-wa').href = u.waLink;
+  document.getElementById('share-url').textContent = window.location.href;
+  const city = u.location;
+  document.getElementById('pp-geo').textContent = 'biased toward ' + city + ', plus national.';
+  document.getElementById('pp-co1').textContent = '[ company · ' + city + ' ]';
+  document.getElementById('pp-city1').textContent = city + ' · CompSci · IS · Engineering · Closes [ date ]';
+  renderCTA();
+  ph('page_view', { uni: PAGE_UNI, seg: PAGE_SEG });
+})();
+
+/* ── CTA ── */
+function renderCTA() {
+  const pack = localStorage.getItem(KEY_PACK)==='1';
+  const signup = localStorage.getItem(KEY_SIGNUP)==='1';
+  ['hs1','hs2','hs3','hs4'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('vis');});
+  let s = 'hs1';
+  if(!pack&&!signup) s='hs1';
+  else if(pack&&!signup) s='hs2';
+  else if(!pack&&signup) s='hs3';
+  else s='hs4';
+  const el=document.getElementById(s);if(el)el.classList.add('vis');
+  // update tile badges
+  document.getElementById('tb-pack').classList.toggle('show', pack);
+  document.getElementById('tb-join').classList.toggle('show', signup);
+}
+
+/* ── PANELS ── */
+function openPanel(name) {
+  const hub = document.getElementById('view-hub');
+  const panel = document.getElementById('panel-' + name);
+  if (!panel) return;
+  hub.classList.add('slide-left');
+  panel.classList.add('open');
+  ACTIVE_PANEL = name;
+  ph('panel_open', { panel: name, uni: PAGE_UNI });
+  // scroll panel to top
+  panel.scrollTop = 0;
+}
+function closePanel() {
+  const hub = document.getElementById('view-hub');
+  if (ACTIVE_PANEL) {
+    document.getElementById('panel-' + ACTIVE_PANEL).classList.remove('open');
+    ACTIVE_PANEL = null;
+  }
+  hub.classList.remove('slide-left');
+}
+// back gesture / browser back
+window.addEventListener('popstate', closePanel);
+
+/* ── PACK ── */
+function claimPack(e) {
+  if(e){e.preventDefault();}
+  const title = e&&e.currentTarget?e.currentTarget.dataset.title||'unknown':'cta';
+  ph('pack_link_clicked', { uni: PAGE_UNI, seg: PAGE_SEG, link: title });
+  localStorage.setItem(KEY_PACK,'1');
+  renderCTA();
+  document.getElementById('tb-pack').classList.add('show');
+  showToast('opening soon →');
+}
+
+/* ── FORM ── */
+function jfChip(el){document.querySelectorAll('.ch').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');JF_FIELD=el.dataset.v;}
+function jfToggleConsent(){
+  JF_CONSENT=!JF_CONSENT;
+  const cb=document.getElementById('jf-cb');
+  cb.classList.toggle('on',JF_CONSENT);
+  cb.innerHTML=JF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';
+}
+async function jfSubmit(){
+  const phone=document.getElementById('jf-phone').value.trim();
+  if(!phone||phone.length<9){showToast('valid number please');return;}
+  if(!JF_FIELD){showToast('pick your field');return;}
+  if(!JF_CONSENT){showToast('tick consent to continue');return;}
+  const btn=document.getElementById('jf-submit');
+  btn.disabled=true;btn.textContent='sending…';
+  ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
+  const payload={university:(UNI[PAGE_UNI]||UNI['uct']).full,field:JF_FIELD,phone:'+27'+phone.replace(/\s/g,''),email:document.getElementById('jf-email').value.trim(),group:PAGE_UNI+'_'+PAGE_SEG,source:window.location.pathname.replace(/^\//,''),submitted_at:new Date().toISOString(),consent:true};
+  try{
+    const url=window.KNOCK_APPS_SCRIPT_URL;
+    if(url) await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
+    ph('signup_success',{uni:PAGE_UNI,seg:PAGE_SEG});
+    localStorage.setItem(KEY_SIGNUP,'1');
+    renderCTA();
+    document.getElementById('tb-join').classList.add('show');
+    document.getElementById('join-form-body').style.display='none';
+    document.getElementById('join-done').style.display='block';
+  }catch{
+    btn.disabled=false;btn.textContent='get me found ✓';
+    showToast('something went wrong, try again');
+  }
+}
+
+/* ── SHARE ── */
+async function doShare(){
+  ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});
+  if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:'free starter pack + weekly grad opportunities on whatsapp.',url:window.location.href});}catch(_){}}
+  else copyLink();
+}
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href).catch(()=>{});
+  const b=document.getElementById('cp-btn');b.textContent='copied ✓';
+  setTimeout(()=>{ const x=document.getElementById('cp-btn');if(x)x.textContent='copy'; },2000);
+  showToast('link copied');
+}
+
+/* ── TOAST ── */
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+
+/* ── POSTHOG ── */
+function ph(e,p={}){try{if(typeof posthog!=='undefined')posthog.capture(e,p);}catch(_){}}
+</script>
+</body>
+</html>
