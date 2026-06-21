@@ -346,6 +346,79 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   animation:knobGlow 2.2s ease-in-out infinite;
 }
 
+
+/* ── BUNDLE COUNTER ON SLIDE ── */
+.bundle-pill{display:none;align-items:center;gap:6px;background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px;width:fit-content;}
+.bundle-pill.show{display:flex;}
+/* ── SWIPE PROGRESS ── */
+.swipe-prog{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.swipe-prog-txt{font-size:12px;font-weight:600;color:var(--g500);}
+.swipe-saved-badge{font-size:12px;font-weight:700;color:var(--purple);background:var(--purple-pale);border:1px solid rgba(94,23,235,.18);border-radius:999px;padding:3px 10px;}
+/* ── OPP LIST ── */
+.opp-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.opp-card-list{
+  background:var(--white);border:1.5px solid var(--g200);border-radius:14px;
+  padding:14px 14px 14px 18px;display:flex;align-items:center;gap:12px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s ease,background .35s ease;
+}
+.opp-card-list::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3.5px;
+  background:var(--purple);border-radius:14px 0 0 14px;
+  transform:scaleY(0);transform-origin:center;
+  transition:transform .4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.opp-card-list.saved{border-color:rgba(94,23,235,.3);background:var(--purple-pale);}
+.opp-card-list.saved::before{transform:scaleY(1);}
+.opp-card-content{flex:1;min-width:0;}
+.opp-card-co{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
+.opp-card-role{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.25;}
+.opp-card-meta{font-size:12px;color:var(--g500);margin-bottom:2px;}
+.opp-card-deadline{font-size:11.5px;font-weight:600;color:var(--g700);}
+/* ── SAVE BUTTON ── */
+@keyframes saveBounce{
+  0%{transform:scale(1);}
+  25%{transform:scale(1.5);}
+  55%{transform:scale(.88);}
+  80%{transform:scale(1.14);}
+  100%{transform:scale(1);}
+}
+@keyframes sparkleOut{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  100%{opacity:0;transform:translate(calc(-50% + var(--sx)),calc(-50% + var(--sy))) scale(0);}
+}
+.opp-save-btn{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--g200);background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:19px;color:var(--g500);
+  transition:background .2s,border-color .2s,color .2s;
+  position:relative;
+}
+.opp-save-btn.saved{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.opp-save-btn.bounce{animation:saveBounce .42s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+.swipe-done-sub{font-size:13px;color:var(--g700);line-height:1.65;margin-bottom:18px;}
+.swipe-done-actions{display:flex;flex-direction:column;gap:8px;}
+/* ── PDF BUTTON ── */
+@keyframes saveFB{0%{opacity:1;transform:translateX(-50%) translateY(0);}70%{opacity:1;transform:translateX(-50%) translateY(-18px);}100%{opacity:0;transform:translateX(-50%) translateY(-36px);}}
+.pdf-btn{
+  display:none;align-items:center;justify-content:center;gap:8px;
+  width:100%;background:var(--ink);color:var(--white);border:none;
+  border-radius:12px;padding:14px;font-size:14px;font-weight:700;
+  font-family:var(--font-b);cursor:pointer;transition:opacity .15s;margin-top:10px;
+}
+.pdf-btn.show{display:flex;}
+.pdf-btn:hover{opacity:.85;}
+.pdf-preview{display:none;flex-direction:column;gap:5px;margin-top:10px;padding:12px;background:var(--off);border:1px solid var(--g200);border-radius:10px;}
+.pdf-preview.show{display:flex;}
+.pdf-preview-item{font-size:12px;color:var(--g700);display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
+.pdf-preview-item::before{content:'✓';color:var(--purple);font-weight:700;font-size:11px;flex-shrink:0;margin-top:1px;}
+/* ── SLIDE 3 DIVIDER ── */
+.s3-divider{height:1px;background:var(--g200);margin:14px 0 10px;}
+.share-sub{font-size:13px;color:var(--g700);margin-bottom:12px;line-height:1.6;}
+
+@keyframes saveFB{0%{opacity:1;transform:translateX(-50%) translateY(0);}60%{opacity:.9;transform:translateX(-50%) translateY(-16px);}100%{opacity:0;transform:translateX(-50%) translateY(-36px);}}
+
 /* ── TOAST ────────────────────────────────── */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -547,51 +620,56 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <p class="slide-label anim a1">early pilot</p>
   <h2 class="slide-title anim a2">we bring it<br><em>to your door.</em></h2>
   <p class="slide-body anim a3">we run campus groups and post verified opportunities directly. two buzzes, same time every week. no other noise.</p>
-  <p class="slide-pre anim a3">before we ask you to join — this is yours. free, no strings.</p>
 
-  <div class="mini-cards">
-    <div class="mini-card anim-r r1">
-      <div class="mc-co" id="mc-co-1">[ company ]</div>
-      <div class="mc-role">[ Graduate Developer Programme ]</div>
-      <div class="mc-meta" id="mc-city-1">[ City ] · CompSci · IS · Eng</div>
-      <button class="mc-cta pack-link" data-title="opp1" onclick="claimPack(event);openSheet('sheet-pack')">view &amp; apply →</button>
-    </div>
-    <div class="mini-card anim-r r2">
-      <div class="mc-co">[ company ]</div>
-      <div class="mc-role">[ Data Analyst Intern ]</div>
-      <div class="mc-meta">Johannesburg · Stats · Math · Data Sci</div>
-      <button class="mc-cta pack-link" data-title="opp2" onclick="claimPack(event);openSheet('sheet-pack')">view &amp; apply →</button>
-    </div>
+  <!-- bundle pill — appears after door opened -->
+  <div class="bundle-pill anim a3" id="slide-bundle-pill">
+    <span id="slide-bundle-num">0</span> opportunities saved
   </div>
 
-  <!-- adaptive CTA -->
-  <div class="cta-pair anim a4" id="cta-block">
-    <div class="cta-state vis" id="cs1">
-      <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
-        <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to access campus group</div></div>
-        <span class="door-knob"></span>
-      </button>
-    </div>
-    <div class="cta-state" id="cs2">
-      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">done</div><div class="cta-arr">starter pack ✓</div></div></div>
-      <button class="cta-btn cta-primary" onclick="openSheet('sheet-form')">
-        <div class="cta-t"><div class="cta-sub">one more step</div><div class="cta-arr">sign up to access campus group</div></div>
-        <span style="opacity:.5;">→</span>
-      </button>
-    </div>
-    <div class="cta-state" id="cs3">
-      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're in</div><div class="cta-arr">signed up ✓</div></div></div>
-      <button class="cta-btn cta-secondary" onclick="goSlide(0)">
-        <div class="cta-t"><div class="cta-sub">grab it while you're here</div><div class="cta-arr">starter pack ↑</div></div>
-        <span style="opacity:.5;">↑</span>
-      </button>
-    </div>
-    <div class="cta-state" id="cs4">
-      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're all in</div><div class="cta-arr">pack + group ✓</div></div></div>
-      <button class="cta-btn cta-secondary" onclick="goSlide(2)">
-        <div class="cta-t"><div class="cta-sub">spread the word</div><div class="cta-arr">share with your cohort →</div></div>
-        <span style="opacity:.5;">→</span>
-      </button>
+  <!-- DOOR CLOSED STATE -->
+  <div id="door-closed" class="anim a4">
+    <p class="slide-pre" style="margin-bottom:12px;">opportunities are knocking on your door.</p>
+    <button class="door-cta cta-btn cta-primary" id="door-btn" onclick="openDoor()">
+      <div class="cta-t"><div class="cta-sub">free · no strings</div><div class="cta-arr">open here</div></div>
+      <span class="door-knob"></span>
+    </button>
+  </div>
+
+  <!-- DOOR OPEN STATE -->
+  <div id="door-open" style="display:none;" class="anim a4">
+    <div class="cta-pair">
+      <div class="cta-state vis" id="cs1">
+        <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
+          <div class="cta-t"><div class="cta-sub">tap ♡ to save opportunities</div><div class="cta-arr">browse the pack</div></div>
+          <span style="opacity:.4;">→</span>
+        </button>
+        <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
+          <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to access campus group</div></div>
+          <span class="door-knob"></span>
+        </button>
+      </div>
+      <div class="cta-state" id="cs2">
+        <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
+          <div class="cta-t"><div class="cta-sub">update your saves</div><div class="cta-arr">browse the pack →</div></div>
+        </button>
+        <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form')">
+          <div class="cta-t"><div class="cta-sub">one more step</div><div class="cta-arr">sign up to access campus group</div></div>
+          <span class="door-knob"></span>
+        </button>
+      </div>
+      <div class="cta-state" id="cs3">
+        <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">done</div><div class="cta-arr">signed up ✓</div></div></div>
+        <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
+          <div class="cta-t"><div class="cta-sub">save opportunities for your PDF</div><div class="cta-arr">browse the pack →</div></div>
+        </button>
+      </div>
+      <div class="cta-state" id="cs4">
+        <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're all set</div><div class="cta-arr">pack + group ✓</div></div></div>
+        <button class="cta-btn cta-secondary" onclick="goSlide(2)">
+          <div class="cta-t"><div class="cta-sub">spread the word</div><div class="cta-arr">share with your cohort →</div></div>
+          <span style="opacity:.4;">→</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -607,17 +685,40 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
 </div>
 
-<!-- ══════════ SLIDE 3: SHARE ══════════ -->
+<!-- ══════════ SLIDE 3: SIGN UP + SHARE ══════════ -->
 <div class="slide slide-share" data-slide="2">
 
-  <p class="slide-label anim a1">share</p>
-  <h2 class="slide-title anim a2">opportunity shouldn't<br><em>be gatekept.</em></h2>
-  <p class="slide-body anim a3">neither should this. share it with your friends, peers, cohort.</p>
-  <button class="share-big anim a4" onclick="doShare()">
+  <p class="slide-label anim a1">sign up + share</p>
+  <h2 class="slide-title anim a2" id="s3-title">sign up to<br><em>save your bundle.</em></h2>
+  <p class="slide-body anim a3" id="s3-body">sign up for the campus group — and we'll bundle your saved opportunities into a PDF.</p>
+
+  <!-- sign-up CTA (adaptive) -->
+  <div class="anim a4" id="s3-signup-wrap">
+    <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup_s3',{})">
+      <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to access campus group</div></div>
+      <span class="door-knob"></span>
+    </button>
+  </div>
+
+  <!-- post-signup PDF section -->
+  <div id="s3-pdf-wrap" style="display:none;" class="anim a4">
+    <div class="cta-btn cta-done" style="margin-bottom:8px;pointer-events:none;">
+      <div class="cta-t"><div class="cta-sub">done</div><div class="cta-arr">you're signed up ✓</div></div>
+    </div>
+    <div class="pdf-preview" id="s3-pdf-preview"></div>
+    <button class="pdf-btn" id="s3-pdf-btn" onclick="generatePDF()">
+      📄 download opportunity bundle
+    </button>
+    <p id="s3-no-bundle-msg" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← swipe back and save some opportunities first</p>
+  </div>
+
+  <div class="s3-divider anim a5"></div>
+  <p class="share-sub anim a5">opportunity shouldn't be gatekept.<br>neither should this.</p>
+  <button class="share-big anim a5" onclick="doShare()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    share this page
+    share with your cohort
   </button>
-  <div class="copy-row anim a5">
+  <div class="copy-row anim a6" style="animation-delay:.56s;">
     <span class="copy-url" id="copy-url-txt">join.knocktalent.co.za</span>
     <button class="copy-btn" id="copy-btn" onclick="copyLink()">copy</button>
   </div>
@@ -639,17 +740,28 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 <!-- SHEET OVERLAY -->
 <div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
 
-<!-- SHEET: PACK -->
+<!-- SHEET: PACK (swipe UI) -->
 <div class="sheet" id="sheet-pack">
   <div class="sheet-handle"></div>
-  <div class="sheet-head"><span class="sheet-title">starter pack</span><button class="sheet-close" onclick="closeSheet()">✕</button></div>
+  <div class="sheet-head">
+    <span class="sheet-title">opportunity is knocking.</span>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
   <div class="sheet-body">
-    <div class="pc"><div class="pc-co" id="sp-co1">[ company ]</div><div class="pc-role">[ Graduate Developer Programme ]</div><div class="pc-meta" id="sp-city1">[ City ] · CompSci · IS · Engineering · Closes [ date ]</div><a href="#" class="pc-link pack-link" data-title="opp1-full" onclick="claimPack(event)">view &amp; apply →</a></div>
-    <div class="pc"><div class="pc-co">[ company ]</div><div class="pc-role">[ Data Analyst Intern ]</div><div class="pc-meta">Johannesburg · Stats · Math · Data Sci · Closes [ date ]</div><a href="#" class="pc-link pack-link" data-title="opp2-full" onclick="claimPack(event)">view &amp; apply →</a></div>
-    <div class="pc"><div class="pc-co">[ company ]</div><div class="pc-role">[ STEM Bursary 2026 ]</div><div class="pc-meta">National · Any STEM degree · Closes [ date ]</div><a href="#" class="pc-link pack-link" data-title="opp3-full" onclick="claimPack(event)">view &amp; apply →</a></div>
-    <div class="pack-divider"></div>
-    <div class="insight"><div class="in-icon">⚡</div><div><div class="in-title">The ATS rejection most STEM grads don't know about</div><div class="in-body">A 64% GPA can trigger auto-rejection before a human reads your application — even with 90% in the exact skill the role needs. <a href="#" class="pack-link" data-title="insight-ats" onclick="claimPack(event)" style="color:var(--purple);font-weight:600;text-decoration:none;">read →</a></div></div></div>
-    <div class="insight"><div class="in-icon">🎯</div><div><div class="in-title">How to stand out when every application looks the same</div><div class="in-body">Most STEM grad applications are identical. One thing makes a recruiter stop. <a href="#" class="pack-link" data-title="insight-standout" onclick="claimPack(event)" style="color:var(--purple);font-weight:600;text-decoration:none;">read →</a></div></div></div>
+
+    <!-- OPP LIST UI -->
+    <div id="swipe-ui">
+      <div class="swipe-prog" style="margin-bottom:14px;">
+        <span class="swipe-prog-txt">tap ♡ to save opportunities</span>
+        <span class="swipe-saved-badge" id="swipe-saved-ct">0 saved</span>
+      </div>
+      <div class="opp-list" id="card-stack"></div>
+      <button class="cta-btn cta-primary" style="width:100%;margin-top:4px;" onclick="closeSheet();goSlide(2);">
+        <div class="cta-t"><div class="cta-sub">sign up to bundle into PDF</div><div class="cta-arr">continue →</div></div>
+        <span style="opacity:.4;">→</span>
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -671,6 +783,14 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
       <div class="sf-done-title">you're vetted.</div>
       <div class="sf-done-sub">request to join your campus group — we'll verify and approve you within 24 hours.</div>
       <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group</a>
+      <!-- PDF section (shown after signup if bundle exists) -->
+      <div id="sf-pdf-section" style="display:none;margin-top:18px;">
+        <div style="height:1px;background:var(--g200);margin-bottom:14px;"></div>
+        <div class="pdf-preview" id="sf-pdf-preview"></div>
+        <button class="pdf-btn" id="sf-pdf-btn" onclick="generatePDF()">📄 download opportunity bundle</button>
+        <p id="sf-no-bundle" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← go back to slide 2 to save opportunities first</p>
+        <p style="font-size:11px;color:var(--g300);text-align:center;margin-top:6px;line-height:1.5;">saved to your device · no account needed · links live when active</p>
+      </div>
     </div>
   </div>
 </div>
@@ -703,10 +823,9 @@ let NET=null,CYCLE_TIMER=null;
   document.getElementById('sf-wa-btn').href=u.waLink;
   document.getElementById('copy-url-txt').textContent=window.location.href;
   const city=u.location;
-  document.getElementById('mc-co-1').textContent='[ company · '+city+' ]';
-  document.getElementById('mc-city-1').textContent=city+' · CompSci · IS · Eng';
-  document.getElementById('sp-co1').textContent='[ company · '+city+' ]';
-  document.getElementById('sp-city1').textContent=city+' · CompSci · IS · Eng · Closes [ date ]';
+  // pack geo is set via OPPORTUNITIES array — no inline card refs needed
+  // pack geo bias now handled by OPPORTUNITIES array
+  // (opportunities in OPPORTUNITIES array use PAGE_UNI city for geo bias)
   loadLikes(); renderCTA();
   // Enter slide 0
   setTimeout(()=>{ slides[0].classList.add('entered'); },80);
@@ -714,6 +833,8 @@ let NET=null,CYCLE_TIMER=null;
   initNetwork();
   startCycling();
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
+  initDoorState();
+  refreshS3();
 })();
 
 /* ── NETWORK CANVAS ── */
@@ -759,8 +880,8 @@ function initNetwork(){
 }
 
 /* ── CYCLING WORD ── */
-const WORDS=['jobs','internships','funding','career knowledge'];
-let wIdx=0;
+var WORDS=['jobs','internships','funding','career knowledge'];
+var wIdx=0;
 function startCycling(){
   CYCLE_TIMER=setInterval(()=>{
     const el=document.getElementById('cycle-word');
@@ -868,7 +989,7 @@ async function sfSubmit(){
     const url=window.KNOCK_APPS_SCRIPT_URL;
     if(url)await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
     ph('signup_success',{uni:PAGE_UNI,seg:PAGE_SEG});
-    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA();
+    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshS3();
     document.getElementById('sf-form-body').style.display='none';
     document.getElementById('sf-done').style.display='block';
   }catch{btn.disabled=false;btn.textContent='get me found ✓';showToast('something went wrong, try again');}
@@ -880,6 +1001,258 @@ function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()
 
 /* ── TOAST / PH ── */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+
+/* ══════ OPPORTUNITIES DATA ══════ */
+var OPPORTUNITIES=[
+  {id:'o1',company:'[ Company A ]',title:'[ Graduate Developer Programme ]',location:'Cape Town',degrees:'CompSci · IS · Engineering',deadline:'[ date ]',url:'go.knocktalent.co.za/company-uct-1'},
+  {id:'o2',company:'[ Company B ]',title:'[ Data Analyst Intern ]',location:'Johannesburg',degrees:'Stats · Mathematics · Data Science',deadline:'[ date ]',url:'go.knocktalent.co.za/company-wits-1'},
+  {id:'o3',company:'[ Company C ]',title:'[ STEM Bursary 2026 ]',location:'National',degrees:'Any STEM degree',deadline:'[ date ]',url:'go.knocktalent.co.za/company-national-1'},
+  {id:'o4',company:'[ Company D ]',title:'[ Software Engineer Graduate ]',location:'Cape Town · Hybrid',degrees:'CompSci · Engineering Informatics',deadline:'[ date ]',url:'go.knocktalent.co.za/company-uct-2'},
+  {id:'o5',company:'[ Company E ]',title:'[ Junior Quant Analyst ]',location:'Johannesburg',degrees:'Mathematics · Statistics · Actuarial',deadline:'[ date ]',url:'go.knocktalent.co.za/company-wits-2'},
+];
+
+/* ══════ BUNDLE & DOOR STATE ══════ */
+var KEY_BUNDLE='knock_bundle_v1',KEY_DOOR='knock_door_v1',KEY_CARD_IDX='knock_card_v1';
+function getBundle(){return JSON.parse(localStorage.getItem(KEY_BUNDLE)||'[]');}
+function saveBundle(b){localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}
+function addToBundle(opp){const b=getBundle();if(!b.find(o=>o.id===opp.id)){b.push(opp);saveBundle(b);}refreshBundleUI();}
+function removeFromBundle(id){saveBundle(getBundle().filter(o=>o.id!==id));refreshBundleUI();}
+function refreshBundleUI(){
+  const n=getBundle().length;
+  const pill=document.getElementById('slide-bundle-pill');
+  const num=document.getElementById('slide-bundle-num');
+  const badge=document.getElementById('swipe-saved-ct');
+  if(pill)pill.classList.toggle('show',n>0);
+  if(num)num.textContent=n;
+  if(badge)badge.textContent=n+' saved';
+  refreshS3();
+}
+function refreshS3(){
+  const signed=localStorage.getItem(KEY_SIGNUP)==='1';
+  const bundle=getBundle();
+  const signupWrap=document.getElementById('s3-signup-wrap');
+  const pdfWrap=document.getElementById('s3-pdf-wrap');
+  const pdfBtn=document.getElementById('s3-pdf-btn');
+  const noBundle=document.getElementById('s3-no-bundle-msg');
+  const preview=document.getElementById('s3-pdf-preview');
+  const title=document.getElementById('s3-title');
+  const body=document.getElementById('s3-body');
+  if(signupWrap)signupWrap.style.display=signed?'none':'block';
+  if(pdfWrap)pdfWrap.style.display=signed?'block':'none';
+  if(signed){
+    if(bundle.length>0){
+      if(pdfBtn)pdfBtn.classList.add('show');
+      if(noBundle)noBundle.style.display='none';
+      if(preview){preview.classList.add('show');preview.innerHTML=bundle.map(o=>`<div class="pdf-preview-item">${o.title} — ${o.company}</div>`).join('');}
+      if(title)title.innerHTML='your bundle<br><em>is ready.</em>';
+      if(body)body.textContent='sign up done. download your saved opportunities as a PDF below.';
+    }else{
+      if(pdfBtn)pdfBtn.classList.remove('show');
+      if(noBundle)noBundle.style.display='block';
+      if(preview)preview.classList.remove('show');
+      if(title)title.innerHTML='signed up ✓<br><em>save some opportunities.</em>';
+      if(body)body.textContent='swipe back to slide 2 and save opportunities to build your PDF bundle.';
+    }
+  }else{
+    if(bundle.length>0){
+      if(title)title.innerHTML='sign up to<br><em>save your bundle.</em>';
+      if(body)body.textContent=`you've saved ${bundle.length} ${bundle.length===1?'opportunity':'opportunities'}. sign up and we'll bundle them into a PDF.`;
+    }else{
+      if(title)title.innerHTML='sign up to<br><em>access the group.</em>';
+      if(body)body.textContent='sign up for the campus group — and discover opportunities delivered directly to WhatsApp.';
+    }
+  }
+  // Also refresh sf-done PDF section if visible
+  const sfPdf=document.getElementById('sf-pdf-section');
+  const sfPdfBtn=document.getElementById('sf-pdf-btn');
+  const sfNoBundle=document.getElementById('sf-no-bundle');
+  const sfPreview=document.getElementById('sf-pdf-preview');
+  if(sfPdf&&signed){
+    sfPdf.style.display='block';
+    if(bundle.length>0){
+      if(sfPdfBtn)sfPdfBtn.classList.add('show');
+      if(sfNoBundle)sfNoBundle.style.display='none';
+      if(sfPreview){sfPreview.classList.add('show');sfPreview.innerHTML=bundle.map(o=>`<div class="pdf-preview-item">${o.title} — ${o.company}</div>`).join('');}
+    }else{
+      if(sfPdfBtn)sfPdfBtn.classList.remove('show');
+      if(sfNoBundle)sfNoBundle.style.display='block';
+    }
+  }
+}
+
+/* ══════ DOOR ══════ */
+function isDoorOpen(){return localStorage.getItem(KEY_DOOR)==='1';}
+function initDoorState(){
+  if(isDoorOpen()){
+    document.getElementById('door-closed').style.display='none';
+    document.getElementById('door-open').style.display='block';
+    refreshBundleUI();
+  }
+}
+function openDoor(){
+  const btn=document.getElementById('door-btn');
+  if(btn){
+    btn.style.transition='transform .5s cubic-bezier(0.4,0,0.2,1),opacity .35s ease';
+    btn.style.transformOrigin='left center';
+    btn.style.transform='perspective(600px) rotateY(-88deg)';
+    btn.style.opacity='0.1';
+  }
+  localStorage.setItem(KEY_DOOR,'1');
+  ph('door_opened',{uni:PAGE_UNI});
+  setTimeout(()=>{
+    document.getElementById('door-closed').style.display='none';
+    document.getElementById('door-open').style.display='block';
+    initCardStack();
+    openSheet('sheet-pack');
+    refreshBundleUI();
+    renderCTA();
+  },420);
+}
+
+/* ══════ CARD STACK ══════ */
+var CARD_IDX=0;
+function initCardStack(){
+  renderStack();
+}
+function renderStack(){
+  var stack=document.getElementById('card-stack');
+  if(!stack)return;
+  stack.innerHTML='';
+  var bundle=getBundle();
+  OPPORTUNITIES.forEach(function(opp){
+    var saved=!!bundle.find(function(o){return o.id===opp.id;});
+    var el=document.createElement('div');
+    el.className='opp-card-list'+(saved?' saved':'');
+    el.dataset.id=opp.id;
+    el.innerHTML=
+      '<div class="opp-card-content">'+
+        '<div class="opp-card-co">'+opp.company+'</div>'+
+        '<div class="opp-card-role">'+opp.title+'</div>'+
+        '<div class="opp-card-meta">'+opp.location+' · '+opp.degrees+'</div>'+
+        '<div class="opp-card-deadline">closes '+opp.deadline+'</div>'+
+      '</div>'+
+      '<button class="opp-save-btn'+(saved?' saved':'')+'" aria-label="'+(saved?'unsave':'save')+'">'+
+        (saved?'♥':'♡')+
+      '</button>';
+    el.querySelector('.opp-save-btn').addEventListener('click',function(e){
+      e.stopPropagation();
+      toggleSave(opp,el,e);
+    });
+    stack.appendChild(el);
+  });
+  updateProgress();
+}
+function toggleSave(opp,cardEl,e){
+  var bundle=getBundle();
+  var saved=!!bundle.find(function(o){return o.id===opp.id;});
+  var btn=cardEl.querySelector('.opp-save-btn');
+  if(!saved){
+    addToBundle(opp);
+    cardEl.classList.add('saved');
+    btn.classList.add('saved');
+    btn.innerHTML='♥';
+    btn.setAttribute('aria-label','unsave');
+    btn.classList.remove('bounce');
+    void btn.offsetWidth;
+    btn.classList.add('bounce');
+    setTimeout(function(){btn.classList.remove('bounce');},450);
+    doSparkle(e);
+    ph('opportunity_saved',{opp_id:opp.id,uni:PAGE_UNI});
+  }else{
+    removeFromBundle(opp.id);
+    cardEl.classList.remove('saved');
+    btn.classList.remove('saved');
+    btn.innerHTML='♡';
+    btn.setAttribute('aria-label','save');
+    ph('opportunity_unsaved',{opp_id:opp.id,uni:PAGE_UNI});
+  }
+  updateProgress();
+}
+function doSparkle(e){
+  var x=e.clientX,y=e.clientY;
+  var clrs=['#5E17EB','#C9AAFF','#F0EBFF','#8B5CF6'];
+  for(var i=0;i<7;i++){
+    (function(idx){
+      var dot=document.createElement('div');
+      var angle=(idx/7)*Math.PI*2+(Math.random()-.5)*.6;
+      var dist=22+Math.random()*20;
+      var sz=3+Math.random()*4;
+      var clr=clrs[idx%clrs.length];
+      var sx=Math.cos(angle)*dist+'px';
+      var sy=Math.sin(angle)*dist+'px';
+      dot.style.cssText='position:fixed;left:'+x+'px;top:'+y+'px;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+clr+';pointer-events:none;z-index:9999;--sx:'+sx+';--sy:'+sy+';animation:sparkleOut .5s '+(idx*.04)+'s ease-out forwards;';
+      document.body.appendChild(dot);
+      setTimeout(function(){dot.remove();},580);
+    })(i);
+  }
+}
+function showSaveFeedback(){
+  var fb=document.createElement('div');
+  fb.textContent='saved ✓';
+  fb.style.cssText='position:fixed;top:42%;left:50%;transform:translateX(-50%);background:var(--purple);color:#fff;font-size:15px;font-weight:700;padding:9px 20px;border-radius:999px;z-index:500;pointer-events:none;font-family:var(--font-b);animation:saveFB .7s ease-out forwards;';
+  document.body.appendChild(fb);
+  setTimeout(function(){fb.remove();},720);
+}
+function updateProgress(){
+  var n=getBundle().length;
+  var badge=document.getElementById('swipe-saved-ct');
+  if(badge)badge.textContent=n+' saved';
+}
+
+/* ══════ PDF GENERATION ══════ */
+function generatePDF(){
+  const bundle=getBundle();
+  if(!bundle.length){showToast('save some opportunities first ←');return;}
+  if(!window.jspdf){
+    showToast('loading PDF tools…');
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload=()=>_doPDF(bundle);
+    s.onerror=()=>showToast('PDF unavailable — check your connection');
+    document.head.appendChild(s);
+    return;
+  }
+  _doPDF(bundle);
+}
+function _doPDF(bundle){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,M=14;
+  // Header bar
+  doc.setFillColor(94,23,235);doc.rect(0,0,W,13,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('knock.',M,9);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.text('opportunity infrastructure.',M+16,9);
+  // Title
+  doc.setTextColor(17,17,17);doc.setFont('helvetica','bold');doc.setFontSize(22);doc.text('your opportunity bundle.',M,28);
+  // Date
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(136,133,128);
+  doc.text(new Date().toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'})+' · compiled from knock digital campus',M,36);
+  // Divider
+  doc.setDrawColor(224,222,217);doc.setLineWidth(0.4);doc.line(M,41,W-M,41);
+  // Cards
+  let y=50;
+  bundle.forEach(opp=>{
+    const h=40;
+    doc.setFillColor(248,247,245);doc.roundedRect(M,y,W-M*2,h,3,3,'F');
+    doc.setFillColor(94,23,235);doc.rect(M,y,2.5,h,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(94,23,235);
+    doc.text(opp.company.toUpperCase(),M+7,y+8);
+    doc.setFontSize(11.5);doc.setTextColor(17,17,17);
+    doc.text(opp.title,M+7,y+16);
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(136,133,128);
+    doc.text(`${opp.location}  ·  ${opp.degrees}  ·  closes ${opp.deadline}`,M+7,y+23);
+    doc.setTextColor(94,23,235);doc.setFontSize(7.5);
+    doc.text('→ '+opp.url,M+7,y+31);
+    y+=h+7;
+  });
+  // Footer
+  doc.setDrawColor(224,222,217);doc.line(M,278,W-M,278);
+  doc.setFontSize(7);doc.setTextColor(200,198,194);doc.setFont('helvetica','normal');
+  doc.text('opportunity finds you. delivered by knock. · links activate when opportunities go live on go.knocktalent.co.za',M,283);
+  doc.save('knock-opportunity-bundle.pdf');
+  ph('pdf_generated',{bundle_size:bundle.length,uni:PAGE_UNI});
+}
+
 function ph(e,p={}){try{if(typeof posthog!=='undefined')posthog.capture(e,p);}catch(_){}}
 </script>
 </body>

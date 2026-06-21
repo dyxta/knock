@@ -24,7 +24,8 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 
 /* ── FEED ──────────────────────────────────── */
 #feed{
-  height:100dvh;height:100vh;
+  height:100vh;
+  height:calc(var(--vh,1vh)*100);
   overflow-y:scroll;
   scroll-snap-type:y mandatory;
   -webkit-overflow-scrolling:touch;
@@ -35,21 +36,115 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 
 /* ── SLIDE BASE ────────────────────────────── */
 .slide{
-  height:100dvh;height:100vh;
+  height:100vh;
+  height:calc(var(--vh,1vh)*100);
   scroll-snap-align:start;
   position:relative;
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
-  padding:0 72px 80px 24px;
+  justify-content:flex-start;
+  padding:0 68px calc(env(safe-area-inset-bottom,0px) + 36px) 22px;
+  box-sizing:border-box;
 }
 
 /* ── SLIDE BACKGROUNDS ─────────────────────── */
 /* slide 1: warm white — network canvas provides life */
-.slide-m{background:var(--warm);color:var(--ink);}
+.slide-m{
+  background:var(--warm);color:var(--ink);
+  justify-content:flex-end;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 110px);
+}
+.slide-m .swipe-hint{margin-top:30px;}
 /* slides 2-3: pure white */
-.slide-pack,.slide-share{background:var(--white);color:var(--ink);}
+.slide-pack,.slide-share{
+  background:var(--white);color:var(--ink);
+  padding-top:calc(env(safe-area-inset-top,0px) + 52px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px);
+}
+/* Slide 2 & 3 spacing */
+.s3-divider{margin-top:24px;}
+
+/* ── TALL DOOR BUTTON ───────────────────── */
+@keyframes doorTallGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(94,23,235,0),0 4px 22px rgba(94,23,235,.2);}
+  50%{box-shadow:0 0 0 9px rgba(94,23,235,.09),0 8px 42px rgba(94,23,235,.38);}
+}
+@keyframes doorTallShimmer{
+  0%{transform:translateX(-120%) skewX(-10deg);}
+  32%,100%{transform:translateX(240%) skewX(-10deg);}
+}
+@keyframes doorTallKnob{
+  0%,100%{opacity:.7;box-shadow:0 0 4px rgba(255,255,255,.4);}
+  50%{opacity:1;box-shadow:0 0 10px rgba(255,255,255,.95),0 0 22px rgba(255,255,255,.28);}
+}
+.door-tall-btn{
+  width:100%;
+  height:min(42vh,290px);
+  border-radius:36px 36px 4px 4px;
+  background:var(--purple);
+  border:none;
+  cursor:pointer;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;
+  padding-bottom:22px;
+  position:relative;overflow:hidden;
+  margin-bottom:20px;
+  transform-style:preserve-3d;
+  animation:doorTallGlow 2.2s ease-in-out infinite;
+  transition:transform .5s cubic-bezier(0.4,0,0.2,1),opacity .35s ease;
+}
+.door-tall-btn::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,.18) 50%,transparent 68%);
+  animation:doorTallShimmer 3s ease-in-out infinite;
+}
+.door-panel-inner{
+  position:absolute;
+  top:22px;left:20px;right:20px;
+  height:52%;
+  border:1.5px solid rgba(255,255,255,.16);
+  border-radius:28px 28px 3px 3px;
+  pointer-events:none;
+}
+.door-tall-crack{
+  position:absolute;right:0;top:12%;bottom:12%;
+  width:2px;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.72),rgba(255,255,255,.72),transparent);
+  border-radius:0 1px 1px 0;
+  animation:crackGlow 2.2s ease-in-out infinite;
+}
+.door-tall-knob-el{
+  position:absolute;right:20px;top:50%;
+  width:11px;height:11px;border-radius:50%;
+  background:rgba(255,255,255,.88);
+  animation:doorTallKnob 2.2s ease-in-out infinite;
+}
+.door-tall-label{
+  position:relative;z-index:2;
+  font-family:var(--font-d);font-weight:800;font-size:16px;
+  color:rgba(255,255,255,.95);letter-spacing:-.2px;
+}
+.door-tall-sub{
+  position:relative;z-index:2;
+  font-size:11px;color:rgba(255,255,255,.45);
+  margin-top:3px;font-family:var(--font-b);
+}
+.door-kicker{
+  font-size:15px;font-weight:700;color:var(--ink);
+  margin-bottom:7px;line-height:1.35;
+}
+.door-explain{
+  font-size:13.5px;color:var(--g500);line-height:1.65;max-width:300px;
+}
+.door-open-note{font-size:13.5px;color:var(--g700);margin-bottom:14px;line-height:1.55;}
+.door-open-note strong{color:var(--ink);font-weight:600;}
+.p2-note{font-size:14px;color:var(--g700);line-height:1.65;margin-bottom:14px;max-width:300px;}
+.p2-wa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:var(--white);border:none;border-radius:12px;padding:14px 18px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;width:100%;max-width:300px;justify-content:center;transition:opacity .15s;}
+.p2-wa-btn:hover{opacity:.88;}
+
+
+
 /* thin purple accent at top of slides 2-3 */
 .slide-pack::before,.slide-share::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -61,12 +156,13 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .net-canvas{
   position:absolute;inset:0;width:100%;height:100%;
   pointer-events:none;z-index:0;
+  border:none;outline:none;display:block;
 }
 
 /* ── LOGO ROW (slide 1 top) ────────────────── */
 .logo-row{
   position:absolute;
-  top:calc(env(safe-area-inset-top,0px) + 24px);
+  top:calc(env(safe-area-inset-top,0px) + 20px);
   left:24px;
   display:flex;align-items:center;gap:9px;
   z-index:5;
@@ -88,6 +184,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .slide.entered .a3{animation-delay:.25s;}
 .slide.entered .a4{animation-delay:.36s;}
 .slide.entered .a5{animation-delay:.46s;}
+.slide.entered .a6{animation-delay:.56s;}
 .anim-r{opacity:0;}
 .slide.entered .anim-r{animation:enterRight .45s ease forwards;}
 .slide.entered .r1{animation-delay:.2s;}
@@ -97,40 +194,40 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 /* ── SLIDE 1 TYPOGRAPHY ────────────────────── */
 .slide-m .slide-label{
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--purple);margin-bottom:6px;
+  color:var(--purple);margin-bottom:14px;
   display:flex;align-items:center;gap:8px;
 }
 .slide-m .slide-label::before{content:'';width:14px;height:1px;background:var(--purple);}
 
 .slide-hi{
   font-family:var(--font-d);font-weight:900;
-  font-size:clamp(44px,12vw,60px);
-  line-height:.97;letter-spacing:-.04em;
-  color:var(--ink);margin-bottom:16px;
+  font-size:clamp(52px,14vw,72px);
+  line-height:.93;letter-spacing:-.04em;
+  color:var(--ink);margin-bottom:22px;
 }
 .slide-hi em{font-style:normal;color:var(--purple);}
 
 /* manifesto block */
-.manifesto{margin-bottom:16px;}
+.manifesto{margin-bottom:18px;}
 .m-pre,.m-post,.m-belief{
-  font-size:15px;color:var(--g700);line-height:1.6;
+  font-size:15.5px;color:var(--g700);line-height:1.68;
 }
-.m-belief{color:var(--ink);font-weight:600;margin-top:10px;}
+.m-belief{color:var(--ink);font-weight:600;margin-top:16px;}
 
 /* cycling word */
 .cycle-wrap{
   display:block;
   overflow:hidden;
-  height:42px;
+  height:50px;
   margin:4px 0 2px;
 }
 #cycle-word{
   display:block;
   font-family:var(--font-d);font-weight:900;
-  font-size:clamp(30px,8vw,36px);
+  font-size:clamp(34px,9.5vw,44px);
   color:var(--purple);
   letter-spacing:-.03em;
-  line-height:1.15;
+  line-height:1.1;
   will-change:transform,opacity;
   transition:transform .2s ease,opacity .2s ease;
 }
@@ -151,19 +248,19 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 /* ── SLIDES 2-3 TYPOGRAPHY ─────────────────── */
 .slide-label{
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--purple);margin-bottom:8px;
+  color:var(--purple);margin-bottom:18px;
   display:flex;align-items:center;gap:8px;
 }
 .slide-label::before{content:'';width:14px;height:1px;background:var(--purple);}
 .slide-title{
   font-family:var(--font-d);font-weight:900;
-  font-size:clamp(30px,8vw,40px);
-  line-height:1.02;letter-spacing:-.04em;
-  color:var(--ink);margin-bottom:10px;
+  font-size:clamp(38px,10.5vw,56px);
+  line-height:.98;letter-spacing:-.04em;
+  color:var(--ink);margin-bottom:20px;
 }
 .slide-title em{font-style:normal;color:var(--purple);}
-.slide-body{font-size:13.5px;color:var(--g700);line-height:1.7;margin-bottom:10px;max-width:290px;}
-.slide-pre{font-size:13px;color:var(--g500);margin-bottom:14px;font-style:italic;}
+.slide-body{font-size:14.5px;color:var(--g700);line-height:1.72;margin-bottom:20px;max-width:300px;}
+.slide-pre{font-size:13.5px;color:var(--g500);margin-bottom:18px;font-style:italic;}
 
 /* ── PACK CARDS ────────────────────────────── */
 .mini-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
@@ -231,7 +328,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .copy-btn{font-size:12px;font-weight:700;color:var(--purple);background:none;border:none;cursor:pointer;font-family:var(--font-b);white-space:nowrap;}
 
 /* ── ACTION BUTTONS (right side) ──────────── */
-.slide-actions{position:absolute;right:10px;bottom:86px;display:flex;flex-direction:column;align-items:center;gap:22px;z-index:10;}
+.slide-actions{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:22px;z-index:10;}
 .act-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:0;}
 .act-icon{
   width:46px;height:46px;border-radius:50%;
@@ -415,10 +512,35 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .pdf-preview-item::before{content:'✓';color:var(--purple);font-weight:700;font-size:11px;flex-shrink:0;margin-top:1px;}
 /* ── SLIDE 3 DIVIDER ── */
 .s3-divider{height:1px;background:var(--g200);margin:14px 0 10px;}
-.share-sub{font-size:13px;color:var(--g700);margin-bottom:12px;line-height:1.6;}
+.share-sub{font-size:14px;color:var(--g700);margin-bottom:16px;line-height:1.65;}
 
 @keyframes saveFB{0%{opacity:1;transform:translateX(-50%) translateY(0);}60%{opacity:.9;transform:translateX(-50%) translateY(-16px);}100%{opacity:0;transform:translateX(-50%) translateY(-36px);}}
 
+
+/* ── PILOT FOMO LINE (slide 1) ── */
+.m-pilot{font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--g500);margin-top:12px;}
+.m-pilot em{color:var(--purple);font-style:normal;}
+
+/* ── INLINE OPP ROWS (slide 2) ── */
+.opp-batch-intro{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin:18px 0 0;}
+.opp-rows{border-top:1px solid var(--g200);margin-top:8px;}
+.opp-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--g200);}
+.opp-row-info{flex:1;min-width:0;}
+.opp-row-co{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:2px;}
+.opp-row-role{font-size:13px;font-weight:700;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.opp-row-loc{font-size:11px;color:var(--g500);margin-top:1px;}
+.opp-row-heart{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--g200);background:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--g300);transition:all .2s;padding:0;line-height:1;}
+.opp-row-heart.liked{background:var(--purple-pale);border-color:var(--purple);color:var(--purple);}
+.opp-row.row-liked{background:var(--purple-pale);border-radius:10px;padding-left:10px;padding-right:10px;margin:0 -10px;border-bottom-color:rgba(94,23,235,.15);}
+.opp-unlock-note{font-size:13.5px;color:var(--g700);margin-top:16px;margin-bottom:12px;line-height:1.6;}
+.opp-unlock-note strong{color:var(--ink);font-weight:700;}
+.bundle-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.opp-rows-unlocked{background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);border-radius:12px;padding:0 12px;margin-top:8px;}
+.opp-rows-unlocked .opp-row{border-bottom-color:rgba(94,23,235,.12);}
+.opp-rows-unlocked .opp-row:last-child{border-bottom:none;}
+.opp-rows-unlocked .opp-row-co{color:rgba(94,23,235,.75);}
+.unlocked-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-top:18px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.unlocked-label::before{content:"✦";font-size:9px;}
 /* ── TOAST ────────────────────────────────── */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -596,6 +718,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
     </div>
     <p class="m-post">should be a time-consuming humiliation ritual.</p>
     <p class="m-belief">real opportunity should find you.<br>we help bring it to your door.</p>
+    <p class="m-pilot">founding pilot · <em>small cohort, not a mass blast.</em></p>
   </div>
 
   <div class="swipe-hint anim a4">
@@ -614,62 +737,48 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
 </div>
 
-<!-- ══════════ SLIDE 2: PACK ══════════ -->
+<!-- ══════════ SLIDE 2: PILOT INFO + OPPORTUNITIES ══════════ -->
 <div class="slide slide-pack" data-slide="1">
 
+  <!-- Always visible: pilot info -->
   <p class="slide-label anim a1">early pilot</p>
-  <h2 class="slide-title anim a2">we bring it<br><em>to your door.</em></h2>
-  <p class="slide-body anim a3">we run campus groups and post verified opportunities directly. two buzzes, same time every week. no other noise.</p>
+  <h2 class="slide-title anim a2">we want to bring it<br><em>to your door.</em></h2>
+  <p class="slide-body anim a3" style="margin-bottom:6px;font-size:13px;color:var(--purple);font-weight:600;font-style:italic;">started by students — because we know the pain, time, and shame that comes with employment seeking.</p>
+  <p class="slide-body anim a3">we run campus groups and post verified opportunities in drops directly to them. twice a week, same time every week. no other noise. (admin-only — no yappers, no rage-baiters.)</p>
 
-  <!-- bundle pill — appears after door opened -->
-  <div class="bundle-pill anim a3" id="slide-bundle-pill">
-    <span id="slide-bundle-num">0</span> opportunities saved
-  </div>
+  <!-- Batch 1: always visible, no gate -->
+  <p class="opp-batch-intro anim a3">we're student-first. here's a taste.</p>
+  <div class="opp-rows anim a3" id="batch1-rows"></div>
 
-  <!-- DOOR CLOSED STATE -->
-  <div id="door-closed" class="anim a4">
-    <p class="slide-pre" style="margin-bottom:12px;">opportunities are knocking on your door.</p>
-    <button class="door-cta cta-btn cta-primary" id="door-btn" onclick="openDoor()">
-      <div class="cta-t"><div class="cta-sub">free · no strings</div><div class="cta-arr">open here</div></div>
+  <!-- STATE 1: not signed up -->
+  <div id="p2-s1" class="anim a4">
+    <p class="opp-unlock-note">want us to bring <strong>more to your door?</strong><br>sign up to become part of the pilot.</p>
+    <p style="font-size:13px;color:var(--g500);margin-bottom:14px;line-height:1.6;max-width:300px;">signing up gets you <strong style="color:var(--ink);">3 more opportunities</strong> + access to your knock campus group — built for <span id="p2-uni-name">your uni</span> stem students.</p>
+    <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
+      <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to become part of it</div></div>
       <span class="door-knob"></span>
     </button>
   </div>
 
-  <!-- DOOR OPEN STATE -->
-  <div id="door-open" style="display:none;" class="anim a4">
-    <div class="cta-pair">
-      <div class="cta-state vis" id="cs1">
-        <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
-          <div class="cta-t"><div class="cta-sub">tap ♡ to save opportunities</div><div class="cta-arr">browse the pack</div></div>
-          <span style="opacity:.4;">→</span>
-        </button>
-        <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
-          <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to access campus group</div></div>
-          <span class="door-knob"></span>
-        </button>
+  <!-- STATE 2: signed up, WA not yet requested -->
+  <div id="p2-s2" style="display:none;">
+    <p class="opp-unlock-note">you're in. <strong>request to join your campus group</strong> — your next 3 opportunities unlock once you do.</p>
+    <button class="p2-wa-btn" id="p2-wa-btn" onclick="requestWA(this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group
+    </button>
+  </div>
+
+  <!-- STATE 3: signed up + WA requested — 3 more unlock -->
+  <div id="p2-s3" style="display:none;">
+    <p class="unlocked-label">unlocked for you</p>
+    <div class="opp-rows opp-rows-unlocked" id="batch2-rows"></div>
+    <div class="bundle-actions">
+      <div class="bundle-pill" id="slide-bundle-pill">
+        <span id="slide-bundle-num">0</span> saved
       </div>
-      <div class="cta-state" id="cs2">
-        <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
-          <div class="cta-t"><div class="cta-sub">update your saves</div><div class="cta-arr">browse the pack →</div></div>
-        </button>
-        <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form')">
-          <div class="cta-t"><div class="cta-sub">one more step</div><div class="cta-arr">sign up to access campus group</div></div>
-          <span class="door-knob"></span>
-        </button>
-      </div>
-      <div class="cta-state" id="cs3">
-        <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">done</div><div class="cta-arr">signed up ✓</div></div></div>
-        <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
-          <div class="cta-t"><div class="cta-sub">save opportunities for your PDF</div><div class="cta-arr">browse the pack →</div></div>
-        </button>
-      </div>
-      <div class="cta-state" id="cs4">
-        <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're all set</div><div class="cta-arr">pack + group ✓</div></div></div>
-        <button class="cta-btn cta-secondary" onclick="goSlide(2)">
-          <div class="cta-t"><div class="cta-sub">spread the word</div><div class="cta-arr">share with your cohort →</div></div>
-          <span style="opacity:.4;">→</span>
-        </button>
-      </div>
+      <button class="cta-btn cta-secondary" onclick="goSlide(2)">
+        <div class="cta-t"><div class="cta-sub">swipe to download your bundle</div><div class="cta-arr">continue →</div></div>
+      </button>
     </div>
   </div>
 
@@ -685,35 +794,25 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
 </div>
 
-<!-- ══════════ SLIDE 3: SIGN UP + SHARE ══════════ -->
+<!-- ══════════ SLIDE 3: BUNDLE + SHARE ══════════ -->
 <div class="slide slide-share" data-slide="2">
 
-  <p class="slide-label anim a1">sign up + share</p>
-  <h2 class="slide-title anim a2" id="s3-title">sign up to<br><em>save your bundle.</em></h2>
-  <p class="slide-body anim a3" id="s3-body">sign up for the campus group — and we'll bundle your saved opportunities into a PDF.</p>
+  <p class="slide-label anim a1">thank you.</p>
+  <h2 class="slide-title anim a2" id="s3-title">for joining<br><em>the pilot.</em></h2>
+  <p class="slide-body anim a3" id="s3-body">welcome to the gang. your saved opportunities are below — download them and share the love.</p>
 
-  <!-- sign-up CTA (adaptive) -->
-  <div class="anim a4" id="s3-signup-wrap">
-    <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup_s3',{})">
-      <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to access campus group</div></div>
-      <span class="door-knob"></span>
-    </button>
-  </div>
-
-  <!-- post-signup PDF section -->
-  <div id="s3-pdf-wrap" style="display:none;" class="anim a4">
-    <div class="cta-btn cta-done" style="margin-bottom:8px;pointer-events:none;">
-      <div class="cta-t"><div class="cta-sub">done</div><div class="cta-arr">you're signed up ✓</div></div>
-    </div>
+  <!-- PDF section — visible once WA requested and bundle has items -->
+  <div class="anim a4">
     <div class="pdf-preview" id="s3-pdf-preview"></div>
-    <button class="pdf-btn" id="s3-pdf-btn" onclick="generatePDF()">
-      📄 download opportunity bundle
+    <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
+      <div class="cta-t"><div class="cta-arr">📄 download opportunity bundle</div></div>
     </button>
-    <p id="s3-no-bundle-msg" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← swipe back and save some opportunities first</p>
+    <p id="s3-pdf-gate-hint" style="font-size:12px;color:var(--g500);margin-top:8px;text-align:center;line-height:1.5;">← go back and complete sign up + group request to unlock</p>
+    <p id="s3-no-bundle-msg" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← save some opportunities on slide 2 first</p>
   </div>
 
   <div class="s3-divider anim a5"></div>
-  <p class="share-sub anim a5">opportunity shouldn't be gatekept.<br>neither should this.</p>
+  <p class="share-sub anim a5">opportunity shouldn't be gatekept.<br>share with your friends, peers, cohort.</p>
   <button class="share-big anim a5" onclick="doShare()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     share with your cohort
@@ -782,12 +881,13 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
       <div class="sf-done-icon">🎉</div>
       <div class="sf-done-title">you're vetted.</div>
       <div class="sf-done-sub">request to join your campus group — we'll verify and approve you within 24 hours.</div>
-      <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group</a>
+      <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener" onclick="requestWA(this);return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group</a>
       <!-- PDF section (shown after signup if bundle exists) -->
       <div id="sf-pdf-section" style="display:none;margin-top:18px;">
         <div style="height:1px;background:var(--g200);margin-bottom:14px;"></div>
         <div class="pdf-preview" id="sf-pdf-preview"></div>
-        <button class="pdf-btn" id="sf-pdf-btn" onclick="generatePDF()">📄 download opportunity bundle</button>
+        <button class="pdf-btn" id="sf-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;">📄 download opportunity bundle</button>
+        <p id="sf-pdf-gate-hint" style="font-size:12px;color:var(--g500);margin-top:8px;text-align:center;line-height:1.5;">tap "request to join group" above to unlock the download</p>
         <p id="sf-no-bundle" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← go back to slide 2 to save opportunities first</p>
         <p style="font-size:11px;color:var(--g300);text-align:center;margin-top:6px;line-height:1.5;">saved to your device · no account needed · links live when active</p>
       </div>
@@ -803,6 +903,7 @@ window.KNOCK_APPS_SCRIPT_URL='';
 const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za',waLink:'#'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za',waLink:'#'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za',waLink:'#'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za',waLink:'#'},'ukzn':{display:'UKZN',full:'University of KwaZulu-Natal',location:'Durban',emailHint:'student@ukzn.ac.za',waLink:'#'}};
 const SEG={'devsoc':'Developer Society','cs':'Computer Science','is':'Information Systems','honours':'Honours','compsci':'Computer Science','eng':'Engineering','data':'Data Science','math':'Mathematics','fintech':'FinTech','stem':'STEM students'};
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
+const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1';
 let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
 const feed=document.getElementById('feed');
 const slides=document.querySelectorAll('.slide');
@@ -827,14 +928,30 @@ let NET=null,CYCLE_TIMER=null;
   // pack geo bias now handled by OPPORTUNITIES array
   // (opportunities in OPPORTUNITIES array use PAGE_UNI city for geo bias)
   loadLikes(); renderCTA();
-  // Enter slide 0
-  setTimeout(()=>{ slides[0].classList.add('entered'); },80);
+  // Restore slide position from last visit
+  var savedSlide=parseInt(localStorage.getItem(KEY_SLIDE)||'0');
+  if(savedSlide>0&&savedSlide<slides.length){
+    CURRENT_SLIDE=savedSlide;
+    setTimeout(function(){
+      feed.scrollTo({top:savedSlide*feed.clientHeight,behavior:'instant'});
+      dots.forEach(function(d,i){d.classList.toggle('active',i===savedSlide);});
+      setTimeout(function(){slides[savedSlide].classList.add('entered');},40);
+    },50);
+  }else{
+    setTimeout(()=>{ slides[0].classList.add('entered'); },80);
+  }
   // Start network + cycling
   initNetwork();
   startCycling();
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
-  initDoorState();
-  refreshS3();
+  // Defer data-dependent calls until after full script execution
+  // (OPPORTUNITIES var is assigned after this IIFE in the file)
+  setTimeout(function(){
+    renderBatch(1);
+    refreshP2();
+    refreshS3();
+    refreshPDFGate();
+  },0);
 })();
 
 /* ── NETWORK CANVAS ── */
@@ -903,6 +1020,7 @@ feed.addEventListener('scroll',()=>{
   if(idx!==CURRENT_SLIDE){
     slides[CURRENT_SLIDE]?.classList.remove('entered');
     CURRENT_SLIDE=idx;
+    localStorage.setItem(KEY_SLIDE,idx);
     setTimeout(()=>slides[idx]?.classList.add('entered'),60);
     dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
     ph('slide_view',{slide:idx});
@@ -989,10 +1107,38 @@ async function sfSubmit(){
     const url=window.KNOCK_APPS_SCRIPT_URL;
     if(url)await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
     ph('signup_success',{uni:PAGE_UNI,seg:PAGE_SEG});
-    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshS3();
+    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshS3();
     document.getElementById('sf-form-body').style.display='none';
     document.getElementById('sf-done').style.display='block';
   }catch{btn.disabled=false;btn.textContent='get me found ✓';showToast('something went wrong, try again');}
+}
+
+/* ── WA REQUEST + PDF GATE ── */
+function requestWA(el){
+  localStorage.setItem(KEY_WA,'1');
+  var link=el||document.getElementById('sf-wa-btn');
+  if(link&&link.href&&link.href!=='#'&&!link.href.endsWith('#')){
+    window.open(link.href,'_blank');
+  }
+  refreshP2();
+  refreshPDFGate();
+  closeSheet();
+  showToast('3 opportunities unlocked ↑ save & swipe to download →');
+}
+function refreshPDFGate(){
+  var waOK=localStorage.getItem(KEY_WA)==='1';
+  var bundle=getBundle();
+  var canDL=waOK&&bundle.length>0;
+  // sf-done PDF button
+  var sfBtn=document.getElementById('sf-pdf-btn');
+  var sfHint=document.getElementById('sf-pdf-gate-hint');
+  if(sfBtn){sfBtn.disabled=!canDL;sfBtn.style.opacity=canDL?'1':'0.4';sfBtn.style.cursor=canDL?'pointer':'not-allowed';}
+  if(sfHint)sfHint.style.display=waOK?'none':'block';
+  // slide 3 PDF button
+  var s3Btn=document.getElementById('s3-pdf-btn');
+  var s3Hint=document.getElementById('s3-pdf-gate-hint');
+  if(s3Btn){s3Btn.disabled=!canDL;s3Btn.style.opacity=canDL?'1':'0.4';s3Btn.style.cursor=canDL?'pointer':'not-allowed';}
+  if(s3Hint)s3Hint.style.display=waOK?'none':'block';
 }
 
 /* ── SHARE ── */
@@ -1009,12 +1155,13 @@ var OPPORTUNITIES=[
   {id:'o3',company:'[ Company C ]',title:'[ STEM Bursary 2026 ]',location:'National',degrees:'Any STEM degree',deadline:'[ date ]',url:'go.knocktalent.co.za/company-national-1'},
   {id:'o4',company:'[ Company D ]',title:'[ Software Engineer Graduate ]',location:'Cape Town · Hybrid',degrees:'CompSci · Engineering Informatics',deadline:'[ date ]',url:'go.knocktalent.co.za/company-uct-2'},
   {id:'o5',company:'[ Company E ]',title:'[ Junior Quant Analyst ]',location:'Johannesburg',degrees:'Mathematics · Statistics · Actuarial',deadline:'[ date ]',url:'go.knocktalent.co.za/company-wits-2'},
+  {id:'o6',company:'[ Company F ]',title:'[ Graduate Systems Engineer ]',location:'Cape Town · Hybrid',degrees:'Electrical Engineering · Mechatronics',deadline:'[ date ]',url:'go.knocktalent.co.za/company-cpt-3'},
 ];
 
 /* ══════ BUNDLE & DOOR STATE ══════ */
 var KEY_BUNDLE='knock_bundle_v1',KEY_DOOR='knock_door_v1',KEY_CARD_IDX='knock_card_v1';
-function getBundle(){return JSON.parse(localStorage.getItem(KEY_BUNDLE)||'[]');}
-function saveBundle(b){localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}
+function getBundle(){try{return JSON.parse(localStorage.getItem(KEY_BUNDLE)||'[]')||[];}catch(e){return [];}}
+function saveBundle(b){try{localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}catch(e){}}
 function addToBundle(opp){const b=getBundle();if(!b.find(o=>o.id===opp.id)){b.push(opp);saveBundle(b);}refreshBundleUI();}
 function removeFromBundle(id){saveBundle(getBundle().filter(o=>o.id!==id));refreshBundleUI();}
 function refreshBundleUI(){
@@ -1028,85 +1175,53 @@ function refreshBundleUI(){
   refreshS3();
 }
 function refreshS3(){
-  const signed=localStorage.getItem(KEY_SIGNUP)==='1';
-  const bundle=getBundle();
-  const signupWrap=document.getElementById('s3-signup-wrap');
-  const pdfWrap=document.getElementById('s3-pdf-wrap');
-  const pdfBtn=document.getElementById('s3-pdf-btn');
-  const noBundle=document.getElementById('s3-no-bundle-msg');
-  const preview=document.getElementById('s3-pdf-preview');
-  const title=document.getElementById('s3-title');
-  const body=document.getElementById('s3-body');
-  if(signupWrap)signupWrap.style.display=signed?'none':'block';
-  if(pdfWrap)pdfWrap.style.display=signed?'block':'none';
-  if(signed){
-    if(bundle.length>0){
-      if(pdfBtn)pdfBtn.classList.add('show');
-      if(noBundle)noBundle.style.display='none';
-      if(preview){preview.classList.add('show');preview.innerHTML=bundle.map(o=>`<div class="pdf-preview-item">${o.title} — ${o.company}</div>`).join('');}
-      if(title)title.innerHTML='your bundle<br><em>is ready.</em>';
-      if(body)body.textContent='sign up done. download your saved opportunities as a PDF below.';
-    }else{
-      if(pdfBtn)pdfBtn.classList.remove('show');
-      if(noBundle)noBundle.style.display='block';
-      if(preview)preview.classList.remove('show');
-      if(title)title.innerHTML='signed up ✓<br><em>save some opportunities.</em>';
-      if(body)body.textContent='swipe back to slide 2 and save opportunities to build your PDF bundle.';
-    }
-  }else{
-    if(bundle.length>0){
-      if(title)title.innerHTML='sign up to<br><em>save your bundle.</em>';
-      if(body)body.textContent=`you've saved ${bundle.length} ${bundle.length===1?'opportunity':'opportunities'}. sign up and we'll bundle them into a PDF.`;
-    }else{
-      if(title)title.innerHTML='sign up to<br><em>access the group.</em>';
-      if(body)body.textContent='sign up for the campus group — and discover opportunities delivered directly to WhatsApp.';
-    }
-  }
+  var bundle=getBundle();
+  var noBundle=document.getElementById('s3-no-bundle-msg');
+  var preview=document.getElementById('s3-pdf-preview');
+  if(noBundle)noBundle.style.display=(bundle.length===0)?'block':'none';
+  if(preview&&bundle.length>0){
+    preview.classList.add('show');
+    preview.innerHTML=bundle.map(function(o){return '<div class="pdf-preview-item">'+o.title+' — '+o.company+'</div>';}).join('');
+  }else if(preview){preview.classList.remove('show');}
   // Also refresh sf-done PDF section if visible
-  const sfPdf=document.getElementById('sf-pdf-section');
-  const sfPdfBtn=document.getElementById('sf-pdf-btn');
-  const sfNoBundle=document.getElementById('sf-no-bundle');
-  const sfPreview=document.getElementById('sf-pdf-preview');
-  if(sfPdf&&signed){
+  var sfPdf=document.getElementById('sf-pdf-section');
+  var sfPreview=document.getElementById('sf-pdf-preview');
+  if(sfPdf&&localStorage.getItem(KEY_SIGNUP)==='1'){
     sfPdf.style.display='block';
-    if(bundle.length>0){
-      if(sfPdfBtn)sfPdfBtn.classList.add('show');
-      if(sfNoBundle)sfNoBundle.style.display='none';
-      if(sfPreview){sfPreview.classList.add('show');sfPreview.innerHTML=bundle.map(o=>`<div class="pdf-preview-item">${o.title} — ${o.company}</div>`).join('');}
-    }else{
-      if(sfPdfBtn)sfPdfBtn.classList.remove('show');
-      if(sfNoBundle)sfNoBundle.style.display='block';
-    }
+    if(bundle.length>0&&sfPreview){sfPreview.classList.add('show');sfPreview.innerHTML=bundle.map(function(o){return '<div class="pdf-preview-item">'+o.title+' — '+o.company+'</div>';}).join('');}
   }
+  refreshPDFGate();
 }
 
 /* ══════ DOOR ══════ */
 function isDoorOpen(){return localStorage.getItem(KEY_DOOR)==='1';}
-function initDoorState(){
-  if(isDoorOpen()){
-    document.getElementById('door-closed').style.display='none';
-    document.getElementById('door-open').style.display='block';
-    refreshBundleUI();
+function refreshP2(){
+  var signed=localStorage.getItem(KEY_SIGNUP)==='1';
+  var waOK=localStorage.getItem(KEY_WA)==='1';
+  var s1=document.getElementById('p2-s1');
+  var s2=document.getElementById('p2-s2');
+  var s3=document.getElementById('p2-s3');
+  var p2WaBtn=document.getElementById('p2-wa-btn');
+  var u2=UNI[PAGE_UNI]||UNI['uct'];
+  if(p2WaBtn&&u2.waLink&&u2.waLink!=='#')p2WaBtn.href=u2.waLink;
+  var uniName=document.getElementById('p2-uni-name');
+  if(uniName)uniName.textContent=u2.display.toLowerCase();
+  if(s1)s1.style.display=!signed?'block':'none';
+  if(s2)s2.style.display=(signed&&!waOK)?'block':'none';
+  if(s3){
+    s3.style.display=(signed&&waOK)?'block':'none';
+    if(signed&&waOK){renderBatch(2);refreshBundleUI();}
   }
-}
-function openDoor(){
-  const btn=document.getElementById('door-btn');
-  if(btn){
-    btn.style.transition='transform .5s cubic-bezier(0.4,0,0.2,1),opacity .35s ease';
-    btn.style.transformOrigin='left center';
-    btn.style.transform='perspective(600px) rotateY(-88deg)';
-    btn.style.opacity='0.1';
+  var bundle=getBundle();
+  var title=document.getElementById('s3-title');
+  var body=document.getElementById('s3-body');
+  if(signed&&waOK&&bundle.length>0){
+    if(title)title.innerHTML='your bundle<br><em>is ready.</em>';
+    if(body)body.textContent='you saved '+bundle.length+' '+(bundle.length===1?'opportunity':'opportunities')+'. download them as a PDF below.';
+  }else if(signed&&waOK){
+    if(title)title.innerHTML='go back to<br><em>slide 2.</em>';
+    if(body)body.textContent='open your starter pack and save the opportunities you like.';
   }
-  localStorage.setItem(KEY_DOOR,'1');
-  ph('door_opened',{uni:PAGE_UNI});
-  setTimeout(()=>{
-    document.getElementById('door-closed').style.display='none';
-    document.getElementById('door-open').style.display='block';
-    initCardStack();
-    openSheet('sheet-pack');
-    refreshBundleUI();
-    renderCTA();
-  },420);
 }
 
 /* ══════ CARD STACK ══════ */
@@ -1251,6 +1366,55 @@ function _doPDF(bundle){
   doc.text('opportunity finds you. delivered by knock. · links activate when opportunities go live on go.knocktalent.co.za',M,283);
   doc.save('knock-opportunity-bundle.pdf');
   ph('pdf_generated',{bundle_size:bundle.length,uni:PAGE_UNI});
+}
+
+/* ── VIEWPORT HEIGHT FIX (Chrome/Android) ── */
+(function(){
+  function setVH(){document.documentElement.style.setProperty('--vh',window.innerHeight*.01+'px');}
+  setVH();
+  window.addEventListener('resize',setVH,{passive:true});
+  window.addEventListener('orientationchange',function(){setTimeout(setVH,100);},{passive:true});
+})();
+
+/* ══════ BATCH ROW RENDERING ══════ */
+function renderBatch(batchNum){
+  if(!OPPORTUNITIES||!OPPORTUNITIES.length)return;
+  var ids=batchNum===1?['o1','o2','o3']:['o4','o5','o6'];
+  var cid=batchNum===1?'batch1-rows':'batch2-rows';
+  var container=document.getElementById(cid);
+  if(!container)return;
+  container.innerHTML='';
+  var bundle=getBundle();
+  ids.forEach(function(id){
+    var opp=OPPORTUNITIES.find(function(o){return o.id===id;});
+    if(!opp)return;
+    var liked=!!bundle.find(function(o){return o.id===id;});
+    var row=document.createElement('div');
+    row.className='opp-row';
+    row.className='opp-row'+(liked?' row-liked':'');
+    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role">'+opp.title+'</div><div class="opp-row-loc">'+opp.location+'</div></div>'
+      +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
+    container.appendChild(row);
+  });
+}
+function toggleSaveRow(id,btn){
+  var opp=OPPORTUNITIES.find(function(o){return o.id===id;});
+  if(!opp)return;
+  var bundle=getBundle();
+  var idx=bundle.findIndex(function(o){return o.id===id;});
+  var row=btn.parentElement;
+  if(idx>=0){
+    bundle.splice(idx,1);saveBundle(bundle);
+    btn.classList.remove('liked');btn.textContent='♡';
+    if(row)row.classList.remove('row-liked');
+  }else{
+    bundle.push(opp);saveBundle(bundle);
+    btn.classList.add('liked');btn.textContent='♥';
+    if(row)row.classList.add('row-liked');
+    burstHearts(btn);
+  }
+  refreshBundleUI();
+  ph('row_toggle',{id:id,liked:idx<0,uni:PAGE_UNI});
 }
 
 function ph(e,p={}){try{if(typeof posthog!=='undefined')posthog.capture(e,p);}catch(_){}}
