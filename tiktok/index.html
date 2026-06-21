@@ -6,10 +6,13 @@
 <title>knock — hi.</title>
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
+/* ── TOKENS ───────────────────────────────── */
 :root{
   --purple:#5E17EB;--purple-mid:#C9AAFF;--purple-pale:#F0EBFF;
-  --black:#0A0A0A;--white:#FFFFFF;--off:#F8F7F5;
-  --ink:#111111;--g200:#E0DED9;--g300:#BDBBB7;--g500:#888580;--g700:#3A3835;
+  --black:#0A0A0A;--white:#FFFFFF;
+  --warm:#FAF8F5;   /* slide 1 bg */
+  --off:#F8F7F5;
+  --ink:#111111;--g200:#E0DED9;--g300:#C8C6C2;--g500:#888580;--g700:#3A3835;
   --wa:#25D366;
   --font-d:'Cabinet Grotesk',sans-serif;
   --font-b:'Switzer',sans-serif;
@@ -19,7 +22,7 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
 body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
 
-/* ── FEED ─────────────────────────── */
+/* ── FEED ──────────────────────────────────── */
 #feed{
   height:100dvh;height:100vh;
   overflow-y:scroll;
@@ -30,183 +33,237 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 }
 #feed::-webkit-scrollbar{display:none;}
 
-/* ── SLIDES ───────────────────────── */
+/* ── SLIDE BASE ────────────────────────────── */
 .slide{
   height:100dvh;height:100vh;
   scroll-snap-align:start;
   position:relative;
+  overflow:hidden;
   display:flex;
   flex-direction:column;
   justify-content:flex-end;
-  overflow:hidden;
-  padding:0 72px 76px 24px;
+  padding:0 72px 80px 24px;
 }
 
-/* hero: black */
-.slide-hero{background:var(--black);color:var(--white);}
-/* all others: white */
-.slide-about,.slide-pack,.slide-join,.slide-share{
-  background:var(--white);color:var(--ink);
-}
-
-/* hero ambient orb */
-.slide-hero::before{
-  content:'';
-  position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 55% 55% at 70% 20%, rgba(94,23,235,0.18) 0%, transparent 65%);
-  animation:orbDrift 8s ease-in-out infinite alternate;
-}
-@keyframes orbDrift{
-  from{transform:translate(0,0);}
-  to{transform:translate(-8%,5%);}
-}
-
-/* subtle top border tint on white slides */
-.slide-about::before,.slide-pack::before,.slide-join::before,.slide-share::before{
+/* ── SLIDE BACKGROUNDS ─────────────────────── */
+/* slide 1: warm white — network canvas provides life */
+.slide-m{background:var(--warm);color:var(--ink);}
+/* slides 2-3: pure white */
+.slide-pack,.slide-share{background:var(--white);color:var(--ink);}
+/* thin purple accent at top of slides 2-3 */
+.slide-pack::before,.slide-share::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--purple),transparent 60%);
-  pointer-events:none;
+  background:linear-gradient(90deg,var(--purple) 0%,transparent 55%);
+  pointer-events:none;z-index:2;
 }
 
-/* ── ENTRANCE ANIMATION ──────────── */
-.anim{opacity:0;transform:translateY(22px);transition:opacity .45s ease,transform .45s ease;}
-.slide.entered .anim{opacity:1;transform:none;}
-.slide.entered .a1{transition-delay:.04s;}
-.slide.entered .a2{transition-delay:.14s;}
-.slide.entered .a3{transition-delay:.24s;}
-.slide.entered .a4{transition-delay:.34s;}
-.slide.entered .a5{transition-delay:.44s;}
-.slide.entered .a6{transition-delay:.54s;}
-/* pack card stagger from right */
-.anim-r{opacity:0;transform:translateX(28px);transition:opacity .4s ease,transform .4s ease;}
-.slide.entered .anim-r{opacity:1;transform:none;}
-.slide.entered .r1{transition-delay:.18s;}
-.slide.entered .r2{transition-delay:.30s;}
-.slide.entered .r3{transition-delay:.42s;}
+/* ── NETWORK CANVAS (slide 1 only) ─────────── */
+.net-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+}
 
-/* ── TYPOGRAPHY ───────────────────── */
+/* ── LOGO ROW (slide 1 top) ────────────────── */
+.logo-row{
+  position:absolute;
+  top:calc(env(safe-area-inset-top,0px) + 24px);
+  left:24px;
+  display:flex;align-items:center;gap:9px;
+  z-index:5;
+}
+.logo-svg{width:32px;height:32px;display:block;}
+.logo-brand{
+  font-family:var(--font-d);font-weight:900;font-size:16px;
+  letter-spacing:-.5px;color:var(--ink);
+}
+.logo-brand span{color:var(--purple);}
+
+/* ── ENTRANCE ANIMATIONS ───────────────────── */
+@keyframes enterUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+@keyframes enterRight{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:none;}}
+.anim{opacity:0;}
+.slide.entered .anim{animation:enterUp .5s ease forwards;}
+.slide.entered .a1{animation-delay:.05s;}
+.slide.entered .a2{animation-delay:.15s;}
+.slide.entered .a3{animation-delay:.25s;}
+.slide.entered .a4{animation-delay:.36s;}
+.slide.entered .a5{animation-delay:.46s;}
+.anim-r{opacity:0;}
+.slide.entered .anim-r{animation:enterRight .45s ease forwards;}
+.slide.entered .r1{animation-delay:.2s;}
+.slide.entered .r2{animation-delay:.33s;}
+.slide.entered .r3{animation-delay:.46s;}
+
+/* ── SLIDE 1 TYPOGRAPHY ────────────────────── */
+.slide-m .slide-label{
+  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--purple);margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;
+}
+.slide-m .slide-label::before{content:'';width:14px;height:1px;background:var(--purple);}
+
+.slide-hi{
+  font-family:var(--font-d);font-weight:900;
+  font-size:clamp(44px,12vw,60px);
+  line-height:.97;letter-spacing:-.04em;
+  color:var(--ink);margin-bottom:16px;
+}
+.slide-hi em{font-style:normal;color:var(--purple);}
+
+/* manifesto block */
+.manifesto{margin-bottom:16px;}
+.m-pre,.m-post,.m-belief{
+  font-size:15px;color:var(--g700);line-height:1.6;
+}
+.m-belief{color:var(--ink);font-weight:600;margin-top:10px;}
+
+/* cycling word */
+.cycle-wrap{
+  display:block;
+  overflow:hidden;
+  height:42px;
+  margin:4px 0 2px;
+}
+#cycle-word{
+  display:block;
+  font-family:var(--font-d);font-weight:900;
+  font-size:clamp(30px,8vw,36px);
+  color:var(--purple);
+  letter-spacing:-.03em;
+  line-height:1.15;
+  will-change:transform,opacity;
+  transition:transform .2s ease,opacity .2s ease;
+}
+#cycle-word.word-out{transform:translateY(-100%);opacity:0;}
+#cycle-word.word-in{transform:translateY(100%);opacity:0;transition:none;}
+
+/* swipe hint */
+.swipe-hint{
+  font-size:12px;color:var(--g500);
+  display:flex;align-items:center;gap:6px;
+}
+.swipe-arrow{
+  display:inline-flex;
+  animation:swipeBounce 1.5s ease-in-out infinite;
+}
+@keyframes swipeBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+
+/* ── SLIDES 2-3 TYPOGRAPHY ─────────────────── */
 .slide-label{
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  margin-bottom:8px;display:flex;align-items:center;gap:8px;
+  color:var(--purple);margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
 }
-.slide-hero .slide-label{color:rgba(255,255,255,.5);}
-.slide-hero .slide-label::before{content:'';width:14px;height:1px;background:rgba(255,255,255,.35);}
-.slide-about .slide-label,.slide-pack .slide-label,.slide-join .slide-label,.slide-share .slide-label{color:var(--purple);}
-.slide-about .slide-label::before,.slide-pack .slide-label::before,.slide-join .slide-label::before,.slide-share .slide-label::before{
-  content:'';width:14px;height:1px;background:var(--purple);
-}
-
+.slide-label::before{content:'';width:14px;height:1px;background:var(--purple);}
 .slide-title{
   font-family:var(--font-d);font-weight:900;
-  font-size:clamp(38px,10vw,54px);
-  line-height:.97;letter-spacing:-.04em;
-  margin-bottom:12px;
+  font-size:clamp(30px,8vw,40px);
+  line-height:1.02;letter-spacing:-.04em;
+  color:var(--ink);margin-bottom:10px;
 }
-.slide-hero .slide-title{font-size:clamp(52px,14vw,70px);color:var(--white);}
-.slide-hero .slide-title em{font-style:normal;color:rgba(255,255,255,.85);}
 .slide-title em{font-style:normal;color:var(--purple);}
+.slide-body{font-size:13.5px;color:var(--g700);line-height:1.7;margin-bottom:10px;max-width:290px;}
+.slide-pre{font-size:13px;color:var(--g500);margin-bottom:14px;font-style:italic;}
 
-.slide-body{font-size:14px;line-height:1.7;max-width:280px;margin-bottom:14px;}
-.slide-hero .slide-body{color:rgba(255,255,255,.7);}
-.slide-hero .slide-body strong{color:var(--white);}
-.slide-about .slide-body,.slide-pack .slide-body,.slide-join .slide-body,.slide-share .slide-body{color:var(--g700);}
-.slide-about .slide-body strong,.slide-pack .slide-body strong,.slide-join .slide-body strong,.slide-share .slide-body strong{color:var(--ink);font-weight:600;}
-
-/* ── PILLS ────────────────────────── */
-.slide-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
-.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 11px;font-size:11.5px;font-weight:600;}
-.slide-hero .pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.9);}
-.slide-hero .pill::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.65);flex-shrink:0;}
-.slide-about .pill,.slide-pack .pill,.slide-join .pill,.slide-share .pill{
-  background:var(--off);border:1px solid var(--g200);color:var(--g700);
+/* ── PACK CARDS ────────────────────────────── */
+.mini-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.mini-card{
+  background:var(--off);border:1px solid var(--g200);
+  border-radius:12px;padding:13px 15px;
 }
-.slide-about .pill::before,.slide-pack .pill::before,.slide-join .pill::before,.slide-share .pill::before{
-  content:'';width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;
+.mc-co{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
+.mc-role{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.25;}
+.mc-meta{font-size:11.5px;color:var(--g500);}
+.mc-cta{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;color:var(--purple);
+  background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);
+  border-radius:6px;padding:6px 11px;margin-top:9px;
+  cursor:pointer;font-family:var(--font-b);
+}
+.more-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--off);border:1px solid var(--g200);
+  border-radius:8px;padding:8px 13px;
+  font-size:13px;font-weight:600;color:var(--g500);
+  cursor:pointer;font-family:var(--font-b);margin-bottom:10px;
 }
 
-.swipe-hint{font-size:12px;display:flex;align-items:center;gap:6px;margin-top:8px;color:rgba(255,255,255,.35);}
-.swipe-hint svg{animation:bounce 1.4s ease-in-out infinite;}
-@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+/* ── CTA BLOCK (slide 2) ───────────────────── */
+.cta-pair{display:flex;flex-direction:column;gap:8px;}
+.cta-btn{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:13px 16px;border-radius:12px;border:none;cursor:pointer;
+  font-family:var(--font-b);font-size:14px;font-weight:600;
+  text-align:left;transition:transform .15s;width:100%;max-width:300px;
+}
+.cta-btn:active{transform:scale(.98);}
+.cta-primary{background:var(--purple);color:var(--white);}
+.cta-secondary{background:var(--off);color:var(--ink);border:1px solid var(--g200);}
+.cta-done{background:#e8f9f2;color:#085041;border:1px solid #b8e6d4;cursor:default;}
+.cta-done:active{transform:none;}
+.cta-t{flex:1;}
+.cta-sub{font-size:10px;opacity:.65;margin-bottom:1px;font-weight:500;}
+.cta-arr{opacity:.4;font-size:15px;}
+.cta-state{display:none;flex-direction:column;gap:8px;}
+.cta-state.vis{display:flex;}
 
-/* ── ACTION BUTTONS ───────────────── */
+/* ── SHARE SLIDE ───────────────────────────── */
+@keyframes sharePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(94,23,235,0);}
+  50%{box-shadow:0 0 0 14px rgba(94,23,235,.08);}
+}
+.share-big{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--ink);border:none;border-radius:14px;padding:15px;
+  font-size:15px;font-weight:700;color:var(--white);
+  cursor:pointer;font-family:var(--font-b);width:100%;max-width:280px;
+  margin-bottom:10px;transition:opacity .15s;
+  animation:sharePulse 2.8s ease-in-out infinite;
+}
+.share-big:hover{opacity:.85;}
+.copy-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--off);border:1px solid var(--g200);
+  border-radius:10px;padding:10px 14px;max-width:280px;
+}
+.copy-url{flex:1;font-size:11.5px;color:var(--g500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.copy-btn{font-size:12px;font-weight:700;color:var(--purple);background:none;border:none;cursor:pointer;font-family:var(--font-b);white-space:nowrap;}
+
+/* ── ACTION BUTTONS (right side) ──────────── */
 .slide-actions{position:absolute;right:10px;bottom:86px;display:flex;flex-direction:column;align-items:center;gap:22px;z-index:10;}
 .act-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:0;}
 .act-icon{
   width:46px;height:46px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:20px;transition:transform .15s,background .2s;
-  position:relative;overflow:visible;
+  font-size:20px;position:relative;overflow:visible;
+  transition:transform .15s;
+  background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.08);color:var(--ink);
 }
 .act-btn:active .act-icon{transform:scale(.9);}
-.act-label{font-size:10.5px;font-weight:600;}
+.act-label{font-size:10.5px;font-weight:600;color:var(--g500);}
+.like-btn.liked .act-icon{background:rgba(255,60,80,.12)!important;border-color:rgba(255,60,80,.25)!important;color:#ff3c50!important;}
 
-/* hero (dark bg) → white buttons */
-.slide-hero .act-icon{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:var(--white);}
-.slide-hero .act-label{color:rgba(255,255,255,.7);}
-/* white slides → dark buttons */
-.slide-about .act-icon,.slide-pack .act-icon,.slide-join .act-icon,.slide-share .act-icon{
-  background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);color:var(--ink);
+/* ── DOTS ─────────────────────────────────── */
+#dots{
+  position:fixed;right:7px;top:50%;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:6px;z-index:50;
+  padding:8px 5px;background:rgba(0,0,0,.05);border-radius:8px;
 }
-.slide-about .act-label,.slide-pack .act-label,.slide-join .act-label,.slide-share .act-label{color:var(--g500);}
+.dot{width:3px;height:18px;border-radius:2px;background:rgba(0,0,0,.2);transition:all .3s;}
+.dot.active{background:var(--purple);height:28px;}
 
-.like-btn.liked .act-icon{background:rgba(255,60,80,.15)!important;border-color:rgba(255,60,80,.3)!important;color:#ff3c50!important;}
-
-@keyframes floatHeart{
-  0%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1);}
-  60%{opacity:.7;}
-  100%{opacity:0;transform:translate(calc(var(--dx)*2.2),calc(var(--dy)*2.2)) scale(.6);}
-}
-.float-heart{position:fixed;pointer-events:none;font-size:16px;color:#ff3c50;animation:floatHeart .75s ease-out forwards;z-index:9999;}
-
-/* ── DOT INDICATORS ───────────────── */
-#dots{position:fixed;right:7px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:50;padding-bottom:55px;}
-.dot{width:3px;height:18px;border-radius:2px;transition:all .3s;}
-/* default (dark slide) */
-.dot{background:rgba(255,255,255,.25);}
-.dot.active{background:var(--white);height:28px;}
-/* when on a light slide */
-#dots.light .dot{background:rgba(0,0,0,.18);}
-#dots.light .dot.active{background:var(--ink);}
-
-/* ── MINI CARDS (pack slide) ──────── */
-.mini-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-.mini-card{background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:12px 14px;}
-.mc-co{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
-.mc-role{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;}
-.mc-meta{font-size:11.5px;color:var(--g500);}
-.mc-cta{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--purple);background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);border-radius:6px;padding:6px 11px;margin-top:8px;cursor:pointer;font-family:var(--font-b);}
-.more-badge{display:inline-flex;align-items:center;gap:5px;background:var(--off);border:1px solid var(--g200);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--g700);cursor:pointer;font-family:var(--font-b);transition:background .15s;}
-.more-badge:hover{background:var(--g200);}
-
-/* ── CTA BLOCK ────────────────────── */
-.cta-pair{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
-.cta-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-radius:12px;border:none;cursor:pointer;font-family:var(--font-b);font-size:14px;font-weight:600;text-align:left;transition:transform .15s;width:100%;max-width:300px;}
-.cta-btn:active{transform:scale(.98);}
-.cta-primary{background:var(--purple);color:var(--white);}
-.cta-secondary{background:var(--off);color:var(--ink);border:1px solid var(--g200);}
-.cta-done{background:#e1f5ee;color:#085041;border:1px solid #b2dece;cursor:default;}
-.cta-done:active{transform:none;}
-.cta-text{flex:1;}
-.cta-sub{font-size:10px;opacity:.65;margin-bottom:1px;font-weight:500;}
-.cta-arr{opacity:.4;}
-.cta-state{display:none;flex-direction:column;gap:8px;}
-.cta-state.vis{display:flex;}
-
-/* CTA pulse */
-@keyframes ctaPulse{0%,100%{box-shadow:0 0 0 0 rgba(94,23,235,.35);}50%{box-shadow:0 0 0 10px rgba(94,23,235,0);}}
-.cta-primary.pulse{animation:ctaPulse 2s ease-in-out infinite;}
-
-/* ── SHARE ────────────────────────── */
-.share-big{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--ink);border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:700;color:var(--white);cursor:pointer;font-family:var(--font-b);width:100%;max-width:280px;margin-bottom:8px;transition:opacity .15s;}
-.share-big:hover{opacity:.85;}
-.copy-row{display:flex;align-items:center;gap:8px;background:var(--off);border:1px solid var(--g200);border-radius:10px;padding:10px 14px;max-width:280px;}
-.copy-url{flex:1;font-size:11.5px;color:var(--g500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.copy-btn{font-size:12px;font-weight:700;color:var(--purple);background:none;border:none;cursor:pointer;font-family:var(--font-b);white-space:nowrap;}
-
-/* ── BOTTOM SHEET ─────────────────── */
-.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .3s;z-index:190;}
+/* ── BOTTOM SHEET ─────────────────────────── */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:190;}
 .sheet-overlay.show{opacity:1;pointer-events:all;}
-.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-radius:20px 20px 0 0;transform:translateY(100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);max-height:88dvh;max-height:88vh;overflow-y:auto;z-index:200;}
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--white);border-radius:20px 20px 0 0;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.22,.61,.36,1);
+  max-height:88dvh;max-height:88vh;overflow-y:auto;z-index:200;
+}
 .sheet.open{transform:translateY(0);}
 .sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--g200);margin:14px auto 0;}
 .sheet-head{padding:16px 20px 14px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;}
@@ -214,22 +271,22 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .sheet-close{background:none;border:none;color:var(--g300);font-size:20px;cursor:pointer;padding:4px;line-height:1;}
 .sheet-body{padding:16px 20px 40px;}
 
-/* sheet cards */
+/* sheet pack */
 .pc{background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
 .pc-co{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:4px;}
 .pc-role{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.25;}
 .pc-meta{font-size:12px;color:var(--g500);margin-bottom:10px;}
-.pc-link{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--purple);background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);border-radius:7px;padding:7px 12px;text-decoration:none;cursor:pointer;font-family:var(--font-b);}
-.insight-mini{display:flex;gap:12px;align-items:flex-start;background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:14px;margin-bottom:10px;}
-.im-icon{font-size:20px;flex-shrink:0;}
-.im-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3;}
-.im-body{font-size:12px;color:var(--g700);line-height:1.55;}
+.pc-link{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--purple);background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);border-radius:7px;padding:7px 12px;cursor:pointer;font-family:var(--font-b);text-decoration:none;}
+.insight{display:flex;gap:12px;align-items:flex-start;background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:14px;margin-bottom:10px;}
+.in-icon{font-size:20px;flex-shrink:0;}
+.in-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3;}
+.in-body{font-size:12px;color:var(--g700);line-height:1.55;}
 .pack-divider{height:1px;background:var(--g200);margin:14px 0;}
 
 /* sheet form */
 .sf-field{margin-bottom:12px;}
 .sf-label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:6px;}
-.sf-input{width:100%;background:var(--off);border:1px solid var(--g200);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);font-family:var(--font-b);outline:none;transition:border-color .15s;}
+.sf-input{width:100%;background:var(--off);border:1px solid var(--g200);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);font-family:var(--font-b);outline:none;transition:border-color .15s,background .15s;}
 .sf-input:focus{border-color:var(--purple);background:var(--white);}
 .sf-input::placeholder{color:var(--g300);}
 .sf-input[readonly]{opacity:.55;cursor:default;}
@@ -252,189 +309,334 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .sf-done-sub{font-size:13px;color:var(--g700);line-height:1.6;margin-bottom:16px;}
 .wa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:var(--white);border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;text-decoration:none;}
 
-/* ── TOAST ─────────────────────────── */
+/* ── BACKGROUND LOGO ── */
+.bg-logo-wrap{position:absolute;right:-18%;top:50%;transform:translateY(-52%);width:88%;aspect-ratio:1;opacity:.07;pointer-events:none;z-index:1;}
+.bg-logo-wrap svg{width:100%;height:100%;}
+
+/* ── HINT HEART ── */
+.hint-heart{cursor:pointer;font-size:14px;color:var(--purple);display:inline;transition:color .15s;vertical-align:middle;}
+.hint-heart:hover{color:#ff3c50;}
+
+/* ── DOOR CTA ── */
+@keyframes doorGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(94,23,235,0),0 2px 14px rgba(94,23,235,0.15);}
+  50%{box-shadow:0 0 0 7px rgba(94,23,235,0.1),0 4px 28px rgba(94,23,235,0.32);}
+}
+@keyframes doorShimmer{
+  0%{transform:translateX(-160%) skewX(-12deg);}
+  36%,100%{transform:translateX(320%) skewX(-12deg);}
+}
+@keyframes knobGlow{
+  0%,100%{opacity:.7;box-shadow:0 0 3px rgba(255,255,255,.4);}
+  50%{opacity:1;box-shadow:0 0 9px rgba(255,255,255,.9),0 0 18px rgba(255,255,255,.3);}
+}
+.door-cta{
+  border:1.5px solid rgba(94,23,235,.65)!important;
+  animation:doorGlow 2.2s ease-in-out infinite;
+  overflow:hidden;
+}
+.door-cta::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 32%,rgba(255,255,255,.26) 50%,transparent 68%);
+  animation:doorShimmer 2.8s ease-in-out infinite;
+}
+.door-cta .door-knob{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.9);flex-shrink:0;
+  animation:knobGlow 2.2s ease-in-out infinite;
+}
+
+/* ── TOAST ────────────────────────────────── */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<svg style="display:none">
-  <symbol id="kmark-d" viewBox="0 0 1180 1180">
-    <circle cx="590" cy="586" r="540" fill="#FFFFFF"/>
-    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
-    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#FFFFFF"/>
-    <rect width="138.762" height="302.898" rx="69.38" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#FFFFFF"/>
-    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#FFFFFF"/>
-  </symbol>
+<!-- INLINE LOGOS -->
+<div style="display:none">
+<svg class="logo-svg" id="logo-dark" viewBox="0 0 1180 1180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_16_59)">
+<circle cx="590" cy="586" r="540" fill="white"/>
+</g>
+<g filter="url(#filter1_d_16_59)">
+<ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+<g filter="url(#filter2_d_16_59)">
+<path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="white"/>
+<rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="white"/>
+<path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="white"/>
+</g>
+</g>
+<g filter="url(#filter3_d_16_59)">
+<ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+</g>
+<defs>
+<filter id="filter0_d_16_59" x="0" y="0" width="1180" height="1180" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="25"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_59"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_59" result="shape"/>
+</filter>
+<filter id="filter1_d_16_59" x="0" y="0" width="1082" height="1180" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="25"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.62 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_59"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_59" result="shape"/>
+</filter>
+<filter id="filter2_d_16_59" x="276.283" y="200.697" width="595.691" height="748.973" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="25"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_59"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_59" result="shape"/>
+</filter>
+<filter id="filter3_d_16_59" x="842.92" y="558.059" width="75.1591" height="90.8831" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="5" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_16_59"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_59"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_59" result="shape"/>
+</filter>
+</defs>
 </svg>
+<svg class="logo-svg" id="logo-light" viewBox="0 0 1180 1180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_16_60)">
+<circle cx="590" cy="586" r="540" fill="white"/>
+</g>
+<g filter="url(#filter1_d_16_60)">
+<ellipse cx="541" cy="586" rx="491" ry="540" fill="white"/>
+<g filter="url(#filter2_d_16_60)">
+<path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+<rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+<path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+</g>
+</g>
+<g filter="url(#filter3_d_16_60)">
+<ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#D9D9D9"/>
+</g>
+<defs>
+<filter id="filter0_d_16_60" x="0" y="0" width="1180" height="1180" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="25"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_60"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_60" result="shape"/>
+</filter>
+<filter id="filter1_d_16_60" x="0" y="0" width="1082" height="1180" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="25"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_60"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_60" result="shape"/>
+</filter>
+<filter id="filter2_d_16_60" x="276.283" y="200.697" width="595.691" height="748.973" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="25"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_60"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_60" result="shape"/>
+</filter>
+<filter id="filter3_d_16_60" x="842.92" y="558.059" width="75.1591" height="90.8831" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="5" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_16_60"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_16_60"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_16_60" result="shape"/>
+</filter>
+</defs>
+</svg>
+</div>
 
+<!-- 3 DOTS -->
 <div id="dots">
   <div class="dot active" data-i="0"></div>
   <div class="dot" data-i="1"></div>
   <div class="dot" data-i="2"></div>
-  <div class="dot" data-i="3"></div>
-  <div class="dot" data-i="4"></div>
 </div>
 
 <div id="feed">
 
-  <!-- SLIDE 1: HERO (black) -->
-  <div class="slide slide-hero" data-slide="0">
-    <p class="slide-label anim a1" id="s0-seg">stem · uct</p>
-    <h1 class="slide-title anim a2">hi,<br><em id="s0-uni">uct.</em></h1>
-    <p class="slide-body anim a3"><strong>knock is our founding pilot.</strong> we're building the network that brings verified sa industry opportunities directly to stem graduates on whatsapp — no portals, no noise. you're among the first.</p>
-    <div class="slide-pills anim a4">
-      <span class="pill">whatsapp native</span>
-      <span class="pill">verified profile</span>
-      <span class="pill">free for students</span>
-    </div>
-    <div class="swipe-hint anim a5">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-      swipe to explore
-    </div>
-    <div class="slide-actions">
-      <button class="act-btn like-btn" id="like-0" onclick="toggleLike(0,this)">
-        <div class="act-icon">♡</div><span class="act-label" id="lc-0">0</span>
-      </button>
-      <button class="act-btn" onclick="doShare()">
-        <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <span class="act-label">share</span>
-      </button>
-    </div>
+<!-- ══════════ SLIDE 1: MANIFESTO ══════════ -->
+<div class="slide slide-m" data-slide="0">
+
+  <!-- network canvas lives behind everything -->
+  <canvas id="net-canvas" class="net-canvas"></canvas>
+
+  <!-- big background logo watermark -->
+  <div class="bg-logo-wrap" aria-hidden="true">
+    <svg viewBox="276 200 596 749" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+      <rect width="138.762" height="302.898" rx="69.38" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+    </svg>
   </div>
 
-  <!-- SLIDE 2: ABOUT (white) -->
-  <div class="slide slide-about" data-slide="1">
-    <p class="slide-label anim a1">what this is</p>
-    <h2 class="slide-title anim a2">the network<br><em>for you.</em></h2>
-    <p class="slide-body anim a3">
-      knock connects sa's best stem graduates to the companies that need them — delivered on whatsapp, where you already are.<br><br>
-      <strong>we're in pilot.</strong> you're early. every opportunity we post is verified and open right now.
-    </p>
-    <div class="slide-pills anim a4">
-      <span class="pill">sa top unis</span>
-      <span class="pill">stem first</span>
-      <span class="pill">pilot phase</span>
-    </div>
-    <div class="slide-actions">
-      <button class="act-btn like-btn" id="like-1" onclick="toggleLike(1,this)">
-        <div class="act-icon">♡</div><span class="act-label" id="lc-1">0</span>
-      </button>
-      <button class="act-btn" onclick="doShare()">
-        <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <span class="act-label">share</span>
-      </button>
-    </div>
+  <!-- logo: top-left, absolute -->
+  <div class="logo-row">
+    <svg class="logo-svg" viewBox="0 0 1180 1180" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g><circle cx="590" cy="586" r="540" fill="white"/></g>
+      <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="white"/>
+      <rect width="138.762" height="302.898" rx="69.38" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="white"/>
+      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="white"/>
+      <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+    </svg>
+    <span class="logo-brand">knock<span>.</span></span>
   </div>
 
-  <!-- SLIDE 3: PACK (white) -->
-  <div class="slide slide-pack" data-slide="2">
-    <p class="slide-label anim a1">starter pack · free</p>
-    <h2 class="slide-title anim a2">open<br><em>doors.</em></h2>
-    <div class="mini-cards">
-      <div class="mini-card anim-r r1">
-        <div class="mc-co" id="mc-co-1">[ company ]</div>
-        <div class="mc-role">[ Graduate Developer Programme ]</div>
-        <div class="mc-meta" id="mc-city-1">[ City ] · CompSci · IS · Eng</div>
-        <button class="mc-cta pack-link" data-title="opp1" onclick="claimPack(event);openSheet('sheet-pack')">view &amp; apply →</button>
-      </div>
-      <div class="mini-card anim-r r2">
-        <div class="mc-co">[ company ]</div>
-        <div class="mc-role">[ Data Analyst Intern ]</div>
-        <div class="mc-meta">Johannesburg · Stats · Math · Data Sci</div>
-        <button class="mc-cta pack-link" data-title="opp2" onclick="claimPack(event);openSheet('sheet-pack')">view &amp; apply →</button>
-      </div>
+  <!-- content at bottom -->
+  <p class="slide-label anim a1" id="s0-seg">stem · uct</p>
+  <h1 class="slide-hi anim a2">hi, <em id="s0-uni">uct.</em></h1>
+
+  <div class="manifesto anim a3">
+    <p class="m-pre">we don't believe finding</p>
+    <div class="cycle-wrap">
+      <span id="cycle-word">job</span>
     </div>
-    <button class="more-badge anim-r r3" onclick="claimPack();openSheet('sheet-pack')">+ 3 more opportunities &amp; 2 insights</button>
-    <div class="slide-actions">
-      <button class="act-btn like-btn" id="like-2" onclick="toggleLike(2,this)">
-        <div class="act-icon">♡</div><span class="act-label" id="lc-2">0</span>
-      </button>
-      <button class="act-btn" onclick="doShare()">
-        <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <span class="act-label">share</span>
-      </button>
-    </div>
+    <p class="m-post">should be a time-consuming humiliation ritual.</p>
+    <p class="m-belief">real opportunity should find you.<br>we help bring it to your door.</p>
   </div>
 
-  <!-- SLIDE 4: JOIN (white) -->
-  <div class="slide slide-join" data-slide="3">
-    <p class="slide-label anim a1">join</p>
-    <h2 class="slide-title anim a2">weekly<br><em>drops.</em></h2>
-    <p class="slide-body anim a3">2× a week max. no noise. every buzz is meaningful. takes 45 seconds.</p>
-    <div class="cta-pair anim a4" id="join-cta">
-      <div class="cta-state vis" id="js1">
-        <button class="cta-btn cta-primary" id="join-primary-btn" onclick="openSheet('sheet-form');ph('cta_signup_clicked',{})">
-          <div class="cta-text"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-main">sign up to access campus group</div></div>
-          <span class="cta-arr">→</span>
-        </button>
-        <button class="cta-btn cta-secondary" onclick="goSlide(2);ph('cta_pack_clicked',{})">
-          <div class="cta-text"><div class="cta-sub">free · no strings</div><div class="cta-main">grab the starter pack first</div></div>
-          <span class="cta-arr">↑</span>
-        </button>
-      </div>
-      <div class="cta-state" id="js2">
-        <div class="cta-btn cta-done"><div class="cta-text"><div class="cta-sub">done</div><div class="cta-main">starter pack ✓</div></div></div>
-        <button class="cta-btn cta-primary" onclick="openSheet('sheet-form')">
-          <div class="cta-text"><div class="cta-sub">one more step</div><div class="cta-main">sign up to access campus group</div></div>
-          <span class="cta-arr">→</span>
-        </button>
-      </div>
-      <div class="cta-state" id="js3">
-        <div class="cta-btn cta-done"><div class="cta-text"><div class="cta-sub">done</div><div class="cta-main">signed up ✓</div></div></div>
-        <button class="cta-btn cta-secondary" onclick="goSlide(2)">
-          <div class="cta-text"><div class="cta-sub">it's free</div><div class="cta-main">grab the pack while you're here</div></div>
-          <span class="cta-arr">↑</span>
-        </button>
-      </div>
-      <div class="cta-state" id="js4">
-        <div class="cta-btn cta-done"><div class="cta-text"><div class="cta-sub">you're in</div><div class="cta-main">look out for knock on whatsapp ✓</div></div></div>
-        <button class="cta-btn cta-secondary" onclick="goSlide(4)">
-          <div class="cta-text"><div class="cta-sub">spread the word</div><div class="cta-main">share with your cohort →</div></div>
-          <span class="cta-arr">→</span>
-        </button>
-      </div>
-    </div>
-    <div class="slide-actions">
-      <button class="act-btn like-btn" id="like-3" onclick="toggleLike(3,this)">
-        <div class="act-icon">♡</div><span class="act-label" id="lc-3">0</span>
-      </button>
-      <button class="act-btn" onclick="doShare()">
-        <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <span class="act-label">share</span>
-      </button>
-    </div>
+  <div class="swipe-hint anim a4">
+    if you agree — <span class="hint-heart" onclick="toggleLike(0,document.getElementById('like-0'))">♡</span> and swipe for more <span class="swipe-arrow">↓</span>
   </div>
 
-  <!-- SLIDE 5: SHARE (white) -->
-  <div class="slide slide-share" data-slide="4">
-    <p class="slide-label anim a1">share</p>
-    <h2 class="slide-title anim a2">know<br><em>someone?</em></h2>
-    <p class="slide-body anim a3">send them your link. same deal — their campus group.</p>
-    <div class="anim a4">
-      <button class="share-big" onclick="doShare()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        share this page
-      </button>
-      <div class="copy-row">
-        <span class="copy-url" id="copy-url-txt">join.knocktalent.co.za/hi-uct-devsoc</span>
-        <button class="copy-btn" id="copy-btn" onclick="copyLink()">copy</button>
-      </div>
-    </div>
-    <div class="slide-actions">
-      <button class="act-btn like-btn" id="like-4" onclick="toggleLike(4,this)">
-        <div class="act-icon">♡</div><span class="act-label" id="lc-4">0</span>
-      </button>
-      <button class="act-btn" onclick="doShare()">
-        <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <span class="act-label">share</span>
-      </button>
-    </div>
+  <!-- right actions -->
+  <div class="slide-actions">
+    <button class="act-btn like-btn" id="like-0" onclick="toggleLike(0,this)">
+      <div class="act-icon">♡</div><span class="act-label" id="lc-0">0</span>
+    </button>
+    <button class="act-btn" onclick="doShare()">
+      <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <span class="act-label">share</span>
+    </button>
   </div>
-
 </div>
 
+<!-- ══════════ SLIDE 2: PACK ══════════ -->
+<div class="slide slide-pack" data-slide="1">
+
+  <p class="slide-label anim a1">early pilot</p>
+  <h2 class="slide-title anim a2">we bring it<br><em>to your door.</em></h2>
+  <p class="slide-body anim a3">we run campus groups and post verified opportunities directly. two buzzes, same time every week. no other noise.</p>
+  <p class="slide-pre anim a3">before we ask you to join — this is yours. free, no strings.</p>
+
+  <div class="mini-cards">
+    <div class="mini-card anim-r r1">
+      <div class="mc-co" id="mc-co-1">[ company ]</div>
+      <div class="mc-role">[ Graduate Developer Programme ]</div>
+      <div class="mc-meta" id="mc-city-1">[ City ] · CompSci · IS · Eng</div>
+      <button class="mc-cta pack-link" data-title="opp1" onclick="claimPack(event);openSheet('sheet-pack')">view &amp; apply →</button>
+    </div>
+    <div class="mini-card anim-r r2">
+      <div class="mc-co">[ company ]</div>
+      <div class="mc-role">[ Data Analyst Intern ]</div>
+      <div class="mc-meta">Johannesburg · Stats · Math · Data Sci</div>
+      <button class="mc-cta pack-link" data-title="opp2" onclick="claimPack(event);openSheet('sheet-pack')">view &amp; apply →</button>
+    </div>
+  </div>
+
+  <!-- adaptive CTA -->
+  <div class="cta-pair anim a4" id="cta-block">
+    <div class="cta-state vis" id="cs1">
+      <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
+        <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to access campus group</div></div>
+        <span class="door-knob"></span>
+      </button>
+    </div>
+    <div class="cta-state" id="cs2">
+      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">done</div><div class="cta-arr">starter pack ✓</div></div></div>
+      <button class="cta-btn cta-primary" onclick="openSheet('sheet-form')">
+        <div class="cta-t"><div class="cta-sub">one more step</div><div class="cta-arr">sign up to access campus group</div></div>
+        <span style="opacity:.5;">→</span>
+      </button>
+    </div>
+    <div class="cta-state" id="cs3">
+      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're in</div><div class="cta-arr">signed up ✓</div></div></div>
+      <button class="cta-btn cta-secondary" onclick="goSlide(0)">
+        <div class="cta-t"><div class="cta-sub">grab it while you're here</div><div class="cta-arr">starter pack ↑</div></div>
+        <span style="opacity:.5;">↑</span>
+      </button>
+    </div>
+    <div class="cta-state" id="cs4">
+      <div class="cta-btn cta-done"><div class="cta-t"><div class="cta-sub">you're all in</div><div class="cta-arr">pack + group ✓</div></div></div>
+      <button class="cta-btn cta-secondary" onclick="goSlide(2)">
+        <div class="cta-t"><div class="cta-sub">spread the word</div><div class="cta-arr">share with your cohort →</div></div>
+        <span style="opacity:.5;">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- right actions -->
+  <div class="slide-actions">
+    <button class="act-btn like-btn" id="like-1" onclick="toggleLike(1,this)">
+      <div class="act-icon">♡</div><span class="act-label" id="lc-1">0</span>
+    </button>
+    <button class="act-btn" onclick="doShare()">
+      <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <span class="act-label">share</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ SLIDE 3: SHARE ══════════ -->
+<div class="slide slide-share" data-slide="2">
+
+  <p class="slide-label anim a1">share</p>
+  <h2 class="slide-title anim a2">opportunity shouldn't<br><em>be gatekept.</em></h2>
+  <p class="slide-body anim a3">neither should this. share it with your friends, peers, cohort.</p>
+  <button class="share-big anim a4" onclick="doShare()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    share this page
+  </button>
+  <div class="copy-row anim a5">
+    <span class="copy-url" id="copy-url-txt">join.knocktalent.co.za</span>
+    <button class="copy-btn" id="copy-btn" onclick="copyLink()">copy</button>
+  </div>
+
+  <!-- right actions -->
+  <div class="slide-actions">
+    <button class="act-btn like-btn" id="like-2" onclick="toggleLike(2,this)">
+      <div class="act-icon">♡</div><span class="act-label" id="lc-2">0</span>
+    </button>
+    <button class="act-btn" onclick="doShare()">
+      <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <span class="act-label">share</span>
+    </button>
+  </div>
+</div>
+
+</div><!-- end #feed -->
+
+<!-- SHEET OVERLAY -->
 <div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
 
 <!-- SHEET: PACK -->
@@ -446,8 +648,8 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
     <div class="pc"><div class="pc-co">[ company ]</div><div class="pc-role">[ Data Analyst Intern ]</div><div class="pc-meta">Johannesburg · Stats · Math · Data Sci · Closes [ date ]</div><a href="#" class="pc-link pack-link" data-title="opp2-full" onclick="claimPack(event)">view &amp; apply →</a></div>
     <div class="pc"><div class="pc-co">[ company ]</div><div class="pc-role">[ STEM Bursary 2026 ]</div><div class="pc-meta">National · Any STEM degree · Closes [ date ]</div><a href="#" class="pc-link pack-link" data-title="opp3-full" onclick="claimPack(event)">view &amp; apply →</a></div>
     <div class="pack-divider"></div>
-    <div class="insight-mini"><div class="im-icon">⚡</div><div><div class="im-title">The ATS rejection most STEM grads don't know about</div><div class="im-body">A 64% GPA can trigger auto-rejection before a human reads your application — even with 90% in the exact skill the role needs. <a href="#" class="pack-link" data-title="insight-ats" onclick="claimPack(event)" style="color:var(--purple);font-weight:600;text-decoration:none;">read →</a></div></div></div>
-    <div class="insight-mini"><div class="im-icon">🎯</div><div><div class="im-title">How to stand out when every application looks the same</div><div class="im-body">Most STEM grad applications are identical. One thing makes a recruiter stop. <a href="#" class="pack-link" data-title="insight-standout" onclick="claimPack(event)" style="color:var(--purple);font-weight:600;text-decoration:none;">read →</a></div></div></div>
+    <div class="insight"><div class="in-icon">⚡</div><div><div class="in-title">The ATS rejection most STEM grads don't know about</div><div class="in-body">A 64% GPA can trigger auto-rejection before a human reads your application — even with 90% in the exact skill the role needs. <a href="#" class="pack-link" data-title="insight-ats" onclick="claimPack(event)" style="color:var(--purple);font-weight:600;text-decoration:none;">read →</a></div></div></div>
+    <div class="insight"><div class="in-icon">🎯</div><div><div class="in-title">How to stand out when every application looks the same</div><div class="in-body">Most STEM grad applications are identical. One thing makes a recruiter stop. <a href="#" class="pack-link" data-title="insight-standout" onclick="claimPack(event)" style="color:var(--purple);font-weight:600;text-decoration:none;">read →</a></div></div></div>
   </div>
 </div>
 
@@ -461,7 +663,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
       <div class="sf-field"><label class="sf-label">field of study</label><div class="sf-chips"><button class="sf-chip" data-v="STEM" onclick="sfChip(this)">stem</button><button class="sf-chip" data-v="Non-STEM" onclick="sfChip(this)">non-stem</button></div></div>
       <div class="sf-field"><label class="sf-label">whatsapp number</label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
       <div class="sf-field"><label class="sf-label">university email <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional</span></label><input class="sf-input" id="sf-email" type="email" placeholder="student@uct.ac.za"/></div>
-      <div class="sf-consent" onclick="sfToggleConsent()" id="sf-consent"><div class="sf-cb" id="sf-cb"></div><div class="sf-ct">i consent to <strong>knock</strong> adding me to a relevant whatsapp group and sending me matched opportunities. popia-aligned. withdraw anytime.</div></div>
+      <div class="sf-consent" onclick="sfToggleConsent()"><div class="sf-cb" id="sf-cb"></div><div class="sf-ct">i consent to <strong>knock</strong> adding me to a relevant whatsapp group and sending me matched opportunities. popia-aligned. withdraw anytime.</div></div>
       <button class="sf-submit" id="sf-submit" onclick="sfSubmit()">get me found ✓</button>
     </div>
     <div class="sf-done" id="sf-done">
@@ -476,7 +678,8 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 <div class="toast" id="toast"></div>
 
 <script>
-window.KNOCK_APPS_SCRIPT_URL = '';
+/* ── CONFIG ── */
+window.KNOCK_APPS_SCRIPT_URL='';
 const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za',waLink:'#'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za',waLink:'#'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za',waLink:'#'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za',waLink:'#'},'ukzn':{display:'UKZN',full:'University of KwaZulu-Natal',location:'Durban',emailHint:'student@ukzn.ac.za',waLink:'#'}};
 const SEG={'devsoc':'Developer Society','cs':'Computer Science','is':'Information Systems','honours':'Honours','compsci':'Computer Science','eng':'Engineering','data':'Data Science','math':'Mathematics','fintech':'FinTech','stem':'STEM students'};
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
@@ -484,7 +687,7 @@ let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
 const feed=document.getElementById('feed');
 const slides=document.querySelectorAll('.slide');
 const dots=document.querySelectorAll('.dot');
-const dotsEl=document.getElementById('dots');
+let NET=null,CYCLE_TIMER=null;
 
 /* ── INIT ── */
 (function init(){
@@ -503,78 +706,126 @@ const dotsEl=document.getElementById('dots');
   document.getElementById('mc-co-1').textContent='[ company · '+city+' ]';
   document.getElementById('mc-city-1').textContent=city+' · CompSci · IS · Eng';
   document.getElementById('sp-co1').textContent='[ company · '+city+' ]';
-  document.getElementById('sp-city1').textContent=city+' · CompSci · IS · Engineering · Closes [ date ]';
+  document.getElementById('sp-city1').textContent=city+' · CompSci · IS · Eng · Closes [ date ]';
   loadLikes(); renderCTA();
-  // Enter first slide after brief delay
-  setTimeout(()=>{ slides[0].classList.add('entered'); }, 80);
+  // Enter slide 0
+  setTimeout(()=>{ slides[0].classList.add('entered'); },80);
+  // Start network + cycling
+  initNetwork();
+  startCycling();
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
 })();
 
-/* ── SCROLL ── */
+/* ── NETWORK CANVAS ── */
+function initNetwork(){
+  const canvas=document.getElementById('net-canvas');
+  if(!canvas)return;
+  // Size canvas to slide
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const NODES=[];
+  const N=11,DIST=140;
+  for(let i=0;i<N;i++){
+    NODES.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:2+Math.random()*1.5});
+  }
+  let running=true;
+  function loop(){
+    if(!running)return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let i=0;i<NODES.length;i++){
+      const a=NODES[i];
+      a.x+=a.vx; a.y+=a.vy;
+      if(a.x<0||a.x>canvas.width)a.vx*=-1;
+      if(a.y<0||a.y>canvas.height)a.vy*=-1;
+      for(let j=i+1;j<NODES.length;j++){
+        const b=NODES[j];
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<DIST){
+          ctx.strokeStyle=`rgba(20,10,60,${(1-d/DIST)*.22})`;
+          ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+        }
+      }
+    }
+    for(const n of NODES){
+      ctx.fillStyle='rgba(20,10,60,0.25)';
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+  NET={stop:()=>{running=false;},start:()=>{running=true;loop();}};
+}
+
+/* ── CYCLING WORD ── */
+const WORDS=['jobs','internships','funding','career knowledge'];
+let wIdx=0;
+function startCycling(){
+  CYCLE_TIMER=setInterval(()=>{
+    const el=document.getElementById('cycle-word');
+    if(!el)return;
+    el.classList.add('word-out');
+    setTimeout(()=>{
+      wIdx=(wIdx+1)%WORDS.length;
+      el.textContent=WORDS[wIdx];
+      el.classList.remove('word-out');
+      el.classList.add('word-in');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove('word-in')));
+    },200);
+  },2000);
+}
+
+/* ── SCROLL / SLIDE TRACKING ── */
 feed.addEventListener('scroll',()=>{
-  const h=feed.clientHeight;
-  const idx=Math.round(feed.scrollTop/h);
+  const idx=Math.round(feed.scrollTop/feed.clientHeight);
   if(idx!==CURRENT_SLIDE){
     slides[CURRENT_SLIDE]?.classList.remove('entered');
     CURRENT_SLIDE=idx;
-    // Brief delay so user sees content arrive
     setTimeout(()=>slides[idx]?.classList.add('entered'),60);
     dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
-    // Dot color context: slide 0 is dark, rest are light
-    dotsEl.classList.toggle('light', idx>0);
-    // CTA pulse on join slide
-    const pb=document.getElementById('join-primary-btn');
-    if(pb){ pb.classList.toggle('pulse', idx===3 && !getStates().signup); }
-    ph('slide_view',{slide:idx,uni:PAGE_UNI});
+    ph('slide_view',{slide:idx});
   }
 },{passive:true});
-
 function goSlide(n){feed.scrollTo({top:n*feed.clientHeight,behavior:'smooth'});}
 dots.forEach(d=>d.addEventListener('click',()=>goSlide(+d.dataset.i)));
 
 /* ── LIKES ── */
 function loadLikes(){
   const data=JSON.parse(localStorage.getItem(KEY_LIKES)||'{}');
-  for(let i=0;i<5;i++){
-    const count=data[i]||0,liked=data['l'+i]||false;
+  for(let i=0;i<3;i++){
     const el=document.getElementById('lc-'+i);
     const btn=document.getElementById('like-'+i);
-    if(el)el.textContent=count;
-    if(btn&&liked){btn.classList.add('liked');btn.querySelector('.act-icon').textContent='♥';}
+    if(el)el.textContent=data[i]||0;
+    if(btn&&data['l'+i]){btn.classList.add('liked');btn.querySelector('.act-icon').textContent='♥';}
   }
 }
 function toggleLike(i,btn){
   const data=JSON.parse(localStorage.getItem(KEY_LIKES)||'{}');
-  const wasLiked=data['l'+i]||false;
-  data['l'+i]=!wasLiked; data[i]=(data[i]||0)+(wasLiked?-1:1);
+  const was=data['l'+i]||false;
+  data['l'+i]=!was; data[i]=(data[i]||0)+(was?-1:1);
   localStorage.setItem(KEY_LIKES,JSON.stringify(data));
   const icon=btn.querySelector('.act-icon');
   const lc=document.getElementById('lc-'+i);
-  if(!wasLiked){
-    btn.classList.add('liked'); icon.textContent='♥';
-    burstHearts(btn);
-    ph('like',{slide:i});
-  }else{btn.classList.remove('liked');icon.textContent='♡';}
+  if(!was){btn.classList.add('liked');icon.textContent='♥';burstHearts(btn);ph('like',{slide:i});}
+  else{btn.classList.remove('liked');icon.textContent='♡';}
   if(lc)lc.textContent=Math.max(0,data[i]);
 }
 function burstHearts(btn){
-  const rect=btn.getBoundingClientRect();
-  const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
-  const angles=[-70,-35,0,35,70,100,140];
-  angles.forEach((deg,k)=>{
+  const r=btn.getBoundingClientRect();
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  [-70,-35,0,35,70,105,140].forEach(deg=>{
     const el=document.createElement('div');
-    el.className='float-heart';
+    const size=11+Math.random()*7;
+    el.style.cssText=`position:fixed;left:${cx}px;top:${cy}px;font-size:${size}px;color:#ff3c50;pointer-events:none;z-index:9999;opacity:1;transition:transform .7s ease-out,opacity .7s ease-in;`;
     el.textContent='♥';
-    const size=12+Math.random()*8;
-    el.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;font-size:'+size+'px;color:#ff3c50;pointer-events:none;z-index:9999;';
-    el.style.setProperty('--dx','0px');el.style.setProperty('--dy','0px');
     document.body.appendChild(el);
+    const dist=50+Math.random()*30;
+    const rad=(deg-90)*Math.PI/180;
     requestAnimationFrame(()=>{
-      const dist=50+Math.random()*35;
-      const rad=(deg-90)*Math.PI/180;
-      const dx=Math.cos(rad)*dist,dy=Math.sin(rad)*dist;
-      el.style.setProperty('--dx',dx+'px');el.style.setProperty('--dy',dy+'px');
-      setTimeout(()=>el.remove(),800);
+      el.style.transform=`translate(calc(-50% + ${Math.cos(rad)*dist}px), calc(-50% + ${Math.sin(rad)*dist}px))`;
+      el.style.opacity='0';
+      setTimeout(()=>el.remove(),750);
     });
   });
 }
@@ -583,18 +834,16 @@ function burstHearts(btn){
 function getStates(){return{pack:localStorage.getItem(KEY_PACK)==='1',signup:localStorage.getItem(KEY_SIGNUP)==='1'};}
 function renderCTA(){
   const{pack,signup}=getStates();
-  ['js1','js2','js3','js4'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('vis');});
-  const s=!pack&&!signup?'js1':pack&&!signup?'js2':!pack&&signup?'js3':'js4';
+  ['cs1','cs2','cs3','cs4'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('vis');});
+  const s=!pack&&!signup?'cs1':pack&&!signup?'cs2':!pack&&signup?'cs3':'cs4';
   const el=document.getElementById(s);if(el)el.classList.add('vis');
-  const pb=document.getElementById('join-primary-btn');
-  if(pb)pb.classList.toggle('pulse',CURRENT_SLIDE===3&&!signup);
 }
 
 /* ── PACK ── */
 function claimPack(e){
   if(e)e.preventDefault();
-  const title=e&&e.currentTarget?e.currentTarget.dataset.title||'unknown':'cta';
-  ph('pack_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG,link:title});
+  const t=e&&e.currentTarget?e.currentTarget.dataset.title||'unknown':'cta';
+  ph('pack_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG,link:t});
   localStorage.setItem(KEY_PACK,'1'); renderCTA();
   showToast('opening soon →');
 }
@@ -613,7 +862,8 @@ async function sfSubmit(){
   if(!SF_CONSENT){showToast('tick consent to continue');return;}
   const btn=document.getElementById('sf-submit');btn.disabled=true;btn.textContent='sending…';
   ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
-  const payload={university:(UNI[PAGE_UNI]||UNI['uct']).full,field:SF_FIELD,phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),email:document.getElementById('sf-email').value.trim(),group:PAGE_UNI+'_'+PAGE_SEG,source:window.location.pathname.replace(/^\//,''),submitted_at:new Date().toISOString(),consent:true};
+  const u=UNI[PAGE_UNI]||UNI['uct'];
+  const payload={university:u.full,field:SF_FIELD,phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),email:document.getElementById('sf-email').value.trim(),group:PAGE_UNI+'_'+PAGE_SEG,source:window.location.pathname.replace(/^\//,''),submitted_at:new Date().toISOString(),consent:true};
   try{
     const url=window.KNOCK_APPS_SCRIPT_URL;
     if(url)await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
@@ -625,10 +875,10 @@ async function sfSubmit(){
 }
 
 /* ── SHARE ── */
-async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:'free starter pack + weekly grad opportunities on whatsapp.',url:window.location.href});}catch(_){}}else copyLink();}
+async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:window.location.href});}catch(_){}}else copyLink();}
 function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');}
 
-/* ── TOAST ── */
+/* ── TOAST / PH ── */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 function ph(e,p={}){try{if(typeof posthog!=='undefined')posthog.capture(e,p);}catch(_){}}
 </script>
