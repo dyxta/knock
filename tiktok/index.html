@@ -354,40 +354,49 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .swipe-prog{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .swipe-prog-txt{font-size:12px;font-weight:600;color:var(--g500);}
 .swipe-saved-badge{font-size:12px;font-weight:700;color:var(--purple);background:var(--purple-pale);border:1px solid rgba(94,23,235,.18);border-radius:999px;padding:3px 10px;}
-/* ── SWIPE INSTRUCTION ── */
-.swipe-instruct{display:flex;justify-content:space-between;margin-bottom:10px;font-size:11.5px;font-weight:600;}
-.inst-left{color:#C0392B;display:flex;align-items:center;gap:4px;}
-.inst-right{color:var(--purple);display:flex;align-items:center;gap:4px;}
-/* ── CARD STACK ── */
-.card-stack{position:relative;height:230px;margin-bottom:14px;user-select:none;}
-.opp-card-swipe{
-  position:absolute;inset:0;background:var(--white);border:1.5px solid var(--g200);
-  border-radius:16px;padding:16px 18px 14px;touch-action:none;cursor:grab;
-  will-change:transform;
+/* ── OPP LIST ── */
+.opp-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.opp-card-list{
+  background:var(--white);border:1.5px solid var(--g200);border-radius:14px;
+  padding:14px 14px 14px 18px;display:flex;align-items:center;gap:12px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s ease,background .35s ease;
 }
-.opp-card-swipe:active{cursor:grabbing;}
-.swipe-label{
-  position:absolute;top:12px;font-family:var(--font-d);font-weight:800;font-size:15px;
-  letter-spacing:-.2px;border:2px solid;border-radius:5px;padding:3px 9px;
-  opacity:0;pointer-events:none;transition:opacity .1s;
+.opp-card-list::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3.5px;
+  background:var(--purple);border-radius:14px 0 0 14px;
+  transform:scaleY(0);transform-origin:center;
+  transition:transform .4s cubic-bezier(0.34,1.56,0.64,1);
 }
-.label-right{left:12px;color:var(--purple);border-color:var(--purple);}
-.label-left{right:12px;color:#C0392B;border-color:#C0392B;}
-.card-tint{position:absolute;inset:0;border-radius:16px;pointer-events:none;}
-.card-co{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:5px;}
-.card-role{font-family:var(--font-d);font-weight:800;font-size:16px;letter-spacing:-.3px;color:var(--ink);margin-bottom:6px;line-height:1.2;}
-.card-meta{font-size:12px;color:var(--g500);margin-bottom:5px;}
-.card-deadline{font-size:12px;font-weight:600;color:var(--g700);margin-bottom:7px;}
-.card-url{font-size:10px;color:var(--purple);font-family:monospace;background:var(--purple-pale);padding:3px 8px;border-radius:4px;display:inline-block;}
-/* ── UNDO ── */
-.undo-btn{display:none;align-items:center;gap:5px;background:none;border:1px solid var(--g200);border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--g500);cursor:pointer;font-family:var(--font-b);transition:border-color .15s,color .15s;margin-bottom:12px;}
-.undo-btn.show{display:flex;}
-.undo-btn:hover{border-color:var(--purple);color:var(--purple);}
-/* ── SWIPE DONE STATE ── */
-.swipe-done{display:none;text-align:center;padding:16px 0;}
-.swipe-done-emoji{font-size:36px;margin-bottom:10px;}
-.swipe-done-title{font-family:var(--font-d);font-weight:900;font-size:22px;letter-spacing:-.5px;color:var(--ink);margin-bottom:6px;}
-.swipe-done-title em{color:var(--purple);font-style:normal;}
+.opp-card-list.saved{border-color:rgba(94,23,235,.3);background:var(--purple-pale);}
+.opp-card-list.saved::before{transform:scaleY(1);}
+.opp-card-content{flex:1;min-width:0;}
+.opp-card-co{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
+.opp-card-role{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.25;}
+.opp-card-meta{font-size:12px;color:var(--g500);margin-bottom:2px;}
+.opp-card-deadline{font-size:11.5px;font-weight:600;color:var(--g700);}
+/* ── SAVE BUTTON ── */
+@keyframes saveBounce{
+  0%{transform:scale(1);}
+  25%{transform:scale(1.5);}
+  55%{transform:scale(.88);}
+  80%{transform:scale(1.14);}
+  100%{transform:scale(1);}
+}
+@keyframes sparkleOut{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  100%{opacity:0;transform:translate(calc(-50% + var(--sx)),calc(-50% + var(--sy))) scale(0);}
+}
+.opp-save-btn{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--g200);background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:19px;color:var(--g500);
+  transition:background .2s,border-color .2s,color .2s;
+  position:relative;
+}
+.opp-save-btn.saved{background:var(--purple);border-color:var(--purple);color:var(--white);}
+.opp-save-btn.bounce{animation:saveBounce .42s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 .swipe-done-sub{font-size:13px;color:var(--g700);line-height:1.65;margin-bottom:18px;}
 .swipe-done-actions{display:flex;flex-direction:column;gap:8px;}
 /* ── PDF BUTTON ── */
@@ -631,7 +640,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
     <div class="cta-pair">
       <div class="cta-state vis" id="cs1">
         <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
-          <div class="cta-t"><div class="cta-sub">swipe to save opportunities</div><div class="cta-arr">browse the pack</div></div>
+          <div class="cta-t"><div class="cta-sub">tap ♡ to save opportunities</div><div class="cta-arr">browse the pack</div></div>
           <span style="opacity:.4;">→</span>
         </button>
         <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
@@ -641,7 +650,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
       </div>
       <div class="cta-state" id="cs2">
         <button class="cta-btn cta-secondary" onclick="openSheet('sheet-pack');initCardStack()">
-          <div class="cta-t"><div class="cta-sub">continue swiping</div><div class="cta-arr">browse the pack →</div></div>
+          <div class="cta-t"><div class="cta-sub">update your saves</div><div class="cta-arr">browse the pack →</div></div>
         </button>
         <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form')">
           <div class="cta-t"><div class="cta-sub">one more step</div><div class="cta-arr">sign up to access campus group</div></div>
@@ -740,34 +749,17 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
   <div class="sheet-body">
 
-    <!-- SWIPE UI -->
+    <!-- OPP LIST UI -->
     <div id="swipe-ui">
-      <div class="swipe-prog">
-        <span class="swipe-prog-txt" id="card-prog">1 of 5</span>
+      <div class="swipe-prog" style="margin-bottom:14px;">
+        <span class="swipe-prog-txt">tap ♡ to save opportunities</span>
         <span class="swipe-saved-badge" id="swipe-saved-ct">0 saved</span>
       </div>
-      <div class="swipe-instruct">
-        <span class="inst-left">← pass</span>
-        <span class="inst-right">save →</span>
-      </div>
-      <div class="card-stack" id="card-stack"></div>
-      <button class="undo-btn" id="undo-btn" onclick="undoLastSwipe()">← undo</button>
-    </div>
-
-    <!-- DONE STATE -->
-    <div class="swipe-done" id="swipe-done">
-      <div class="swipe-done-emoji" id="swipe-done-emoji">🎯</div>
-      <h3 class="swipe-done-title">you saved <em id="swipe-done-ct">0</em>.</h3>
-      <p class="swipe-done-sub" id="swipe-done-sub"></p>
-      <div class="swipe-done-actions">
-        <button class="cta-btn cta-primary" onclick="closeSheet();goSlide(2);">
-          <div class="cta-t"><div class="cta-sub">sign up to unlock the PDF</div><div class="cta-arr">continue →</div></div>
-          <span style="opacity:.4;">→</span>
-        </button>
-        <button class="cta-btn cta-secondary" onclick="closeSheet()">
-          <div class="cta-t"><div class="cta-arr">back to the page</div></div>
-        </button>
-      </div>
+      <div class="opp-list" id="card-stack"></div>
+      <button class="cta-btn cta-primary" style="width:100%;margin-top:4px;" onclick="closeSheet();goSlide(2);">
+        <div class="cta-t"><div class="cta-sub">sign up to bundle into PDF</div><div class="cta-arr">continue →</div></div>
+        <span style="opacity:.4;">→</span>
+      </button>
     </div>
 
   </div>
@@ -1118,125 +1110,93 @@ function openDoor(){
 }
 
 /* ══════ CARD STACK ══════ */
-var CARD_IDX=0,LAST_ACTION=null,DRAG_X=0,IS_DRAG=false,TX=0,TY=0,ACTIVE_CARD=null;
+var CARD_IDX=0;
 function initCardStack(){
-  CARD_IDX=parseInt(localStorage.getItem(KEY_CARD_IDX)||'0');
   renderStack();
 }
 function renderStack(){
-  const stack=document.getElementById('card-stack');
-  const ui=document.getElementById('swipe-ui');
-  const done=document.getElementById('swipe-done');
-  const allDone=CARD_IDX>=OPPORTUNITIES.length;
+  var stack=document.getElementById('card-stack');
   if(!stack)return;
   stack.innerHTML='';
-  if(ui)ui.style.display=allDone?'none':'block';
-  if(done)done.style.display=allDone?'block':'none';
-  if(allDone){showDoneState();return;}
-  updateProgress();
-  // Render current + 2 behind (in reverse so front is on top)
-  const end=Math.min(CARD_IDX+2,OPPORTUNITIES.length-1);
-  for(let i=end;i>=CARD_IDX;i--){
-    const el=makeCard(OPPORTUNITIES[i],i-CARD_IDX);
+  var bundle=getBundle();
+  OPPORTUNITIES.forEach(function(opp){
+    var saved=!!bundle.find(function(o){return o.id===opp.id;});
+    var el=document.createElement('div');
+    el.className='opp-card-list'+(saved?' saved':'');
+    el.dataset.id=opp.id;
+    el.innerHTML=
+      '<div class="opp-card-content">'+
+        '<div class="opp-card-co">'+opp.company+'</div>'+
+        '<div class="opp-card-role">'+opp.title+'</div>'+
+        '<div class="opp-card-meta">'+opp.location+' · '+opp.degrees+'</div>'+
+        '<div class="opp-card-deadline">closes '+opp.deadline+'</div>'+
+      '</div>'+
+      '<button class="opp-save-btn'+(saved?' saved':'')+'" aria-label="'+(saved?'unsave':'save')+'">'+
+        (saved?'♥':'♡')+
+      '</button>';
+    el.querySelector('.opp-save-btn').addEventListener('click',function(e){
+      e.stopPropagation();
+      toggleSave(opp,el,e);
+    });
     stack.appendChild(el);
-  }
-  ACTIVE_CARD=stack.querySelector('.opp-card-swipe');
-  if(ACTIVE_CARD)attachHandlers(ACTIVE_CARD,OPPORTUNITIES[CARD_IDX]);
-}
-function makeCard(opp,pos){
-  const el=document.createElement('div');
-  el.className='opp-card-swipe';
-  const transforms=['translateY(0) scale(1)','translateY(7px) scale(0.94)','translateY(14px) scale(0.88)'];
-  el.style.transform=transforms[pos]||transforms[2];
-  el.style.zIndex=10-pos;
-  el.style.transition='transform .3s cubic-bezier(0.34,1.56,0.64,1)';
-  el.dataset.id=opp.id;
-  el.innerHTML=`<div class="card-tint"></div>
-<div class="swipe-label label-right">save</div>
-<div class="swipe-label label-left">pass</div>
-<div class="card-co">${opp.company}</div>
-<div class="card-role">${opp.title}</div>
-<div class="card-meta">${opp.location} · ${opp.degrees}</div>
-<div class="card-deadline">closes ${opp.deadline}</div>
-<div class="card-url">${opp.url}</div>`;
-  return el;
-}
-function attachHandlers(el,opp){
-  el.addEventListener('touchstart',e=>{TX=e.touches[0].clientX;TY=e.touches[0].clientY;IS_DRAG=true;DRAG_X=0;el.style.transition='none';},{passive:true});
-  el.addEventListener('touchmove',e=>{
-    if(!IS_DRAG)return;
-    const dx=e.touches[0].clientX-TX,dy=e.touches[0].clientY-TY;
-    if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dx)<15){IS_DRAG=false;return;}
-    e.preventDefault();DRAG_X=dx;applyDrag(el,dx);
-  },{passive:false});
-  el.addEventListener('touchend',()=>{if(!IS_DRAG)return;IS_DRAG=false;commitOrSnap(el,opp);});
-  // Mouse fallback for desktop testing
-  el.addEventListener('mousedown',e=>{TX=e.clientX;TY=e.clientY;IS_DRAG=true;DRAG_X=0;el.style.transition='none';
-    const mm=ev=>{DRAG_X=ev.clientX-TX;applyDrag(el,DRAG_X);};
-    const mu=()=>{IS_DRAG=false;commitOrSnap(el,opp);document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);};
-    document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);
   });
+  updateProgress();
 }
-function applyDrag(el,dx){
-  el.style.transform=`translateX(${dx}px) rotate(${dx*.07}deg)`;
-  const lR=el.querySelector('.label-right'),lL=el.querySelector('.label-left'),tint=el.querySelector('.card-tint');
-  if(dx>20){lR&&(lR.style.opacity=Math.min((dx-20)/55,1));lL&&(lL.style.opacity=0);tint&&(tint.style.background=`rgba(94,23,235,${Math.min((dx-20)/110,.09)})`);}
-  else if(dx<-20){lL&&(lL.style.opacity=Math.min((-dx-20)/55,1));lR&&(lR.style.opacity=0);tint&&(tint.style.background=`rgba(200,50,50,${Math.min((-dx-20)/110,.07)})`);}
-  else{lR&&(lR.style.opacity=0);lL&&(lL.style.opacity=0);tint&&(tint.style.background='transparent');}
-}
-function commitOrSnap(el,opp){
-  const THRESH=75;
-  if(DRAG_X>THRESH)commitSwipe('right',el,opp);
-  else if(DRAG_X<-THRESH)commitSwipe('left',el,opp);
-  else{
-    el.style.transition='transform .35s cubic-bezier(0.34,1.56,0.64,1)';
-    el.style.transform='translateX(0) rotate(0deg)';
-    const lR=el.querySelector('.label-right'),lL=el.querySelector('.label-left'),tint=el.querySelector('.card-tint');
-    if(lR)lR.style.opacity=0;if(lL)lL.style.opacity=0;if(tint)tint.style.background='transparent';
+function toggleSave(opp,cardEl,e){
+  var bundle=getBundle();
+  var saved=!!bundle.find(function(o){return o.id===opp.id;});
+  var btn=cardEl.querySelector('.opp-save-btn');
+  if(!saved){
+    addToBundle(opp);
+    cardEl.classList.add('saved');
+    btn.classList.add('saved');
+    btn.innerHTML='♥';
+    btn.setAttribute('aria-label','unsave');
+    btn.classList.remove('bounce');
+    void btn.offsetWidth;
+    btn.classList.add('bounce');
+    setTimeout(function(){btn.classList.remove('bounce');},450);
+    doSparkle(e);
+    ph('opportunity_saved',{opp_id:opp.id,uni:PAGE_UNI});
+  }else{
+    removeFromBundle(opp.id);
+    cardEl.classList.remove('saved');
+    btn.classList.remove('saved');
+    btn.innerHTML='♡';
+    btn.setAttribute('aria-label','save');
+    ph('opportunity_unsaved',{opp_id:opp.id,uni:PAGE_UNI});
   }
-  DRAG_X=0;
+  updateProgress();
 }
-function commitSwipe(dir,el,opp){
-  LAST_ACTION={dir,opp};
-  const ex=dir==='right'?'130%':'-130%',rot=dir==='right'?'18deg':'-18deg';
-  el.style.transition='transform .38s ease-in,opacity .38s ease-in';
-  el.style.transform=`translateX(${ex}) rotate(${rot})`;
-  el.style.opacity='0';
-  el.style.pointerEvents='none';
-  if(dir==='right'){addToBundle(opp);showSaveFeedback();}
-  CARD_IDX++;localStorage.setItem(KEY_CARD_IDX,String(CARD_IDX));
-  showUndo();updateProgress();
-  setTimeout(()=>renderStack(),360);
-  ph('card_swiped',{dir,opp_id:opp.id,uni:PAGE_UNI});
+function doSparkle(e){
+  var x=e.clientX,y=e.clientY;
+  var clrs=['#5E17EB','#C9AAFF','#F0EBFF','#8B5CF6'];
+  for(var i=0;i<7;i++){
+    (function(idx){
+      var dot=document.createElement('div');
+      var angle=(idx/7)*Math.PI*2+(Math.random()-.5)*.6;
+      var dist=22+Math.random()*20;
+      var sz=3+Math.random()*4;
+      var clr=clrs[idx%clrs.length];
+      var sx=Math.cos(angle)*dist+'px';
+      var sy=Math.sin(angle)*dist+'px';
+      dot.style.cssText='position:fixed;left:'+x+'px;top:'+y+'px;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+clr+';pointer-events:none;z-index:9999;--sx:'+sx+';--sy:'+sy+';animation:sparkleOut .5s '+(idx*.04)+'s ease-out forwards;';
+      document.body.appendChild(dot);
+      setTimeout(function(){dot.remove();},580);
+    })(i);
+  }
 }
 function showSaveFeedback(){
-  const fb=document.createElement('div');
+  var fb=document.createElement('div');
   fb.textContent='saved ✓';
   fb.style.cssText='position:fixed;top:42%;left:50%;transform:translateX(-50%);background:var(--purple);color:#fff;font-size:15px;font-weight:700;padding:9px 20px;border-radius:999px;z-index:500;pointer-events:none;font-family:var(--font-b);animation:saveFB .7s ease-out forwards;';
   document.body.appendChild(fb);
-  setTimeout(()=>fb.remove(),720);
+  setTimeout(function(){fb.remove();},720);
 }
-function undoLastSwipe(){
-  if(!LAST_ACTION)return;
-  if(LAST_ACTION.dir==='right')removeFromBundle(LAST_ACTION.opp.id);
-  CARD_IDX=Math.max(0,CARD_IDX-1);
-  localStorage.setItem(KEY_CARD_IDX,String(CARD_IDX));
-  LAST_ACTION=null;hideUndo();renderStack();updateProgress();
-}
-function showUndo(){const b=document.getElementById('undo-btn');if(b)b.classList.add('show');}
-function hideUndo(){const b=document.getElementById('undo-btn');if(b)b.classList.remove('show');}
 function updateProgress(){
-  const p=document.getElementById('card-prog');
-  if(p&&CARD_IDX<OPPORTUNITIES.length)p.textContent=(CARD_IDX+1)+' of '+OPPORTUNITIES.length;
-}
-function showDoneState(){
-  const n=getBundle().length;
-  const ct=document.getElementById('swipe-done-ct');
-  const sub=document.getElementById('swipe-done-sub');
-  const emoji=document.getElementById('swipe-done-emoji');
-  if(ct)ct.textContent=n;
-  if(emoji)emoji.textContent=n>0?'🎯':'👀';
-  if(sub){sub.textContent=n>0?`swipe to sign up — we'll bundle your ${n} ${n===1?'opportunity':'opportunities'} into a PDF.`:'sign up to access the campus group. you can always come back to discover opportunities.';}
+  var n=getBundle().length;
+  var badge=document.getElementById('swipe-saved-ct');
+  if(badge)badge.textContent=n+' saved';
 }
 
 /* ══════ PDF GENERATION ══════ */
