@@ -675,6 +675,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <div class="dot active" data-i="0"></div>
   <div class="dot" data-i="1"></div>
   <div class="dot" data-i="2"></div>
+  <div class="dot" data-i="3"></div>
 </div>
 
 <div id="feed">
@@ -737,49 +738,32 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
 </div>
 
-<!-- ══════════ SLIDE 2: PILOT INFO + OPPORTUNITIES ══════════ -->
+<!-- ══════════ SLIDE 2: PILOT INFO + STARTER PACK ══════════ -->
 <div class="slide slide-pack" data-slide="1">
 
-  <!-- Always visible: pilot info -->
   <p class="slide-label anim a1">early pilot</p>
   <h2 class="slide-title anim a2">we want to bring it<br><em>to your door.</em></h2>
-  <p class="slide-body anim a3" style="margin-bottom:6px;font-size:13px;color:var(--purple);font-weight:600;font-style:italic;">started by students — because we know the pain, time, and shame that comes with employment seeking.</p>
-  <p class="slide-body anim a3">we run campus groups and post verified opportunities in drops directly to them. twice a week, same time every week. no other noise. (admin-only — no yappers, no rage-baiters.)</p>
+  <p class="slide-body anim a3" style="margin-bottom:6px;font-size:13px;color:var(--purple);font-weight:600;font-style:italic;">started by students — because we know the pain that comes with employment seeking.</p>
+  <p class="slide-body anim a3" style="margin-bottom:10px;">verified opportunities, dropped to your campus group. twice a week. no noise. (admin-only.)</p>
 
-  <!-- Batch 1: always visible, no gate -->
   <p class="opp-batch-intro anim a3">we're student-first. here's a taste.</p>
   <div class="opp-rows anim a3" id="batch1-rows"></div>
 
-  <!-- STATE 1: not signed up -->
+  <!-- STATE 1: sign up -->
   <div id="p2-s1" class="anim a4">
-    <p class="opp-unlock-note">want us to bring <strong>more to your door?</strong><br>sign up to become part of the pilot.</p>
-    <p style="font-size:13px;color:var(--g500);margin-bottom:14px;line-height:1.6;max-width:300px;">signing up gets you <strong style="color:var(--ink);">3 more opportunities</strong> + access to your knock campus group — built for <span id="p2-uni-name">your uni</span> stem students.</p>
+    <p class="opp-unlock-note" style="margin-top:14px;">want more? <strong>sign up to become part of the pilot.</strong><br><span style="font-size:12.5px;font-weight:400;color:var(--g500);">you'll unlock 3 more opps + access to your campus group.</span></p>
     <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
       <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to become part of it</div></div>
       <span class="door-knob"></span>
     </button>
   </div>
 
-  <!-- STATE 2: signed up, WA not yet requested -->
+  <!-- STATE 2: WA request -->
   <div id="p2-s2" style="display:none;">
-    <p class="opp-unlock-note">you're in. <strong>request to join your campus group</strong> — your next 3 opportunities unlock once you do.</p>
+    <p class="opp-unlock-note" style="margin-top:14px;">you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.</p>
     <button class="p2-wa-btn" id="p2-wa-btn" onclick="requestWA(this)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group
     </button>
-  </div>
-
-  <!-- STATE 3: signed up + WA requested — 3 more unlock -->
-  <div id="p2-s3" style="display:none;">
-    <p class="unlocked-label">unlocked for you</p>
-    <div class="opp-rows opp-rows-unlocked" id="batch2-rows"></div>
-    <div class="bundle-actions">
-      <div class="bundle-pill" id="slide-bundle-pill">
-        <span id="slide-bundle-num">0</span> saved
-      </div>
-      <button class="cta-btn cta-secondary" onclick="goSlide(2)">
-        <div class="cta-t"><div class="cta-sub">swipe to download your bundle</div><div class="cta-arr">continue →</div></div>
-      </button>
-    </div>
   </div>
 
   <!-- right actions -->
@@ -794,8 +778,47 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
 </div>
 
-<!-- ══════════ SLIDE 3: BUNDLE + SHARE ══════════ -->
-<div class="slide slide-share" data-slide="2">
+<!-- ══════════ SLIDE 3: UNLOCKED OPPORTUNITIES ══════════ -->
+<div class="slide slide-unlock" data-slide="2">
+
+  <!-- LOCKED: not yet signed up + WA -->
+  <div id="p3-locked">
+    <p class="slide-label">bonus opportunities.</p>
+    <h2 class="slide-title">3 more<br><em>waiting for you.</em></h2>
+    <p class="slide-body" id="p3-locked-body">sign up and request to join your campus group on the previous slide to unlock these.</p>
+    <button class="cta-btn cta-secondary" style="max-width:280px;" onclick="goSlide(1)">
+      <div class="cta-t"><div class="cta-arr">← go back</div></div>
+    </button>
+  </div>
+
+  <!-- UNLOCKED: signed up + WA done -->
+  <div id="p3-unlocked" style="display:none;">
+    <p class="unlocked-label">unlocked for you</p>
+    <div class="opp-rows opp-rows-unlocked" id="batch2-rows"></div>
+    <div class="bundle-actions" style="margin-top:16px;">
+      <div class="bundle-pill" id="slide-bundle-pill">
+        <span id="slide-bundle-num">0</span> saved
+      </div>
+      <button class="cta-btn cta-primary" style="max-width:300px;" onclick="goSlide(3)">
+        <div class="cta-t"><div class="cta-sub">swipe to download your bundle</div><div class="cta-arr">continue →</div></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- right actions -->
+  <div class="slide-actions">
+    <button class="act-btn like-btn" id="like-2" onclick="toggleLike(2,this)">
+      <div class="act-icon">♡</div><span class="act-label" id="lc-2">0</span>
+    </button>
+    <button class="act-btn" onclick="doShare()">
+      <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <span class="act-label">share</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ SLIDE 4: THANK YOU + DOWNLOAD + SHARE ══════════ -->
+<div class="slide slide-share" data-slide="3">
 
   <p class="slide-label anim a1">thank you.</p>
   <h2 class="slide-title anim a2" id="s3-title">for joining<br><em>the pilot.</em></h2>
@@ -824,8 +847,8 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 
   <!-- right actions -->
   <div class="slide-actions">
-    <button class="act-btn like-btn" id="like-2" onclick="toggleLike(2,this)">
-      <div class="act-icon">♡</div><span class="act-label" id="lc-2">0</span>
+    <button class="act-btn like-btn" id="like-3" onclick="toggleLike(3,this)">
+      <div class="act-icon">♡</div><span class="act-label" id="lc-3">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
       <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
@@ -949,6 +972,7 @@ let NET=null,CYCLE_TIMER=null;
   setTimeout(function(){
     renderBatch(1);
     refreshP2();
+    refreshP3();
     refreshS3();
     refreshPDFGate();
   },0);
@@ -1032,7 +1056,7 @@ dots.forEach(d=>d.addEventListener('click',()=>goSlide(+d.dataset.i)));
 /* ── LIKES ── */
 function loadLikes(){
   const data=JSON.parse(localStorage.getItem(KEY_LIKES)||'{}');
-  for(let i=0;i<3;i++){
+  for(let i=0;i<4;i++){
     const el=document.getElementById('lc-'+i);
     const btn=document.getElementById('like-'+i);
     if(el)el.textContent=data[i]||0;
@@ -1107,7 +1131,7 @@ async function sfSubmit(){
     const url=window.KNOCK_APPS_SCRIPT_URL;
     if(url)await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
     ph('signup_success',{uni:PAGE_UNI,seg:PAGE_SEG});
-    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshS3();
+    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshP3(); refreshS3();
     document.getElementById('sf-form-body').style.display='none';
     document.getElementById('sf-done').style.display='block';
   }catch{btn.disabled=false;btn.textContent='get me found ✓';showToast('something went wrong, try again');}
@@ -1121,9 +1145,11 @@ function requestWA(el){
     window.open(link.href,'_blank');
   }
   refreshP2();
+  refreshP3();
   refreshPDFGate();
   closeSheet();
-  showToast('3 opportunities unlocked ↑ save & swipe to download →');
+  showToast('3 opportunities unlocked → swipe to see them');
+  setTimeout(function(){goSlide(2);},1000);
 }
 function refreshPDFGate(){
   var waOK=localStorage.getItem(KEY_WA)==='1';
@@ -1200,27 +1226,36 @@ function refreshP2(){
   var waOK=localStorage.getItem(KEY_WA)==='1';
   var s1=document.getElementById('p2-s1');
   var s2=document.getElementById('p2-s2');
-  var s3=document.getElementById('p2-s3');
-  var p2WaBtn=document.getElementById('p2-wa-btn');
   var u2=UNI[PAGE_UNI]||UNI['uct'];
+  var p2WaBtn=document.getElementById('p2-wa-btn');
   if(p2WaBtn&&u2.waLink&&u2.waLink!=='#')p2WaBtn.href=u2.waLink;
   var uniName=document.getElementById('p2-uni-name');
   if(uniName)uniName.textContent=u2.display.toLowerCase();
   if(s1)s1.style.display=!signed?'block':'none';
   if(s2)s2.style.display=(signed&&!waOK)?'block':'none';
-  if(s3){
-    s3.style.display=(signed&&waOK)?'block':'none';
-    if(signed&&waOK){renderBatch(2);refreshBundleUI();}
+}
+function refreshP3(){
+  var signed=localStorage.getItem(KEY_SIGNUP)==='1';
+  var waOK=localStorage.getItem(KEY_WA)==='1';
+  var locked=document.getElementById('p3-locked');
+  var unlocked=document.getElementById('p3-unlocked');
+  var body=document.getElementById('p3-locked-body');
+  var ok=signed&&waOK;
+  if(locked)locked.style.display=ok?'none':'block';
+  if(unlocked){
+    unlocked.style.display=ok?'block':'none';
+    if(ok&&OPPORTUNITIES&&OPPORTUNITIES.length)renderBatch(2);
+  }
+  if(!ok&&body){
+    if(signed&&!waOK)body.textContent='request to join your campus group on the previous slide to unlock your 3 bonus opportunities.';
+    else body.textContent='sign up and request to join your campus group on the previous slide to unlock these.';
   }
   var bundle=getBundle();
   var title=document.getElementById('s3-title');
-  var body=document.getElementById('s3-body');
+  var sbody=document.getElementById('s3-body');
   if(signed&&waOK&&bundle.length>0){
     if(title)title.innerHTML='your bundle<br><em>is ready.</em>';
-    if(body)body.textContent='you saved '+bundle.length+' '+(bundle.length===1?'opportunity':'opportunities')+'. download them as a PDF below.';
-  }else if(signed&&waOK){
-    if(title)title.innerHTML='go back to<br><em>slide 2.</em>';
-    if(body)body.textContent='open your starter pack and save the opportunities you like.';
+    if(sbody)sbody.textContent='you saved '+bundle.length+' '+(bundle.length===1?'opportunity':'opportunities')+'. download them as a PDF below.';
   }
 }
 
