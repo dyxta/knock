@@ -294,12 +294,59 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
 .timer-display.running{color:var(--gray-700);}
 .timer-display.warn{color:#D97706!important;}
 .timer-display.danger{color:#DC2626!important;}
-@media print{
-  body{background:white;}
-  .controls-outer{display:none!important;}
-  .slide{page-break-after:always;break-after:page;min-height:100vh;border:none;box-shadow:none;border-radius:0;padding:2rem 3rem;}
-  .slide *{animation:none!important;opacity:1!important;transform:none!important;}
-  @page{size:landscape;margin:0;}
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  /* Reset document flow */
+  html { height: auto !important; overflow: visible !important; }
+  body {
+    background: white !important;
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;   /* kill flex so slides stack normally */
+    min-height: 0 !important;
+  }
+  /* Hide all interactive chrome */
+  .controls-outer, .pdf-btn-wrap, .pdf-toast { display: none !important; }
+  /* Deck container: full bleed, no centering, no card spacing */
+  .deck-container {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  /* Every slide: full page, no card chrome */
+  .slide {
+    display: flex !important;
+    flex-direction: column !important;
+    opacity: 1 !important;
+    transform: none !important;
+    position: relative !important;
+    inset: auto !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 1.8rem 2.2rem !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+  }
+  /* Kill all animations */
+  .slide * { animation: none !important; transition: none !important; }
+  /* Hide title-slide animated elements */
+  .radar-ring, .wa-notif-wrap { display: none !important; }
+  /* Preserve coloured slide backgrounds */
+  #s2 { background: #5E17EB !important; }
+  /* 16:9 page — matches slide dimensions exactly */
+  @page { size: 25.4cm 14.3cm; margin: 0; }
 }
 
 /* ── S1 HERO ANIMATIONS ─────────────────────────────── */
@@ -388,6 +435,42 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
 #s1.active p.lede    { animation:slide-up-in 0.6s 0.45s both ease-out; }
 #s1.active .pill-cluster { animation:slide-up-in 0.6s 0.6s both ease-out; }
 
+
+/* PDF export button */
+.pdf-btn-wrap { display: flex; align-items: center; }
+.pdf-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--black); color: var(--white); border: none;
+  font-family: var(--font-body); font-weight: 600; font-size: .8rem;
+  padding: .48rem 1rem; border-radius: 8px; cursor: pointer;
+  transition: background .2s; white-space: nowrap;
+}
+.pdf-btn:hover { background: #222; }
+.pdf-btn svg { flex-shrink: 0; }
+/* PDF toast overlay */
+.pdf-toast {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.pdf-toast.show { opacity: 1; pointer-events: all; }
+.pdf-toast-card {
+  background: var(--white); border-radius: 20px;
+  padding: 2rem 2.4rem; max-width: 440px; width: 90%;
+  box-shadow: 0 24px 60px rgba(0,0,0,.2);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.pdf-toast-card h3 { font-family: var(--font-head); font-weight: 700; font-size: 18px; }
+.pdf-steps { display: flex; flex-direction: column; gap: .55rem; }
+.pdf-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--gray-700); line-height: 1.45; }
+.pdf-step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--purple); color: white; display: grid; place-items: center; font-family: var(--font-head); font-weight: 700; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+.pdf-toast-actions { display: flex; gap: .6rem; justify-content: flex-end; margin-top: .4rem; }
+.pdf-cancel { background: var(--off-white); border: 1px solid var(--gray-100); color: var(--gray-700); font-family: var(--font-body); font-weight: 600; font-size: .8rem; padding: .5rem 1rem; border-radius: 8px; cursor: pointer; }
+.pdf-confirm { background: var(--purple); color: white; border: none; font-family: var(--font-body); font-weight: 700; font-size: .8rem; padding: .5rem 1.2rem; border-radius: 8px; cursor: pointer; }
+.pdf-confirm:hover { background: var(--purple-deep); }
+
 </style>
 </head>
 <body>
@@ -430,7 +513,7 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
       <div>
         <div class="eyebrow">South Africa's opportunity infrastructure</div>
         <h1 class="display">The <em>infrastructure</em> for opportunity.</h1>
-        <p class="lede" style="font-size:17px;">We help opportunity find the student.</p>
+        <p class="lede" style="font-size:17px;">Building the infrastructure that routes industry opportunity to the doors of student talent.</p>
         <div class="pill-cluster">
           <span class="pill solid">🎓 Student talent</span>
           <span class="pill">🏢 Industry</span>
@@ -490,7 +573,7 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
   </div>
   <div class="slide-body">
     <div class="manifesto-eyebrow">it only takes one</div>
-    <div class="manifesto-text">One opportunity can change a life.<em>We help it find you.</em></div>
+    <div class="manifesto-text">One opportunity can change a life.<em>We help it find student talent.</em></div>
     <div class="manifesto-tag">An internship · a bursary · a graduate programme · a first job</div>
   </div>
 </div>
@@ -502,7 +585,7 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
     <div class="header-right"><div class="slide-tag">The Problem</div></div>
   </div>
   <div class="slide-body">
-    <div class="eyebrow">Opportunities exist — they don't reach the right people</div>
+    <div class="eyebrow">Opportunities exist — they are not reaching students</div>
     <h2 class="heading" style="margin-bottom:1.6rem;">Two sides. <em>One broken connection.</em></h2>
     <div class="disconnect-pair">
       <div class="disconnect-card left">
@@ -539,7 +622,7 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
       <div style="background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:18px;padding:1.5rem 1.6rem;display:flex;flex-direction:column;justify-content:center;">
         <div style="font-size:32px;margin-bottom:.7rem;">🎓</div>
         <h3 class="sub" style="font-size:18px;color:var(--purple);margin-bottom:.5rem;">For students</h3>
-        <div style="font-size:14px;color:var(--gray-700);line-height:1.6;">Relevant, verified opportunities delivered directly — matched to their studies, interests and goals. On the platform they already use every day.</div>
+        <div style="font-size:14px;color:var(--gray-700);line-height:1.6;">Relevant, verified opportunities delivered directly to their door, on their terms. The time spent searching is now used to decide which opportunities best fit their career paths.</div>
       </div>
       <div style="background:var(--white);border:1.5px solid var(--black);border-radius:18px;padding:1.5rem 1.6rem;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm);">
         <div style="font-size:32px;margin-bottom:.7rem;">🏢</div>
@@ -560,7 +643,7 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
     <div class="header-right"><div class="slide-tag">Product Vision</div></div>
   </div>
   <div class="slide-body">
-    <div class="eyebrow">An intelligence layer between industry and emerging talent</div>
+    <div class="eyebrow">An intelligence layer between industry and emerging talent — building a sustainable relationship between education &amp; private sector</div>
     <h2 class="heading" style="margin-bottom:1.4rem;">Three layers. <em>One infrastructure.</em></h2>
     <div class="layer-stack">
       <div class="layer">
@@ -600,32 +683,86 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
     <div class="lockup"><div class="knock-logo"><svg><use href="#logo-dark"/></svg></div><div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div></div>
     <div class="header-right"><div class="slide-tag">Market Opportunity</div></div>
   </div>
-  <div class="slide-body">
+  <div class="slide-body top">
     <div class="eyebrow">Start focused. Expand by design.</div>
-    <h2 class="heading" style="margin-bottom:1.4rem;">A focused entry — <em>into a market that compounds.</em></h2>
-    <div class="grid-2 start" style="gap:2.4rem;">
+    <h2 class="heading" style="margin-bottom:1rem;">A focused entry — <em>into a market that compounds.</em></h2>
+    <div class="grid-2 start" style="gap:2rem;align-items:start;">
+      <!-- LEFT: expansion path + market sizes -->
       <div>
-        <div class="eyebrow" style="margin-bottom:.6rem;">The expansion path</div>
-        <div class="market-strip">
-          <div class="mrow"><span class="mrow-label" style="min-width:120px;">Beachhead</span><div class="mrow-bar-bg"><div class="mrow-bar" style="width:22%;"></div></div><span class="mrow-val" style="font-size:11px;color:var(--black);min-width:140px;">Final-year STEM · UCT Wits Stellies UP</span></div>
-          <div class="mrow"><span class="mrow-label" style="min-width:120px;">Then</span><div class="mrow-bar-bg"><div class="mrow-bar" style="width:50%;"></div></div><span class="mrow-val" style="min-width:140px;font-size:13px;">All faculties · all 26 unis</span></div>
-          <div class="mrow"><span class="mrow-label" style="min-width:120px;">Lifecycle</span><div class="mrow-bar-bg"><div class="mrow-bar" style="width:75%;"></div></div><span class="mrow-val" style="min-width:140px;font-size:13px;">Full student journey</span></div>
-          <div class="mrow"><span class="mrow-label" style="min-width:120px;">Long term</span><div class="mrow-bar-bg"><div class="mrow-bar" style="width:100%;"></div></div><span class="mrow-val" style="min-width:140px;font-size:13px;">Across Africa</span></div>
+        <div class="eyebrow" style="margin-bottom:.55rem;">The expansion path · market opportunity</div>
+        <div class="market-strip" style="gap:.5rem;">
+
+          <div class="mrow" style="align-items:center;">
+            <div style="min-width:130px;"><div class="mrow-label" style="font-size:11.5px;">Beachhead · Now</div><div style="font-size:9px;color:var(--gray-500);margin-top:1px;">UCT, Wits, Stellies, UP, UWC · STEM</div></div>
+            <div class="mrow-bar-bg" style="flex:1;"><div class="mrow-bar" style="width:18%;"></div></div>
+            <div style="text-align:right;min-width:96px;"><div style="font-family:var(--font-title);font-weight:900;font-size:17px;color:var(--purple);letter-spacing:-0.02em;line-height:1;">R80M</div><div style="font-size:9px;color:var(--gray-500);">~$4.3M</div></div>
+            <span class="mrow-tag now" style="margin-left:.4rem;">Active</span>
+          </div>
+
+          <div class="mrow" style="align-items:center;">
+            <div style="min-width:130px;"><div class="mrow-label" style="font-size:11.5px;">Next · All faculties</div><div style="font-size:9px;color:var(--gray-500);margin-top:1px;">All 26 SA universities · STEM</div></div>
+            <div class="mrow-bar-bg" style="flex:1;"><div class="mrow-bar" style="width:46%;opacity:.85;"></div></div>
+            <div style="text-align:right;min-width:96px;"><div style="font-family:var(--font-title);font-weight:900;font-size:17px;color:var(--purple);letter-spacing:-0.02em;line-height:1;">R1.2B</div><div style="font-size:9px;color:var(--gray-500);">~$65M</div></div>
+            <span class="mrow-tag later" style="margin-left:.4rem;">Year 1</span>
+          </div>
+
+          <div class="mrow" style="align-items:center;">
+            <div style="min-width:130px;"><div class="mrow-label" style="font-size:11.5px;">SA Student Lifecycle</div><div style="font-size:9px;color:var(--gray-500);margin-top:1px;">All disciplines + SDL compliance layer</div></div>
+            <div class="mrow-bar-bg" style="flex:1;"><div class="mrow-bar" style="width:72%;opacity:.7;"></div></div>
+            <div style="text-align:right;min-width:96px;"><div style="font-family:var(--font-title);font-weight:900;font-size:17px;color:var(--purple);letter-spacing:-0.02em;line-height:1;">R5B+</div><div style="font-size:9px;color:var(--gray-500);">~$270M+</div></div>
+            <span class="mrow-tag later" style="margin-left:.4rem;">Year 2</span>
+          </div>
+
+          <div class="mrow" style="align-items:center;">
+            <div style="min-width:130px;"><div class="mrow-label" style="font-size:11.5px;">Africa TAM</div><div style="font-size:9px;color:var(--gray-500);margin-top:1px;">Graduate talent markets across Africa</div></div>
+            <div class="mrow-bar-bg" style="flex:1;"><div class="mrow-bar" style="width:100%;opacity:.5;"></div></div>
+            <div style="text-align:right;min-width:96px;"><div style="font-family:var(--font-title);font-weight:900;font-size:17px;color:var(--purple);letter-spacing:-0.02em;line-height:1;">R305B</div><div style="font-size:9px;color:var(--gray-500);">USD 16.5B</div></div>
+            <span class="mrow-tag later" style="margin-left:.4rem;">Year 3+</span>
+          </div>
         </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.75rem;">
+          <div class="stat-chip"><div class="sn">26</div><div class="sl">SA Universities · near-zero marginal cost per institution added</div></div>
+          <div class="stat-chip"><div class="sn">3</div><div class="sl">Scaling axes: Universities → Faculties → Student lifecycle</div></div>
+        </div>
+        <div style="margin-top:.5rem;font-size:8.5px;color:var(--gray-300);line-height:1.5;">Africa staffing market: Research &amp; Markets 2023 (USD 16.5B, 8.7% CAGR) · SA SDL: DHET 2023 · SA enrolment: HEMIS 2023 (1.07M students, 319k in SET) · All market figures estimated bottom-up</div>
       </div>
-      <div style="display:flex;flex-direction:column;justify-content:center;gap:1rem;">
-        <div style="background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:16px;padding:1.2rem 1.4rem;">
-          <div style="font-size:13px;color:var(--purple-deep);line-height:1.6;">Every new <strong>student</strong> increases the platform's value for employers.</div>
+
+      <!-- RIGHT: Unit Economics & Scalability -->
+      <div>
+        <div class="eyebrow" style="margin-bottom:.55rem;">Unit Economics &amp; Scalability</div>
+
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:14px;padding:1rem 1.1rem;box-shadow:var(--shadow-xs);margin-bottom:.7rem;">
+          <div style="font-family:var(--font-head);font-weight:700;font-size:12px;color:var(--black);margin-bottom:.7rem;">Cost to service one student/month — drops with scale</div>
+          <div style="display:flex;align-items:flex-end;gap:.35rem;height:62px;margin-bottom:.5rem;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--purple);height:62px;border-radius:4px 4px 0 0;"></div><div style="font-family:var(--font-title);font-weight:900;font-size:9px;color:var(--purple);">R62</div><div style="font-size:7.5px;color:var(--gray-500);text-align:center;line-height:1.2;">50 students</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--purple);height:29px;border-radius:4px 4px 0 0;opacity:.85;"></div><div style="font-family:var(--font-title);font-weight:900;font-size:9px;color:var(--purple);">R28</div><div style="font-size:7.5px;color:var(--gray-500);text-align:center;line-height:1.2;">100</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--purple);height:9px;border-radius:4px 4px 0 0;opacity:.7;"></div><div style="font-family:var(--font-title);font-weight:900;font-size:9px;color:var(--purple);">R8.46</div><div style="font-size:7.5px;color:var(--gray-500);text-align:center;line-height:1.2;">500</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--purple);height:6px;border-radius:4px 4px 0 0;opacity:.55;"></div><div style="font-family:var(--font-title);font-weight:900;font-size:9px;color:var(--purple);">R5.95</div><div style="font-size:7.5px;color:var(--gray-500);text-align:center;line-height:1.2;">1,000</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--purple);height:4px;border-radius:4px 4px 0 0;opacity:.38;"></div><div style="font-family:var(--font-title);font-weight:900;font-size:9px;color:var(--purple);">R3.69</div><div style="font-size:7.5px;color:var(--gray-500);text-align:center;line-height:1.2;">10,000</div></div>
+          </div>
+          <div style="font-size:9px;color:var(--gray-500);line-height:1.45;">Fixed costs (R2,514/mo) don't grow with student count — adding the next student costs almost nothing extra.</div>
         </div>
-        <div style="display:flex;justify-content:center;color:var(--purple-mid);font-size:22px;">⇅</div>
-        <div style="background:var(--white);border:1.5px solid var(--black);border-radius:16px;padding:1.2rem 1.4rem;box-shadow:var(--shadow-sm);">
-          <div style="font-size:13px;color:var(--gray-700);line-height:1.6;">Every new <strong style="color:var(--black);">employer</strong> increases the platform's value for students.</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.7rem;">
+          <div style="background:var(--do-bg);border:1px solid rgba(8,80,65,.15);border-radius:12px;padding:.75rem .9rem;">
+            <div style="font-family:var(--font-title);font-weight:900;font-size:22px;color:var(--do-ink);letter-spacing:-0.03em;line-height:1;">65%</div>
+            <div style="font-size:10px;color:var(--do-ink);margin-top:4px;line-height:1.35;">Gross margin by Month 6</div>
+          </div>
+          <div style="background:var(--purple-light);border:1px solid var(--purple-mid);border-radius:12px;padding:.75rem .9rem;">
+            <div style="font-family:var(--font-title);font-weight:900;font-size:22px;color:var(--purple);letter-spacing:-0.03em;line-height:1;">2 drops</div>
+            <div style="font-size:10px;color:var(--purple-deep);margin-top:4px;line-height:1.35;">= break-even (R6k/month)</div>
+          </div>
         </div>
-        <div style="text-align:center;font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--purple);margin-top:.3rem;">The connective infrastructure between talent and opportunity.</div>
+
+        <div class="note">
+          <strong>Zero-CAC flywheel:</strong> Students are already on WhatsApp. Peers invite the next class. The graduating cohort inherits the platform — student acquisition cost trends to R0 as Knock embeds in campus culture.
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- ════════════ S7 · WHY US ════════════ -->
 <div class="slide" id="s7">
@@ -635,73 +772,39 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
   </div>
   <div class="slide-body">
     <div class="eyebrow">We've lived both sides of this market</div>
-    <h2 class="heading" style="margin-bottom:1.4rem;">We've already <em>been paid to do this</em> — by hand.</h2>
-    <div class="grid-3" style="margin-bottom:1.4rem;">
-      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:16px;padding:1.2rem;box-shadow:var(--shadow-xs);">
-        <div style="font-size:26px;margin-bottom:.6rem;">🎓</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;">Lived it as students</div>
-        <div style="font-size:12px;color:var(--gray-700);line-height:1.55;">We've felt firsthand how hard it is to discover the right opportunities.</div>
-      </div>
-      <div style="background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:16px;padding:1.2rem;">
-        <div style="font-size:26px;margin-bottom:.6rem;">💸</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;color:var(--purple);">Paid to connect them</div>
-        <div style="font-size:12px;color:var(--purple-deep);line-height:1.55;">Companies have already paid us to connect them with students.</div>
-      </div>
-      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:16px;padding:1.2rem;box-shadow:var(--shadow-xs);">
-        <div style="font-size:26px;margin-bottom:.6rem;">🤝</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;">Both sides of the market</div>
-        <div style="font-size:12px;color:var(--gray-700);line-height:1.55;">Worked directly with students, communities and industry — we know why existing channels fail.</div>
-      </div>
-    </div>
-    <div class="proof-box">
+    <h2 class="heading" style="margin-bottom:1.5rem;">We've already been paid to do this — <em>by hand.</em></h2>
+    <div class="proof-box" style="margin-bottom:1.1rem;">
       <div class="proof-ico">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
       </div>
       <div>
         <div class="proof-title">We ran the manual version — and it worked</div>
-        <div class="proof-body">As exec of the <strong>UCT Developer Society</strong>, we connected industry to students by hand across Cape Town's tech ecosystem. Knock is that, systematised and at scale.</div>
+        <div class="proof-body">As exec of the <strong>UCT Developer Society</strong>, we connected industry to students by hand across Cape Town's tech ecosystem. Knock is that, systematised and at scale. We've already built trust on both sides of this market.</div>
         <div class="proof-companies">
           <span class="co-chip">Electrum</span><span class="co-chip">Entelect</span><span class="co-chip">BBD</span><span class="co-chip">FNB</span><span class="co-chip">RMB</span><span class="co-chip">Standard Bank</span><span class="co-chip">AWS</span>
         </div>
       </div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;">
+      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.7rem;box-shadow:var(--shadow-xs);">
+        <div style="width:34px;height:34px;background:var(--purple);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-weight:900;font-size:15px;color:white;flex-shrink:0;">D</div>
+        <div><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--black);">Dylan Tasdhary</div><div style="font-size:10px;color:var(--gray-500);margin-top:2px;">Product · Architecture</div><div style="font-size:9.5px;color:var(--purple);margin-top:2px;">Allan Gray Fellow · UCT MPhil FinTech</div></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.7rem;box-shadow:var(--shadow-xs);">
+        <div style="width:34px;height:34px;background:linear-gradient(135deg,var(--purple),#9560FF);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-weight:900;font-size:15px;color:white;flex-shrink:0;">C</div>
+        <div><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--black);">Chipo Chidakwa</div><div style="font-size:10px;color:var(--gray-500);margin-top:2px;">Operations · Sales</div><div style="font-size:9.5px;color:var(--purple);margin-top:2px;">Venture Experience · MCom Info Systems</div></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:flex-start;gap:.7rem;box-shadow:var(--shadow-xs);">
+        <div style="width:34px;height:34px;background:linear-gradient(135deg,#10B981,var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-weight:900;font-size:15px;color:white;flex-shrink:0;">4</div>
+        <div><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--black);">IS Honours Team</div><div style="font-size:10px;color:var(--gray-500);margin-top:2px;">4 developers · building the MVP now</div><div style="font-size:9.5px;color:var(--purple);margin-top:2px;">Verification · intent-tracking · analytics</div></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ════════════ S8 · PILOT VALIDATION ════════════ -->
+
+<!-- ════════════ S8 · OUR ASK ════════════ -->
 <div class="slide" id="s8">
-  <div class="slide-header">
-    <div class="lockup"><div class="knock-logo"><svg><use href="#logo-dark"/></svg></div><div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div></div>
-    <div class="header-right"><div class="slide-tag">Pilot Validation</div><div class="slide-meta">Execution-first</div></div>
-  </div>
-  <div class="slide-body">
-    <div class="eyebrow">What we're validating right now</div>
-    <h2 class="heading" style="margin-bottom:1.6rem;">Deliver opportunities through a channel students <em>already use</em> — and prove it works.</h2>
-    <div class="grid-3" style="margin-bottom:1.6rem;">
-      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:16px;padding:1.3rem;box-shadow:var(--shadow-xs);text-align:center;">
-        <div style="font-family:var(--font-title);font-weight:900;font-size:34px;color:var(--purple);letter-spacing:-0.03em;line-height:1;margin-bottom:.6rem;">01</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;">Validate demand</div>
-        <div style="font-size:12px;color:var(--gray-700);line-height:1.55;">Do better-matched opportunities improve discovery, engagement and access?</div>
-      </div>
-      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:16px;padding:1.3rem;box-shadow:var(--shadow-xs);text-align:center;">
-        <div style="font-family:var(--font-title);font-weight:900;font-size:34px;color:var(--purple);letter-spacing:-0.03em;line-height:1;margin-bottom:.6rem;">02</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;">Understand willingness to pay</div>
-        <div style="font-size:12px;color:var(--gray-700);line-height:1.55;">A sales-led pilot to test our assumptions and find real pricing.</div>
-      </div>
-      <div style="background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:16px;padding:1.3rem;text-align:center;">
-        <div style="font-family:var(--font-title);font-weight:900;font-size:34px;color:var(--purple);letter-spacing:-0.03em;line-height:1;margin-bottom:.6rem;">03</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;color:var(--purple);">Build the network</div>
-        <div style="font-size:12px;color:var(--purple-deep);line-height:1.55;">Our most valuable long-term asset: a trusted, engaged student network.</div>
-      </div>
-    </div>
-    <div class="note" style="text-align:center;">
-      <strong>Execution-first.</strong> We learn by building — validating demand and willingness to pay while growing the asset everything else depends on.
-    </div>
-  </div>
-</div>
-
-<!-- ════════════ S9 · PILOT & ASK ════════════ -->
-<div class="slide" id="s9">
   <div class="slide-header">
     <div class="lockup"><div class="knock-logo"><svg><use href="#logo-dark"/></svg></div><div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div></div>
     <div class="header-right"><div class="slide-tag">Our Ask</div></div>
@@ -733,6 +836,42 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
     <div style="margin-top:1.6rem;text-align:center;font-family:var(--font-title);font-weight:900;font-size:18px;letter-spacing:-0.02em;color:var(--black);">Thank you.</div>
   </div>
 </div>
+
+
+
+<!-- ════════════ S9 · PILOT VALIDATION (Q&A Backup) ════════════ -->
+<div class="slide" id="s9">
+  <div class="slide-header">
+    <div class="lockup"><div class="knock-logo"><svg><use href="#logo-dark"/></svg></div><div><div class="word">knock</div><div class="tag">opportunity infrastructure</div></div></div>
+    <div class="header-right"><div class="slide-tag">Pilot Validation</div><div class="slide-meta">Execution-first</div></div>
+  </div>
+  <div class="slide-body">
+    <div class="eyebrow">What we're validating right now</div>
+    <h2 class="heading" style="margin-bottom:1.6rem;">Deliver opportunities through a channel students <em>already use</em> — and prove it works.</h2>
+    <div class="grid-3" style="margin-bottom:1.6rem;">
+      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:16px;padding:1.3rem;box-shadow:var(--shadow-xs);text-align:center;">
+        <div style="font-family:var(--font-title);font-weight:900;font-size:34px;color:var(--purple);letter-spacing:-0.03em;line-height:1;margin-bottom:.6rem;">01</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;">Validate demand</div>
+        <div style="font-size:12px;color:var(--gray-700);line-height:1.55;">Do better-matched opportunities improve discovery, engagement and access?</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:16px;padding:1.3rem;box-shadow:var(--shadow-xs);text-align:center;">
+        <div style="font-family:var(--font-title);font-weight:900;font-size:34px;color:var(--purple);letter-spacing:-0.03em;line-height:1;margin-bottom:.6rem;">02</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;">Understand willingness to pay</div>
+        <div style="font-size:12px;color:var(--gray-700);line-height:1.55;">A sales-led pilot to test our assumptions and find real pricing.</div>
+      </div>
+      <div style="background:var(--purple-light);border:1.5px solid var(--purple-mid);border-radius:16px;padding:1.3rem;text-align:center;">
+        <div style="font-family:var(--font-title);font-weight:900;font-size:34px;color:var(--purple);letter-spacing:-0.03em;line-height:1;margin-bottom:.6rem;">03</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:14px;margin-bottom:.4rem;color:var(--purple);">Build the network</div>
+        <div style="font-size:12px;color:var(--purple-deep);line-height:1.55;">Our most valuable long-term asset: a trusted, engaged student network.</div>
+      </div>
+    </div>
+    <div class="note" style="text-align:center;">
+      <strong>Execution-first.</strong> We learn by building — validating demand and willingness to pay while growing the asset everything else depends on.
+    </div>
+  </div>
+</div>
+
+
 
 <!-- ════════════ S10 · SCALABILITY (Q&A BACKUP) ════════════ -->
 <div class="slide" id="s10">
@@ -791,6 +930,29 @@ p.body{font-family:var(--font-body);font-size:13px;line-height:1.6;color:var(--g
     <div class="timer-wrap">
       <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">Start timer</button>
       <div class="timer-display" id="timerDisplay" title="Click to reset">3:00</div>
+    </div>
+    <div class="pdf-btn-wrap">
+      <button class="pdf-btn" onclick="showPdfToast()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF TOAST -->
+<div class="pdf-toast" id="pdfToast">
+  <div class="pdf-toast-card">
+    <h3>Export as PDF</h3>
+    <div class="pdf-steps">
+      <div class="pdf-step"><div class="pdf-step-num">1</div>Click <strong style="color:#000;">&ldquo;Export&rdquo;</strong> below — your browser's print dialog will open.</div>
+      <div class="pdf-step"><div class="pdf-step-num">2</div>Set <strong>Destination</strong> to <strong style="color:#5E17EB;">Save as PDF</strong>.</div>
+      <div class="pdf-step"><div class="pdf-step-num">3</div>Set <strong>Layout</strong> to <strong style="color:#5E17EB;">Landscape</strong> and <strong>Margins</strong> to <strong>None</strong>.</div>
+      <div class="pdf-step"><div class="pdf-step-num">4</div>Click <strong style="color:#000;">Save</strong>. All 10 slides will export as individual pages.</div>
+    </div>
+    <div class="pdf-toast-actions">
+      <button class="pdf-cancel" onclick="hidePdfToast()">Cancel</button>
+      <button class="pdf-confirm" onclick="doPrint()">Export →</button>
     </div>
   </div>
 </div>
@@ -852,6 +1014,27 @@ document.getElementById('timerDisplay').onclick = () => { clearInterval(tick); r
 
 goTo(0);
 updateTimer();
+
+// PDF export
+function showPdfToast() {
+  document.getElementById('pdfToast').classList.add('show');
+}
+function hidePdfToast() {
+  document.getElementById('pdfToast').classList.remove('show');
+}
+function doPrint() {
+  hidePdfToast();
+  setTimeout(() => window.print(), 200);
+}
+// Close toast on backdrop click
+document.getElementById('pdfToast').addEventListener('click', function(e) {
+  if (e.target === this) hidePdfToast();
+});
+// Keyboard: Escape closes toast
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') hidePdfToast();
+});
+
 
 // WhatsApp notification cycling
 (function() {
