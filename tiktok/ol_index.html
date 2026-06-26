@@ -245,33 +245,6 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 }
 @keyframes swipeBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
 
-/* ── FIRST-VISIT SWIPE COACHMARK ── */
-@keyframes coachPulse{0%,100%{transform:translateY(0);opacity:1;}50%{transform:translateY(10px);opacity:.55;}}
-.swipe-coach{
-  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  z-index:60;pointer-events:none;
-  font-family:var(--font-b);
-  transition:opacity .3s ease;
-}
-.swipe-coach-pill{
-  background:var(--ink);color:var(--white);font-size:12px;font-weight:600;
-  padding:8px 14px;border-radius:999px;white-space:nowrap;
-  box-shadow:0 4px 18px rgba(0,0,0,.18);
-}
-.swipe-coach-chev{font-size:14px;color:var(--white);background:var(--ink);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:coachPulse 1.4s ease-in-out infinite;margin-top:2px;}
-.swipe-coach.hide{opacity:0;pointer-events:none;}
-
-/* ── HEART/SAVE EXPLAINER ── */
-.heart-explainer{
-  display:flex;gap:10px;align-items:flex-start;
-  background:var(--purple-pale);border:1px solid rgba(94,23,235,.18);
-  border-radius:12px;padding:12px 14px;margin-bottom:14px;
-}
-.heart-explainer .he-icon{font-size:17px;flex-shrink:0;color:var(--purple);}
-.heart-explainer .he-txt{font-size:12.5px;color:var(--g700);line-height:1.55;}
-.heart-explainer .he-txt strong{color:var(--ink);}
-
 /* ── SLIDES 2-3 TYPOGRAPHY ─────────────────── */
 .slide-label{
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
@@ -329,8 +302,6 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .cta-t{flex:1;}
 .cta-sub{font-size:10px;opacity:.65;margin-bottom:1px;font-weight:500;}
 .cta-arr{opacity:.4;font-size:15px;}
-.cta-primary .cta-arr{opacity:.95;font-weight:700;}
-.cta-primary .cta-sub{opacity:.75;}
 .cta-state{display:none;flex-direction:column;gap:8px;}
 .cta-state.vis{display:flex;}
 
@@ -707,12 +678,6 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <div class="dot" data-i="3"></div>
 </div>
 
-<!-- FIRST-VISIT SWIPE COACHMARK -->
-<div class="swipe-coach" id="swipe-coach">
-  <div class="swipe-coach-pill">swipe up for more ↑</div>
-  <div class="swipe-coach-chev">↑</div>
-</div>
-
 <div id="feed">
 
 <!-- ══════════ SLIDE 1: MANIFESTO ══════════ -->
@@ -754,7 +719,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
     </div>
     <p class="m-post">should be a time-consuming humiliation ritual.</p>
     <p class="m-belief">real opportunity should find you.<br>we help bring it to your door.</p>
-    <p class="m-pilot">we're running a pilot to help you — <em>swipe below to find out more</em> <span class="swipe-arrow" style="display:inline-flex;">↓</span></p>
+    <p class="m-pilot">founding pilot · <em>small cohort, not a mass blast.</em></p>
   </div>
 
   <div class="swipe-hint anim a4">
@@ -781,14 +746,14 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <p class="slide-body anim a3" style="margin-bottom:6px;font-size:13px;color:var(--purple);font-weight:600;font-style:italic;">started by students — because we know the pain that comes with employment seeking.</p>
   <p class="slide-body anim a3" style="margin-bottom:10px;">verified opportunities, dropped to your campus group. twice a week. no noise. (admin-only.)</p>
 
-  <p class="opp-batch-intro anim a3">your starter pack — 3 opportunities, free to look at. <span style="color:var(--purple);font-weight:700;">♡</span> just saves one, no sign up needed.</p>
+  <p class="opp-batch-intro anim a3">we're student-first. here's a taste.</p>
   <div class="opp-rows anim a3" id="batch1-rows"></div>
 
   <!-- STATE 1: sign up -->
   <div id="p2-s1" class="anim a4">
-    <p class="opp-unlock-note" style="margin-top:14px;">want more? <strong>sign up to become part of the pilot</strong> — 45 sec, unlocks 3 more + your campus group.</p>
+    <p class="opp-unlock-note" style="margin-top:14px;">want more? <strong>sign up to become part of the pilot.</strong><br><span style="font-size:12.5px;font-weight:400;color:var(--g500);">you'll unlock 3 more opps + access to your campus group.</span></p>
     <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
-      <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up now →</div></div>
+      <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up to become part of it</div></div>
       <span class="door-knob"></span>
     </button>
   </div>
@@ -829,7 +794,6 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <!-- UNLOCKED: signed up + WA done -->
   <div id="p3-unlocked" style="display:none;">
     <p class="unlocked-label">unlocked for you</p>
-    <p style="font-size:11.5px;color:var(--g500);margin-bottom:10px;line-height:1.5;"><span style="color:var(--purple);font-weight:700;">♡</span> saves to your bundle for the PDF — not an application.</p>
     <div class="opp-rows opp-rows-unlocked" id="batch2-rows"></div>
     <div class="bundle-actions" style="margin-top:16px;">
       <div class="bundle-pill" id="slide-bundle-pill">
@@ -929,10 +893,6 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <div class="sheet-head"><span class="sheet-title">sign up to access campus group</span><button class="sheet-close" onclick="closeSheet()">✕</button></div>
   <div class="sheet-body">
     <div id="sf-form-body">
-      <div class="heart-explainer" style="margin-bottom:16px;">
-        <span class="he-icon">🔒</span>
-        <span class="he-txt">why we ask: <strong>we need this to know which group to put you in.</strong> we do share data with companies, but only grouped — never anything that identifies you personally without asking first.</span>
-      </div>
       <div class="sf-field"><label class="sf-label">university</label><input class="sf-input" id="sf-uni" type="text" readonly/></div>
       <div class="sf-field"><label class="sf-label">field of study</label><div class="sf-chips"><button class="sf-chip" data-v="STEM" onclick="sfChip(this)">stem</button><button class="sf-chip" data-v="Non-STEM" onclick="sfChip(this)">non-stem</button></div></div>
       <div class="sf-field"><label class="sf-label">whatsapp number</label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
@@ -1006,8 +966,6 @@ let NET=null,CYCLE_TIMER=null;
   // Start network + cycling
   initNetwork();
   startCycling();
-  maybeShowSwipeCoach();
-  setTimeout(hideSwipeCoach,6000);
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
   // Defer data-dependent calls until after full script execution
   // (OPPORTUNITIES var is assigned after this IIFE in the file)
@@ -1083,7 +1041,6 @@ function startCycling(){
 /* ── SCROLL / SLIDE TRACKING ── */
 feed.addEventListener('scroll',()=>{
   const idx=Math.round(feed.scrollTop/feed.clientHeight);
-  hideSwipeCoach();
   if(idx!==CURRENT_SLIDE){
     slides[CURRENT_SLIDE]?.classList.remove('entered');
     CURRENT_SLIDE=idx;
@@ -1093,21 +1050,6 @@ feed.addEventListener('scroll',()=>{
     ph('slide_view',{slide:idx});
   }
 },{passive:true});
-
-/* ── SWIPE COACHMARK (first visit only) ── */
-const KEY_SWIPE_SEEN='knock_swipe_seen_v1';
-function hideSwipeCoach(){
-  const c=document.getElementById('swipe-coach');
-  if(c&&!c.classList.contains('hide')){c.classList.add('hide');}
-  localStorage.setItem(KEY_SWIPE_SEEN,'1');
-}
-function maybeShowSwipeCoach(){
-  const c=document.getElementById('swipe-coach');
-  if(!c)return;
-  if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0){
-    c.classList.add('hide');
-  }
-}
 function goSlide(n){feed.scrollTo({top:n*feed.clientHeight,behavior:'smooth'});}
 dots.forEach(d=>d.addEventListener('click',()=>goSlide(+d.dataset.i)));
 
