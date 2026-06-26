@@ -973,6 +973,21 @@ const slides=document.querySelectorAll('.slide');
 const dots=document.querySelectorAll('.dot');
 let NET=null,CYCLE_TIMER=null;
 
+/* ── SWIPE COACHMARK (first visit only) ── */
+const KEY_SWIPE_SEEN='knock_swipe_seen_v1';
+function hideSwipeCoach(){
+  const c=document.getElementById('swipe-coach');
+  if(c&&!c.classList.contains('hide')){c.classList.add('hide');}
+  localStorage.setItem(KEY_SWIPE_SEEN,'1');
+}
+function maybeShowSwipeCoach(){
+  const c=document.getElementById('swipe-coach');
+  if(!c)return;
+  if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0){
+    c.classList.add('hide');
+  }
+}
+
 /* ── INIT ── */
 (function init(){
   const path=window.location.pathname.replace(/^\//,'');
@@ -1093,21 +1108,6 @@ feed.addEventListener('scroll',()=>{
     ph('slide_view',{slide:idx});
   }
 },{passive:true});
-
-/* ── SWIPE COACHMARK (first visit only) ── */
-const KEY_SWIPE_SEEN='knock_swipe_seen_v1';
-function hideSwipeCoach(){
-  const c=document.getElementById('swipe-coach');
-  if(c&&!c.classList.contains('hide')){c.classList.add('hide');}
-  localStorage.setItem(KEY_SWIPE_SEEN,'1');
-}
-function maybeShowSwipeCoach(){
-  const c=document.getElementById('swipe-coach');
-  if(!c)return;
-  if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0){
-    c.classList.add('hide');
-  }
-}
 function goSlide(n){feed.scrollTo({top:n*feed.clientHeight,behavior:'smooth'});}
 dots.forEach(d=>d.addEventListener('click',()=>goSlide(+d.dataset.i)));
 
