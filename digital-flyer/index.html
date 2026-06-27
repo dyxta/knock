@@ -734,20 +734,10 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ── ADMIN STATS PAGE (?stats=1, server-password gated) ── */
+/* ── ADMIN STATS PAGE (?stats=1, no password — public analytics view) ── */
 body.admin #feed,body.admin #theme-toggle,body.admin .toast{display:none!important;}
-#adminGate,#adminPanel{display:none;}
-body.admin #adminGate{display:flex;}
-body.admin.unlocked #adminPanel{display:block;}
-#adminGate{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:24px;background:var(--off);font-family:var(--font-b);}
-#adminGate h3{font-size:18px;font-weight:800;color:var(--ink);margin:0;}
-.gate-sub{font-size:13px;color:var(--g500);text-align:center;max-width:260px;line-height:1.5;}
-#gatePass{width:100%;max-width:260px;background:var(--white);border:1.5px solid var(--g200);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink);font-family:var(--font-b);outline:none;}
-#gatePass:focus{border-color:var(--purple);}
-.gate-err{font-size:12px;color:#C0392B;display:none;}
-.gate-err.show{display:block;}
-#gateUnlock{background:var(--purple);color:var(--white);border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;width:100%;max-width:260px;}
-#gateUnlock:disabled{opacity:.5;}
+#adminPanel{display:none;}
+body.admin #adminPanel{display:block;}
 #adminPanel{max-width:980px;margin:0 auto;padding:28px 20px 60px;font-family:var(--font-b);color:var(--ink);}
 #adminPanel h2{font-size:20px;font-weight:800;margin:0 0 4px;}
 .a-sub{font-size:13px;color:var(--g500);margin-bottom:22px;}
@@ -773,17 +763,9 @@ body.admin.unlocked #adminPanel{display:block;}
 </head>
 <body>
 
-<!-- ADMIN STATS PAGE: only shown when ?stats=1 is in the URL (toggled via body.admin).
-     Password is NEVER checked here — gateUnlock() POSTs it to the Apps Script
-     backend (window.KNOCK_APPS_SCRIPT_URL) which validates it server-side against
-     a Script Property. See setup instructions provided alongside this file. -->
-<div id="adminGate">
-  <h3>knock · stats</h3>
-  <div class="gate-sub">enter the analytics password to view signups + funnel data.</div>
-  <input type="password" id="gatePass" placeholder="password" autocomplete="off"/>
-  <div class="gate-err" id="gateErr">wrong password.</div>
-  <button id="gateUnlock" onclick="attemptUnlock()">unlock</button>
-</div>
+<!-- ADMIN STATS PAGE: shown directly when ?stats=1 is in the URL (toggled via
+     body.admin). No password — analytics are fetched from the public
+     ?action=full endpoint on window.KNOCK_APPS_SCRIPT_URL. -->
 <div id="adminPanel">
   <h2>knock · analytics</h2>
   <div class="a-sub" id="aUpdated">loading…</div>
@@ -1517,71 +1499,22 @@ function maybeShowSwipeCoach(){
 }
 
 /* ── ADMIN STATS PAGE ──
-   Visiting the flyer with ?stats=1 in the URL shows a password gate instead
-   of the normal feed. The password is validated server-side: gateUnlock()
-   POSTs { type:'auth', password } to window.KNOCK_APPS_SCRIPT_URL, which
-   must compare it against a Script Property (e.g. STATS_PASSWORD) and
-   return { ok:true, token }. The password string never appears in this
-   file. The token is cached in sessionStorage so the gate isn't re-shown
-   on every reload within the same browser tab session. */
+   Visiting the flyer with ?stats=1 in the URL shows the analytics panel
+   directly — no password gate. Data is fetched with a plain unauthenticated
+   fetch() against window.KNOCK_APPS_SCRIPT_URL + '?action=full', which is
+   a public GET endpoint (confirmed reachable directly in-browser). */
 function isAdminPage(){
   return new URLSearchParams(window.location.search).get('stats')==='1';
-}
-/* JSONP loader — Apps Script's /exec GET endpoint redirects through a
-   script.googleusercontent.com content URL, and that redirect hop doesn't
-   carry CORS headers, so a cross-origin fetch() to /exec fails even on a
-   fully public ("Anyone") deployment. <script> tags aren't subject to CORS,
-   so we load the response as a script that calls a uniquely-named global
-   callback with the JSON payload — the standard JSONP workaround. */
-let JSONP_COUNTER=0;
-function jsonpRequest(url,params,timeoutMs){
-  return new Promise(function(resolve,reject){
-    var cbName='__knockJsonp'+(JSONP_COUNTER++)+'_'+Date.now();
-    var script=document.createElement('script');
-    var cleanup=function(){
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      clearTimeout(timer);
-    };
-    var timer=setTimeout(function(){cleanup();reject(new Error('timed out'));},timeoutMs||12000);
-    window[cbName]=function(data){cleanup();resolve(data);};
-    var qs=Object.keys(params||{}).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
-    script.src=url+(url.indexOf('?')>-1?'&':'?')+qs+'&callback='+cbName;
-    script.onerror=function(){cleanup();reject(new Error('script load failed'));};
-    document.body.appendChild(script);
-  });
-}
-async function attemptUnlock(){
-  var pass=document.getElementById('gatePass').value;
-  var btn=document.getElementById('gateUnlock');
-  var err=document.getElementById('gateErr');
-  err.classList.remove('show');
-  if(!pass)return;
-  var url=window.KNOCK_APPS_SCRIPT_URL;
-  if(!url){err.textContent='backend not configured.';err.classList.add('show');return;}
-  btn.disabled=true;btn.textContent='checking…';
-  try{
-    const data=await jsonpRequest(url,{action:'auth',password:pass});
-    if(data&&data.ok&&data.token){
-      sessionStorage.setItem('knock_admin_unlocked',data.token);
-      document.body.classList.add('unlocked');
-      loadAdminData();
-    }else{
-      err.textContent='wrong password.';err.classList.add('show');
-    }
-  }catch(e){
-    err.textContent='could not reach backend.';err.classList.add('show');
-  }
-  btn.disabled=false;btn.textContent='unlock';
 }
 let ADMIN_DATA=null;
 async function loadAdminData(){
   var url=window.KNOCK_APPS_SCRIPT_URL;
-  var token=sessionStorage.getItem('knock_admin_unlocked');
-  if(!url||!token)return;
+  if(!url)return;
   document.getElementById('aUpdated').textContent='loading…';
   try{
-    const data=await jsonpRequest(url,{action:'full',token:token});
+    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full');
+    const text=await res.text();
+    const data=JSON.parse(text);
     ADMIN_DATA=data;
     renderAdminData(data);
   }catch(e){
@@ -1636,12 +1569,7 @@ function exportSubmissionsCsv(){
 }
 function initAdminPage(){
   document.body.classList.add('admin');
-  var savedToken=sessionStorage.getItem('knock_admin_unlocked');
-  if(savedToken){
-    document.body.classList.add('unlocked');
-    loadAdminData();
-  }
-  document.getElementById('gatePass').addEventListener('keydown',function(e){if(e.key==='Enter')attemptUnlock();});
+  loadAdminData();
 }
 if(isAdminPage()){
   initAdminPage();
