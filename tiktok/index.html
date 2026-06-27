@@ -62,6 +62,10 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   padding-top:calc(env(safe-area-inset-top,0px) + 52px);
   padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px);
 }
+/* slide 2 can run tall (title + subhead + CTA + starter pack) — let it
+   scroll internally instead of clipping the CTA when the viewport is
+   short (e.g. Chrome's collapsed toolbar height differs from Safari's) */
+.slide-pack{overflow-y:auto;-webkit-overflow-scrolling:touch;}
 /* Slide 2 & 3 spacing */
 .s3-divider{margin-top:24px;}
 
@@ -245,22 +249,61 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 }
 @keyframes swipeBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
 
-/* ── FIRST-VISIT SWIPE COACHMARK ── */
-@keyframes coachPulse{0%,100%{transform:translateY(0);opacity:1;}50%{transform:translateY(10px);opacity:.55;}}
+/* ── FIRST-VISIT SWIPE COACHMARK (animated drag gesture) ── */
 .swipe-coach{
-  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:4px;
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
   z-index:60;pointer-events:none;
   font-family:var(--font-b);
-  transition:opacity .3s ease;
+  transition:opacity .35s ease;
 }
+.swipe-coach.hide{opacity:0;pointer-events:none;}
+.swipe-coach.pending{opacity:0;}
+.swipe-coach.revealed{opacity:1;}
 .swipe-coach-pill{
   background:var(--ink);color:var(--white);font-size:12px;font-weight:600;
-  padding:8px 14px;border-radius:999px;white-space:nowrap;
+  padding:7px 14px;border-radius:999px;white-space:nowrap;
   box-shadow:0 4px 18px rgba(0,0,0,.18);
+  letter-spacing:.01em;
 }
-.swipe-coach-chev{font-size:14px;color:var(--white);background:var(--ink);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:coachPulse 1.4s ease-in-out infinite;margin-top:2px;}
-.swipe-coach.hide{opacity:0;pointer-events:none;}
+/* gesture track: vertical line the "finger" travels along */
+.swipe-coach-track{
+  position:relative;width:30px;height:54px;
+  display:flex;align-items:center;justify-content:center;
+}
+.swipe-coach-track::before{
+  content:'';position:absolute;left:50%;top:2px;bottom:2px;width:2px;
+  transform:translateX(-50%);
+  background:linear-gradient(to top,rgba(94,23,235,0) 0%,rgba(94,23,235,.35) 35%,rgba(94,23,235,.35) 100%);
+  border-radius:2px;
+}
+/* the "finger" dot dragging upward, looping with a fade */
+.swipe-coach-finger{
+  position:absolute;left:50%;bottom:2px;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--purple);
+  box-shadow:0 2px 10px rgba(94,23,235,.45),0 0 0 5px rgba(94,23,235,.12);
+  animation:swipeFingerDrag 1.6s cubic-bezier(.3,0,.4,1) infinite;
+}
+@keyframes swipeFingerDrag{
+  0%{transform:translate(-50%,0) scale(1);opacity:0;}
+  10%{opacity:1;}
+  70%{transform:translate(-50%,-46px) scale(.82);opacity:1;}
+  100%{transform:translate(-50%,-50px) scale(.7);opacity:0;}
+}
+/* small chevrons trailing above, rippling up to reinforce direction */
+.swipe-coach-chevs{position:absolute;top:-4px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;}
+.swipe-coach-chevs span{
+  font-size:11px;line-height:1;color:var(--purple);opacity:0;
+  animation:chevRipple 1.6s ease-in-out infinite;
+}
+.swipe-coach-chevs span:nth-child(1){animation-delay:0s;}
+.swipe-coach-chevs span:nth-child(2){animation-delay:.18s;margin-top:-2px;}
+@keyframes chevRipple{
+  0%,100%{opacity:0;transform:translateY(4px);}
+  40%{opacity:.9;transform:translateY(0);}
+  75%{opacity:0;transform:translateY(-3px);}
+}
 
 /* ── HEART/SAVE EXPLAINER ── */
 .heart-explainer{
@@ -271,6 +314,47 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .heart-explainer .he-icon{font-size:17px;flex-shrink:0;color:var(--purple);}
 .heart-explainer .he-txt{font-size:12.5px;color:var(--g700);line-height:1.55;}
 .heart-explainer .he-txt strong{color:var(--ink);}
+
+/* ── PILOT EXPLAINER TRIGGER LINKS ── */
+.pilot-link{
+  background:none;border:none;cursor:pointer;font-family:var(--font-b);
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12.5px;font-weight:700;color:var(--purple);
+  padding:6px 2px;margin-top:2px;
+  text-decoration:underline;text-decoration-color:rgba(94,23,235,.35);text-underline-offset:3px;
+}
+.pilot-link-arr{transition:transform .15s;}
+.pilot-link:active .pilot-link-arr{transform:translateX(2px);}
+.pilot-link-inline{
+  font-size:9px;letter-spacing:.08em;text-transform:none;font-weight:700;
+  padding:0;margin:0;text-decoration:none;
+  color:var(--g500);opacity:.85;
+}
+.pilot-link-inline:active{opacity:.6;}
+
+/* ── PILOT EXPLAINER: interactive step deck ── */
+.pilot-deck{background:var(--off);border:1px solid var(--g200);border-radius:14px;padding:18px 16px 14px;overflow:hidden;}
+.pilot-deck-track{position:relative;min-height:128px;}
+.pilot-step{
+  display:none;flex-direction:column;align-items:flex-start;
+  animation:pilotStepIn .35s ease;
+}
+.pilot-step.active{display:flex;}
+@keyframes pilotStepIn{from{opacity:0;transform:translateX(8px);}to{opacity:1;transform:none;}}
+.pilot-step-ic{font-size:26px;margin-bottom:8px;}
+.pilot-step-t{font-family:var(--font-d);font-weight:800;font-size:16px;color:var(--ink);margin-bottom:6px;}
+.pilot-step-d{font-size:13px;color:var(--g700);line-height:1.55;}
+.pilot-deck-dots{display:flex;gap:6px;justify-content:center;margin:14px 0 12px;}
+.pilot-dot{width:6px;height:6px;border-radius:50%;background:var(--g200);transition:all .2s;}
+.pilot-dot.active{background:var(--purple);width:18px;border-radius:3px;}
+.pilot-deck-nav{display:flex;gap:8px;}
+.pilot-nav-btn{
+  flex:1;background:var(--white);border:1px solid var(--g200);border-radius:10px;
+  padding:10px;font-size:13px;font-weight:700;font-family:var(--font-b);
+  color:var(--g700);cursor:pointer;transition:opacity .15s;
+}
+.pilot-nav-btn:disabled{opacity:.35;cursor:default;}
+.pilot-nav-next{background:var(--purple);color:var(--white);border-color:var(--purple);}
 
 /* ── SLIDES 2-3 TYPOGRAPHY ─────────────────── */
 .slide-label{
@@ -424,6 +508,8 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .sf-chip.sel{background:var(--purple);border-color:var(--purple);color:var(--white);}
 .sf-consent{display:flex;gap:10px;align-items:flex-start;background:var(--purple-pale);border:1px solid rgba(94,23,235,.15);border-radius:10px;padding:11px 14px;cursor:pointer;margin-bottom:12px;}
 .sf-cb{width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(94,23,235,.4);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.pdf-consent{margin-bottom:10px;}
+.pdf-consent .sf-ct{font-size:11.5px;}
 .sf-cb.on{background:var(--purple);border-color:var(--purple);}
 .sf-ct{font-size:12.5px;color:var(--g700);line-height:1.55;}
 .sf-ct strong{color:var(--ink);}
@@ -560,6 +646,20 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .opp-row-loc{font-size:11px;color:var(--g500);margin-top:1px;}
 .opp-row-heart{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--g200);background:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--g300);transition:all .2s;padding:0;line-height:1;}
 .opp-row-heart.liked{background:var(--purple-pale);border-color:var(--purple);color:var(--purple);}
+/* one-time cue: nudge toward hearting the first opportunity, then toward signing up */
+@keyframes heartCuePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(94,23,235,.35);}
+  50%{box-shadow:0 0 0 7px rgba(94,23,235,0);}
+}
+.opp-row-heart.heart-cue{
+  border-color:var(--purple);color:var(--purple);
+  animation:heartCuePulse 1.5s ease-in-out infinite;
+}
+@keyframes ctaCueNudge{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(3px);}
+}
+.door-cta.cta-cue{animation:doorGlow 2.2s ease-in-out infinite,ctaCueNudge 1.2s ease-in-out infinite;}
 .opp-row.row-liked{background:var(--purple-pale);border-radius:10px;padding-left:10px;padding-right:10px;margin:0 -10px;border-bottom-color:rgba(94,23,235,.15);}
 .opp-unlock-note{font-size:13.5px;color:var(--g700);margin-top:16px;margin-bottom:12px;line-height:1.6;}
 .opp-unlock-note strong{color:var(--ink);font-weight:700;}
@@ -708,9 +808,12 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 </div>
 
 <!-- FIRST-VISIT SWIPE COACHMARK -->
-<div class="swipe-coach" id="swipe-coach">
-  <div class="swipe-coach-pill">swipe up for more ↑</div>
-  <div class="swipe-coach-chev">↑</div>
+<div class="swipe-coach pending" id="swipe-coach">
+  <div class="swipe-coach-track">
+    <div class="swipe-coach-chevs"><span>︿</span><span>︿</span></div>
+    <div class="swipe-coach-finger"></div>
+  </div>
+  <div class="swipe-coach-pill">swipe up ↑</div>
 </div>
 
 <div id="feed">
@@ -754,21 +857,22 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
     </div>
     <p class="m-post">should be a time-consuming humiliation ritual.</p>
     <p class="m-belief">real opportunity should find you.<br>we help bring it to your door.</p>
-    <p class="m-pilot">we're running a pilot to help you — <em>swipe below to find out more</em> <span class="swipe-arrow" style="display:inline-flex;">↓</span></p>
+    <p class="m-pilot">we're running a pilot to help you — <em>swipe up to find out more.</em></p>
+    <button class="pilot-link" onclick="event.stopPropagation();ph('pilot_link_clicked',{from:'slide0'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide0'})">what's the pilot? <span class="pilot-link-arr">→</span></button>
   </div>
 
   <div class="swipe-hint anim a4">
-    if you agree — <span class="hint-heart" onclick="toggleLike(0,document.getElementById('like-0'))">♡</span> and swipe for more <span class="swipe-arrow">↓</span>
+    if you agree — <span class="hint-heart" onclick="toggleLike(0,document.getElementById('like-0'))">♡</span>
   </div>
 
   <!-- right actions -->
   <div class="slide-actions">
     <button class="act-btn like-btn" id="like-0" onclick="toggleLike(0,this)">
-      <div class="act-icon">♡</div><span class="act-label" id="lc-0">0</span>
+      <div class="act-icon">♡</div><span class="act-label" id="lc-0" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
       <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-      <span class="act-label">share</span>
+      <span class="act-label sc-count" style="display:none;">0</span>
     </button>
   </div>
 </div>
@@ -776,17 +880,13 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 <!-- ══════════ SLIDE 2: PILOT INFO + STARTER PACK ══════════ -->
 <div class="slide slide-pack" data-slide="1">
 
-  <p class="slide-label anim a1">early pilot</p>
-  <h2 class="slide-title anim a2">we want to bring it<br><em>to your door.</em></h2>
-  <p class="slide-body anim a3" style="margin-bottom:6px;font-size:13px;color:var(--purple);font-weight:600;font-style:italic;">started by students — because we know the pain that comes with employment seeking.</p>
-  <p class="slide-body anim a3" style="margin-bottom:10px;">verified opportunities, dropped to your campus group. twice a week. no noise. (admin-only.)</p>
-
-  <p class="opp-batch-intro anim a3">your starter pack — 3 opportunities, free to look at. <span style="color:var(--purple);font-weight:700;">♡</span> just saves one, no sign up needed.</p>
-  <div class="opp-rows anim a3" id="batch1-rows"></div>
+  <p class="slide-label anim a1">early pilot <button class="pilot-link pilot-link-inline" onclick="ph('pilot_link_clicked',{from:'slide1'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide1'})">what's this? →</button></p>
+  <h2 class="slide-title anim a2">what we bring<br><em>to your door.</em></h2>
+  <p class="slide-body anim a3" style="margin-bottom:10px;">relevant opportunities, dropped to your campus group. twice a week — 0 noise. (admin only.)</p>
 
   <!-- STATE 1: sign up -->
-  <div id="p2-s1" class="anim a4">
-    <p class="opp-unlock-note" style="margin-top:14px;">want more? <strong>sign up to become part of the pilot</strong> — 45 sec, unlocks 3 more + your campus group.</p>
+  <div id="p2-s1" class="anim a3">
+    <p class="opp-unlock-note" style="margin-top:0;margin-bottom:10px;">want more? <strong>sign up to become part of the pilot</strong> — 45 sec, unlocks 3 more + your campus group.</p>
     <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
       <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up now →</div></div>
       <span class="door-knob"></span>
@@ -795,20 +895,23 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 
   <!-- STATE 2: WA request -->
   <div id="p2-s2" style="display:none;">
-    <p class="opp-unlock-note" style="margin-top:14px;">you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.</p>
+    <p class="opp-unlock-note" style="margin-top:0;margin-bottom:10px;">you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.</p>
     <button class="p2-wa-btn" id="p2-wa-btn" onclick="requestWA(this)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group
     </button>
   </div>
 
+  <p class="opp-batch-intro anim a4" style="margin-top:18px;">your starter pack — 3 opportunities. yours to have. <span style="color:var(--purple);font-weight:700;">♡</span> to save and export later.</p>
+  <div class="opp-rows anim a4" id="batch1-rows"></div>
+
   <!-- right actions -->
   <div class="slide-actions">
     <button class="act-btn like-btn" id="like-1" onclick="toggleLike(1,this)">
-      <div class="act-icon">♡</div><span class="act-label" id="lc-1">0</span>
+      <div class="act-icon">♡</div><span class="act-label" id="lc-1" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
       <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-      <span class="act-label">share</span>
+      <span class="act-label sc-count" style="display:none;">0</span>
     </button>
   </div>
 </div>
@@ -844,11 +947,11 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <!-- right actions -->
   <div class="slide-actions">
     <button class="act-btn like-btn" id="like-2" onclick="toggleLike(2,this)">
-      <div class="act-icon">♡</div><span class="act-label" id="lc-2">0</span>
+      <div class="act-icon">♡</div><span class="act-label" id="lc-2" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
       <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-      <span class="act-label">share</span>
+      <span class="act-label sc-count" style="display:none;">0</span>
     </button>
   </div>
 </div>
@@ -863,6 +966,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <!-- PDF section — visible once WA requested and bundle has items -->
   <div class="anim a4">
     <div class="pdf-preview" id="s3-pdf-preview"></div>
+    <div class="sf-consent pdf-consent" id="s3-pdf-consent-row" style="max-width:300px;" onclick="pdfToggleConsent()"><div class="sf-cb" id="s3-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
     <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
       <div class="cta-t"><div class="cta-arr">📄 download opportunity bundle</div></div>
     </button>
@@ -884,11 +988,11 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <!-- right actions -->
   <div class="slide-actions">
     <button class="act-btn like-btn" id="like-3" onclick="toggleLike(3,this)">
-      <div class="act-icon">♡</div><span class="act-label" id="lc-3">0</span>
+      <div class="act-icon">♡</div><span class="act-label" id="lc-3" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
       <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-      <span class="act-label">share</span>
+      <span class="act-label sc-count" style="display:none;">0</span>
     </button>
   </div>
 </div>
@@ -949,6 +1053,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
       <div id="sf-pdf-section" style="display:none;margin-top:18px;">
         <div style="height:1px;background:var(--g200);margin-bottom:14px;"></div>
         <div class="pdf-preview" id="sf-pdf-preview"></div>
+        <div class="sf-consent pdf-consent" id="sf-pdf-consent-row" onclick="pdfToggleConsent()"><div class="sf-cb" id="sf-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
         <button class="pdf-btn" id="sf-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;">📄 download opportunity bundle</button>
         <p id="sf-pdf-gate-hint" style="font-size:12px;color:var(--g500);margin-top:8px;text-align:center;line-height:1.5;">tap "request to join group" above to unlock the download</p>
         <p id="sf-no-bundle" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← go back to slide 2 to save opportunities first</p>
@@ -958,16 +1063,98 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   </div>
 </div>
 
+<!-- SHEET: PILOT EXPLAINER -->
+<div class="sheet" id="sheet-pilot">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head"><span class="sheet-title">what's the pilot?</span><button class="sheet-close" onclick="closeSheet()">✕</button></div>
+  <div class="sheet-body">
+
+    <p style="font-size:13px;color:var(--g700);line-height:1.5;margin-bottom:14px;">knock is in early testing at a few universities. it's free to use. here's how it works:</p>
+
+    <!-- interactive step-through diagram -->
+    <div class="pilot-deck">
+      <div class="pilot-deck-track" id="pilot-deck-track">
+
+        <div class="pilot-step active" data-step="0">
+          <div class="pilot-step-ic">👀</div>
+          <div class="pilot-step-t">1. look</div>
+          <div class="pilot-step-d">you get 3 free opportunities to look at right away. you don't need to sign up to see them.</div>
+        </div>
+
+        <div class="pilot-step" data-step="1">
+          <div class="pilot-step-ic">♡</div>
+          <div class="pilot-step-t">2. save</div>
+          <div class="pilot-step-d">tap the heart on any opportunity you like. this saves it to a list so you can find it again later.</div>
+        </div>
+
+        <div class="pilot-step" data-step="2">
+          <div class="pilot-step-ic">✓</div>
+          <div class="pilot-step-t">3. sign up</div>
+          <div class="pilot-step-d">fill in a short form (about 45 seconds). this adds you to your university's whatsapp group.</div>
+        </div>
+
+        <div class="pilot-step" data-step="3">
+          <div class="pilot-step-ic">💬</div>
+          <div class="pilot-step-t">4. get matched</div>
+          <div class="pilot-step-d">twice a week, new opportunities are posted in your whatsapp group. that's the only time we message you.</div>
+        </div>
+
+      </div>
+
+      <div class="pilot-deck-dots" id="pilot-deck-dots">
+        <span class="pilot-dot active" data-i="0"></span>
+        <span class="pilot-dot" data-i="1"></span>
+        <span class="pilot-dot" data-i="2"></span>
+        <span class="pilot-dot" data-i="3"></span>
+      </div>
+
+      <div class="pilot-deck-nav">
+        <button class="pilot-nav-btn" id="pilot-prev" onclick="pilotDeckGo(-1)" disabled>← back</button>
+        <button class="pilot-nav-btn pilot-nav-next" id="pilot-next" onclick="pilotDeckGo(1)">next →</button>
+      </div>
+    </div>
+
+    <div class="heart-explainer" style="margin-top:14px;">
+      <span class="he-icon">🔒</span>
+      <span class="he-txt"><strong>your data:</strong> we only use it to put you in the right whatsapp group. we won't share anything that identifies you with companies unless we ask you first.</span>
+    </div>
+
+    <button class="cta-btn cta-primary" style="width:100%;margin-top:14px;" onclick="closeSheet();openSheet('sheet-form');ph('cta_signup',{from:'pilot_explainer'})">
+      <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up now →</div></div>
+      <span style="opacity:.4;">→</span>
+    </button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* ── CONFIG ── */
 window.KNOCK_APPS_SCRIPT_URL='';
-const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za',waLink:'#'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za',waLink:'#'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za',waLink:'#'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za',waLink:'#'},'ukzn':{display:'UKZN',full:'University of KwaZulu-Natal',location:'Durban',emailHint:'student@ukzn.ac.za',waLink:'#'}};
+const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za'}};
+// real WhatsApp group links — 5 STEM groups + 1 catch-all waiting list.
+// non-STEM (any uni) and any university not in UNI above route to the waiting list.
+const WA_LINKS={
+  uct:'https://chat.whatsapp.com/Citm7pOI3MAHESm4uUQOUV?mode=gi_t',
+  wits:'https://chat.whatsapp.com/L14toN1ry4N30T5bB6mzCP?mode=gi_t',
+  stellies:'https://chat.whatsapp.com/Eg1XFBNXvT67CQoWCWGvs9?mode=gi_t',
+  up:'https://chat.whatsapp.com/Crv6D5eEHk5EfKDdHsXfC6?mode=gi_t',
+  other:'https://chat.whatsapp.com/KUTUWMx7cfG189jab0NW8c?mode=gi_t'
+};
+const WA_WAITLIST=WA_LINKS.other; // non-STEM or unrecognized uni land on the "other" group for now, tagged as waitlist
+function getWaLink(){
+  if(SF_FIELD==='Non-STEM')return WA_WAITLIST;
+  if(UNI[PAGE_UNI]&&WA_LINKS[PAGE_UNI])return WA_LINKS[PAGE_UNI];
+  return WA_LINKS.other;
+}
+function isWaitlisted(){
+  return SF_FIELD==='Non-STEM'||!UNI[PAGE_UNI];
+}
 const SEG={'devsoc':'Developer Society','cs':'Computer Science','is':'Information Systems','honours':'Honours','compsci':'Computer Science','eng':'Engineering','data':'Data Science','math':'Mathematics','fintech':'FinTech','stem':'STEM students'};
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
 const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1';
 let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
+let GLOBAL_STATS=null; // {likes:N, shares:N} once loaded from a real backend — null means "not connected yet"
 const feed=document.getElementById('feed');
 const slides=document.querySelectorAll('.slide');
 const dots=document.querySelectorAll('.dot');
@@ -977,7 +1164,9 @@ let NET=null,CYCLE_TIMER=null;
 const KEY_SWIPE_SEEN='knock_swipe_seen_v1';
 function hideSwipeCoach(){
   const c=document.getElementById('swipe-coach');
+  const wasShown=c&&c.classList.contains('revealed')&&!c.classList.contains('hide');
   if(c&&!c.classList.contains('hide')){c.classList.add('hide');}
+  if(wasShown)ph('swipe_coach_dismissed',{});
   localStorage.setItem(KEY_SWIPE_SEEN,'1');
 }
 function maybeShowSwipeCoach(){
@@ -985,7 +1174,16 @@ function maybeShowSwipeCoach(){
   if(!c)return;
   if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0){
     c.classList.add('hide');
+    return;
   }
+  // Wait for slide 1's text to finish animating in (last item is .a4,
+  // delay .36s + .5s duration) before revealing the swipe gesture, so it
+  // reads at a natural reading pace rather than competing with the copy.
+  setTimeout(function(){
+    c.classList.remove('pending');
+    c.classList.add('revealed');
+    ph('swipe_coach_shown',{});
+  },1100);
 }
 
 /* ── INIT ── */
@@ -993,19 +1191,19 @@ function maybeShowSwipeCoach(){
   const path=window.location.pathname.replace(/^\//,'');
   const parts=path.split('-');
   PAGE_UNI=parts[1]||'uct'; PAGE_SEG=parts.slice(2).join('-')||'stem';
-  const u=UNI[PAGE_UNI]||UNI['uct'];
+  const u=UNI[PAGE_UNI]||{display:PAGE_UNI?(PAGE_UNI.charAt(0).toUpperCase()+PAGE_UNI.slice(1)):'your uni',full:'',location:'',emailHint:'student@example.ac.za'};
   const seg=SEG[PAGE_SEG]||PAGE_SEG.replace(/-/g,' ');
   document.getElementById('s0-uni').textContent=u.display.toLowerCase()+'.';
   document.getElementById('s0-seg').textContent=seg.toLowerCase()+' · '+u.display.toLowerCase();
-  document.getElementById('sf-uni').value=u.full;
+  document.getElementById('sf-uni').value=u.full||PAGE_UNI;
   document.getElementById('sf-email').placeholder=u.emailHint;
-  document.getElementById('sf-wa-btn').href=u.waLink;
+  document.getElementById('sf-wa-btn').href=getWaLink();
   document.getElementById('copy-url-txt').textContent=window.location.href;
   const city=u.location;
   // pack geo is set via OPPORTUNITIES array — no inline card refs needed
   // pack geo bias now handled by OPPORTUNITIES array
   // (opportunities in OPPORTUNITIES array use PAGE_UNI city for geo bias)
-  loadLikes(); renderCTA();
+  loadLikes(); renderCTA(); fetchGlobalStats();
   // Restore slide position from last visit
   var savedSlide=parseInt(localStorage.getItem(KEY_SLIDE)||'0');
   if(savedSlide>0&&savedSlide<slides.length){
@@ -1022,7 +1220,7 @@ function maybeShowSwipeCoach(){
   initNetwork();
   startCycling();
   maybeShowSwipeCoach();
-  setTimeout(hideSwipeCoach,6000);
+  setTimeout(hideSwipeCoach,7000);
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
   // Defer data-dependent calls until after full script execution
   // (OPPORTUNITIES var is assigned after this IIFE in the file)
@@ -1115,9 +1313,7 @@ dots.forEach(d=>d.addEventListener('click',()=>goSlide(+d.dataset.i)));
 function loadLikes(){
   const data=JSON.parse(localStorage.getItem(KEY_LIKES)||'{}');
   for(let i=0;i<4;i++){
-    const el=document.getElementById('lc-'+i);
     const btn=document.getElementById('like-'+i);
-    if(el)el.textContent=data[i]||0;
     if(btn&&data['l'+i]){btn.classList.add('liked');btn.querySelector('.act-icon').textContent='♥';}
   }
 }
@@ -1127,10 +1323,57 @@ function toggleLike(i,btn){
   data['l'+i]=!was; data[i]=(data[i]||0)+(was?-1:1);
   localStorage.setItem(KEY_LIKES,JSON.stringify(data));
   const icon=btn.querySelector('.act-icon');
-  const lc=document.getElementById('lc-'+i);
-  if(!was){btn.classList.add('liked');icon.textContent='♥';burstHearts(btn);ph('like',{slide:i});}
+  if(!was){btn.classList.add('liked');icon.textContent='♥';burstHearts(btn);ph('like',{slide:i});bumpGlobalStat('likes');}
   else{btn.classList.remove('liked');icon.textContent='♡';}
-  if(lc)lc.textContent=Math.max(0,data[i]);
+}
+
+/* ── GLOBAL LIKE/SHARE COUNTERS (TikTok-style, under the icons) ──
+   These reflect a site-wide total across all visitors, not a per-visitor
+   count. There's no live backend wired up yet — once the Google Sheet
+   used for the other sign-up form is connected, fetchGlobalStats() should
+   pull real totals from it and bumpGlobalStat() should append/increment
+   there too. Until then the counters stay hidden rather than show a
+   fake or misleading number. */
+async function fetchGlobalStats(){
+  // TODO: replace with a real read from the Google Sheet (e.g. via an
+  // Apps Script web endpoint) once access is granted. Returning null
+  // keeps the counters hidden.
+  try{
+    if(window.KNOCK_STATS_URL){
+      const res=await fetch(window.KNOCK_STATS_URL);
+      const json=await res.json();
+      if(json&&typeof json.likes==='number'&&typeof json.shares==='number'){
+        GLOBAL_STATS=json;
+        renderGlobalStats();
+        return;
+      }
+    }
+  }catch(_){}
+  GLOBAL_STATS=null;
+}
+function renderGlobalStats(){
+  if(!GLOBAL_STATS)return;
+  for(let i=0;i<4;i++){
+    const el=document.getElementById('lc-'+i);
+    if(el){el.textContent=formatCount(GLOBAL_STATS.likes);el.style.display='inline';}
+  }
+  document.querySelectorAll('.sc-count').forEach(function(el){
+    el.textContent=formatCount(GLOBAL_STATS.shares);
+    el.style.display='inline';
+  });
+}
+function formatCount(n){
+  if(n>=1000000)return(n/1000000).toFixed(1).replace(/\.0$/,'')+'m';
+  if(n>=1000)return(n/1000).toFixed(1).replace(/\.0$/,'')+'k';
+  return ''+n;
+}
+function bumpGlobalStat(key){
+  // optimistic local bump so the tap feels responsive — once a real
+  // backend is wired, this should also persist the increment server-side.
+  if(!GLOBAL_STATS)return;
+  GLOBAL_STATS[key]=(GLOBAL_STATS[key]||0)+1;
+  renderGlobalStats();
+  // TODO: also POST the increment to the Google Sheet endpoint here.
 }
 function burstHearts(btn){
   const r=btn.getBoundingClientRect();
@@ -1170,21 +1413,71 @@ function claimPack(e){
 }
 
 /* ── SHEETS ── */
-function openSheet(id){document.getElementById('overlay').classList.add('show');document.getElementById(id).classList.add('open');}
-function closeSheet(){document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));}
+let LAST_OPEN_SHEET=null;
+function openSheet(id){
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById(id).classList.add('open');
+  if(id==='sheet-pilot')resetPilotDeck();
+  LAST_OPEN_SHEET=id;
+  ph('sheet_open',{sheet:id});
+}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('show');
+  document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));
+  if(LAST_OPEN_SHEET){ph('sheet_close',{sheet:LAST_OPEN_SHEET});LAST_OPEN_SHEET=null;}
+}
+
+/* ── PILOT EXPLAINER: interactive step deck ── */
+let PILOT_STEP=0;
+const PILOT_STEPS=4;
+function resetPilotDeck(){
+  PILOT_STEP=0;
+  document.querySelectorAll('.pilot-step').forEach(function(el){el.classList.toggle('active',+el.dataset.step===0);});
+  document.querySelectorAll('.pilot-dot').forEach(function(el){el.classList.toggle('active',+el.dataset.i===0);});
+  var prevBtn=document.getElementById('pilot-prev');
+  var nextBtn=document.getElementById('pilot-next');
+  if(prevBtn)prevBtn.disabled=true;
+  if(nextBtn)nextBtn.textContent='next →';
+}
+function pilotDeckGo(dir){
+  if(dir>0&&PILOT_STEP===PILOT_STEPS-1){closeSheet();return;}
+  var next=PILOT_STEP+dir;
+  if(next<0||next>=PILOT_STEPS)return;
+  PILOT_STEP=next;
+  document.querySelectorAll('.pilot-step').forEach(function(el){
+    el.classList.toggle('active',+el.dataset.step===PILOT_STEP);
+  });
+  document.querySelectorAll('.pilot-dot').forEach(function(el){
+    el.classList.toggle('active',+el.dataset.i===PILOT_STEP);
+  });
+  var prevBtn=document.getElementById('pilot-prev');
+  var nextBtn=document.getElementById('pilot-next');
+  if(prevBtn)prevBtn.disabled=(PILOT_STEP===0);
+  if(nextBtn){
+    nextBtn.disabled=false;
+    nextBtn.textContent=(PILOT_STEP===PILOT_STEPS-1)?'done ✓':'next →';
+  }
+  ph('pilot_explainer_step',{step:PILOT_STEP});
+}
+document.addEventListener('click',function(e){
+  if(e.target&&e.target.classList&&e.target.classList.contains('pilot-dot')){
+    PILOT_STEP=+e.target.dataset.i-0;
+    pilotDeckGo(0);
+  }
+});
 
 /* ── FORM ── */
-function sfChip(el){document.querySelectorAll('.sf-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');SF_FIELD=el.dataset.v;}
-function sfToggleConsent(){SF_CONSENT=!SF_CONSENT;const cb=document.getElementById('sf-cb');cb.classList.toggle('on',SF_CONSENT);cb.innerHTML=SF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';}
+function sfChip(el){document.querySelectorAll('.sf-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');SF_FIELD=el.dataset.v;var waBtn=document.getElementById('sf-wa-btn');if(waBtn)waBtn.href=getWaLink();ph('field_selected',{field:SF_FIELD,uni:PAGE_UNI});}
+function sfToggleConsent(){SF_CONSENT=!SF_CONSENT;const cb=document.getElementById('sf-cb');cb.classList.toggle('on',SF_CONSENT);cb.innerHTML=SF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';ph('consent_toggled',{on:SF_CONSENT});}
 async function sfSubmit(){
   const phone=document.getElementById('sf-phone').value.trim();
-  if(!phone||phone.length<9){showToast('valid number please');return;}
-  if(!SF_FIELD){showToast('pick your field');return;}
-  if(!SF_CONSENT){showToast('tick consent to continue');return;}
+  if(!phone||phone.length<9){showToast('valid number please');ph('form_field_error',{field:'phone'});return;}
+  if(!SF_FIELD){showToast('pick your field');ph('form_field_error',{field:'field_of_study'});return;}
+  if(!SF_CONSENT){showToast('tick consent to continue');ph('form_field_error',{field:'consent'});return;}
   const btn=document.getElementById('sf-submit');btn.disabled=true;btn.textContent='sending…';
   ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
-  const u=UNI[PAGE_UNI]||UNI['uct'];
-  const payload={university:u.full,field:SF_FIELD,phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),email:document.getElementById('sf-email').value.trim(),group:PAGE_UNI+'_'+PAGE_SEG,source:window.location.pathname.replace(/^\//,''),submitted_at:new Date().toISOString(),consent:true};
+  const u=UNI[PAGE_UNI]||{full:PAGE_UNI};
+  const payload={university:u.full,field:SF_FIELD,phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),email:document.getElementById('sf-email').value.trim(),group:isWaitlisted()?'waitlist':(PAGE_UNI+'_stem'),source:window.location.pathname.replace(/^\//,''),submitted_at:new Date().toISOString(),consent:true};
   try{
     const url=window.KNOCK_APPS_SCRIPT_URL;
     if(url)await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
@@ -1202,32 +1495,60 @@ function requestWA(el){
   if(link&&link.href&&link.href!=='#'&&!link.href.endsWith('#')){
     window.open(link.href,'_blank');
   }
+  ph('wa_requested',{uni:PAGE_UNI,waitlisted:isWaitlisted()});
   refreshP2();
   refreshP3();
   refreshPDFGate();
   closeSheet();
-  showToast('3 opportunities unlocked → swipe to see them');
+  showToast(isWaitlisted()?"you're on the list → swipe to see your opportunities":'3 opportunities unlocked → swipe to see them');
   setTimeout(function(){goSlide(2);},1000);
 }
+const KEY_PDF_CONSENT='knock_pdf_consent_v1';
+let PDF_CONSENT=localStorage.getItem(KEY_PDF_CONSENT)==='1';
+function pdfToggleConsent(){
+  PDF_CONSENT=!PDF_CONSENT;
+  localStorage.setItem(KEY_PDF_CONSENT,PDF_CONSENT?'1':'0');
+  syncPdfConsentUI();
+  refreshPDFGate();
+  ph('pdf_consent_toggled',{on:PDF_CONSENT});
+}
+function syncPdfConsentUI(){
+  ['sf-pdf-cb','s3-pdf-cb'].forEach(function(id){
+    var cb=document.getElementById(id);
+    if(!cb)return;
+    cb.classList.toggle('on',PDF_CONSENT);
+    cb.innerHTML=PDF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';
+  });
+}
 function refreshPDFGate(){
-  var waOK=localStorage.getItem(KEY_WA)==='1';
+  // download requires both (a) having saved something and (b) the
+  // privacy/terms consent box ticked — the company links only ever
+  // surface inside the generated PDF, so gating the PDF gates the links.
+  // signup/WA status is irrelevant and intentionally not mentioned.
   var bundle=getBundle();
-  var canDL=waOK&&bundle.length>0;
+  var canDL=bundle.length>0&&PDF_CONSENT;
+  syncPdfConsentUI();
   // sf-done PDF button
   var sfBtn=document.getElementById('sf-pdf-btn');
   var sfHint=document.getElementById('sf-pdf-gate-hint');
+  var sfConsentRow=document.getElementById('sf-pdf-consent-row');
   if(sfBtn){sfBtn.disabled=!canDL;sfBtn.style.opacity=canDL?'1':'0.4';sfBtn.style.cursor=canDL?'pointer':'not-allowed';}
-  if(sfHint)sfHint.style.display=waOK?'none':'block';
-  // slide 3 PDF button
+  if(sfHint)sfHint.style.display='none';
+  if(sfConsentRow)sfConsentRow.style.display=bundle.length>0?'flex':'none';
+  // slide 4 PDF button
   var s3Btn=document.getElementById('s3-pdf-btn');
   var s3Hint=document.getElementById('s3-pdf-gate-hint');
+  var s3NoBundle=document.getElementById('s3-no-bundle-msg');
+  var s3ConsentRow=document.getElementById('s3-pdf-consent-row');
   if(s3Btn){s3Btn.disabled=!canDL;s3Btn.style.opacity=canDL?'1':'0.4';s3Btn.style.cursor=canDL?'pointer':'not-allowed';}
-  if(s3Hint)s3Hint.style.display=waOK?'none':'block';
+  if(s3Hint)s3Hint.style.display='none';
+  if(s3NoBundle)s3NoBundle.style.display=bundle.length>0?'none':'block';
+  if(s3ConsentRow)s3ConsentRow.style.display=bundle.length>0?'flex':'none';
 }
 
 /* ── SHARE ── */
-async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:window.location.href});}catch(_){}}else copyLink();}
-function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');}
+async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});bumpGlobalStat('shares');if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:window.location.href});}catch(_){}}else copyLink();}
+function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');ph('copy_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});}
 
 /* ── TOAST / PH ── */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
@@ -1284,9 +1605,9 @@ function refreshP2(){
   var waOK=localStorage.getItem(KEY_WA)==='1';
   var s1=document.getElementById('p2-s1');
   var s2=document.getElementById('p2-s2');
-  var u2=UNI[PAGE_UNI]||UNI['uct'];
+  var u2=UNI[PAGE_UNI]||{display:PAGE_UNI?(PAGE_UNI.charAt(0).toUpperCase()+PAGE_UNI.slice(1)):'your uni'};
   var p2WaBtn=document.getElementById('p2-wa-btn');
-  if(p2WaBtn&&u2.waLink&&u2.waLink!=='#')p2WaBtn.href=u2.waLink;
+  if(p2WaBtn)p2WaBtn.href=getWaLink();
   var uniName=document.getElementById('p2-uni-name');
   if(uniName)uniName.textContent=u2.display.toLowerCase();
   if(s1)s1.style.display=!signed?'block':'none';
@@ -1308,10 +1629,12 @@ function refreshP3(){
     if(signed&&!waOK)body.textContent='request to join your campus group on the previous slide to unlock your 3 bonus opportunities.';
     else body.textContent='sign up and request to join your campus group on the previous slide to unlock these.';
   }
+  // bundle-ready copy applies regardless of signup state — exporting
+  // never required signing up, it just quietly works once something's saved.
   var bundle=getBundle();
   var title=document.getElementById('s3-title');
   var sbody=document.getElementById('s3-body');
-  if(signed&&waOK&&bundle.length>0){
+  if(bundle.length>0){
     if(title)title.innerHTML='your bundle<br><em>is ready.</em>';
     if(sbody)sbody.textContent='you saved '+bundle.length+' '+(bundle.length===1?'opportunity':'opportunities')+'. download them as a PDF below.';
   }
@@ -1407,6 +1730,16 @@ function updateProgress(){
   if(badge)badge.textContent=n+' saved';
 }
 
+/* track attempted taps on the PDF button while it's disabled — disabled
+   elements never fire click, so this uses pointerdown capture instead. */
+document.addEventListener('pointerdown',function(e){
+  var btn=e.target&&e.target.closest?e.target.closest('#sf-pdf-btn, #s3-pdf-btn'):null;
+  if(!btn||!btn.disabled)return;
+  var bundle=getBundle();
+  var reason=bundle.length===0?'no_bundle':'no_consent';
+  ph('pdf_download_blocked',{reason:reason,surface:btn.id});
+});
+
 /* ══════ PDF GENERATION ══════ */
 function generatePDF(){
   const bundle=getBundle();
@@ -1489,6 +1822,24 @@ function renderBatch(batchNum){
       +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
     container.appendChild(row);
   });
+  if(batchNum===1)maybeShowHeartCue();
+}
+/* ── ONE-TIME HEART→SIGNUP CUE (slide 2, first visit only) ── */
+const KEY_HEART_CUE_SEEN='knock_heart_cue_seen_v1';
+function maybeShowHeartCue(){
+  if(localStorage.getItem(KEY_HEART_CUE_SEEN)==='1')return;
+  var firstHeart=document.querySelector('#batch1-rows .opp-row-heart');
+  if(firstHeart)firstHeart.classList.add('heart-cue');
+}
+function clearHeartCue(){
+  if(localStorage.getItem(KEY_HEART_CUE_SEEN)==='1')return;
+  localStorage.setItem(KEY_HEART_CUE_SEEN,'1');
+  document.querySelectorAll('.opp-row-heart.heart-cue').forEach(function(h){h.classList.remove('heart-cue');});
+  var cta=document.querySelector('#p2-s1 .door-cta');
+  if(cta){
+    cta.classList.add('cta-cue');
+    setTimeout(function(){cta.classList.remove('cta-cue');},4500);
+  }
 }
 function toggleSaveRow(id,btn){
   var opp=OPPORTUNITIES.find(function(o){return o.id===id;});
@@ -1505,6 +1856,7 @@ function toggleSaveRow(id,btn){
     btn.classList.add('liked');btn.textContent='♥';
     if(row)row.classList.add('row-liked');
     burstHearts(btn);
+    clearHeartCue();
   }
   refreshBundleUI();
   ph('row_toggle',{id:id,liked:idx<0,uni:PAGE_UNI});
