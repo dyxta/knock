@@ -17,9 +17,32 @@
   --font-d:'Cabinet Grotesk',sans-serif;
   --font-b:'Switzer',sans-serif;
 }
+/* ── THEME SWITCHER (additive — fallbacks preserve current look) ── */
+body[data-bg="dark"]   { --bg-canvas:#0F0F12; --bg-watermark-color:#FFFFFF; --bg-watermark-opacity:0.04; }
+body[data-bg="light"]  { --bg-canvas:#F8F7F5; --bg-watermark-color:#5E17EB; --bg-watermark-opacity:0.04; }
+body[data-bg="purple"] { --bg-canvas:#5E17EB; --bg-watermark-color:#FFFFFF; --bg-watermark-opacity:0.07; }
+body[data-btn="metallic"] {
+  --btn-bg: linear-gradient(180deg, #2a2a2e 0%, #1a1a1d 50%, #0a0a0c 100%);
+  --btn-color: #FFFFFF;
+  --btn-shadow: 0 6px 18px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,255,255,0.06);
+  --btn-border: 1px solid rgba(255,255,255,0.10);
+}
+body[data-btn="volt"] {
+  --btn-bg: linear-gradient(135deg, #6B27F0 0%, #5E17EB 50%, #4A0FC1 100%);
+  --btn-color: #FFFFFF;
+  --btn-shadow: 0 8px 22px rgba(94,23,235,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+  --btn-border: none;
+}
+body[data-btn="glass"] {
+  --btn-bg: rgba(255,255,255,0.10);
+  --btn-color: var(--white);
+  --btn-shadow: 0 8px 28px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.20);
+  --btn-border: 1px solid rgba(255,255,255,0.22);
+  --btn-backdrop: blur(20px) saturate(160%);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
-body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var(--bg-canvas,var(--warm));}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
 
 /* ── FEED ──────────────────────────────────── */
@@ -406,7 +429,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   text-align:left;transition:transform .15s;width:100%;max-width:300px;
 }
 .cta-btn:active{transform:scale(.98);}
-.cta-primary{background:var(--purple);color:var(--white);}
+.cta-primary{background:var(--btn-bg,var(--purple));color:var(--btn-color,var(--white));box-shadow:var(--btn-shadow,none);border:var(--btn-border,none);-webkit-backdrop-filter:var(--btn-backdrop,none);backdrop-filter:var(--btn-backdrop,none);}
 .cta-secondary{background:var(--off);color:var(--ink);border:1px solid var(--g200);}
 .cta-done{background:#e8f9f2;color:#085041;border:1px solid #b8e6d4;cursor:default;}
 .cta-done:active{transform:none;}
@@ -503,6 +526,12 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .sf-phone{display:flex;}
 .sf-prefix{background:var(--g200);border:1px solid var(--g200);border-right:none;border-radius:10px 0 0 10px;padding:11px 12px;font-size:14px;color:var(--g500);white-space:nowrap;}
 .sf-phone .sf-input{border-radius:0 10px 10px 0;}
+.sf-email-row{display:grid;grid-template-columns:1fr auto;gap:0;align-items:stretch;}
+.sf-email-row .sf-input{border-radius:10px 0 0 10px;border-right:none;}
+.sf-domain{background:var(--g200);border:1px solid var(--g200);border-left:none;border-radius:0 10px 10px 0;padding:11px 12px;font-size:13px;font-weight:700;color:var(--g500);font-family:var(--font-mono,Menlo,monospace);display:flex;align-items:center;white-space:nowrap;}
+.sf-email-row.free{grid-template-columns:1fr;}
+.sf-email-row.free .sf-domain{display:none;}
+.sf-email-row.free .sf-input{border-radius:10px;border-right:1px solid var(--g200);}
 .sf-chips{display:flex;gap:7px;flex-wrap:wrap;}
 .sf-chip{background:var(--off);border:1.5px solid var(--g200);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--g700);cursor:pointer;font-family:var(--font-b);transition:all .15s;}
 .sf-chip.sel{background:var(--purple);border-color:var(--purple);color:var(--white);}
@@ -520,6 +549,23 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .sf-done-title{font-family:var(--font-d);font-weight:800;font-size:20px;color:var(--ink);margin-bottom:6px;}
 .sf-done-sub{font-size:13px;color:var(--g700);line-height:1.6;margin-bottom:16px;}
 .wa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:var(--white);border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;text-decoration:none;}
+
+/* ── EXTENDED SIGN-UP FIELDS (university chips + optional details) ── */
+.form-field{margin-bottom:12px;}
+.form-field .label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:6px;}
+.form-field .hint{font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;opacity:.55;}
+.followup{width:100%;background:var(--off);border:1px solid var(--g200);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);font-family:var(--font-b);outline:none;margin-top:8px;transition:border-color .15s,background .15s;}
+.followup:focus{border-color:var(--purple);background:var(--white);}
+.followup[hidden]{display:none;}
+.optional-toggle{border:1px solid var(--g200);border-radius:12px;background:var(--off);margin-bottom:14px;overflow:hidden;}
+.optional-toggle summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;}
+.optional-toggle summary::-webkit-details-marker{display:none;}
+.optional-toggle summary::after{content:'+';font-size:18px;color:var(--g500);flex-shrink:0;margin-left:10px;transition:transform .2s;}
+.optional-toggle[open] summary::after{transform:rotate(45deg);}
+.ot-label{font-size:13px;font-weight:700;color:var(--ink);}
+.ot-sub{font-size:11px;color:var(--g500);margin-top:2px;}
+.ot-body{padding:0 15px 15px;}
+.ot-body .form-field{margin-top:12px;margin-bottom:0;}
 
 /* ── BACKGROUND LOGO ── */
 .bg-logo-wrap{position:absolute;right:-18%;top:50%;transform:translateY(-52%);width:88%;aspect-ratio:1;opacity:.07;pointer-events:none;z-index:1;}
@@ -670,6 +716,20 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 .opp-rows-unlocked .opp-row-co{color:rgba(94,23,235,.75);}
 .unlocked-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-top:18px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
 .unlocked-label::before{content:"✦";font-size:9px;}
+/* ── THEME TOGGLE (floating, bottom-left) ── */
+#theme-toggle{
+  position:fixed;left:14px;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;z-index:55;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.theme-swatches{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px;}
+.theme-swatch{background:var(--off);border:1.5px solid var(--g200);border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--g700);cursor:pointer;font-family:var(--font-b);transition:all .15s;}
+.theme-swatch.sel{background:var(--purple);border-color:var(--purple);color:var(--white);}
+
 /* ── TOAST ────────────────────────────────── */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -887,7 +947,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
   <!-- STATE 1: sign up -->
   <div id="p2-s1" class="anim a3">
     <p class="opp-unlock-note" style="margin-top:0;margin-bottom:10px;">want more? <strong>sign up to become part of the pilot</strong> — 45 sec, unlocks 3 more + your campus group.</p>
-    <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{})">
+    <button class="cta-btn cta-primary door-cta" onclick="openSheet('sheet-form');ph('cta_signup',{});track('hero_cta_clicked',{from:'slide1'})">
       <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up now →</div></div>
       <span class="door-knob"></span>
     </button>
@@ -1037,10 +1097,87 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
         <span class="he-icon">🔒</span>
         <span class="he-txt">why we ask: <strong>we need this to know which group to put you in.</strong> we do share data with companies, but only grouped — never anything that identifies you personally without asking first.</span>
       </div>
-      <div class="sf-field"><label class="sf-label">university</label><input class="sf-input" id="sf-uni" type="text" readonly/></div>
+      <div class="form-field" data-field="university">
+        <label class="sf-label">university <span class="hint">pick one</span></label>
+        <div class="sf-chips" id="sf-uni-chips">
+          <button type="button" class="sf-chip" data-v="UCT" data-domain="myuct.ac.za" onclick="sfUniChip(this)">uct</button>
+          <button type="button" class="sf-chip" data-v="Wits" data-domain="students.wits.ac.za" onclick="sfUniChip(this)">wits</button>
+          <button type="button" class="sf-chip" data-v="Stellies" data-domain="sun.ac.za" onclick="sfUniChip(this)">stellies</button>
+          <button type="button" class="sf-chip" data-v="Pretoria" data-domain="tuks.co.za" onclick="sfUniChip(this)">pretoria</button>
+          <button type="button" class="sf-chip" data-v="UKZN" data-domain="stu.ukzn.ac.za" onclick="sfUniChip(this)">ukzn</button>
+          <button type="button" class="sf-chip" data-v="Other" data-domain="" onclick="sfUniChip(this)">other</button>
+        </div>
+        <input type="text" class="followup sf-input" id="universityOther" placeholder="which university?" hidden/>
+      </div>
       <div class="sf-field"><label class="sf-label">field of study</label><div class="sf-chips"><button class="sf-chip" data-v="STEM" onclick="sfChip(this)">stem</button><button class="sf-chip" data-v="Non-STEM" onclick="sfChip(this)">non-stem</button></div></div>
       <div class="sf-field"><label class="sf-label">whatsapp number</label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
-      <div class="sf-field"><label class="sf-label">university email <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional</span></label><input class="sf-input" id="sf-email" type="email" placeholder="student@uct.ac.za"/></div>
+      <div class="sf-field"><label class="sf-label" id="sf-email-label">university email <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional</span></label>
+        <div class="sf-email-row" id="sfEmailRow"><input class="sf-input" id="sf-email" type="text" placeholder="your.username" autocomplete="email"/><div class="sf-domain" id="sfEmailDomain">@uct.ac.za</div></div>
+      </div>
+
+      <details class="optional-toggle" id="optionalToggle">
+        <summary>
+          <div>
+            <div class="ot-label">help us learn how to make a better service for you</div>
+            <div class="ot-sub">optional · ~15 seconds</div>
+          </div>
+        </summary>
+        <div class="ot-body">
+          <div class="form-field">
+            <label class="sf-label">year of study</label>
+            <div class="sf-chips" data-chip-group="year">
+              <button type="button" class="sf-chip" data-v="Year 1" onclick="sfOptionalChip(this)">yr 1</button>
+              <button type="button" class="sf-chip" data-v="Year 2" onclick="sfOptionalChip(this)">yr 2</button>
+              <button type="button" class="sf-chip" data-v="Year 3" onclick="sfOptionalChip(this)">yr 3</button>
+              <button type="button" class="sf-chip" data-v="Year 4" onclick="sfOptionalChip(this)">yr 4 / final</button>
+              <button type="button" class="sf-chip" data-v="Honours" onclick="sfOptionalChip(this)">hons</button>
+              <button type="button" class="sf-chip" data-v="Masters" onclick="sfOptionalChip(this)">masters</button>
+              <button type="button" class="sf-chip" data-v="Graduated" onclick="sfOptionalChip(this)">just grad'd (&lt; 1 year)</button>
+            </div>
+          </div>
+          <div class="form-field" data-field="degree">
+            <label class="sf-label">degree / specialisation <span class="hint">pick the closest</span></label>
+            <div class="sf-chips" data-chip-group="degree">
+              <button type="button" class="sf-chip" data-v="CompSci / IS" onclick="sfOptionalChip(this)">compsci / is</button>
+              <button type="button" class="sf-chip" data-v="Math / Data Sci / Stats" onclick="sfOptionalChip(this)">math / data sci / stats</button>
+              <button type="button" class="sf-chip" data-v="Act Sci" onclick="sfOptionalChip(this)">act sci</button>
+              <button type="button" class="sf-chip" data-v="Comp Eng" onclick="sfOptionalChip(this)">comp eng</button>
+              <button type="button" class="sf-chip" data-v="Mechatronics" onclick="sfOptionalChip(this)">mechatronics</button>
+              <button type="button" class="sf-chip" data-v="Medicine" onclick="sfOptionalChip(this)">medicine</button>
+              <button type="button" class="sf-chip" data-v="Chem / Bio / Genetics" onclick="sfOptionalChip(this)">chem / bio / genetics</button>
+              <button type="button" class="sf-chip" data-v="AI" onclick="sfOptionalChip(this)">ai</button>
+              <button type="button" class="sf-chip" data-v="FinTech" onclick="sfOptionalChip(this)">fintech</button>
+              <button type="button" class="sf-chip" data-v="Physics" onclick="sfOptionalChip(this)">physics</button>
+              <button type="button" class="sf-chip" data-v="Other" onclick="sfOptionalChip(this)">other</button>
+            </div>
+            <input type="text" class="followup" id="degreeOther" placeholder="what's your degree?" hidden/>
+          </div>
+          <div class="form-field">
+            <label class="sf-label">gpa band</label>
+            <div class="sf-chips" data-chip-group="gpa">
+              <button type="button" class="sf-chip" data-v="50-60" onclick="sfOptionalChip(this)">50–60%</button>
+              <button type="button" class="sf-chip" data-v="60-65" onclick="sfOptionalChip(this)">60–65%</button>
+              <button type="button" class="sf-chip" data-v="65-70" onclick="sfOptionalChip(this)">65–70%</button>
+              <button type="button" class="sf-chip" data-v="70-75" onclick="sfOptionalChip(this)">70–75%</button>
+              <button type="button" class="sf-chip" data-v="75-80" onclick="sfOptionalChip(this)">75–80%</button>
+              <button type="button" class="sf-chip" data-v="80+" onclick="sfOptionalChip(this)">80%+</button>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="sf-label">what you're looking for <span class="hint">pick as many as you want</span></label>
+            <div class="sf-chips" data-chip-group="lookingFor" data-multi="true">
+              <button type="button" class="sf-chip multi" data-v="Internships" onclick="sfOptionalChip(this)">internships</button>
+              <button type="button" class="sf-chip multi" data-v="Jobs" onclick="sfOptionalChip(this)">jobs</button>
+              <button type="button" class="sf-chip multi" data-v="Bursaries" onclick="sfOptionalChip(this)">bursaries</button>
+              <button type="button" class="sf-chip multi" data-v="Career advice" onclick="sfOptionalChip(this)">career advice</button>
+              <button type="button" class="sf-chip multi" data-v="Talks" onclick="sfOptionalChip(this)">talks</button>
+              <button type="button" class="sf-chip multi" data-v="Workshops" onclick="sfOptionalChip(this)">workshops</button>
+              <button type="button" class="sf-chip multi" data-v="Job roles & industries" onclick="sfOptionalChip(this)">learning roles &amp; industries</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
       <div class="sf-consent" onclick="sfToggleConsent()"><div class="sf-cb" id="sf-cb"></div><div class="sf-ct">i consent to <strong>knock</strong> adding me to a relevant whatsapp group and sending me matched opportunities. popia-aligned. withdraw anytime.</div></div>
       <button class="sf-submit" id="sf-submit" onclick="sfSubmit()">get me found ✓</button>
     </div>
@@ -1119,10 +1256,37 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
       <span class="he-txt"><strong>your data:</strong> we only use it to put you in the right whatsapp group. we won't share anything that identifies you with companies unless we ask you first.</span>
     </div>
 
-    <button class="cta-btn cta-primary" style="width:100%;margin-top:14px;" onclick="closeSheet();openSheet('sheet-form');ph('cta_signup',{from:'pilot_explainer'})">
+    <button class="cta-btn cta-primary" style="width:100%;margin-top:14px;" onclick="closeSheet();openSheet('sheet-form');ph('cta_signup',{from:'pilot_explainer'});track('hero_cta_clicked',{from:'pilot_explainer'})">
       <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up now →</div></div>
       <span style="opacity:.4;">→</span>
     </button>
+  </div>
+</div>
+
+<!-- THEME TOGGLE -->
+<button id="theme-toggle" onclick="openSheet('sheet-theme')" aria-label="theme settings">🎨</button>
+
+<!-- SHEET: THEME -->
+<div class="sheet" id="sheet-theme">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head"><span class="sheet-title">theme</span><button class="sheet-close" onclick="closeSheet()">✕</button></div>
+  <div class="sheet-body">
+    <div class="form-field">
+      <label class="sf-label">background</label>
+      <div class="theme-swatches" id="theme-bg-swatches">
+        <button type="button" class="theme-swatch" data-bg="dark" onclick="setTheme('dark',document.body.dataset.btn||'volt')">dark</button>
+        <button type="button" class="theme-swatch" data-bg="light" onclick="setTheme('light',document.body.dataset.btn||'volt')">light</button>
+        <button type="button" class="theme-swatch" data-bg="purple" onclick="setTheme('purple',document.body.dataset.btn||'volt')">purple</button>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="sf-label">button style</label>
+      <div class="theme-swatches" id="theme-btn-swatches">
+        <button type="button" class="theme-swatch" data-btn="metallic" onclick="setTheme(document.body.dataset.bg||'purple','metallic')">metallic</button>
+        <button type="button" class="theme-swatch" data-btn="volt" onclick="setTheme(document.body.dataset.bg||'purple','volt')">volt</button>
+        <button type="button" class="theme-swatch" data-btn="glass" onclick="setTheme(document.body.dataset.bg||'purple','glass')">glass</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1130,7 +1294,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
 
 <script>
 /* ── CONFIG ── */
-window.KNOCK_APPS_SCRIPT_URL='';
+window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxI8CeMbboWYqMeRLzgiCRfV-V55kv2J26enSWLWTYDqGk3K_Sx5Fikv25ehhQsY7F7Dw/exec';
 const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za'}};
 // real WhatsApp group links — 5 STEM groups + 1 catch-all waiting list.
 // non-STEM (any uni) and any university not in UNI above route to the waiting list.
@@ -1154,11 +1318,101 @@ const SEG={'devsoc':'Developer Society','cs':'Computer Science','is':'Informatio
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
 const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1';
 let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
+let SF_UNI='',SF_UNI_OTHER='',SF_UNI_DOMAIN='',SF_OPTIONAL={lookingFor:[]};
 let GLOBAL_STATS=null; // {likes:N, shares:N} once loaded from a real backend — null means "not connected yet"
 const feed=document.getElementById('feed');
 const slides=document.querySelectorAll('.slide');
 const dots=document.querySelectorAll('.dot');
 let NET=null,CYCLE_TIMER=null;
+
+/* ── EVENT TRACKING / BACKEND QUEUE ──
+   Ported from the legacy sign-up form. track() logs every event locally
+   and additionally queues+flushes a subset (BACKEND_EVENTS) to the Apps
+   Script backend. Calls to track() are additive alongside the existing
+   ph() PostHog calls — neither replaces the other. */
+const STORAGE_EVENTS='knock_signup_events';
+const STORAGE_EVENT_QUEUE='knock_signup_event_queue';
+const BACKEND_EVENTS=new Set(['page_view','hero_cta_clicked','form_started','submit_clicked','submit_success','validation_failed','share_clicked','share_copied']);
+let SESSION_ID=sessionStorage.getItem('knock_sess_id');
+if(!SESSION_ID){SESSION_ID='s_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);sessionStorage.setItem('knock_sess_id',SESSION_ID);}
+
+function track(eventName,props){
+  const evt={e:eventName,t:Date.now(),p:props||{},s:SESSION_ID};
+  const log=JSON.parse(localStorage.getItem(STORAGE_EVENTS)||'[]');
+  log.push(evt);
+  if(log.length>5000)log.splice(0,log.length-5000);
+  localStorage.setItem(STORAGE_EVENTS,JSON.stringify(log));
+  if(BACKEND_EVENTS.has(eventName)&&window.KNOCK_APPS_SCRIPT_URL){
+    const queue=JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE)||'[]');
+    queue.push(evt);
+    localStorage.setItem(STORAGE_EVENT_QUEUE,JSON.stringify(queue));
+    scheduleEventFlush();
+  }
+}
+let _eventFlushTimer=null;
+function scheduleEventFlush(){
+  if(_eventFlushTimer)return;
+  _eventFlushTimer=setTimeout(async()=>{_eventFlushTimer=null;await flushEventQueue();},4000);
+}
+async function flushEventQueue(){
+  const url=window.KNOCK_APPS_SCRIPT_URL;
+  if(!url)return;
+  const queue=JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE)||'[]');
+  if(!queue.length)return;
+  localStorage.setItem(STORAGE_EVENT_QUEUE,'[]');
+  try{
+    await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'events_batch',data:queue})});
+  }catch(e){
+    const cur=JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE)||'[]');
+    localStorage.setItem(STORAGE_EVENT_QUEUE,JSON.stringify(queue.concat(cur)));
+  }
+}
+window.addEventListener('beforeunload',()=>{
+  const url=window.KNOCK_APPS_SCRIPT_URL;
+  const queue=JSON.parse(localStorage.getItem(STORAGE_EVENT_QUEUE)||'[]');
+  if(url&&queue.length&&navigator.sendBeacon){
+    const blob=new Blob([JSON.stringify({type:'events_batch',data:queue})],{type:'text/plain;charset=utf-8'});
+    navigator.sendBeacon(url,blob);
+    localStorage.setItem(STORAGE_EVENT_QUEUE,'[]');
+  }
+});
+async function sendToBackend(submission){
+  const url=window.KNOCK_APPS_SCRIPT_URL;
+  if(!url){console.info('No backend URL set — submission saved locally only.');return;}
+  await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'submission',data:submission})});
+}
+
+/* ── THEME SWITCHER ── */
+function setTheme(bg,btn){
+  document.body.dataset.bg=bg;
+  document.body.dataset.btn=btn;
+  localStorage.setItem('knock_theme_combo',JSON.stringify({bg,btn}));
+  syncThemeSwatchUI();
+}
+function syncThemeSwatchUI(){
+  var bg=document.body.dataset.bg,btn=document.body.dataset.btn;
+  document.querySelectorAll('#theme-bg-swatches .theme-swatch').forEach(function(el){
+    el.classList.toggle('sel',el.dataset.bg===bg);
+  });
+  document.querySelectorAll('#theme-btn-swatches .theme-swatch').forEach(function(el){
+    el.classList.toggle('sel',el.dataset.btn===btn);
+  });
+}
+/* Restore a previously-saved theme combo. Placed here (top-level, runs
+   immediately on parse) rather than inside init() because it only touches
+   document.body.dataset — no TDZ-sensitive identifiers are referenced.
+   Per spec: only set dataset.bg/btn if a saved combo already exists,
+   otherwise leave attributes unset so CSS var fallbacks keep today's
+   exact appearance for users who haven't opted into a theme yet. */
+(function restoreTheme(){
+  try{
+    var raw=localStorage.getItem('knock_theme_combo');
+    if(!raw)return;
+    var saved=JSON.parse(raw)||{};
+    if(saved.bg)document.body.dataset.bg=saved.bg;
+    if(saved.btn)document.body.dataset.btn=saved.btn;
+  }catch(e){}
+})();
 
 /* ── SWIPE COACHMARK (first visit only) ── */
 const KEY_SWIPE_SEEN='knock_swipe_seen_v1';
@@ -1195,10 +1449,23 @@ function maybeShowSwipeCoach(){
   const seg=SEG[PAGE_SEG]||PAGE_SEG.replace(/-/g,' ');
   document.getElementById('s0-uni').textContent=u.display.toLowerCase()+'.';
   document.getElementById('s0-seg').textContent=seg.toLowerCase()+' · '+u.display.toLowerCase();
-  document.getElementById('sf-uni').value=u.full||PAGE_UNI;
   document.getElementById('sf-email').placeholder=u.emailHint;
   document.getElementById('sf-wa-btn').href=getWaLink();
   document.getElementById('copy-url-txt').textContent=window.location.href;
+  // Pre-select the matching university chip from PAGE_UNI/u.full, if one
+  // of the 5 named chips matches. PAGE_UNI keys ('uct','wits','stellies',
+  // 'up','ukzn') are mapped to chip data-v values here; 'up' (UNI key) maps
+  // to the 'Pretoria' chip since that's the chip's display label. If no
+  // match is found, judgment call: leave unselected rather than defaulting
+  // to 'Other', since an unrecognized PAGE_UNI may still resolve via the
+  // PAGE_UNI/u.full fallback at submit time (see sfSubmit()).
+  var uniChipMap={uct:'UCT',wits:'Wits',stellies:'Stellies',up:'Pretoria',ukzn:'UKZN'};
+  var matchVal=uniChipMap[PAGE_UNI];
+  if(matchVal){
+    var matchChip=document.querySelector('#sf-uni-chips .sf-chip[data-v="'+matchVal+'"]');
+    if(matchChip)sfUniChip(matchChip,true);
+  }
+  syncThemeSwatchUI();
   const city=u.location;
   // pack geo is set via OPPORTUNITIES array — no inline card refs needed
   // pack geo bias now handled by OPPORTUNITIES array
@@ -1222,6 +1489,7 @@ function maybeShowSwipeCoach(){
   maybeShowSwipeCoach();
   setTimeout(hideSwipeCoach,7000);
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
+  track('page_view',{uni:PAGE_UNI,seg:PAGE_SEG});
   // Defer data-dependent calls until after full script execution
   // (OPPORTUNITIES var is assigned after this IIFE in the file)
   setTimeout(function(){
@@ -1418,8 +1686,10 @@ function openSheet(id){
   document.getElementById('overlay').classList.add('show');
   document.getElementById(id).classList.add('open');
   if(id==='sheet-pilot')resetPilotDeck();
+  if(id==='sheet-theme')syncThemeSwatchUI();
   LAST_OPEN_SHEET=id;
   ph('sheet_open',{sheet:id});
+  if(id==='sheet-form')track('form_started',{uni:PAGE_UNI,seg:PAGE_SEG});
 }
 function closeSheet(){
   document.getElementById('overlay').classList.remove('show');
@@ -1467,21 +1737,106 @@ document.addEventListener('click',function(e){
 });
 
 /* ── FORM ── */
-function sfChip(el){document.querySelectorAll('.sf-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');SF_FIELD=el.dataset.v;var waBtn=document.getElementById('sf-wa-btn');if(waBtn)waBtn.href=getWaLink();ph('field_selected',{field:SF_FIELD,uni:PAGE_UNI});}
+function sfChip(el){el.parentElement.querySelectorAll('.sf-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');SF_FIELD=el.dataset.v;var waBtn=document.getElementById('sf-wa-btn');if(waBtn)waBtn.href=getWaLink();ph('field_selected',{field:SF_FIELD,uni:PAGE_UNI});}
+/* University chip group (single-select). "Other" reveals #universityOther
+   and switches #sf-email to a free-input placeholder; a named uni clears/
+   hides the other-input and sets the email placeholder to that uni's
+   domain hint, e.g. student@myuct.ac.za. silent=true suppresses the ph()
+   call, used when init() pre-selects a chip programmatically. */
+function sfUniChip(el,silent){
+  document.querySelectorAll('#sf-uni-chips .sf-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  SF_UNI=el.dataset.v;
+  var otherInput=document.getElementById('universityOther');
+  var emailInput=document.getElementById('sf-email');
+  var emailRow=document.getElementById('sfEmailRow');
+  var emailDomainEl=document.getElementById('sfEmailDomain');
+  SF_UNI_DOMAIN=el.dataset.domain||'';
+  if(SF_UNI==='Other'){
+    if(otherInput)otherInput.hidden=false;
+    if(emailRow)emailRow.classList.add('free');
+    if(emailDomainEl)emailDomainEl.textContent='';
+    if(emailInput)emailInput.placeholder='you@your.uni.email';
+  }else{
+    if(otherInput){otherInput.hidden=true;otherInput.value='';SF_UNI_OTHER='';}
+    var domain=SF_UNI_DOMAIN;
+    if(domain){
+      if(emailRow)emailRow.classList.remove('free');
+      if(emailDomainEl)emailDomainEl.textContent='@'+domain;
+      if(emailInput)emailInput.placeholder='your.username';
+    }else{
+      if(emailRow)emailRow.classList.add('free');
+      if(emailDomainEl)emailDomainEl.textContent='';
+      if(emailInput)emailInput.placeholder='student@uct.ac.za';
+    }
+  }
+  if(!silent)ph('university_selected',{uni_chip:SF_UNI});
+}
+document.addEventListener('input',function(e){
+  if(e.target&&e.target.id==='universityOther')SF_UNI_OTHER=e.target.value.trim();
+  if(e.target&&e.target.id==='degreeOther')SF_OPTIONAL.degree=e.target.value.trim()?('Other: '+e.target.value.trim()):'Other';
+});
+/* Generic handler for the optional-details chip groups (year/degree/gpa
+   single-select, lookingFor multi-select via data-multi="true"). Stores
+   onto SF_OPTIONAL.<group>. degree="Other" reveals #degreeOther. */
+function sfOptionalChip(el){
+  var group=el.closest('.sf-chips');
+  if(!group)return;
+  var key=group.dataset.chipGroup;
+  var multi=group.dataset.multi==='true';
+  if(multi){
+    el.classList.toggle('sel');
+    var vals=Array.prototype.slice.call(group.querySelectorAll('.sf-chip.sel')).map(c=>c.dataset.v);
+    SF_OPTIONAL[key]=vals;
+  }else{
+    Array.prototype.slice.call(group.querySelectorAll('.sf-chip')).forEach(c=>c.classList.remove('sel'));
+    el.classList.add('sel');
+    SF_OPTIONAL[key]=el.dataset.v;
+    if(key==='degree'){
+      var degreeOther=document.getElementById('degreeOther');
+      if(degreeOther){
+        var isOther=el.dataset.v==='Other';
+        degreeOther.hidden=!isOther;
+        if(!isOther)degreeOther.value='';
+      }
+    }
+  }
+  ph('optional_field_selected',{group:key,value:SF_OPTIONAL[key]});
+}
 function sfToggleConsent(){SF_CONSENT=!SF_CONSENT;const cb=document.getElementById('sf-cb');cb.classList.toggle('on',SF_CONSENT);cb.innerHTML=SF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';ph('consent_toggled',{on:SF_CONSENT});}
 async function sfSubmit(){
+  track('submit_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});
+  const u=UNI[PAGE_UNI]||{full:PAGE_UNI};
+  const uniFallback=SF_UNI?(SF_UNI==='Other'?SF_UNI_OTHER:SF_UNI):(u.full||PAGE_UNI);
   const phone=document.getElementById('sf-phone').value.trim();
-  if(!phone||phone.length<9){showToast('valid number please');ph('form_field_error',{field:'phone'});return;}
-  if(!SF_FIELD){showToast('pick your field');ph('form_field_error',{field:'field_of_study'});return;}
-  if(!SF_CONSENT){showToast('tick consent to continue');ph('form_field_error',{field:'consent'});return;}
+  if(!phone||phone.length<9){showToast('valid number please');ph('form_field_error',{field:'phone'});track('validation_failed',{field:'phone'});return;}
+  if(!uniFallback){showToast('pick your university');ph('form_field_error',{field:'university'});track('validation_failed',{field:'university'});return;}
+  if(!SF_FIELD){showToast('pick your field');ph('form_field_error',{field:'field_of_study'});track('validation_failed',{field:'field_of_study'});return;}
+  if(!SF_CONSENT){showToast('tick consent to continue');ph('form_field_error',{field:'consent'});track('validation_failed',{field:'consent'});return;}
   const btn=document.getElementById('sf-submit');btn.disabled=true;btn.textContent='sending…';
   ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
-  const u=UNI[PAGE_UNI]||{full:PAGE_UNI};
-  const payload={university:u.full,field:SF_FIELD,phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),email:document.getElementById('sf-email').value.trim(),group:isWaitlisted()?'waitlist':(PAGE_UNI+'_stem'),source:window.location.pathname.replace(/^\//,''),submitted_at:new Date().toISOString(),consent:true};
+  const emailRaw=document.getElementById('sf-email').value.trim();
+  const finalEmail=(SF_UNI==='Other'||!SF_UNI_DOMAIN||!emailRaw)?emailRaw:(emailRaw+'@'+SF_UNI_DOMAIN);
+  const payload={
+    university:uniFallback,
+    field:SF_FIELD,
+    phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),
+    email:finalEmail,
+    year:SF_OPTIONAL.year||'',
+    degree:SF_OPTIONAL.degree||'',
+    gpa:SF_OPTIONAL.gpa||'',
+    lookingFor:SF_OPTIONAL.lookingFor||[],
+    group:isWaitlisted()?'waitlist':(PAGE_UNI+'_stem'),
+    source:window.location.pathname.replace(/^\//,''),
+    submitted_at:new Date().toISOString(),
+    consent:true
+  };
   try{
     const url=window.KNOCK_APPS_SCRIPT_URL;
     if(url)await fetch(url,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'submit',...payload}),headers:{'Content-Type':'text/plain'}});
+    sendToBackend(payload).catch(function(){});
     ph('signup_success',{uni:PAGE_UNI,seg:PAGE_SEG});
+    track('submit_success',{uni:PAGE_UNI,seg:PAGE_SEG,university:uniFallback});
     localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshP3(); refreshS3();
     document.getElementById('sf-form-body').style.display='none';
     document.getElementById('sf-done').style.display='block';
@@ -1547,8 +1902,8 @@ function refreshPDFGate(){
 }
 
 /* ── SHARE ── */
-async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});bumpGlobalStat('shares');if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:window.location.href});}catch(_){}}else copyLink();}
-function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');ph('copy_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});}
+async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});track('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});bumpGlobalStat('shares');if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:window.location.href});}catch(_){}}else copyLink();}
+function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');ph('copy_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});track('share_copied',{uni:PAGE_UNI,seg:PAGE_SEG});}
 
 /* ── TOAST / PH ── */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
