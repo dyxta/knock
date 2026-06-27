@@ -816,6 +816,7 @@ body.ops #opsPanel{display:block;}
     <div class="a-stat"><div class="a-stat-val" id="aSignups">–</div><div class="a-stat-label">signups</div></div>
     <div class="a-stat"><div class="a-stat-val" id="aCtaClicks">–</div><div class="a-stat-label">cta clicks</div></div>
     <div class="a-stat"><div class="a-stat-val" id="aShareTotal">–</div><div class="a-stat-label">shares</div></div>
+    <div class="a-stat"><div class="a-stat-val" id="aLikeTotal">–</div><div class="a-stat-label">likes</div></div>
     <div class="a-stat"><div class="a-stat-val" id="aConvPct">–</div><div class="a-stat-label">conversion</div></div>
   </div>
   <div class="a-section">
@@ -825,6 +826,10 @@ body.ops #opsPanel{display:block;}
   <div class="a-section">
     <h4>by university</h4>
     <div id="aUniSplit"></div>
+  </div>
+  <div class="a-section">
+    <h4>likes by opportunity slide</h4>
+    <div id="aLikesBySlide"></div>
   </div>
   <div class="a-section">
     <h4>approval pipeline</h4>
@@ -1465,7 +1470,7 @@ let NET=null,CYCLE_TIMER=null;
    ph() PostHog calls — neither replaces the other. */
 const STORAGE_EVENTS='knock_signup_events';
 const STORAGE_EVENT_QUEUE='knock_signup_event_queue';
-const BACKEND_EVENTS=new Set(['page_view','hero_cta_clicked','form_started','submit_clicked','submit_success','validation_failed','share_clicked','share_copied']);
+const BACKEND_EVENTS=new Set(['page_view','hero_cta_clicked','form_started','submit_clicked','submit_success','validation_failed','share_clicked','share_copied','like']);
 let SESSION_ID=sessionStorage.getItem('knock_sess_id');
 if(!SESSION_ID){SESSION_ID='s_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);sessionStorage.setItem('knock_sess_id',SESSION_ID);}
 
@@ -1596,6 +1601,12 @@ async function loadAdminData(){
     document.getElementById('aUpdated').textContent='failed to load data.';
   }
 }
+function opsEventProps(e){
+  if(e.props&&typeof e.props==='object')return e.props;
+  if(typeof e.props==='string'){try{return JSON.parse(e.props);}catch(_){return{};}}
+  return {};
+}
+var SLIDE_LABELS=['intro / door','starter pack','bonus opps','thank you · share'];
 function renderAdminData(data){
   var events=data.events||[];
   var subs=data.submissions||[];
@@ -1608,12 +1619,23 @@ function renderAdminData(data){
   document.getElementById('aShareTotal').textContent=(counts.share_clicked||0)+(counts.share_copied||0);
   var pv=counts.page_view||0;
   document.getElementById('aConvPct').textContent=pv?Math.round(subs.length/pv*100)+'%':'–';
-  var funnelSteps=[['page_view','viewed'],['hero_cta_clicked','clicked cta'],['form_started','started form'],['submit_success','signed up']];
+  /* split hero_cta_clicked by source (main door CTA vs the "what's the pilot?" sheet CTA) */
+  var ctaBySource={};
+  events.forEach(function(e){
+    if(e.event!=='hero_cta_clicked')return;
+    var from=opsEventProps(e).from||'unknown';
+    ctaBySource[from]=(ctaBySource[from]||0)+1;
+  });
+  var ctaMain=ctaBySource.slide1||0;
+  var ctaPilot=ctaBySource.pilot_explainer||0;
+  var funnelSteps=[['page_view','viewed'],['hero_cta_clicked','clicked cta (any)'],['form_started','started form'],['submit_success','signed up']];
   var maxF=Math.max.apply(null,funnelSteps.map(function(s){return counts[s[0]]||0;}).concat([1]));
   document.getElementById('aFunnel').innerHTML=funnelSteps.map(function(s){
     var v=counts[s[0]]||0;
     return '<div class="a-bar-row"><div class="a-bar-label">'+s[1]+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxF*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
-  }).join('');
+  }).join('')+
+  '<div class="a-bar-row" style="margin-top:8px;"><div class="a-bar-label">　↳ main door cta</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(ctaMain/Math.max(ctaMain,ctaPilot,1)*100)+'%"></div></div><div class="a-bar-val">'+ctaMain+'</div></div>'+
+  '<div class="a-bar-row"><div class="a-bar-label">　↳ "what\'s the pilot?"</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(ctaPilot/Math.max(ctaMain,ctaPilot,1)*100)+'%"></div></div><div class="a-bar-val">'+ctaPilot+'</div></div>';
   var uniCounts={};
   subs.forEach(function(s){var k=s.university||'unknown';uniCounts[k]=(uniCounts[k]||0)+1;});
   var maxU=Math.max.apply(null,Object.values(uniCounts).concat([1]));
@@ -1621,6 +1643,20 @@ function renderAdminData(data){
     var v=uniCounts[k];
     return '<div class="a-bar-row"><div class="a-bar-label">'+k+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxU*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
   }).join(''):'<div class="a-empty">no signups yet.</div>';
+  /* likes — total + per-slide breakdown (heart-tap events carry {slide:i}) */
+  var likeTotal=0;var likesBySlide=[0,0,0,0];
+  events.forEach(function(e){
+    if(e.event!=='like')return;
+    likeTotal++;
+    var slide=opsEventProps(e).slide;
+    if(typeof slide==='number'&&likesBySlide[slide]!==undefined)likesBySlide[slide]++;
+  });
+  document.getElementById('aLikeTotal').textContent=likeTotal;
+  var maxL=Math.max.apply(null,likesBySlide.concat([1]));
+  document.getElementById('aLikesBySlide').innerHTML=likeTotal?SLIDE_LABELS.map(function(label,i){
+    var v=likesBySlide[i]||0;
+    return '<div class="a-bar-row"><div class="a-bar-label">'+label+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxL*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
+  }).join(''):'<div class="a-empty">no likes yet.</div>';
   document.getElementById('aSubmissions').innerHTML=subs.length?(
     '<table class="a-table"><thead><tr><th>when</th><th>university</th><th>field</th><th>phone</th><th>email</th></tr></thead><tbody>'+
     subs.slice().reverse().map(function(s){
@@ -1659,7 +1695,7 @@ function renderAdminData(data){
 function exportSubmissionsCsv(){
   if(!ADMIN_DATA||!ADMIN_DATA.submissions||!ADMIN_DATA.submissions.length){showToast('nothing to export');return;}
   var subs=ADMIN_DATA.submissions;
-  var cols=['submitted_at','university','field','phone','email','year','degree','gpa'];
+  var cols=['ref','state','submitted_at','university','field','phone','email','year','degree','gpa'];
   var rows=[cols.join(',')].concat(subs.map(function(s){
     return cols.map(function(c){return JSON.stringify(s[c]!=null?String(s[c]):'');}).join(',');
   }));
