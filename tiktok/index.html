@@ -736,6 +736,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 
 /* ── ADMIN STATS PAGE (?stats=1, no password — public analytics view) ── */
 body.admin #feed,body.admin #theme-toggle,body.admin .toast{display:none!important;}
+body.admin,body.ops{height:auto!important;overflow-y:auto!important;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
 #adminPanel{display:none;}
 body.admin #adminPanel{display:block;}
 #adminPanel{max-width:980px;margin:0 auto;padding:28px 20px 60px;font-family:var(--font-b);color:var(--ink);}
@@ -1707,6 +1708,7 @@ function exportSubmissionsCsv(){
 }
 function initAdminPage(){
   document.body.classList.add('admin');
+  document.documentElement.style.cssText='height:auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;';
   loadAdminData();
 }
 
@@ -1797,6 +1799,7 @@ async function opsSetState(ref,phone,newState,cardId){
 }
 function initOpsPage(){
   document.body.classList.add('ops');
+  document.documentElement.style.cssText='height:auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;';
   loadOpsData();
 }
 
