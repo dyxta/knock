@@ -180,6 +180,33 @@ let ALL_OPEN_OPPS=[];
 let EXISTING_PACKS=[];
 let SELECTED_IDS=new Set();
 
+/* ── JSONP helper ──
+   ?action=opportunities (and starterpack_save below) requires a verified
+   Google identity. Apps Script checks this by 302-redirecting the request
+   through accounts.google.com — and browsers block fetch()/XHR from
+   following a cross-origin redirect into a login page (shows up as a CORS
+   error in devtools, not an auth error). A plain <script src="..."> tag
+   isn't subject to that restriction, so JSONP is the only transport that
+   actually works here for cross-origin pages like this one. The backend
+   already supports ?callback=NAME for this. */
+let _jsonpN=0;
+function jsonpRequest(url){
+  return new Promise(function(resolve,reject){
+    var cbName='_jsonp_cb_'+(_jsonpN++)+'_'+Date.now();
+    var script=document.createElement('script');
+    var timeout=setTimeout(function(){cleanup();reject(new Error('timed out'));},15000);
+    function cleanup(){
+      clearTimeout(timeout);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+    }
+    window[cbName]=function(data){cleanup();resolve(data);};
+    script.onerror=function(){cleanup();reject(new Error('script load failed'));};
+    script.src=url+(url.indexOf('?')>-1?'&':'?')+'callback='+cbName;
+    document.head.appendChild(script);
+  });
+}
+
 async function checkAccessAndInit(){
   const gate=document.getElementById('gate');
   const gateMsg=document.getElementById('gate-msg');
@@ -191,8 +218,7 @@ async function checkAccessAndInit(){
     return;
   }
   try{
-    const res=await fetch(url+'?action=opportunities');
-    const data=await res.json();
+    const data=await jsonpRequest(url+'?action=opportunities');
     if(data&&data.error){
       gate.style.display='block';
       gateMsg.textContent=data.needsLogin
@@ -305,12 +331,13 @@ async function savePack(){
   btn.disabled=true;btn.textContent='saving…';
   status.textContent='';status.className='status-msg';
   try{
-    const res=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({type:'starterpack_save',data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
-    });
-    const json=await res.json();
+    // Sent as a GET via JSONP, not POST — same reason as checkAccessAndInit()
+    // above: this is an authenticated call, so plain fetch() can't survive
+    // the accounts.google.com redirect cross-origin. <script> tags can't
+    // carry a POST body, so the payload travels as a URL-encoded `data`
+    // query param instead.
+    const payload=encodeURIComponent(JSON.stringify({audience:aud,channel:ch,label:label,opportunities:opportunities}));
+    const json=await jsonpRequest(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpack_save&data='+payload);
     if(json&&json.ok){
       status.textContent='saved ('+json.mode+') — '+opportunities.length+' opportunities for '+aud+'/'+ch+'.';
       status.classList.add('ok');
