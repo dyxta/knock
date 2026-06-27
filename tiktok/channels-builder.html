@@ -229,7 +229,11 @@ let BONUS_IDS=new Set();  // 'opp-N' keys into ALL_OPEN_OPPS, exactly 3
    page (you'll see a CORS error in devtools, not an auth error). A plain
    <script src="..."> tag isn't subject to that restriction, so JSONP is
    the only transport that actually works here for cross-origin pages
-   like this one. The backend already supports ?callback=NAME for this. */
+   like this one. The backend supports ?cb=NAME for this — NOT
+   ?callback=NAME: "callback" is apparently a reserved param name on the
+   Drive/Apps Script proxy layer in front of /exec, and using it makes
+   the request get swallowed into a "Sorry, unable to open the file at
+   present" Drive error page before doGet ever runs. "cb" sidesteps that. */
 let _jsonpN=0;
 function jsonpRequest(url){
   return new Promise(function(resolve,reject){
@@ -243,7 +247,7 @@ function jsonpRequest(url){
     }
     window[cbName]=function(data){cleanup();resolve(data);};
     script.onerror=function(){cleanup();reject(new Error('script load failed'));};
-    script.src=url+(url.indexOf('?')>-1?'&':'?')+'callback='+cbName;
+    script.src=url+(url.indexOf('?')>-1?'&':'?')+'cb='+cbName;
     document.head.appendChild(script);
   });
 }
