@@ -733,9 +733,85 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 /* ── TOAST ────────────────────────────────── */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── ADMIN STATS PAGE (?stats=1, server-password gated) ── */
+body.admin #feed,body.admin #theme-toggle,body.admin .toast{display:none!important;}
+#adminGate,#adminPanel{display:none;}
+body.admin #adminGate{display:flex;}
+body.admin.unlocked #adminPanel{display:block;}
+#adminGate{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:24px;background:var(--off);font-family:var(--font-b);}
+#adminGate h3{font-size:18px;font-weight:800;color:var(--ink);margin:0;}
+.gate-sub{font-size:13px;color:var(--g500);text-align:center;max-width:260px;line-height:1.5;}
+#gatePass{width:100%;max-width:260px;background:var(--white);border:1.5px solid var(--g200);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink);font-family:var(--font-b);outline:none;}
+#gatePass:focus{border-color:var(--purple);}
+.gate-err{font-size:12px;color:#C0392B;display:none;}
+.gate-err.show{display:block;}
+#gateUnlock{background:var(--purple);color:var(--white);border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;width:100%;max-width:260px;}
+#gateUnlock:disabled{opacity:.5;}
+#adminPanel{max-width:980px;margin:0 auto;padding:28px 20px 60px;font-family:var(--font-b);color:var(--ink);}
+#adminPanel h2{font-size:20px;font-weight:800;margin:0 0 4px;}
+.a-sub{font-size:13px;color:var(--g500);margin-bottom:22px;}
+.a-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:24px;}
+.a-stat{background:var(--white);border:1px solid var(--g200);border-radius:12px;padding:14px 16px;}
+.a-stat-val{font-size:22px;font-weight:800;color:var(--purple);}
+.a-stat-label{font-size:11px;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+.a-section{margin-bottom:26px;}
+.a-section h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g500);margin:0 0 10px;}
+.a-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px;}
+.a-bar-label{width:120px;flex-shrink:0;color:var(--g700);}
+.a-bar-track{flex:1;background:var(--g200);border-radius:6px;height:18px;overflow:hidden;}
+.a-bar-fill{background:var(--purple);height:100%;border-radius:6px;}
+.a-bar-val{width:40px;text-align:right;flex-shrink:0;font-weight:700;}
+.a-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.a-actions button{background:var(--white);border:1.5px solid var(--g200);border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:600;color:var(--g700);cursor:pointer;font-family:var(--font-b);}
+.a-actions button:hover{border-color:var(--purple);color:var(--purple);}
+.a-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.a-table th{text-align:left;padding:8px 10px;color:var(--g500);font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;border-bottom:1.5px solid var(--g200);}
+.a-table td{padding:8px 10px;border-bottom:1px solid var(--g200);color:var(--g700);}
+.a-empty{font-size:13px;color:var(--g500);padding:20px 0;}
 </style>
 </head>
 <body>
+
+<!-- ADMIN STATS PAGE: only shown when ?stats=1 is in the URL (toggled via body.admin).
+     Password is NEVER checked here — gateUnlock() POSTs it to the Apps Script
+     backend (window.KNOCK_APPS_SCRIPT_URL) which validates it server-side against
+     a Script Property. See setup instructions provided alongside this file. -->
+<div id="adminGate">
+  <h3>knock · stats</h3>
+  <div class="gate-sub">enter the analytics password to view signups + funnel data.</div>
+  <input type="password" id="gatePass" placeholder="password" autocomplete="off"/>
+  <div class="gate-err" id="gateErr">wrong password.</div>
+  <button id="gateUnlock" onclick="attemptUnlock()">unlock</button>
+</div>
+<div id="adminPanel">
+  <h2>knock · analytics</h2>
+  <div class="a-sub" id="aUpdated">loading…</div>
+  <div class="a-stats-grid">
+    <div class="a-stat"><div class="a-stat-val" id="aPageViews">–</div><div class="a-stat-label">page views</div></div>
+    <div class="a-stat"><div class="a-stat-val" id="aSignups">–</div><div class="a-stat-label">signups</div></div>
+    <div class="a-stat"><div class="a-stat-val" id="aCtaClicks">–</div><div class="a-stat-label">cta clicks</div></div>
+    <div class="a-stat"><div class="a-stat-val" id="aShareTotal">–</div><div class="a-stat-label">shares</div></div>
+    <div class="a-stat"><div class="a-stat-val" id="aConvPct">–</div><div class="a-stat-label">conversion</div></div>
+  </div>
+  <div class="a-section">
+    <h4>funnel</h4>
+    <div id="aFunnel"></div>
+  </div>
+  <div class="a-section">
+    <h4>by university</h4>
+    <div id="aUniSplit"></div>
+  </div>
+  <div class="a-actions">
+    <button onclick="loadAdminData()">refresh</button>
+    <button onclick="exportSubmissionsCsv()">export csv</button>
+    <button onclick="window.location.href=window.location.pathname">back to flyer</button>
+  </div>
+  <div class="a-section">
+    <h4>signups</h4>
+    <div id="aSubmissions"><div class="a-empty">loading…</div></div>
+  </div>
+</div>
 
 <!-- INLINE LOGOS -->
 <div style="display:none">
@@ -1294,7 +1370,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 
 <script>
 /* ── CONFIG ── */
-window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxI8CeMbboWYqMeRLzgiCRfV-V55kv2J26enSWLWTYDqGk3K_Sx5Fikv25ehhQsY7F7Dw/exec';
+window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
 const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za'}};
 // real WhatsApp group links — 5 STEM groups + 1 catch-all waiting list.
 // non-STEM (any uni) and any university not in UNI above route to the waiting list.
@@ -1440,6 +1516,115 @@ function maybeShowSwipeCoach(){
   },1100);
 }
 
+/* ── ADMIN STATS PAGE ──
+   Visiting the flyer with ?stats=1 in the URL shows a password gate instead
+   of the normal feed. The password is validated server-side: gateUnlock()
+   POSTs { type:'auth', password } to window.KNOCK_APPS_SCRIPT_URL, which
+   must compare it against a Script Property (e.g. STATS_PASSWORD) and
+   return { ok:true, token }. The password string never appears in this
+   file. The token is cached in sessionStorage so the gate isn't re-shown
+   on every reload within the same browser tab session. */
+function isAdminPage(){
+  return new URLSearchParams(window.location.search).get('stats')==='1';
+}
+async function attemptUnlock(){
+  var pass=document.getElementById('gatePass').value;
+  var btn=document.getElementById('gateUnlock');
+  var err=document.getElementById('gateErr');
+  err.classList.remove('show');
+  if(!pass)return;
+  var url=window.KNOCK_APPS_SCRIPT_URL;
+  if(!url){err.textContent='backend not configured.';err.classList.add('show');return;}
+  btn.disabled=true;btn.textContent='checking…';
+  try{
+    const res=await fetch(url,{method:'POST',body:JSON.stringify({type:'auth',password:pass}),headers:{'Content-Type':'text/plain'}});
+    const data=await res.json();
+    if(data&&data.ok&&data.token){
+      sessionStorage.setItem('knock_admin_unlocked',data.token);
+      document.body.classList.add('unlocked');
+      loadAdminData();
+    }else{
+      err.textContent='wrong password.';err.classList.add('show');
+    }
+  }catch(e){
+    err.textContent='could not reach backend.';err.classList.add('show');
+  }
+  btn.disabled=false;btn.textContent='unlock';
+}
+let ADMIN_DATA=null;
+async function loadAdminData(){
+  var url=window.KNOCK_APPS_SCRIPT_URL;
+  var token=sessionStorage.getItem('knock_admin_unlocked');
+  if(!url||!token)return;
+  document.getElementById('aUpdated').textContent='loading…';
+  try{
+    const res=await fetch(url+'?action=full&token='+encodeURIComponent(token),{method:'GET'});
+    const data=await res.json();
+    ADMIN_DATA=data;
+    renderAdminData(data);
+  }catch(e){
+    document.getElementById('aUpdated').textContent='failed to load data.';
+  }
+}
+function renderAdminData(data){
+  var events=data.events||[];
+  var subs=data.submissions||[];
+  document.getElementById('aUpdated').textContent='updated '+new Date().toLocaleString();
+  var counts={};
+  events.forEach(function(e){counts[e.event]=(counts[e.event]||0)+1;});
+  document.getElementById('aPageViews').textContent=counts.page_view||0;
+  document.getElementById('aSignups').textContent=subs.length;
+  document.getElementById('aCtaClicks').textContent=counts.hero_cta_clicked||0;
+  document.getElementById('aShareTotal').textContent=(counts.share_clicked||0)+(counts.share_copied||0);
+  var pv=counts.page_view||0;
+  document.getElementById('aConvPct').textContent=pv?Math.round(subs.length/pv*100)+'%':'–';
+  var funnelSteps=[['page_view','viewed'],['hero_cta_clicked','clicked cta'],['form_started','started form'],['submit_success','signed up']];
+  var maxF=Math.max.apply(null,funnelSteps.map(function(s){return counts[s[0]]||0;}).concat([1]));
+  document.getElementById('aFunnel').innerHTML=funnelSteps.map(function(s){
+    var v=counts[s[0]]||0;
+    return '<div class="a-bar-row"><div class="a-bar-label">'+s[1]+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxF*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
+  }).join('');
+  var uniCounts={};
+  subs.forEach(function(s){var k=s.university||'unknown';uniCounts[k]=(uniCounts[k]||0)+1;});
+  var maxU=Math.max.apply(null,Object.values(uniCounts).concat([1]));
+  document.getElementById('aUniSplit').innerHTML=Object.keys(uniCounts).length?Object.keys(uniCounts).map(function(k){
+    var v=uniCounts[k];
+    return '<div class="a-bar-row"><div class="a-bar-label">'+k+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxU*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
+  }).join(''):'<div class="a-empty">no signups yet.</div>';
+  document.getElementById('aSubmissions').innerHTML=subs.length?(
+    '<table class="a-table"><thead><tr><th>when</th><th>university</th><th>field</th><th>phone</th><th>email</th></tr></thead><tbody>'+
+    subs.slice().reverse().map(function(s){
+      return '<tr><td>'+(s.submitted_at?new Date(s.submitted_at).toLocaleString():'–')+'</td><td>'+(s.university||'')+'</td><td>'+(s.field||'')+'</td><td>'+(s.phone||'')+'</td><td>'+(s.email||'')+'</td></tr>';
+    }).join('')+
+    '</tbody></table>'
+  ):'<div class="a-empty">no signups yet.</div>';
+}
+function exportSubmissionsCsv(){
+  if(!ADMIN_DATA||!ADMIN_DATA.submissions||!ADMIN_DATA.submissions.length){showToast('nothing to export');return;}
+  var subs=ADMIN_DATA.submissions;
+  var cols=['submitted_at','university','field','phone','email','year','degree','gpa'];
+  var rows=[cols.join(',')].concat(subs.map(function(s){
+    return cols.map(function(c){return JSON.stringify(s[c]!=null?String(s[c]):'');}).join(',');
+  }));
+  var blob=new Blob([rows.join('\n')],{type:'text/csv'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='knock_signups_'+Date.now()+'.csv';
+  a.click();
+}
+function initAdminPage(){
+  document.body.classList.add('admin');
+  var savedToken=sessionStorage.getItem('knock_admin_unlocked');
+  if(savedToken){
+    document.body.classList.add('unlocked');
+    loadAdminData();
+  }
+  document.getElementById('gatePass').addEventListener('keydown',function(e){if(e.key==='Enter')attemptUnlock();});
+}
+if(isAdminPage()){
+  initAdminPage();
+}else{
+
 /* ── INIT ── */
 (function init(){
   const path=window.location.pathname.replace(/^\//,'');
@@ -1500,6 +1685,8 @@ function maybeShowSwipeCoach(){
     refreshPDFGate();
   },0);
 })();
+
+} // end isAdminPage() else-branch
 
 /* ── NETWORK CANVAS ── */
 function initNetwork(){
