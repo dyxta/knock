@@ -29,11 +29,14 @@ module.exports = async function handler(req, res) {
     return {
       code,
       shortUrl:  `https://go.knocktalent.co.za/${code}`,
+      type:      rec.type || 'campaign',
       dest:      rec.dest,
       org:       rec.org,
       source:    rec.source,
       medium:    rec.medium,
       wave:      rec.wave,
+      audience:  rec.audience,
+      ch:        rec.ch,
       createdAt: rec.createdAt,
       clicks:    parseInt(clicks[i] || 0, 10)
     };

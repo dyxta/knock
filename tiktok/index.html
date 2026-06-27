@@ -1802,6 +1802,11 @@ if(isAdminPage()){
   setTimeout(hideSwipeCoach,7000);
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG,audience:PAGE_AUDIENCE,ch:PAGE_CH});
   track('page_view',{uni:PAGE_UNI,seg:PAGE_SEG,audience:PAGE_AUDIENCE,ch:PAGE_CH});
+  // Anonymous channel-link landing signal — only fires when the visitor
+  // arrived via a go.knocktalent.co.za channels short link (both params
+  // present). No PII: just which audience+channel combo landed, for
+  // measuring channel performance in PostHog.
+  if(PAGE_AUDIENCE&&PAGE_CH)ph('channel_link_landed',{audience:PAGE_AUDIENCE,ch:PAGE_CH});
   // Defer data-dependent calls until after full script execution
   // (OPPORTUNITIES var is assigned after this IIFE in the file)
   setTimeout(function(){
@@ -2247,9 +2252,12 @@ function applyStarterPack(){
     var packs=(data&&data.packs)||[];
     var match=packs.find(function(p){return p.audience===PAGE_AUDIENCE&&p.channel===PAGE_CH;});
     if(match&&Array.isArray(match.opportunities)&&match.opportunities.length){
+      // id falls back to o1..o6 by position (not 'sp'+i) — renderBatch()
+      // keys batch 1/2 off the literal ids 'o1'-'o3'/'o4'-'o6', so a pack
+      // saved without explicit ids must still line up with that scheme.
       OPPORTUNITIES=match.opportunities.map(function(o,i){
         return {
-          id:o.id||('sp'+i),
+          id:o.id||('o'+(i+1)),
           company:o.company||'',
           title:o.title||'',
           location:o.location||'',
