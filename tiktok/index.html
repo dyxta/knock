@@ -1527,6 +1527,30 @@ function maybeShowSwipeCoach(){
 function isAdminPage(){
   return new URLSearchParams(window.location.search).get('stats')==='1';
 }
+/* JSONP loader — Apps Script's /exec GET endpoint redirects through a
+   script.googleusercontent.com content URL, and that redirect hop doesn't
+   carry CORS headers, so a cross-origin fetch() to /exec fails even on a
+   fully public ("Anyone") deployment. <script> tags aren't subject to CORS,
+   so we load the response as a script that calls a uniquely-named global
+   callback with the JSON payload — the standard JSONP workaround. */
+let JSONP_COUNTER=0;
+function jsonpRequest(url,params,timeoutMs){
+  return new Promise(function(resolve,reject){
+    var cbName='__knockJsonp'+(JSONP_COUNTER++)+'_'+Date.now();
+    var script=document.createElement('script');
+    var cleanup=function(){
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      clearTimeout(timer);
+    };
+    var timer=setTimeout(function(){cleanup();reject(new Error('timed out'));},timeoutMs||12000);
+    window[cbName]=function(data){cleanup();resolve(data);};
+    var qs=Object.keys(params||{}).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
+    script.src=url+(url.indexOf('?')>-1?'&':'?')+qs+'&callback='+cbName;
+    script.onerror=function(){cleanup();reject(new Error('script load failed'));};
+    document.body.appendChild(script);
+  });
+}
 async function attemptUnlock(){
   var pass=document.getElementById('gatePass').value;
   var btn=document.getElementById('gateUnlock');
@@ -1537,8 +1561,7 @@ async function attemptUnlock(){
   if(!url){err.textContent='backend not configured.';err.classList.add('show');return;}
   btn.disabled=true;btn.textContent='checking…';
   try{
-    const res=await fetch(url,{method:'POST',body:JSON.stringify({type:'auth',password:pass}),headers:{'Content-Type':'text/plain'}});
-    const data=await res.json();
+    const data=await jsonpRequest(url,{action:'auth',password:pass});
     if(data&&data.ok&&data.token){
       sessionStorage.setItem('knock_admin_unlocked',data.token);
       document.body.classList.add('unlocked');
@@ -1558,8 +1581,7 @@ async function loadAdminData(){
   if(!url||!token)return;
   document.getElementById('aUpdated').textContent='loading…';
   try{
-    const res=await fetch(url+'?action=full&token='+encodeURIComponent(token),{method:'GET'});
-    const data=await res.json();
+    const data=await jsonpRequest(url,{action:'full',token:token});
     ADMIN_DATA=data;
     renderAdminData(data);
   }catch(e){
