@@ -1434,6 +1434,11 @@ body.ops #opsPanel{display:block;}
 <script>
 /* ── CONFIG ── */
 window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
+// Shared secret sent with every analytics/ops read+write request — must match
+// the ADMIN_KEY Script Property set in the Apps Script editor. Without this,
+// the backend now refuses list/events/full reads and state_update writes
+// (fails closed) to stop anyone with the /exec URL from pulling student PII.
+window.KNOCK_ADMIN_KEY='AtPWeCb8hBULXWatKZE0fhXrtU1odCtP';
 const UNI={'uct':{display:'UCT',full:'University of Cape Town',location:'Cape Town',emailHint:'student@uct.ac.za'},'wits':{display:'Wits',full:'University of the Witwatersrand',location:'Johannesburg',emailHint:'student@students.wits.ac.za'},'stellies':{display:'Stellies',full:'Stellenbosch University',location:'Stellenbosch',emailHint:'student@sun.ac.za'},'up':{display:'UP',full:'University of Pretoria',location:'Pretoria',emailHint:'student@tuks.co.za'}};
 // real WhatsApp group links — 5 STEM groups + 1 catch-all waiting list.
 // non-STEM (any uni) and any university not in UNI above route to the waiting list.
@@ -1593,9 +1598,13 @@ async function loadAdminData(){
   if(!url)return;
   document.getElementById('aUpdated').textContent='loading…';
   try{
-    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full');
+    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full&key='+encodeURIComponent(window.KNOCK_ADMIN_KEY||''));
     const text=await res.text();
     const data=JSON.parse(text);
+    if(data&&data.error){
+      document.getElementById('aUpdated').textContent='failed to load data: '+data.error;
+      return;
+    }
     ADMIN_DATA=data;
     renderAdminData(data);
   }catch(e){
@@ -1723,9 +1732,13 @@ async function loadOpsData(){
   if(!url)return;
   document.getElementById('oUpdated').textContent='loading…';
   try{
-    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full');
+    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full&key='+encodeURIComponent(window.KNOCK_ADMIN_KEY||''));
     const text=await res.text();
     const data=JSON.parse(text);
+    if(data&&data.error){
+      document.getElementById('oUpdated').textContent='failed to load: '+data.error;
+      return;
+    }
     OPS_DATA=(data.submissions||[]).slice().reverse(); // newest first
     document.getElementById('oUpdated').textContent='updated '+new Date().toLocaleString();
     renderOpsList();
@@ -1779,7 +1792,7 @@ async function opsSetState(ref,phone,newState,cardId){
   var btns=card?card.querySelectorAll('.o-btn'):[];
   btns.forEach(function(b){b.disabled=true;});
   try{
-    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'state_update',ref:ref||undefined,phone:phone||undefined,state:newState})});
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'state_update',key:window.KNOCK_ADMIN_KEY||'',ref:ref||undefined,phone:phone||undefined,state:newState})});
     const json=await res.json();
     if(json&&json.ok){
       // reflect locally so list/tab/search stays consistent without a full reload
