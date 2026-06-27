@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>knock — link builder</title>
+<!--
+  ============================================================
+  KNOCK LINK BUILDER — ops-only internal tool
+  ============================================================
+  Generates trackable flyer links per audience + channel, and lets ops
+  attach a custom "starter pack" of opportunities (pulled from the
+  Opportunities List Google Sheet, Status=Open only) to that link.
+
+  ACCESS: gated the same way as ?ops=1 / ?stats=1 on the main flyer —
+  Google login + ADMIN_EMAILS allowlist, checked server-side by the same
+  Apps Script backend (knock_signup_backend.gs.txt). There is no separate
+  secret here; this page just calls the backend's already-gated
+  ?action=opportunities (read) and starterpack_save (write) endpoints.
+  Anyone can open this HTML file, but it does nothing useful for them
+  unless their Google account is on the allowlist.
+
+  SET THIS before this tool is useful:
+-->
+<script>
+window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
+// The real, working flyer URL that ?audience=&ch= params get appended to.
+// Update this once the production flyer domain is finalized.
+window.KNOCK_FLYER_BASE_URL='https://knocktalent.co.za/';
+</script>
+<style>
+:root{
+  --ink:#0F0F12;--g700:#54545c;--g400:#9b9ba3;--g200:#e4e3e8;--off:#F8F7F5;
+  --white:#fff;--purple:#5E17EB;--purple-pale:#F0EBFF;--wa:#25D366;
+  --font-b:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--font-b);background:var(--off);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 80px;}
+header{margin-bottom:24px;}
+h1{font-size:21px;font-weight:800;letter-spacing:-.01em;}
+.sub{font-size:13px;color:var(--g700);margin-top:4px;}
+.card{
+  background:var(--white);border:1px solid var(--g200);border-radius:16px;
+  padding:20px;margin-bottom:18px;
+}
+.card h2{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card h2 .num{
+  width:20px;height:20px;border-radius:50%;background:var(--purple);color:var(--white);
+  font-size:11px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--g700);margin-bottom:6px;}
+.field{margin-bottom:14px;}
+select,input[type=text]{
+  width:100%;padding:11px 12px;border:1.5px solid var(--g200);border-radius:10px;
+  font-size:14px;font-family:var(--font-b);background:var(--white);color:var(--ink);
+}
+select:focus,input:focus{outline:none;border-color:var(--purple);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.out{
+  background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:14px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;
+  word-break:break-all;color:var(--ink);margin-top:4px;
+}
+.out-label{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--g400);margin-bottom:5px;}
+.out-block{margin-bottom:12px;}
+.copy-btn{
+  margin-top:8px;background:var(--ink);color:var(--white);border:none;border-radius:8px;
+  padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-b);
+}
+.copy-btn:active{opacity:.8;}
+.pill{
+  display:inline-block;background:var(--purple-pale);color:var(--purple);font-size:11px;
+  font-weight:700;border-radius:999px;padding:3px 10px;margin-top:6px;
+}
+.opp-list{max-height:420px;overflow-y:auto;border:1px solid var(--g200);border-radius:12px;}
+.opp-row{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid var(--g200);
+}
+.opp-row:last-child{border-bottom:none;}
+.opp-row input{width:auto;margin-top:2px;flex-shrink:0;accent-color:var(--purple);}
+.opp-row-t{font-size:13.5px;font-weight:700;}
+.opp-row-c{font-size:12px;color:var(--g700);margin-top:2px;}
+.opp-row-meta{font-size:11px;color:var(--g400);margin-top:3px;}
+.empty,.loading,.errbox{font-size:13px;color:var(--g700);padding:16px;text-align:center;}
+.errbox{color:#b3261e;background:#fdecea;border-radius:10px;}
+.save-btn{
+  width:100%;background:linear-gradient(180deg,#2a2a2e 0%,#1a1a1d 50%,#0a0a0c 100%);
+  color:var(--white);border:1px solid rgba(255,255,255,.10);border-radius:12px;
+  padding:14px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:var(--font-b);
+  margin-top:6px;
+}
+.save-btn:disabled{opacity:.4;cursor:not-allowed;}
+.status-msg{font-size:12.5px;margin-top:10px;text-align:center;}
+.status-msg.ok{color:#0a7a4d;}
+.status-msg.err{color:#b3261e;}
+.gate{
+  max-width:420px;margin:80px auto;text-align:center;padding:0 20px;
+}
+.gate h1{font-size:18px;margin-bottom:8px;}
+.gate p{font-size:13.5px;color:var(--g700);line-height:1.6;}
+.count-badge{font-size:12px;color:var(--g700);margin-bottom:10px;}
+.existing-packs{font-size:12px;color:var(--g700);margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate" style="display:none;">
+  <h1>🔒 ops access only</h1>
+  <p id="gate-msg">checking your Google account…</p>
+</div>
+
+<div id="app" class="wrap" style="display:none;">
+  <header>
+    <h1>knock — link builder</h1>
+    <div class="sub">generate a trackable flyer link per audience + channel, and attach a starter pack of opportunities to it.</div>
+  </header>
+
+  <div class="card">
+    <h2><span class="num">1</span>audience &amp; channel</h2>
+    <div class="row2">
+      <div class="field">
+        <label>audience</label>
+        <select id="aud-select" onchange="onParamsChanged()">
+          <option value="stem-students">stem-students</option>
+          <option value="cs-students">cs-students</option>
+          <option value="devsoc">devsoc</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>channel</label>
+        <select id="ch-select" onchange="onParamsChanged()">
+          <option value="ig">ig — instagram</option>
+          <option value="wa">wa — whatsapp</option>
+          <option value="ln">ln — linkedin</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="out-block">
+      <div class="out-label">working link (real, trackable today)</div>
+      <div class="out" id="out-real-url"></div>
+      <button class="copy-btn" onclick="copyText('out-real-url')">copy link</button>
+    </div>
+
+    <div class="out-block">
+      <div class="out-label">intended short link (label only — not live yet)</div>
+      <div class="out" id="out-intended-url"></div>
+      <span class="pill">channels.knocktalent.co.za — not yet wired up</span>
+    </div>
+
+    <div id="existing-pack-note" class="existing-packs"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>build the starter pack for this link</h2>
+    <div class="field">
+      <label>pack label (internal, optional)</label>
+      <input type="text" id="pack-label" placeholder="e.g. UCT STEM — Instagram push, June 2026">
+    </div>
+    <div class="count-badge" id="opp-count-badge">loading opportunities…</div>
+    <div id="opp-list" class="opp-list"><div class="loading">loading open opportunities from the Opportunities List sheet…</div></div>
+    <button class="save-btn" id="save-btn" onclick="savePack()" disabled>save starter pack for this link</button>
+    <div id="save-status" class="status-msg"></div>
+  </div>
+</div>
+
+<script>
+/* ── ACCESS GATE ──
+   Same pattern as ?ops=1 / ?stats=1 on the main flyer: a plain fetch()
+   against the Apps Script /exec URL. The browser's existing Google
+   session cookie is what gets checked server-side via
+   Session.getActiveUser().getEmail() — there is no token/key here for a
+   technical visitor to find by viewing source. If the allowlist check
+   fails, the tool shows a message and never renders the builder UI. */
+let ALL_OPEN_OPPS=[];
+let EXISTING_PACKS=[];
+let SELECTED_IDS=new Set();
+
+async function checkAccessAndInit(){
+  const gate=document.getElementById('gate');
+  const gateMsg=document.getElementById('gate-msg');
+  const app=document.getElementById('app');
+  const url=window.KNOCK_APPS_SCRIPT_URL;
+  if(!url){
+    gate.style.display='block';
+    gateMsg.textContent='KNOCK_APPS_SCRIPT_URL is not set in this file — nothing to connect to.';
+    return;
+  }
+  try{
+    const res=await fetch(url+'?action=opportunities');
+    const data=await res.json();
+    if(data&&data.error){
+      gate.style.display='block';
+      gateMsg.textContent=data.needsLogin
+        ? 'sign in with your Google account (you may need to reload this page after signing in), then reload.'
+        : 'access denied: '+data.error;
+      return;
+    }
+    ALL_OPEN_OPPS=data.opportunities||[];
+    gate.style.display='none';
+    app.style.display='block';
+    await loadExistingPacks();
+    renderOppList();
+    onParamsChanged();
+  }catch(e){
+    gate.style.display='block';
+    gateMsg.textContent='could not reach the backend. check your connection and try again.';
+  }
+}
+
+async function loadExistingPacks(){
+  try{
+    const res=await fetch(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpacks');
+    const data=await res.json();
+    EXISTING_PACKS=(data&&data.packs)||[];
+  }catch(e){EXISTING_PACKS=[];}
+}
+
+/* ── LINK GENERATION ── */
+function onParamsChanged(){
+  const aud=document.getElementById('aud-select').value;
+  const ch=document.getElementById('ch-select').value;
+  const base=(window.KNOCK_FLYER_BASE_URL||window.location.href).replace(/\?.*$/,'');
+  document.getElementById('out-real-url').textContent=base+(base.indexOf('?')>-1?'&':'?')+'audience='+aud+'&ch='+ch;
+  document.getElementById('out-intended-url').textContent='channels.knocktalent.co.za/'+aud+'-'+ch;
+  const existing=EXISTING_PACKS.find(function(p){return p.audience===aud&&p.channel===ch;});
+  const note=document.getElementById('existing-pack-note');
+  if(existing){
+    note.textContent='a starter pack already exists for this audience+channel ('+(existing.opportunities||[]).length+' opportunities'+(existing.label?(' — "'+existing.label+'"'):'')+'). saving below will overwrite it.';
+    SELECTED_IDS=new Set((existing.opportunities||[]).map(function(o,i){return o.id||('sp'+i);}));
+    document.getElementById('pack-label').value=existing.label||'';
+  }else{
+    note.textContent='no starter pack exists yet for this audience+channel — the flyer will show the default opportunities until you save one.';
+    SELECTED_IDS=new Set();
+    document.getElementById('pack-label').value='';
+  }
+  renderOppList();
+}
+
+function copyText(elId){
+  const txt=document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(txt).catch(function(){});
+}
+
+/* ── OPPORTUNITY PICKER ── */
+function renderOppList(){
+  const list=document.getElementById('opp-list');
+  const badge=document.getElementById('opp-count-badge');
+  if(!ALL_OPEN_OPPS.length){
+    list.innerHTML='<div class="empty">no open opportunities found in the Opportunities List sheet.</div>';
+    badge.textContent='0 open opportunities available';
+    return;
+  }
+  badge.textContent=ALL_OPEN_OPPS.length+' open opportunities available — '+SELECTED_IDS.size+' selected';
+  list.innerHTML=ALL_OPEN_OPPS.map(function(o,i){
+    const id='opp-'+i;
+    const checked=SELECTED_IDS.has(id)?' checked':'';
+    const name=o['Name of Opportunity']||'(unnamed)';
+    const degrees=o['Degrees Wanted']||'';
+    const loc=o['Location Based']||'';
+    const deadline=o['Closing Date']||'';
+    return '<label class="opp-row">'+
+      '<input type="checkbox" id="cb-'+id+'" data-id="'+id+'"'+checked+' onchange="toggleOpp(\''+id+'\')">'+
+      '<div>'+
+        '<div class="opp-row-t">'+name+'</div>'+
+        '<div class="opp-row-c">'+(loc||'location not specified')+(degrees?' · '+degrees:'')+'</div>'+
+        '<div class="opp-row-meta">closes: '+(deadline||'not specified')+'</div>'+
+      '</div>'+
+    '</label>';
+  }).join('');
+  updateSaveBtn();
+}
+function toggleOpp(id){
+  if(SELECTED_IDS.has(id))SELECTED_IDS.delete(id);else SELECTED_IDS.add(id);
+  document.getElementById('opp-count-badge').textContent=ALL_OPEN_OPPS.length+' open opportunities available — '+SELECTED_IDS.size+' selected';
+  updateSaveBtn();
+}
+function updateSaveBtn(){
+  document.getElementById('save-btn').disabled=SELECTED_IDS.size===0;
+}
+
+/* ── SAVE ── */
+async function savePack(){
+  const aud=document.getElementById('aud-select').value;
+  const ch=document.getElementById('ch-select').value;
+  const label=document.getElementById('pack-label').value.trim();
+  const btn=document.getElementById('save-btn');
+  const status=document.getElementById('save-status');
+  const selected=ALL_OPEN_OPPS.map(function(o,i){return {o:o,id:'opp-'+i};}).filter(function(x){return SELECTED_IDS.has(x.id);});
+  const opportunities=selected.map(function(x){
+    return {
+      id:x.id,
+      company:'', // Opportunities List sheet doesn't separate company from opportunity name — kept in `title`
+      title:x.o['Name of Opportunity']||'',
+      location:x.o['Location Based']||'',
+      degrees:x.o['Degrees Wanted']||'',
+      deadline:x.o['Closing Date']||'',
+      url:x.o['Link']||''
+    };
+  });
+  btn.disabled=true;btn.textContent='saving…';
+  status.textContent='';status.className='status-msg';
+  try{
+    const res=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({type:'starterpack_save',data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
+    });
+    const json=await res.json();
+    if(json&&json.ok){
+      status.textContent='saved ('+json.mode+') — '+opportunities.length+' opportunities for '+aud+'/'+ch+'.';
+      status.classList.add('ok');
+      await loadExistingPacks();
+      onParamsChanged();
+    }else{
+      status.textContent=(json&&json.error)||'save failed.';
+      status.classList.add('err');
+    }
+  }catch(e){
+    status.textContent='save failed — could not reach the backend.';
+    status.classList.add('err');
+  }
+  btn.disabled=SELECTED_IDS.size===0;btn.textContent='save starter pack for this link';
+}
+
+checkAccessAndInit();
+</script>
+</body>
+</html>
