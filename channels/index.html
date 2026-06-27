@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>knock — channels builder</title>
+<!--
+  ============================================================
+  KNOCK CHANNELS BUILDER — ops-only internal tool
+  ============================================================
+  Builds a "channel link": a short, trackable, fully anonymous link
+  (go.knocktalent.co.za/<code>) that redirects straight to the digital
+  flyer with ?audience=&ch=, with a starter pack of exactly 6
+  opportunities (3 "main" + 3 "bonus") attached to that specific
+  audience+channel combo.
+
+  This is a separate, parallel tool to the existing campaigns mechanic
+  (campaigns/knock_campaigns.gs + go/guide/index.html), which is keyed by
+  opportunity+org+wave and points at arbitrary external dest URLs via
+  campaigns.knocktalent.co.za. Channels links are keyed by audience+ch
+  only, point at the owned flyer (not an arbitrary dest), and the click
+  counter + redirect both live in go/api/{create,redirect}.js — no new
+  domain needed, no PII anywhere in the link record.
+
+  WHAT THIS TOOL DOES, IN ORDER:
+   1. Pick an audience + channel.
+   2. Pick exactly 3 "main" opportunities + 3 "bonus" opportunities from
+      the Opportunities List Sheet (Status=Open only) — these become
+      OPPORTUNITIES o1-o3 (batch 1, shown first) and o4-o6 (batch 2) on
+      the flyer for anyone who lands via this link.
+   3. Save the starter pack (writes to the StarterPacks sheet tab via
+      the existing Apps Script backend).
+   4. Mint (or re-mint) the short link via go.knocktalent.co.za's
+      /api/create endpoint. Re-running this for the same audience+channel
+      reuses the same short code — the link ops already posted never
+      changes underneath them, only what it shows updates.
+
+  ACCESS: gated the same way as ?ops=1 / link-builder.html — Google login
+  + ADMIN_EMAILS allowlist, checked server-side by the Apps Script
+  backend. The go.knocktalent.co.za create endpoint has its own separate
+  password gate (KNOCK_PASSWORD) — enter that once below; it's only sent
+  to that endpoint, never logged anywhere client-side beyond this page.
+
+  SET THESE before this tool is useful:
+-->
+<script>
+window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
+// go.knocktalent.co.za's link-creation endpoint (see go/api/create.js).
+window.KNOCK_GO_CREATE_URL='https://go.knocktalent.co.za/api/create';
+</script>
+<style>
+:root{
+  --ink:#0F0F12;--g700:#54545c;--g400:#9b9ba3;--g200:#e4e3e8;--off:#F8F7F5;
+  --white:#fff;--purple:#5E17EB;--purple-pale:#F0EBFF;--wa:#25D366;
+  --font-b:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--font-b);background:var(--off);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 80px;}
+header{margin-bottom:24px;}
+h1{font-size:21px;font-weight:800;letter-spacing:-.01em;}
+.sub{font-size:13px;color:var(--g700);margin-top:4px;}
+.card{
+  background:var(--white);border:1px solid var(--g200);border-radius:16px;
+  padding:20px;margin-bottom:18px;
+}
+.card h2{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card h2 .num{
+  width:20px;height:20px;border-radius:50%;background:var(--purple);color:var(--white);
+  font-size:11px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--g700);margin-bottom:6px;}
+.field{margin-bottom:14px;}
+select,input[type=text],input[type=password]{
+  width:100%;padding:11px 12px;border:1.5px solid var(--g200);border-radius:10px;
+  font-size:14px;font-family:var(--font-b);background:var(--white);color:var(--ink);
+}
+select:focus,input:focus{outline:none;border-color:var(--purple);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.out{
+  background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:14px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;
+  word-break:break-all;color:var(--ink);margin-top:4px;
+}
+.out.big{font-size:15px;font-weight:700;color:var(--purple);}
+.out-label{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--g400);margin-bottom:5px;}
+.out-block{margin-bottom:12px;}
+.copy-btn{
+  margin-top:8px;background:var(--ink);color:var(--white);border:none;border-radius:8px;
+  padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font-b);
+}
+.copy-btn:active{opacity:.8;}
+.pill{
+  display:inline-block;background:var(--purple-pale);color:var(--purple);font-size:11px;
+  font-weight:700;border-radius:999px;padding:3px 10px;margin-top:6px;
+}
+.pill.green{background:#e6f6ee;color:#0a7a4d;}
+.subhead{font-size:12px;font-weight:700;color:var(--g700);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.04em;}
+.subhead .n{color:var(--purple);}
+.opp-list{max-height:340px;overflow-y:auto;border:1px solid var(--g200);border-radius:12px;}
+.opp-row{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid var(--g200);
+}
+.opp-row:last-child{border-bottom:none;}
+.opp-row.disabled{opacity:.35;}
+.opp-row input{width:auto;margin-top:2px;flex-shrink:0;accent-color:var(--purple);}
+.opp-row-t{font-size:13.5px;font-weight:700;}
+.opp-row-c{font-size:12px;color:var(--g700);margin-top:2px;}
+.opp-row-meta{font-size:11px;color:var(--g400);margin-top:3px;}
+.empty,.loading,.errbox{font-size:13px;color:var(--g700);padding:16px;text-align:center;}
+.errbox{color:#b3261e;background:#fdecea;border-radius:10px;}
+.save-btn{
+  width:100%;background:linear-gradient(180deg,#2a2a2e 0%,#1a1a1d 50%,#0a0a0c 100%);
+  color:var(--white);border:1px solid rgba(255,255,255,.10);border-radius:12px;
+  padding:14px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:var(--font-b);
+  margin-top:6px;
+}
+.save-btn:disabled{opacity:.4;cursor:not-allowed;}
+.status-msg{font-size:12.5px;margin-top:10px;text-align:center;}
+.status-msg.ok{color:#0a7a4d;}
+.status-msg.err{color:#b3261e;}
+.gate{
+  max-width:420px;margin:80px auto;text-align:center;padding:0 20px;
+}
+.gate h1{font-size:18px;margin-bottom:8px;}
+.gate p{font-size:13.5px;color:var(--g700);line-height:1.6;}
+.count-badge{font-size:12px;color:var(--g700);margin-bottom:10px;}
+.existing-packs{font-size:12px;color:var(--g700);margin-top:10px;}
+.step-disabled{opacity:.45;pointer-events:none;}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate" style="display:none;">
+  <h1>🔒 ops access only</h1>
+  <p id="gate-msg">checking your Google account…</p>
+</div>
+
+<div id="app" class="wrap" style="display:none;">
+  <header>
+    <h1>knock — channels builder</h1>
+    <div class="sub">build a trackable channel link: a short go.knocktalent.co.za link → flyer, with its own 3 main + 3 bonus starter pack.</div>
+  </header>
+
+  <div class="card">
+    <h2><span class="num">1</span>audience &amp; channel</h2>
+    <div class="row2">
+      <div class="field">
+        <label>audience</label>
+        <select id="aud-select" onchange="onParamsChanged()">
+          <option value="stem-students">stem-students</option>
+          <option value="cs-students">cs-students</option>
+          <option value="devsoc">devsoc</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>channel</label>
+        <select id="ch-select" onchange="onParamsChanged()">
+          <option value="ig">ig — instagram</option>
+          <option value="wa">wa — whatsapp</option>
+          <option value="ln">ln — linkedin</option>
+        </select>
+      </div>
+    </div>
+    <div id="existing-pack-note" class="existing-packs"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>main 3 <span class="subhead" style="display:inline;margin:0;font-weight:600;text-transform:none;letter-spacing:0;">— shown first, the moment they land</span></h2>
+    <div class="count-badge" id="main-count-badge">loading opportunities…</div>
+    <div id="main-opp-list" class="opp-list"><div class="loading">loading open opportunities…</div></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span>bonus 3 <span class="subhead" style="display:inline;margin:0;font-weight:600;text-transform:none;letter-spacing:0;">— revealed after they sign up</span></h2>
+    <div class="count-badge" id="bonus-count-badge">loading opportunities…</div>
+    <div id="bonus-opp-list" class="opp-list"><div class="loading">loading open opportunities…</div></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">4</span>save &amp; generate link</h2>
+    <div class="field">
+      <label>pack label (internal, optional)</label>
+      <input type="text" id="pack-label" placeholder="e.g. STEM students — Instagram push, June 2026">
+    </div>
+    <div class="field" id="go-password-field">
+      <label>go.knocktalent.co.za password</label>
+      <input type="password" id="go-password" placeholder="needed once per session to mint the short link" autocomplete="off">
+    </div>
+    <button class="save-btn" id="save-btn" onclick="saveAndMintLink()" disabled>save starter pack + generate channel link</button>
+    <div id="save-status" class="status-msg"></div>
+
+    <div id="result-block" style="display:none;margin-top:16px;">
+      <div class="out-block">
+        <div class="out-label">channel link (share this — anonymous click tracking, no PII)</div>
+        <div class="out big" id="out-short-url"></div>
+        <button class="copy-btn" onclick="copyText('out-short-url')">copy link</button>
+        <span class="pill green" id="out-click-count"></span>
+      </div>
+      <div class="out-block">
+        <div class="out-label">what it redirects to</div>
+        <div class="out" id="out-real-url"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── ACCESS GATE ──
+   Same pattern as ?ops=1 / link-builder.html: a plain fetch() against the
+   Apps Script /exec URL. The browser's existing Google session cookie is
+   what gets checked server-side via Session.getActiveUser().getEmail() —
+   there is no token/key here for a technical visitor to find by viewing
+   source. If the allowlist check fails, the tool shows a message and
+   never renders the builder UI. */
+let ALL_OPEN_OPPS=[];
+let EXISTING_PACKS=[];
+let MAIN_IDS=new Set();   // 'opp-N' keys into ALL_OPEN_OPPS, exactly 3
+let BONUS_IDS=new Set();  // 'opp-N' keys into ALL_OPEN_OPPS, exactly 3
+
+async function checkAccessAndInit(){
+  const gate=document.getElementById('gate');
+  const gateMsg=document.getElementById('gate-msg');
+  const app=document.getElementById('app');
+  const url=window.KNOCK_APPS_SCRIPT_URL;
+  if(!url){
+    gate.style.display='block';
+    gateMsg.textContent='KNOCK_APPS_SCRIPT_URL is not set in this file — nothing to connect to.';
+    return;
+  }
+  try{
+    const res=await fetch(url+'?action=opportunities');
+    const data=await res.json();
+    if(data&&data.error){
+      gate.style.display='block';
+      gateMsg.textContent=data.needsLogin
+        ? 'sign in with your Google account (you may need to reload this page after signing in), then reload.'
+        : 'access denied: '+data.error;
+      return;
+    }
+    ALL_OPEN_OPPS=data.opportunities||[];
+    gate.style.display='none';
+    app.style.display='block';
+    await loadExistingPacks();
+    renderOppLists();
+    onParamsChanged();
+  }catch(e){
+    gate.style.display='block';
+    gateMsg.textContent='could not reach the backend. check your connection and try again.';
+  }
+}
+
+async function loadExistingPacks(){
+  try{
+    const res=await fetch(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpacks');
+    const data=await res.json();
+    EXISTING_PACKS=(data&&data.packs)||[];
+  }catch(e){EXISTING_PACKS=[];}
+}
+
+/* ── PARAMS CHANGED — pre-fill from any existing pack for this combo ── */
+function onParamsChanged(){
+  const aud=document.getElementById('aud-select').value;
+  const ch=document.getElementById('ch-select').value;
+  const existing=EXISTING_PACKS.find(function(p){return p.audience===aud&&p.channel===ch;});
+  const note=document.getElementById('existing-pack-note');
+  if(existing){
+    note.textContent='a starter pack already exists for this audience+channel ('+(existing.opportunities||[]).length+' opportunities'+(existing.label?(' — "'+existing.label+'"'):'')+'). saving below will overwrite it and re-mint the same short link.';
+    var opps=existing.opportunities||[];
+    // Match existing pack opportunities back to ALL_OPEN_OPPS rows by title+url,
+    // since the saved pack stores a snapshot, not the sheet row index.
+    MAIN_IDS=new Set();BONUS_IDS=new Set();
+    opps.forEach(function(o,i){
+      var idx=ALL_OPEN_OPPS.findIndex(function(row){
+        return (row['Name of Opportunity']||'')===o.title&&(row['Link']||'')===o.url;
+      });
+      if(idx===-1)return;
+      var key='opp-'+idx;
+      if(i<3)MAIN_IDS.add(key);else BONUS_IDS.add(key);
+    });
+    document.getElementById('pack-label').value=existing.label||'';
+  }else{
+    note.textContent='no starter pack exists yet for this audience+channel — pick 3 main + 3 bonus below.';
+    MAIN_IDS=new Set();BONUS_IDS=new Set();
+    document.getElementById('pack-label').value='';
+  }
+  document.getElementById('result-block').style.display='none';
+  renderOppLists();
+}
+
+function copyText(elId){
+  const txt=document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(txt).catch(function(){});
+}
+
+/* ── OPPORTUNITY PICKERS (main = exactly 3, bonus = exactly 3, no overlap) ── */
+function renderOppLists(){
+  renderOppList('main', MAIN_IDS, BONUS_IDS);
+  renderOppList('bonus', BONUS_IDS, MAIN_IDS);
+  updateSaveBtn();
+}
+function renderOppList(kind, ownSet, otherSet){
+  const list=document.getElementById(kind+'-opp-list');
+  const badge=document.getElementById(kind+'-count-badge');
+  if(!ALL_OPEN_OPPS.length){
+    list.innerHTML='<div class="empty">no open opportunities found in the Opportunities List sheet.</div>';
+    badge.textContent='0 open opportunities available';
+    return;
+  }
+  badge.textContent=ownSet.size+' / 3 selected';
+  list.innerHTML=ALL_OPEN_OPPS.map(function(o,i){
+    const id='opp-'+i;
+    const checked=ownSet.has(id);
+    const usedElsewhere=otherSet.has(id);
+    const atCap=!checked&&ownSet.size>=3;
+    const disabled=usedElsewhere||atCap;
+    const name=o['Name of Opportunity']||'(unnamed)';
+    const degrees=o['Degrees Wanted']||'';
+    const loc=o['Location Based']||'';
+    const deadline=o['Closing Date']||'';
+    return '<label class="opp-row'+(disabled&&!checked?' disabled':'')+'">'+
+      '<input type="checkbox" data-id="'+id+'"'+(checked?' checked':'')+(disabled&&!checked?' disabled':'')+' onchange="toggleOpp(\''+kind+'\',\''+id+'\')">'+
+      '<div>'+
+        '<div class="opp-row-t">'+name+(usedElsewhere?' <span class="pill" style="margin-top:0;">already in '+(kind==='main'?'bonus':'main')+'</span>':'')+'</div>'+
+        '<div class="opp-row-c">'+(loc||'location not specified')+(degrees?' · '+degrees:'')+'</div>'+
+        '<div class="opp-row-meta">closes: '+(deadline||'not specified')+'</div>'+
+      '</div>'+
+    '</label>';
+  }).join('');
+}
+function toggleOpp(kind,id){
+  const set=kind==='main'?MAIN_IDS:BONUS_IDS;
+  if(set.has(id)){
+    set.delete(id);
+  }else{
+    if(set.size>=3)return; // capped at exactly 3
+    set.add(id);
+  }
+  renderOppLists();
+}
+function updateSaveBtn(){
+  document.getElementById('save-btn').disabled=(MAIN_IDS.size!==3||BONUS_IDS.size!==3);
+}
+
+/* ── SAVE STARTER PACK, THEN MINT THE SHORT LINK ── */
+async function saveAndMintLink(){
+  const aud=document.getElementById('aud-select').value;
+  const ch=document.getElementById('ch-select').value;
+  const label=document.getElementById('pack-label').value.trim();
+  const goPassword=document.getElementById('go-password').value;
+  const btn=document.getElementById('save-btn');
+  const status=document.getElementById('save-status');
+  const resultBlock=document.getElementById('result-block');
+
+  if(MAIN_IDS.size!==3||BONUS_IDS.size!==3){
+    status.textContent='pick exactly 3 main and 3 bonus opportunities first.';
+    status.className='status-msg err';
+    return;
+  }
+
+  // Order matters: main 3 become o1-o3 (batch 1), bonus 3 become o4-o6
+  // (batch 2) — this is the exact id scheme renderBatch() on the flyer
+  // expects, so explicit ids here (not left to fall back) is what makes
+  // "main" vs "bonus" actually mean something once it renders.
+  const mainList=Array.from(MAIN_IDS);
+  const bonusList=Array.from(BONUS_IDS);
+  const orderedKeys=mainList.concat(bonusList);
+  const opportunities=orderedKeys.map(function(key,i){
+    const idx=parseInt(key.split('-')[1],10);
+    const o=ALL_OPEN_OPPS[idx];
+    return {
+      id:'o'+(i+1),
+      company:'', // Opportunities List sheet doesn't separate company from opportunity name — kept in `title`
+      title:o['Name of Opportunity']||'',
+      location:o['Location Based']||'',
+      degrees:o['Degrees Wanted']||'',
+      deadline:o['Closing Date']||'',
+      url:o['Link']||''
+    };
+  });
+
+  btn.disabled=true;btn.textContent='saving…';
+  status.textContent='';status.className='status-msg';
+  resultBlock.style.display='none';
+
+  try{
+    // 1. Save the starter pack (Apps Script — Google-login gated).
+    const saveRes=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({type:'starterpack_save',data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
+    });
+    const saveJson=await saveRes.json();
+    if(!saveJson||!saveJson.ok){
+      status.textContent=(saveJson&&saveJson.error)||'starter pack save failed.';
+      status.className='status-msg err';
+      btn.disabled=false;btn.textContent='save starter pack + generate channel link';
+      return;
+    }
+
+    // 2. Mint (or re-mint) the channel short link (go.knocktalent.co.za — password gated).
+    if(!window.KNOCK_GO_CREATE_URL){
+      status.textContent='starter pack saved, but KNOCK_GO_CREATE_URL is not set — no short link minted.';
+      status.className='status-msg err';
+      btn.disabled=false;btn.textContent='save starter pack + generate channel link';
+      return;
+    }
+    btn.textContent='minting link…';
+    const createRes=await fetch(window.KNOCK_GO_CREATE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'channel',audience:aud,ch:ch,password:goPassword})
+    });
+    const createJson=await createRes.json();
+    if(!createRes.ok||!createJson||createJson.error){
+      status.textContent='starter pack saved ('+saveJson.mode+'), but link creation failed: '+((createJson&&createJson.error)||createRes.status);
+      status.className='status-msg err';
+      btn.disabled=false;btn.textContent='save starter pack + generate channel link';
+      return;
+    }
+
+    status.textContent='done — pack '+saveJson.mode+', link ready.';
+    status.className='status-msg ok';
+    document.getElementById('out-short-url').textContent=createJson.shortUrl;
+    document.getElementById('out-real-url').textContent='knocktalent.co.za/?audience='+aud+'&ch='+ch;
+    document.getElementById('out-click-count').textContent='new link — 0 clicks so far';
+    resultBlock.style.display='block';
+    await loadExistingPacks();
+  }catch(e){
+    status.textContent='failed — could not reach the backend.';
+    status.className='status-msg err';
+  }
+  btn.disabled=false;btn.textContent='save starter pack + generate channel link';
+}
+
+checkAccessAndInit();
+</script>
+</body>
+</html>
