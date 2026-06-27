@@ -12,13 +12,11 @@
   attach a custom "starter pack" of opportunities (pulled from the
   Opportunities List Google Sheet, Status=Open only) to that link.
 
-  ACCESS: gated the same way as ?ops=1 / ?stats=1 on the main flyer —
-  Google login + ADMIN_EMAILS allowlist, checked server-side by the same
-  Apps Script backend (knock_signup_backend.gs.txt). There is no separate
-  secret here; this page just calls the backend's already-gated
-  ?action=opportunities (read) and starterpack_save (write) endpoints.
-  Anyone can open this HTML file, but it does nothing useful for them
-  unless their Google account is on the allowlist.
+  ACCESS: a single shared password, entered once below, checked
+  server-side against KNOCK_OPS_PASSWORD (an Apps Script Script
+  Property) — not Google-login-gated like ?ops=1/?stats=1, since this
+  tool never touches the Signups sheet (no PII). Anyone can open this
+  HTML file, but it does nothing useful without the password.
 
   SET THIS before this tool is useful:
 -->
@@ -108,9 +106,13 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
 </head>
 <body>
 
-<div id="gate" class="gate" style="display:none;">
+<div id="gate" class="gate">
   <h1>🔒 ops access only</h1>
-  <p id="gate-msg">checking your Google account…</p>
+  <p id="gate-msg" style="margin-bottom:14px;">enter the ops password to load open opportunities.</p>
+  <div class="field" style="text-align:left;max-width:280px;margin:0 auto 10px;">
+    <input type="password" id="ops-password" placeholder="ops password" autocomplete="off" onkeydown="if(event.key==='Enter')checkAccessAndInit();">
+  </div>
+  <button class="save-btn" style="max-width:280px;" onclick="checkAccessAndInit()">unlock</button>
 </div>
 
 <div id="app" class="wrap" style="display:none;">
@@ -170,46 +172,15 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
 
 <script>
 /* ── ACCESS GATE ──
-   Same pattern as ?ops=1 / ?stats=1 on the main flyer: a plain fetch()
-   against the Apps Script /exec URL. The browser's existing Google
-   session cookie is what gets checked server-side via
-   Session.getActiveUser().getEmail() — there is no token/key here for a
-   technical visitor to find by viewing source. If the allowlist check
-   fails, the tool shows a message and never renders the builder UI. */
+   A single shared password, sent as a plain query param to the Apps
+   Script /exec URL — checked server-side against KNOCK_OPS_PASSWORD
+   (a Script Property). No Google login, no redirect, no JSONP: this
+   tool never touches the Signups sheet (no PII). The password is kept
+   in memory (OPS_PASSWORD below) and resent on every subsequent call. */
 let ALL_OPEN_OPPS=[];
 let EXISTING_PACKS=[];
 let SELECTED_IDS=new Set();
-
-/* ── JSONP helper ──
-   ?action=opportunities (and starterpack_save below) requires a verified
-   Google identity. Apps Script checks this by 302-redirecting the request
-   through accounts.google.com — and browsers block fetch()/XHR from
-   following a cross-origin redirect into a login page (shows up as a CORS
-   error in devtools, not an auth error). A plain <script src="..."> tag
-   isn't subject to that restriction, so JSONP is the only transport that
-   actually works here for cross-origin pages like this one. The backend
-   supports ?cb=NAME for this — NOT ?callback=NAME: "callback" is
-   apparently a reserved param name on the Drive/Apps Script proxy layer
-   in front of /exec, and using it makes the request get swallowed into a
-   "Sorry, unable to open the file at present" Drive error page before
-   doGet ever runs. "cb" sidesteps that. */
-let _jsonpN=0;
-function jsonpRequest(url){
-  return new Promise(function(resolve,reject){
-    var cbName='_jsonp_cb_'+(_jsonpN++)+'_'+Date.now();
-    var script=document.createElement('script');
-    var timeout=setTimeout(function(){cleanup();reject(new Error('timed out'));},15000);
-    function cleanup(){
-      clearTimeout(timeout);
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-    }
-    window[cbName]=function(data){cleanup();resolve(data);};
-    script.onerror=function(){cleanup();reject(new Error('script load failed'));};
-    script.src=url+(url.indexOf('?')>-1?'&':'?')+'cb='+cbName;
-    document.head.appendChild(script);
-  });
-}
+let OPS_PASSWORD='';
 
 async function checkAccessAndInit(){
   const gate=document.getElementById('gate');
@@ -217,19 +188,23 @@ async function checkAccessAndInit(){
   const app=document.getElementById('app');
   const url=window.KNOCK_APPS_SCRIPT_URL;
   if(!url){
-    gate.style.display='block';
     gateMsg.textContent='KNOCK_APPS_SCRIPT_URL is not set in this file — nothing to connect to.';
     return;
   }
+  const pw=document.getElementById('ops-password').value;
+  if(!pw){
+    gateMsg.textContent='enter the ops password first.';
+    return;
+  }
+  gateMsg.textContent='checking…';
   try{
-    const data=await jsonpRequest(url+'?action=opportunities');
+    const res=await fetch(url+'?action=opportunities&password='+encodeURIComponent(pw));
+    const data=await res.json();
     if(data&&data.error){
-      gate.style.display='block';
-      gateMsg.textContent=data.needsLogin
-        ? 'sign in with your Google account (you may need to reload this page after signing in), then reload.'
-        : 'access denied: '+data.error;
+      gateMsg.textContent='access denied: '+data.error;
       return;
     }
+    OPS_PASSWORD=pw;
     ALL_OPEN_OPPS=data.opportunities||[];
     gate.style.display='none';
     app.style.display='block';
@@ -237,7 +212,6 @@ async function checkAccessAndInit(){
     renderOppList();
     onParamsChanged();
   }catch(e){
-    gate.style.display='block';
     gateMsg.textContent='could not reach the backend. check your connection and try again.';
   }
 }
@@ -335,13 +309,12 @@ async function savePack(){
   btn.disabled=true;btn.textContent='saving…';
   status.textContent='';status.className='status-msg';
   try{
-    // Sent as a GET via JSONP, not POST — same reason as checkAccessAndInit()
-    // above: this is an authenticated call, so plain fetch() can't survive
-    // the accounts.google.com redirect cross-origin. <script> tags can't
-    // carry a POST body, so the payload travels as a URL-encoded `data`
-    // query param instead.
-    const payload=encodeURIComponent(JSON.stringify({audience:aud,channel:ch,label:label,opportunities:opportunities}));
-    const json=await jsonpRequest(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpack_save&data='+payload);
+    const res=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'starterpack_save',password:OPS_PASSWORD,data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
+    });
+    const json=await res.json();
     if(json&&json.ok){
       status.textContent='saved ('+json.mode+') — '+opportunities.length+' opportunities for '+aud+'/'+ch+'.';
       status.classList.add('ok');

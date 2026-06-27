@@ -35,11 +35,16 @@
       reuses the same short code — the link ops already posted never
       changes underneath them, only what it shows updates.
 
-  ACCESS: gated the same way as ?ops=1 / link-builder.html — Google login
-  + ADMIN_EMAILS allowlist, checked server-side by the Apps Script
-  backend. The go.knocktalent.co.za create endpoint has its own separate
-  password gate (KNOCK_PASSWORD) — enter that once below; it's only sent
-  to that endpoint, never logged anywhere client-side beyond this page.
+  ACCESS: a single shared password, entered once below. It's checked
+  against KNOCK_OPS_PASSWORD (an Apps Script Script Property) for the
+  opportunities/starterpack_save calls, and separately against
+  KNOCK_PASSWORD (a Vercel env var on the go.knocktalent.co.za project)
+  for link minting — two independent systems, but nothing stops you from
+  setting them to the same value so there's only one password to
+  remember. Not Google-login-gated: this tool never touches the Signups
+  sheet (no PII), so a shared password is a deliberately simpler model
+  than the allowlist used by ?ops=1/?stats=1. Nothing is logged
+  client-side beyond this page.
 
   SET THESE before this tool is useful:
 -->
@@ -134,9 +139,13 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
 </head>
 <body>
 
-<div id="gate" class="gate" style="display:none;">
+<div id="gate" class="gate">
   <h1>🔒 ops access only</h1>
-  <p id="gate-msg">checking your Google account…</p>
+  <p id="gate-msg" style="margin-bottom:14px;">enter the ops password to load open opportunities.</p>
+  <div class="field" style="text-align:left;max-width:280px;margin:0 auto 10px;">
+    <input type="password" id="ops-password" placeholder="ops password" autocomplete="off" onkeydown="if(event.key==='Enter')checkAccessAndInit();">
+  </div>
+  <button class="save-btn" style="max-width:280px;" onclick="checkAccessAndInit()">unlock</button>
 </div>
 
 <div id="app" class="wrap" style="display:none;">
@@ -188,7 +197,7 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
     </div>
     <div class="field" id="go-password-field">
       <label>go.knocktalent.co.za password</label>
-      <input type="password" id="go-password" placeholder="needed once per session to mint the short link" autocomplete="off">
+      <input type="password" id="go-password" placeholder="needed to mint the short link (often the same as the ops password)" autocomplete="off">
     </div>
     <button class="save-btn" id="save-btn" onclick="saveAndMintLink()" disabled>save starter pack + generate channel link</button>
     <div id="save-status" class="status-msg"></div>
@@ -210,47 +219,19 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
 
 <script>
 /* ── ACCESS GATE ──
-   Same pattern as ?ops=1 / link-builder.html: a plain fetch() against the
-   Apps Script /exec URL. The browser's existing Google session cookie is
-   what gets checked server-side via Session.getActiveUser().getEmail() —
-   there is no token/key here for a technical visitor to find by viewing
-   source. If the allowlist check fails, the tool shows a message and
-   never renders the builder UI. */
+   A single shared password, sent as a plain query param to the Apps
+   Script /exec URL — checked server-side against KNOCK_OPS_PASSWORD
+   (a Script Property). No Google login, no redirect, no JSONP: this
+   tool never touches the Signups sheet (no PII), so a password check is
+   a deliberately simpler model than the Google-login + allowlist gate
+   used by ?ops=1/?stats=1 elsewhere. The password is kept in memory
+   (OPS_PASSWORD below) and resent on every subsequent call this page
+   makes, so it only needs to be entered once per page load. */
 let ALL_OPEN_OPPS=[];
 let EXISTING_PACKS=[];
 let MAIN_IDS=new Set();   // 'opp-N' keys into ALL_OPEN_OPPS, exactly 3
 let BONUS_IDS=new Set();  // 'opp-N' keys into ALL_OPEN_OPPS, exactly 3
-
-/* ── JSONP helper ──
-   ?action=opportunities (and list/events/full/state_update, elsewhere)
-   requires a verified Google identity. Apps Script checks this by 302-
-   redirecting the request through accounts.google.com — and browsers
-   block fetch()/XHR from following a cross-origin redirect into a login
-   page (you'll see a CORS error in devtools, not an auth error). A plain
-   <script src="..."> tag isn't subject to that restriction, so JSONP is
-   the only transport that actually works here for cross-origin pages
-   like this one. The backend supports ?cb=NAME for this — NOT
-   ?callback=NAME: "callback" is apparently a reserved param name on the
-   Drive/Apps Script proxy layer in front of /exec, and using it makes
-   the request get swallowed into a "Sorry, unable to open the file at
-   present" Drive error page before doGet ever runs. "cb" sidesteps that. */
-let _jsonpN=0;
-function jsonpRequest(url){
-  return new Promise(function(resolve,reject){
-    var cbName='_jsonp_cb_'+(_jsonpN++)+'_'+Date.now();
-    var script=document.createElement('script');
-    var timeout=setTimeout(function(){cleanup();reject(new Error('timed out'));},15000);
-    function cleanup(){
-      clearTimeout(timeout);
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-    }
-    window[cbName]=function(data){cleanup();resolve(data);};
-    script.onerror=function(){cleanup();reject(new Error('script load failed'));};
-    script.src=url+(url.indexOf('?')>-1?'&':'?')+'cb='+cbName;
-    document.head.appendChild(script);
-  });
-}
+let OPS_PASSWORD='';
 
 async function checkAccessAndInit(){
   const gate=document.getElementById('gate');
@@ -258,27 +239,33 @@ async function checkAccessAndInit(){
   const app=document.getElementById('app');
   const url=window.KNOCK_APPS_SCRIPT_URL;
   if(!url){
-    gate.style.display='block';
     gateMsg.textContent='KNOCK_APPS_SCRIPT_URL is not set in this file — nothing to connect to.';
     return;
   }
+  const pw=document.getElementById('ops-password').value;
+  if(!pw){
+    gateMsg.textContent='enter the ops password first.';
+    return;
+  }
+  gateMsg.textContent='checking…';
   try{
-    const data=await jsonpRequest(url+'?action=opportunities');
+    const res=await fetch(url+'?action=opportunities&password='+encodeURIComponent(pw));
+    const data=await res.json();
     if(data&&data.error){
-      gate.style.display='block';
-      gateMsg.textContent=data.needsLogin
-        ? 'sign in with your Google account (you may need to reload this page after signing in), then reload.'
-        : 'access denied: '+data.error;
+      gateMsg.textContent='access denied: '+data.error;
       return;
     }
+    OPS_PASSWORD=pw;
     ALL_OPEN_OPPS=data.opportunities||[];
     gate.style.display='none';
     app.style.display='block';
+    // Prefill the go.knocktalent.co.za password with the same value — most
+    // setups use the same password for both, and this can be overwritten if not.
+    document.getElementById('go-password').value=pw;
     await loadExistingPacks();
     renderOppLists();
     onParamsChanged();
   }catch(e){
-    gate.style.display='block';
     gateMsg.textContent='could not reach the backend. check your connection and try again.';
   }
 }
@@ -417,15 +404,13 @@ async function saveAndMintLink(){
   resultBlock.style.display='none';
 
   try{
-    // 1. Save the starter pack (Apps Script — Google-login gated).
-    // Sent as a GET via JSONP, not POST: this is an authenticated call, so
-    // it hits the same accounts.google.com redirect that plain fetch() can't
-    // survive cross-origin (see jsonpRequest() above). <script> tags can't
-    // carry a POST body, so the payload travels as a URL-encoded `data`
-    // query param instead — the backend's starterpack_save GET branch
-    // expects exactly that shape.
-    const payload=encodeURIComponent(JSON.stringify({audience:aud,channel:ch,label:label,opportunities:opportunities}));
-    const saveJson=await jsonpRequest(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpack_save&data='+payload);
+    // 1. Save the starter pack (Apps Script — password gated, plain POST).
+    const saveRes=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'starterpack_save',password:OPS_PASSWORD,data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
+    });
+    const saveJson=await saveRes.json();
     if(!saveJson||!saveJson.ok){
       status.textContent=(saveJson&&saveJson.error)||'starter pack save failed.';
       status.className='status-msg err';
