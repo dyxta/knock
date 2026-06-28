@@ -1509,11 +1509,21 @@ function maybeShowSwipeCoach(){
   },1100);
 }
 
-/* ── ADMIN STATS PAGE ──
-   Visiting the flyer with ?stats=1 in the URL shows the analytics panel
-   directly — no password gate. Data is fetched with a plain unauthenticated
-   fetch() against window.KNOCK_APPS_SCRIPT_URL + '?action=full', which is
-   a public GET endpoint (confirmed reachable directly in-browser). */
+/* ── SHARED OPS PASSWORD ──
+   ?stats=1 and ?ops=1 both require the same KNOCK_OPS_PASSWORD that the
+   Apps Script backend checks server-side. Not Google-login-gated — see
+   the ACCESS CONTROL note at the top of knock_signup_backend.gs.txt for
+   why this moved from per-person Google identity to one shared
+   password. Kept in memory only (not localStorage), re-prompted each
+   page load. */
+let OPS_PASSWORD='';
+function getOpsPassword(){
+  if(OPS_PASSWORD)return OPS_PASSWORD;
+  OPS_PASSWORD=window.prompt('ops password:')||'';
+  return OPS_PASSWORD;
+}
+
+/* ── ADMIN STATS PAGE ── */
 function isAdminPage(){
   return new URLSearchParams(window.location.search).get('stats')==='1';
 }
@@ -1521,15 +1531,16 @@ let ADMIN_DATA=null;
 async function loadAdminData(){
   var url=window.KNOCK_APPS_SCRIPT_URL;
   if(!url)return;
+  var pw=getOpsPassword();
+  if(!pw){document.getElementById('aUpdated').textContent='ops password required.';return;}
   document.getElementById('aUpdated').textContent='loading…';
   try{
-    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full');
+    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full&password='+encodeURIComponent(pw));
     const text=await res.text();
     const data=JSON.parse(text);
     if(data&&data.error){
-      document.getElementById('aUpdated').textContent=data.needsLogin
-        ? 'sign in with your Google account, then reload this page.'
-        : 'access denied: '+data.error;
+      OPS_PASSWORD=''; // wrong password — clear it so the next refresh re-prompts
+      document.getElementById('aUpdated').textContent='access denied: '+data.error;
       return;
     }
     ADMIN_DATA=data;
@@ -1657,15 +1668,16 @@ let OPS_TAB='all';
 async function loadOpsData(){
   var url=window.KNOCK_APPS_SCRIPT_URL;
   if(!url)return;
+  var pw=getOpsPassword();
+  if(!pw){document.getElementById('oUpdated').textContent='ops password required.';return;}
   document.getElementById('oUpdated').textContent='loading…';
   try{
-    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full');
+    const res=await fetch(url+(url.indexOf('?')>-1?'&':'?')+'action=full&password='+encodeURIComponent(pw));
     const text=await res.text();
     const data=JSON.parse(text);
     if(data&&data.error){
-      document.getElementById('oUpdated').textContent=data.needsLogin
-        ? 'sign in with your Google account, then reload this page.'
-        : 'access denied: '+data.error;
+      OPS_PASSWORD=''; // wrong password — clear it so the next refresh re-prompts
+      document.getElementById('oUpdated').textContent='access denied: '+data.error;
       return;
     }
     OPS_DATA=(data.submissions||[]).slice().reverse(); // newest first
@@ -1721,7 +1733,7 @@ async function opsSetState(ref,phone,newState,cardId){
   var btns=card?card.querySelectorAll('.o-btn'):[];
   btns.forEach(function(b){b.disabled=true;});
   try{
-    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'state_update',ref:ref||undefined,phone:phone||undefined,state:newState})});
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'state_update',password:OPS_PASSWORD,ref:ref||undefined,phone:phone||undefined,state:newState})});
     const json=await res.json();
     if(json&&json.ok){
       // reflect locally so list/tab/search stays consistent without a full reload
