@@ -1591,7 +1591,15 @@ function hideSwipeCoach(){
 function maybeShowSwipeCoach(){
   const c=document.getElementById('swipe-coach');
   if(!c)return;
-  if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0){
+  // CURRENT_SLIDE>0 used to be the only "don't show" guard, treating
+  // every non-zero slide the same. But slides[].length-1 is the last
+  // slide (slide-share, nothing further to swipe to) — landing there
+  // directly via the saved-slide restore in init() still revealed
+  // "swipe up ↑" pinned at the bottom with nothing above it, which read
+  // as a stuck/persisting hint since there's no further content to
+  // dismiss it against. Guard against the last slide explicitly too.
+  const isLastSlide=CURRENT_SLIDE>=slides.length-1;
+  if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0||isLastSlide){
     c.classList.add('hide');
     return;
   }
