@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knock — Pilot Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@900,800,700&f[]=switzer@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black:        #000000;
+      --white:        #FFFFFF;
+      --off-white:    #F8F7F5;
+      --purple:       #5E17EB;
+      --purple-light: #F0EBFF;
+      --purple-mid:   #C9AAFF;
+      --purple-deep:  #4A0FC1;
+      --gray-100:     #EDEDEB;
+      --gray-300:     #BDBBB7;
+      --gray-500:     #888580;
+      --gray-700:     #444241;
+      --green:        #10B981;
+      --amber:        #F59E0B;
+      --red:          #EF4444;
+      --shadow-xs:    0 1px 2px rgba(15,15,20,0.04);
+      --shadow-sm:    0 2px 8px rgba(15,15,20,0.06);
+      --shadow-md:    0 8px 24px rgba(15,15,20,0.08), 0 2px 6px rgba(15,15,20,0.04);
+      --shadow-lg:    0 24px 60px rgba(94,23,235,0.14), 0 8px 24px rgba(15,15,20,0.06);
+      --shadow-logo:  0 6px 18px rgba(94,23,235,0.22), 0 2px 6px rgba(15,15,20,0.10);
+      --font-title:   "Cabinet Grotesk", system-ui, sans-serif;
+      --font-head:    "Poppins", system-ui, sans-serif;
+      --font-body:    "Switzer", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
+    /* ── Lock ── */
+    #lock-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--black);
+      background-image: radial-gradient(900px 600px at 80% 20%, rgba(94,23,235,0.18) 0%, transparent 60%);
+    }
+
+    .lock-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 44px;
+      width: 100%;
+      max-width: 380px;
+      backdrop-filter: blur(12px);
+    }
+
+    .lock-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+    .lock-logo-mark { width: 36px; height: 36px; border-radius: 50%; box-shadow: var(--shadow-logo); flex-shrink: 0; }
+    .lock-logo-mark svg { display: block; width: 100%; height: 100%; }
+    .lock-wordmark { font-family: var(--font-title); font-weight: 900; font-size: 22px; letter-spacing: -1px; color: var(--white); line-height: 1; }
+    .lock-tag { font-family: var(--font-body); font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple-mid); margin-top: 2px; }
+
+    .lock-card h1 { font-family: var(--font-title); font-weight: 900; font-size: 28px; letter-spacing: -0.5px; color: var(--white); margin-bottom: 6px; }
+    .lock-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 28px; }
+
+    input[type="password"] {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 15px;
+      color: var(--white);
+      outline: none;
+      font-family: var(--font-body);
+      transition: border-color 0.15s;
+      margin-bottom: 14px;
+    }
+    input[type="password"]:focus { border-color: var(--purple); }
+    input[type="password"]::placeholder { color: rgba(255,255,255,0.25); }
+
+    .lock-btn {
+      width: 100%;
+      background: var(--purple);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .lock-btn:hover { opacity: 0.88; }
+
+    .lock-error {
+      display: none;
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-bottom: 12px;
+    }
+
+    /* ── App ── */
+    #app-wrap { display: none; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--black);
+      background-image:
+        radial-gradient(800px 500px at 100% 0%, rgba(94,23,235,0.14) 0%, transparent 60%),
+        radial-gradient(600px 400px at 0% 100%, rgba(94,23,235,0.06) 0%, transparent 55%);
+      padding: 32px 48px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+
+    .lockup { display: flex; align-items: center; gap: 12px; }
+    .knock-logo { display: inline-block; border-radius: 50%; box-shadow: var(--shadow-logo); flex-shrink: 0; }
+    .knock-logo svg { display: block; width: 100%; height: 100%; }
+    .lockup .knock-logo { width: 36px; height: 36px; }
+    .lockup .word { font-family: var(--font-title); font-weight: 900; font-size: 22px; letter-spacing: -1px; color: var(--white); line-height: 1; }
+    .lockup .tag  { font-family: var(--font-body); font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple-mid); margin-top: 2px; }
+
+    .sign-out-btn {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 7px 14px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.15s;
+    }
+    .sign-out-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
+
+    .hero-body { max-width: 680px; }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple-mid);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: clamp(40px, 5vw, 64px);
+      color: var(--white);
+      letter-spacing: -0.035em;
+      line-height: 0.96;
+      margin-bottom: 20px;
+    }
+
+    .hero-title em { font-style: normal; color: var(--purple-mid); }
+
+    .hero-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 32px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: wrap;
+    }
+
+    .hero-meta-item label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 4px;
+    }
+
+    .hero-meta-item span {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── Content ── */
+    .content { max-width: 1100px; margin: 0 auto; padding: 56px 48px 100px; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 60px; }
+
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: -12px;
+      margin-bottom: 20px;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    /* ── Card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Hub card ── */
+    .hub-card {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+      display: block;
+      box-shadow: var(--shadow-xs);
+    }
+    .hub-card:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--purple-mid);
+      transform: translateY(-2px);
+    }
+
+    .card-visual {
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-body { padding: 20px 22px 22px; }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+      background: var(--purple-light);
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      margin-bottom: 5px;
+    }
+
+    .card-desc {
+      font-size: 12.5px;
+      color: var(--gray-500);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .card-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--purple);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .visual-channel {
+      background: var(--black);
+      background-image: radial-gradient(400px at 100% 0%, rgba(94,23,235,0.3) 0%, transparent 60%);
+    }
+    .mini-url {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--purple-mid);
+    }
+
+    .visual-analytics {
+      background: #1c1129;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      padding-bottom: 20px;
+    }
+    .mini-bar { width: 14px; background: var(--purple); border-radius: 3px 3px 0 0; opacity: 0.7; }
+    .mini-bar.hi { background: var(--purple); opacity: 1; }
+    .mini-bar.lo { background: var(--purple-mid); opacity: 0.4; }
+
+    .visual-signup {
+      background: var(--off-white);
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .signup-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: conic-gradient(var(--purple) 0deg, var(--purple) var(--ring-deg, 120deg), var(--gray-100) var(--ring-deg, 120deg));
+      display: flex; align-items: center; justify-content: center;
+    }
+    .signup-ring-inner {
+      width: 48px; height: 48px; border-radius: 50%; background: var(--off-white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--purple); font-family: var(--font-head);
+    }
+
+    .visual-whatsapp {
+      background: #075E54;
+      background-image: radial-gradient(300px at 0% 100%, rgba(255,255,255,0.08) 0%, transparent 60%);
+    }
+    .wa-bubble {
+      background: rgba(255,255,255,0.92);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 11px;
+      color: #075E54;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .visual-guide {
+      background: var(--off-white);
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0 22px;
+      gap: 6px;
+    }
+    .step-preview { display: flex; align-items: center; gap: 8px; }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: var(--purple); color: var(--white);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-line { height: 6px; border-radius: 3px; background: var(--gray-100); }
+
+    /* ── Targets ── */
+    .target-card {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 18px;
+      padding: 22px 22px 20px;
+      box-shadow: var(--shadow-xs);
+    }
+    .target-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    .target-nums {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .target-current {
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+    }
+    .target-goal {
+      font-size: 14px;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+    .target-bar-track {
+      height: 7px;
+      border-radius: 4px;
+      background: var(--gray-100);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .target-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--purple);
+      transition: width 0.4s ease;
+    }
+    .target-bar-fill.behind { background: var(--amber); }
+    .target-bar-fill.danger { background: var(--red); }
+    .target-pct {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+    .target-note {
+      font-size: 11px;
+      color: var(--gray-300);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ── Timeline ── */
+    .timeline-wrap {
+      background: var(--white);
+      border: 1px solid var(--gray-100);
+      border-radius: 18px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-xs);
+      overflow-x: auto;
+    }
+    .timeline-track {
+      display: flex;
+      min-width: 920px;
+      position: relative;
+    }
+    .timeline-step {
+      flex: 1;
+      position: relative;
+      padding-top: 26px;
+      text-align: left;
+      padding-right: 14px;
+    }
+    .timeline-step::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gray-100);
+    }
+    .timeline-step.done::before { background: var(--purple); }
+    .timeline-step.current::before {
+      background: linear-gradient(to right, var(--purple) 50%, var(--gray-100) 50%);
+    }
+    .timeline-dot {
+      position: absolute;
+      top: 0; left: 0;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--gray-300);
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 1px var(--gray-100);
+    }
+    .timeline-step.done .timeline-dot { background: var(--purple); box-shadow: 0 0 0 1px var(--purple); }
+    .timeline-step.current .timeline-dot {
+      background: var(--purple);
+      box-shadow: 0 0 0 1px var(--purple), 0 0 0 5px var(--purple-light);
+    }
+    .timeline-date {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 4px;
+    }
+    .timeline-label {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: -0.01em;
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+    .timeline-gate {
+      font-size: 10.5px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+    .timeline-today-flag {
+      display: inline-block;
+      background: var(--purple);
+      color: var(--white);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-bottom: 5px;
+    }
+
+    .status-msg { font-size: 12px; color: rgba(255,255,255,0.45); min-height: 16px; }
+    .status-msg.err { color: #ff6b6b; }
+
+    @media (max-width: 720px) {
+      .hero { padding: 24px 24px 36px; }
+      .content { padding: 40px 20px 80px; }
+      .timeline-wrap { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Logo SVG symbols -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="logo-dark" viewBox="0 0 1180 1180">
+    <circle cx="590" cy="586" r="540" fill="white"/>
+    <ellipse cx="541" cy="586" rx="491" ry="540" fill="#5E17EB"/>
+    <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="white"/>
+    <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="white"/>
+    <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="white"/>
+    <ellipse cx="880.5" cy="599.5" rx="28.5" ry="36.5" transform="rotate(5.2667 880.5 599.5)" fill="#9560FF"/>
+  </symbol>
+</svg>
+
+<!-- Lock screen -->
+<div id="lock-wrap">
+  <div class="lock-card">
+    <div class="lock-logo-wrap">
+      <div class="lock-logo-mark"><svg><use href="#logo-dark"/></svg></div>
+      <div>
+        <div class="lock-wordmark">knock</div>
+        <div class="lock-tag">pilot hub</div>
+      </div>
+    </div>
+    <h1>Pilot access</h1>
+    <p class="lock-sub">Ops team only. Same password as the analytics dashboard.</p>
+    <div class="lock-error" id="lock-error"></div>
+    <input type="password" id="pw-input" placeholder="Ops password" />
+    <input type="password" id="go-pw-input" placeholder="Links password (for click data)" />
+    <button class="lock-btn" onclick="unlock()">Enter →</button>
+    <div class="status-msg" id="gate-status"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app-wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="lockup">
+        <div class="knock-logo" style="width:36px;height:36px;"><svg><use href="#logo-dark"/></svg></div>
+        <div>
+          <div class="word">knock</div>
+          <div class="tag">pilot ops hub</div>
+        </div>
+      </div>
+      <button class="sign-out-btn" onclick="signOut()">Sign out</button>
+    </div>
+
+    <div class="hero-body">
+      <div class="hero-eyebrow">Pilot · 22 Jun – 22 Jul 2026</div>
+      <div class="hero-title">The <em>pilot</em><br>pulse.</div>
+      <p class="hero-sub">Everything the ops team needs to run the pilot — channel tools, sign-up data, target tracking, WhatsApp approvals, and the schedule — in one place.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <label>Platform</label>
+          <span>pilot-hub.knocktalent.co.za</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Pilot window</label>
+          <span>22 Jun – 22 Jul 2026</span>
+        </div>
+        <div class="hero-meta-item">
+          <label>Status</label>
+          <span id="pilot-status-label" style="color:#10B981;">● Live</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 1. Timeline -->
+    <div class="section">
+      <div class="section-eyebrow">01 — Schedule</div>
+      <div class="section-title">Where we are in the pilot.</div>
+      <div class="section-desc">Seven stages, from prep through final feedback. Source: Knock GTM Strategy doc.</div>
+      <div class="timeline-wrap">
+        <div class="timeline-track" id="timeline-track"></div>
+      </div>
+    </div>
+
+    <!-- 2. Targets -->
+    <div class="section">
+      <div class="section-eyebrow">02 — Targets</div>
+      <div class="section-title">Are we on track?</div>
+      <div class="section-desc">Live numbers pulled from sign-ups, starter packs, and link clicks. Goals are from the GTM Strategy doc — edit the <code>TARGETS</code> object in this file if they change.</div>
+      <div class="card-grid" id="targets-grid"></div>
+    </div>
+
+    <!-- 3. Channel builder -->
+    <div class="section">
+      <div class="section-eyebrow">03 — Channel Tools</div>
+      <div class="section-title">Build and track channel links.</div>
+      <div class="card-grid">
+
+        <a class="hub-card" href="https://go.knocktalent.co.za/channels-builder.html" target="_blank">
+          <div class="card-visual visual-channel">
+            <div class="mini-url">knocktalent.co.za/wits-stem-1</div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Channel Builder</div>
+            <div class="card-title">Create a Starter Pack Link</div>
+            <div class="card-desc">Pick the audience and channel, choose 6 opportunities, save — get a link to post into the WhatsApp group.</div>
+            <div class="card-link">Open Channel Builder →</div>
+          </div>
+        </a>
+
+        <div class="hub-card" style="cursor:default;">
+          <div class="card-visual visual-guide">
+            <div class="step-preview"><div class="step-num">1</div><div class="step-line" style="width:90px;"></div></div>
+            <div class="step-preview"><div class="step-num" style="background:var(--gray-100);color:var(--gray-500);">2</div><div class="step-line" style="width:70px;"></div></div>
+            <div class="step-preview"><div class="step-num" style="background:var(--gray-100);color:var(--gray-500);">3</div><div class="step-line" style="width:60px;"></div></div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">How it works</div>
+            <div class="card-title">Pick → Build → Post</div>
+            <div class="card-desc">1. Pick the audience + channel. 2. Choose 6 opportunities for the starter pack. 3. Save — it auto-mints a tracked link and captures the champion. Post that link into the group.</div>
+          </div>
+        </div>
+
+        <a class="hub-card" href="https://go.knocktalent.co.za/analytics.html" target="_blank">
+          <div class="card-visual visual-analytics">
+            <div class="mini-bar lo" style="height:18px;"></div>
+            <div class="mini-bar" style="height:34px;"></div>
+            <div class="mini-bar hi" style="height:48px;"></div>
+            <div class="mini-bar" style="height:28px;"></div>
+            <div class="mini-bar lo" style="height:14px;"></div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Analytics</div>
+            <div class="card-title">Opportunity &amp; Link Performance</div>
+            <div class="card-desc">Starter packs, champions, per-opportunity likes/downloads, and total clicks across every minted link.</div>
+            <div class="card-link">See opportunity &amp; link performance →</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- 4. Sign-up snapshot -->
+    <div class="section">
+      <div class="section-eyebrow">04 — Sign-Ups</div>
+      <div class="section-title">Sign-up form snapshot.</div>
+      <div class="card-grid">
+
+        <div class="hub-card" style="cursor:default;">
+          <div class="card-visual visual-signup">
+            <div class="signup-ring" id="signup-ring" style="--ring-deg:0deg;">
+              <div class="signup-ring-inner" id="signup-ring-label">—</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Total Sign-Ups</div>
+            <div class="card-title" id="signup-total">—</div>
+            <div class="card-desc" id="signup-breakdown">loading…</div>
+          </div>
+        </div>
+
+        <a class="hub-card" href="https://join.knocktalent.co.za?stats=1" target="_blank">
+          <div class="card-visual visual-analytics">
+            <div class="mini-bar" style="height:20px;"></div>
+            <div class="mini-bar hi" style="height:44px;"></div>
+            <div class="mini-bar" style="height:30px;"></div>
+            <div class="mini-bar lo" style="height:16px;"></div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Full Dashboard</div>
+            <div class="card-title">Funnel, Pipeline &amp; Trends</div>
+            <div class="card-desc">The full sign-up analytics — conversion funnel, pipeline breakdown, and signups-over-time charts.</div>
+            <div class="card-link">View full analytics →</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- 5. WhatsApp approvals -->
+    <div class="section">
+      <div class="section-eyebrow">05 — Approvals</div>
+      <div class="section-title">Manage WhatsApp group access.</div>
+      <div class="card-grid">
+
+        <a class="hub-card" href="https://join.knocktalent.co.za/?ops=1" target="_blank">
+          <div class="card-visual visual-whatsapp">
+            <div class="wa-bubble">✓ Approve request</div>
+          </div>
+          <div class="card-body">
+            <div class="card-tag">Ops Approvals</div>
+            <div class="card-title">Review &amp; Approve Sign-Ups</div>
+            <div class="card-desc">Mobile-friendly queue for approving students into the right university/STEM WhatsApp group.</div>
+            <div class="card-link">Open Approvals →</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── CONFIG ──────────────────────────────────────────────────────────
+   Everything below is sourced from the Knock GTM Strategy doc
+   (Google Drive, "Pilot" folder). Edit these objects directly when
+   the strategy changes — no other code needs to change. ────────────*/
+
+window.KNOCK_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
+window.KNOCK_GO_LINKS_URL = 'https://go.knocktalent.co.za/api/links';
+
+// Pilot window
+var PILOT_START = new Date('2026-06-22T00:00:00');
+var PILOT_END   = new Date('2026-07-22T23:59:59');
+
+// Timeline — 7 stages from the GTM Strategy doc.
+var TIMELINE = [
+  { date: 'Before 22 Jun', label: 'Prep for pilot', gate: 'POPIA compliance confirmed; posting flow ready.', end: new Date('2026-06-22T00:00:00') },
+  { date: '22 Jun (Mon)',  label: 'Launch for students', gate: 'WhatsApp groups live (UCT/Wits/Stellies STEM); sign-up links out.', end: new Date('2026-06-29T00:00:00') },
+  { date: '29 Jun',        label: 'Begin industry outreach', gate: 'Pool must exist in a real, sayable way before first call.', end: new Date('2026-07-03T00:00:00') },
+  { date: '3 Jul',         label: 'Pool size meets goals', gate: '80–100 students in pool, correct distribution, 50–60% active.', end: new Date('2026-07-08T00:00:00') },
+  { date: '8 Jul',         label: 'Early pilot partners go live', gate: '1–2 paid, confirmed partners ready to post.', end: new Date('2026-07-08T00:00:01') },
+  { date: '8–22 Jul',      label: 'Internal reporting & measuring', gate: 'Track engagement, intent signals, applications, group growth/churn.', end: new Date('2026-07-22T00:00:00') },
+  { date: '22 Jul',        label: 'Pilot ends — feedback both sides', gate: 'Formal feedback to companies; retain students post-pilot.', end: new Date('2026-07-22T23:59:59') }
+];
+
+// Targets — goal numbers from the GTM Strategy doc, by end of pilot (22 Jul).
+var TARGETS = {
+  studentsServed:  { label: 'Students Served',        goal: 400, unit: '',   note: 'Total students reached across WhatsApp groups.' },
+  activeUsers:      { label: 'Active Users',            goal: 120, unit: '',   note: '~30% of students served, clicked ≥3 links.' },
+  payingCompanies:  { label: 'Paying Companies',        goal: 8,   unit: '',   note: 'Completed a paid talent drop.' },
+  intentCompanies:  { label: 'Expressed Intent',        goal: 7,   unit: '',   note: 'Interested, not yet paying. Goal range 5–10.' },
+  channelClicks:    { label: 'Channel Link Clicks',     goal: 1200, unit: '',  note: 'Total clicks across all minted channel links (derived target — ~3 per student served).' }
+};
+
+/* ── ACCESS GATE ────────────────────────────────────────────────────*/
+var SESSION_KEY = 'knock_pilot_authed';
+var OPS_PW_KEY = 'knock_pilot_ops_pw';
+var GO_PW_KEY = 'knock_pilot_go_pw';
+var OPS_PASSWORD = '';
+var GO_PASSWORD = '';
+
+function unlock() {
+  var opsPw = document.getElementById('pw-input').value.trim();
+  var goPw = document.getElementById('go-pw-input').value.trim();
+  var errEl = document.getElementById('lock-error');
+  var statusEl = document.getElementById('gate-status');
+  errEl.style.display = 'none';
+  statusEl.textContent = '';
+
+  if (!opsPw || !goPw) {
+    errEl.textContent = 'Enter both passwords.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  statusEl.textContent = 'checking…';
+
+  fetch(window.KNOCK_APPS_SCRIPT_URL + '?action=starterpacks_admin&password=' + encodeURIComponent(opsPw))
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data || data.error) {
+        errEl.textContent = 'Ops password rejected: ' + ((data && data.error) || 'unknown error');
+        errEl.style.display = 'block';
+        statusEl.textContent = '';
+        return;
+      }
+      OPS_PASSWORD = opsPw;
+      GO_PASSWORD = goPw;
+      sessionStorage.setItem(SESSION_KEY, '1');
+      sessionStorage.setItem(OPS_PW_KEY, opsPw);
+      sessionStorage.setItem(GO_PW_KEY, goPw);
+      showApp();
+      loadAll();
+    })
+    .catch(function () {
+      errEl.textContent = 'Could not reach the backend. Check your connection and try again.';
+      errEl.style.display = 'block';
+      statusEl.textContent = '';
+    });
+}
+
+function signOut() {
+  sessionStorage.clear();
+  document.getElementById('app-wrap').style.display = 'none';
+  document.getElementById('lock-wrap').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('go-pw-input').value = '';
+}
+
+function showApp() {
+  document.getElementById('lock-wrap').style.display = 'none';
+  document.getElementById('app-wrap').style.display = 'block';
+}
+
+if (sessionStorage.getItem(SESSION_KEY)) {
+  OPS_PASSWORD = sessionStorage.getItem(OPS_PW_KEY) || '';
+  GO_PASSWORD = sessionStorage.getItem(GO_PW_KEY) || '';
+  showApp();
+  loadAll();
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && document.getElementById('lock-wrap').style.display !== 'none') unlock();
+});
+
+/* ── RENDER: TIMELINE ───────────────────────────────────────────────*/
+function renderTimeline() {
+  var now = new Date();
+  var track = document.getElementById('timeline-track');
+  var html = '';
+  var currentIdx = TIMELINE.findIndex(function (s) { return now < s.end; });
+  if (currentIdx === -1) currentIdx = TIMELINE.length - 1;
+
+  TIMELINE.forEach(function (step, i) {
+    var cls = 'timeline-step';
+    if (i < currentIdx) cls += ' done';
+    else if (i === currentIdx) cls += ' current';
+    html += '<div class="' + cls + '">' +
+      '<div class="timeline-dot"></div>' +
+      (i === currentIdx ? '<div class="timeline-today-flag">Today</div><br>' : '') +
+      '<div class="timeline-date">' + step.date + '</div>' +
+      '<div class="timeline-label">' + step.label + '</div>' +
+      '<div class="timeline-gate">' + step.gate + '</div>' +
+      '</div>';
+  });
+  track.innerHTML = html;
+
+  var statusLabel = document.getElementById('pilot-status-label');
+  if (now < PILOT_START) {
+    statusLabel.textContent = '● Pre-launch';
+    statusLabel.style.color = '#F59E0B';
+  } else if (now > PILOT_END) {
+    statusLabel.textContent = '● Pilot ended';
+    statusLabel.style.color = 'var(--gray-500)';
+  } else {
+    statusLabel.textContent = '● Live';
+    statusLabel.style.color = '#10B981';
+  }
+}
+
+/* ── RENDER: TARGETS ────────────────────────────────────────────────*/
+function pctClass(pct) {
+  if (pct >= 70) return '';
+  if (pct >= 40) return 'behind';
+  return 'danger';
+}
+
+function renderTargets(current) {
+  var grid = document.getElementById('targets-grid');
+  var html = '';
+  Object.keys(TARGETS).forEach(function (key) {
+    var t = TARGETS[key];
+    var cur = current[key] || 0;
+    var pct = t.goal > 0 ? Math.min(100, Math.round((cur / t.goal) * 100)) : 0;
+    html += '<div class="target-card">' +
+      '<div class="target-label">' + t.label + '</div>' +
+      '<div class="target-nums">' +
+        '<div class="target-current">' + cur.toLocaleString() + '</div>' +
+        '<div class="target-goal">/ ' + t.goal.toLocaleString() + ' goal</div>' +
+      '</div>' +
+      '<div class="target-bar-track"><div class="target-bar-fill ' + pctClass(pct) + '" style="width:' + pct + '%;"></div></div>' +
+      '<div class="target-pct">' + pct + '% to goal</div>' +
+      '<div class="target-note">' + t.note + '</div>' +
+      '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+/* ── RENDER: SIGN-UP SNAPSHOT ───────────────────────────────────────*/
+function renderSignupSnapshot(submissions) {
+  var total = submissions.length;
+  var now = new Date();
+  var startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  var startOfDay = new Date(now); startOfDay.setHours(0, 0, 0, 0);
+
+  var today = 0, thisWeek = 0;
+  submissions.forEach(function (s) {
+    var ts = new Date(s.timestamp || s.created_at || s.submitted_at);
+    if (isNaN(ts)) return;
+    if (ts >= startOfDay) today++;
+    if (ts >= startOfWeek) thisWeek++;
+  });
+
+  document.getElementById('signup-total').textContent = total.toLocaleString();
+  document.getElementById('signup-breakdown').textContent = today + ' today · ' + thisWeek + ' this week';
+
+  var goal = TARGETS.studentsServed.goal;
+  var pct = goal > 0 ? Math.min(100, Math.round((total / goal) * 100)) : 0;
+  document.getElementById('signup-ring').style.setProperty('--ring-deg', (pct * 3.6) + 'deg');
+  document.getElementById('signup-ring-label').textContent = pct + '%';
+
+  return total;
+}
+
+/* ── LOAD EVERYTHING ────────────────────────────────────────────────*/
+function loadAll() {
+  renderTimeline();
+
+  Promise.all([
+    fetch(window.KNOCK_APPS_SCRIPT_URL + '?action=full&password=' + encodeURIComponent(OPS_PASSWORD)).then(function (r) { return r.json(); }),
+    fetch(window.KNOCK_APPS_SCRIPT_URL + '?action=starterpacks_admin&password=' + encodeURIComponent(OPS_PASSWORD)).then(function (r) { return r.json(); }),
+    fetch(window.KNOCK_GO_LINKS_URL, { headers: { 'x-knock-password': GO_PASSWORD } }).then(function (r) { return r.json(); })
+  ]).then(function (results) {
+    var fullRes = results[0] || {};
+    var packsRes = results[1] || {};
+    var linksRes = results[2] || {};
+
+    var submissions = fullRes.submissions || [];
+    var packs = packsRes.packs || [];
+    var links = linksRes.links || [];
+
+    var totalSignups = renderSignupSnapshot(submissions);
+
+    var totalClicks = 0;
+    links.forEach(function (l) { totalClicks += (l.clicks || 0); });
+
+    // "Active users" — best available proxy today is students who clicked
+    // through at least once; without per-user click attribution this is
+    // approximated from total click volume. Replace with a real per-user
+    // count once that's tracked.
+    var approxActive = Math.min(totalSignups, Math.round(totalClicks / 3));
+
+    var current = {
+      studentsServed: totalSignups,
+      activeUsers: approxActive,
+      payingCompanies: 0,   // no live source yet — update manually until tracked
+      intentCompanies: 0,   // no live source yet — update manually until tracked
+      channelClicks: totalClicks
+    };
+
+    renderTargets(current);
+  }).catch(function (e) {
+    document.getElementById('targets-grid').innerHTML = '<div style="color:var(--gray-500);font-size:13px;">Failed to load live data — check your connection and refresh.</div>';
+  });
+}
+</script>
+
+</body>
+</html>
