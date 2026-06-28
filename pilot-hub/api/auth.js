@@ -29,8 +29,8 @@ module.exports = async function (req, res) {
   try {
     const body = await readBody(req);
     const password = body && body.password;
-    const valid = process.env.KNOCK_OPS_PASSWORD;
-    if (!valid) return res.status(500).json({ error: 'KNOCK_OPS_PASSWORD not set' });
+    const valid = process.env.KNOCK_PASSWORD;
+    if (!valid) return res.status(500).json({ error: 'KNOCK_PASSWORD not set' });
     if (!password || password !== valid) return res.status(401).json({ error: 'Unauthorized' });
     return res.status(200).json({ ok: true });
   } catch (err) {

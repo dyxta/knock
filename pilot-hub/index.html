@@ -773,11 +773,12 @@ var TARGETS = {
 };
 
 /* ── ACCESS GATE ────────────────────────────────────────────────────
-   Single password, checked against the KNOCK_OPS_PASSWORD env var set
+   Single password, checked against the KNOCK_PASSWORD env var set
    in Vercel (pilot-hub project → Settings → Environment Variables) via
    /api/auth — same pattern as ops/index.html. Once unlocked, this same
    password is reused to call the Apps Script backend directly (it
-   checks the identical KNOCK_OPS_PASSWORD value), and go/api/links is
+   checks against its own KNOCK_OPS_PASSWORD script property — a
+   separate value, set in Apps Script, not Vercel), and go/api/links is
    reached through /api/links-proxy, which holds its own password
    server-side — so the browser never needs a second password. ───────*/
 var SESSION_KEY = 'knock_pilot_authed';
@@ -812,7 +813,7 @@ function unlock() {
         return null;
       }
       if (!r.ok) {
-        errEl.textContent = 'Server error checking password (status ' + r.status + ') — check Vercel logs / KNOCK_OPS_PASSWORD.';
+        errEl.textContent = 'Server error checking password (status ' + r.status + ') — check Vercel logs / KNOCK_PASSWORD env var.';
         errEl.style.display = 'block';
         statusEl.textContent = '';
         return null;
