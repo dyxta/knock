@@ -8,3 +8,5 @@
 
 # Local-only config
 config.local.js
+.vercel
+.env*

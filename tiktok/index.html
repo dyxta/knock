@@ -683,6 +683,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .opp-row-co{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:2px;}
 .opp-row-role{font-size:13px;font-weight:700;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .opp-row-loc{font-size:11px;color:var(--g500);margin-top:1px;}
+.opp-row-deadline{font-size:10.5px;font-weight:600;color:var(--g700);margin-top:1px;}
 .opp-row-heart{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--g200);background:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--g300);transition:all .2s;padding:0;line-height:1;}
 .opp-row-heart.liked{background:var(--purple-pale);border-color:var(--purple);color:var(--purple);}
 /* one-time cue: nudge toward hearting the first opportunity, then toward signing up */
@@ -1879,7 +1880,12 @@ if(isAdminPage()){
   const hasPathUni=parts.length>1&&!!parts[1];
   const greetLabel=(!hasPathUni&&PAGE_AUDIENCE)?audienceDisplay(PAGE_AUDIENCE):u.display.toLowerCase();
   document.getElementById('s0-uni').textContent=greetLabel+'.';
-  document.getElementById('s0-seg').textContent=seg.toLowerCase()+' · '+u.display.toLowerCase();
+  // Was a dynamic "stem · uct" built from PAGE_SEG/PAGE_UNI — per
+  // feedback this read as confusing/too narrow on every flyer page
+  // regardless of audience. Replaced with a fixed national framing line;
+  // seg/u are still computed above since other code on this page (email
+  // hint, uni chip preselect, etc.) depends on them.
+  document.getElementById('s0-seg').textContent='STEM students SA 🇿🇦';
   document.getElementById('sf-email').placeholder=u.emailHint;
   document.getElementById('sf-wa-btn').href=getWaLink();
   document.getElementById('copy-url-txt').textContent=window.location.href;
@@ -2644,7 +2650,16 @@ function _doPDF(bundle){
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(136,133,128);
     doc.text(`${opp.location}  ·  ${opp.degrees}  ·  closes ${opp.deadline}`,M+7,y+23);
     doc.setTextColor(94,23,235);doc.setFontSize(7.5);
-    doc.text('→ '+opp.url,M+7,y+31);
+    // Use the tracked go.knocktalent.co.za/opp-<id> short link, not the
+    // raw opp.url — opp.url is the opportunity's own application page,
+    // but every opportunity that's ever been added to a starter pack
+    // already has a recycled short link minted for it (see go/api/
+    // create.js's 'opportunity' type), and that's what should actually
+    // get clicked so visits/likes attribute back to this campaign.
+    // oppId() here matches that endpoint's id scheme exactly (same MD5
+    // of lowercased title+url), so this never needs a network call.
+    var shortLink='go.knocktalent.co.za/opp-'+oppId(opp.title,opp.url);
+    doc.text('→ '+shortLink,M+7,y+31);
     y+=h+7;
   });
   // Footer
@@ -2680,7 +2695,9 @@ function renderBatch(batchNum){
     var row=document.createElement('div');
     row.className='opp-row';
     row.className='opp-row'+(liked?' row-liked':'');
-    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role">'+opp.title+'</div><div class="opp-row-loc">'+opp.location+'</div></div>'
+    var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
+    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
+      +(opp.deadline?'<div class="opp-row-deadline">closes '+opp.deadline+'</div>':'')+'</div>'
       +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
     container.appendChild(row);
   });
