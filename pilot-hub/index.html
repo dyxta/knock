@@ -562,10 +562,9 @@
       </div>
     </div>
     <h1>Pilot access</h1>
-    <p class="lock-sub">Ops team only. Same passwords as the analytics dashboard.</p>
+    <p class="lock-sub">Ops team only.</p>
     <div class="lock-error" id="lock-error"></div>
-    <input type="password" id="pw-input" placeholder="Ops password" />
-    <input type="password" id="go-pw-input" placeholder="Links password (for click data)" />
+    <input type="password" id="pw-input" placeholder="Password" />
     <button class="lock-btn" onclick="unlock()">Enter →</button>
     <div class="status-msg" id="gate-status"></div>
   </div>
@@ -746,7 +745,8 @@
    the strategy changes — no other code needs to change. ────────────*/
 
 window.KNOCK_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
-window.KNOCK_GO_LINKS_URL = 'https://go.knocktalent.co.za/api/links';
+// go/api/links is reached via /api/links-proxy (server-side password), not
+// a direct browser fetch — see api/links-proxy.js.
 
 // Pilot window
 var PILOT_START = new Date('2026-06-22T00:00:00');
@@ -772,35 +772,33 @@ var TARGETS = {
   channelClicks:    { label: 'Channel Link Clicks',     goal: 1200, unit: '',  note: 'Total clicks across all minted channel links (derived target — ~3 per student served).' }
 };
 
-/* ── ACCESS GATE ────────────────────────────────────────────────────*/
+/* ── ACCESS GATE ────────────────────────────────────────────────────
+   Single password, checked against the KNOCK_OPS_PASSWORD env var set
+   in Vercel (pilot-hub project → Settings → Environment Variables) via
+   /api/auth — same pattern as ops/index.html. Once unlocked, this same
+   password is reused to call the Apps Script backend directly (it
+   checks the identical KNOCK_OPS_PASSWORD value), and go/api/links is
+   reached through /api/links-proxy, which holds its own password
+   server-side — so the browser never needs a second password. ───────*/
 var SESSION_KEY = 'knock_pilot_authed';
 var OPS_PW_KEY = 'knock_pilot_ops_pw';
-var GO_PW_KEY = 'knock_pilot_go_pw';
 var OPS_PASSWORD = '';
-var GO_PASSWORD = '';
 
 function unlock() {
   var opsPw = document.getElementById('pw-input').value.trim();
-  var goPw = document.getElementById('go-pw-input').value.trim();
   var errEl = document.getElementById('lock-error');
   var statusEl = document.getElementById('gate-status');
   errEl.style.display = 'none';
   statusEl.textContent = '';
 
-  if (!opsPw || !goPw) {
-    errEl.textContent = 'Enter both passwords.';
+  if (!opsPw) {
+    errEl.textContent = 'Enter the password.';
     errEl.style.display = 'block';
     return;
   }
 
   statusEl.textContent = 'checking…';
 
-  // Gate the page itself against the KNOCK_OPS_PASSWORD env var set in
-  // Vercel (pilot-hub project → Settings → Environment Variables), via
-  // /api/auth — same pattern as ops/index.html. This is the actual
-  // access control; the Apps Script + go/api/links checks below are
-  // separate passwords needed only for pulling live data, not for
-  // unlocking the page.
   fetch('/api/auth', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -814,7 +812,7 @@ function unlock() {
         return null;
       }
       if (!r.ok) {
-        errEl.textContent = 'Server error checking password — is KNOCK_OPS_PASSWORD set in Vercel?';
+        errEl.textContent = 'Server error checking password (status ' + r.status + ') — check Vercel logs / KNOCK_OPS_PASSWORD.';
         errEl.style.display = 'block';
         statusEl.textContent = '';
         return null;
@@ -824,10 +822,8 @@ function unlock() {
     .then(function (data) {
       if (!data) return; // error already shown above
       OPS_PASSWORD = opsPw;
-      GO_PASSWORD = goPw;
       sessionStorage.setItem(SESSION_KEY, '1');
       sessionStorage.setItem(OPS_PW_KEY, opsPw);
-      sessionStorage.setItem(GO_PW_KEY, goPw);
       showApp();
       loadAll();
     })
@@ -843,7 +839,6 @@ function signOut() {
   document.getElementById('app-wrap').style.display = 'none';
   document.getElementById('lock-wrap').style.display = 'flex';
   document.getElementById('pw-input').value = '';
-  document.getElementById('go-pw-input').value = '';
 }
 
 function showApp() {
@@ -853,7 +848,6 @@ function showApp() {
 
 if (sessionStorage.getItem(SESSION_KEY)) {
   OPS_PASSWORD = sessionStorage.getItem(OPS_PW_KEY) || '';
-  GO_PASSWORD = sessionStorage.getItem(GO_PW_KEY) || '';
   showApp();
   loadAll();
 }
@@ -959,7 +953,7 @@ function loadAll() {
   Promise.all([
     fetch(window.KNOCK_APPS_SCRIPT_URL + '?action=full&password=' + encodeURIComponent(OPS_PASSWORD)).then(function (r) { return r.json(); }),
     fetch(window.KNOCK_APPS_SCRIPT_URL + '?action=starterpacks_admin&password=' + encodeURIComponent(OPS_PASSWORD)).then(function (r) { return r.json(); }),
-    fetch(window.KNOCK_GO_LINKS_URL, { headers: { 'x-knock-password': GO_PASSWORD } }).then(function (r) { return r.json(); })
+    fetch('/api/links-proxy').then(function (r) { return r.json(); })
   ]).then(function (results) {
     var fullRes = results[0] || {};
     var packsRes = results[1] || {};
