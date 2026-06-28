@@ -50,8 +50,12 @@
 -->
 <script>
 window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
-// go.knocktalent.co.za's link-creation endpoint (see go/api/create.js).
-window.KNOCK_GO_CREATE_URL='https://go.knocktalent.co.za/api/create';
+// knocktalent.co.za's own link-creation endpoint (see tiktok/api/create.js).
+// Short links now live at knocktalent.co.za/<code> (not go.knocktalent.co.za)
+// and redirect to an exact destination URL with no params appended — the
+// custom code itself (e.g. "digital-flyer-uct-is-hons") is the tracking
+// signal, since the destination can be anything (Instagram, the flyer, etc).
+window.KNOCK_FLYER_CREATE_URL='https://knocktalent.co.za/api/create';
 </script>
 <style>
 :root{
@@ -202,12 +206,17 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
       <input type="text" id="pack-label" placeholder="e.g. STEM students — Instagram push, June 2026">
     </div>
     <div class="field">
+      <label>short link code</label>
+      <input type="text" id="link-code" placeholder="e.g. digital-flyer-uct-is-hons" autocomplete="off" oninput="LINK_CODE_AUTOFILLED=false;">
+      <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">the short link will be knocktalent.co.za/&lt;this&gt;. saving again with the same code repoints it instead of making a new one.</div>
+    </div>
+    <div class="field">
       <label>redirect destination</label>
-      <input type="text" id="dest-base" placeholder="https://knocktalent.co.za (default — change to point this link anywhere)" autocomplete="off">
-      <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">the short link will redirect here with ?audience=&amp;ch= appended. change this and re-save to repoint an existing link without minting a new one.</div>
+      <input type="text" id="link-dest" placeholder="e.g. https://knock-1bf3.vercel.app or an Instagram post URL" autocomplete="off">
+      <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">used exactly as typed, no params appended — can be the flyer, an Instagram post, anything.</div>
     </div>
     <div class="field" id="go-password-field">
-      <label>go.knocktalent.co.za password</label>
+      <label>knocktalent.co.za password</label>
       <input type="password" id="go-password" placeholder="needed to mint the short link (often the same as the ops password)" autocomplete="off">
     </div>
     <button class="save-btn" id="save-btn" onclick="saveAndMintLink()" disabled>save starter pack + generate channel link</button>
@@ -296,9 +305,14 @@ function getAudienceValue(){
 function getChannelValue(){
   return document.getElementById('ch-select').value.trim().toLowerCase();
 }
+let LINK_CODE_AUTOFILLED=true; // tracks whether link-code still holds an auto-suggestion vs. a manual edit
 function onParamsChanged(){
   const aud=getAudienceValue();
   const ch=getChannelValue();
+  const codeField=document.getElementById('link-code');
+  if(LINK_CODE_AUTOFILLED&&aud&&ch){
+    codeField.value=(aud+'-'+ch).replace(/[^a-z0-9-]+/g,'-').replace(/-+/g,'-');
+  }
   const existing=EXISTING_PACKS.find(function(p){return p.audience===aud&&p.channel===ch;});
   const note=document.getElementById('existing-pack-note');
   if(existing){
@@ -440,19 +454,33 @@ async function saveAndMintLink(){
       return;
     }
 
-    // 2. Mint (or re-mint) the channel short link (go.knocktalent.co.za — password gated).
-    if(!window.KNOCK_GO_CREATE_URL){
-      status.textContent='starter pack saved, but KNOCK_GO_CREATE_URL is not set — no short link minted.';
+    // 2. Mint (or re-mint) the short link (knocktalent.co.za/<code> — password gated).
+    if(!window.KNOCK_FLYER_CREATE_URL){
+      status.textContent='starter pack saved, but KNOCK_FLYER_CREATE_URL is not set — no short link minted.';
       status.className='status-msg err';
       btn.disabled=false;btn.textContent='save starter pack + generate channel link';
       return;
     }
+    const linkCode=document.getElementById('link-code').value.trim();
+    let linkDest=document.getElementById('link-dest').value.trim();
+    if(!linkCode){
+      status.textContent='starter pack saved ('+saveJson.mode+'), but a short link code is required to mint the link.';
+      status.className='status-msg err';
+      btn.disabled=false;btn.textContent='save starter pack + generate channel link';
+      return;
+    }
+    // If left blank, default the destination to the flyer with the
+    // audience/ch params it needs to apply this same starter pack — but
+    // this is just a convenience default; whatever's typed here is used
+    // exactly as-is, so pointing it at Instagram or anywhere else works too.
+    if(!linkDest){
+      linkDest='https://knocktalent.co.za/?audience='+encodeURIComponent(aud)+'&ch='+encodeURIComponent(ch);
+    }
     btn.textContent='minting link…';
-    const destBase=document.getElementById('dest-base').value.trim();
-    const createRes=await fetch(window.KNOCK_GO_CREATE_URL,{
+    const createRes=await fetch(window.KNOCK_FLYER_CREATE_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'channel',audience:aud,ch:ch,destBase:destBase||undefined,password:goPassword})
+      body:JSON.stringify({code:linkCode,dest:linkDest,label:label,password:goPassword})
     });
     const createJson=await createRes.json();
     if(!createRes.ok||!createJson||createJson.error){
@@ -465,9 +493,8 @@ async function saveAndMintLink(){
     status.textContent='done — pack '+saveJson.mode+', link ready.';
     status.className='status-msg ok';
     document.getElementById('out-short-url').textContent=createJson.shortUrl;
-    const usedDestBase=(createJson.destBase||'https://knocktalent.co.za').replace(/\/+$/,'');
-    document.getElementById('out-real-url').textContent=usedDestBase+'/?audience='+aud+'&ch='+ch;
-    document.getElementById('dest-base').value=usedDestBase;
+    document.getElementById('out-real-url').textContent=createJson.dest;
+    document.getElementById('link-dest').value=createJson.dest;
     document.getElementById('out-click-count').textContent='new link — 0 clicks so far';
     resultBlock.style.display='block';
     await loadExistingPacks();
