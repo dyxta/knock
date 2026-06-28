@@ -35,7 +35,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { type, dest, org, source, medium, wave, audience, ch, password, _auth_check } = req.body;
+  const { type, dest, org, source, medium, wave, audience, ch, destBase, password, _auth_check } = req.body;
 
   const validPassword = process.env.KNOCK_PASSWORD;
   if (!validPassword) return res.status(500).json({ error: 'KNOCK_PASSWORD not set' });
@@ -44,20 +44,34 @@ module.exports = async function handler(req, res) {
 
   /* ── CHANNELS LINK ──
      A separate link type from the original campaigns flow above. Points at
-     the digital flyer (not an arbitrary dest URL via campaigns.knocktalent
-     .co.za) with ?audience=&ch= — the flyer reads those params directly and
-     swaps in the matching starter pack itself (see applyStarterPack() in
-     tiktok/index.html). No PII anywhere in this record — just two labels —
-     so the click counter below stays fully anonymous. */
+     a flyer (an owned page, not an arbitrary dest URL via campaigns
+     .knocktalent.co.za) with ?audience=&ch= appended — the flyer reads
+     those params directly and swaps in the matching starter pack itself
+     (see applyStarterPack() in tiktok/index.html). No PII anywhere in this
+     record — just two labels — so the click counter below stays fully
+     anonymous.
+
+     destBase is the base URL the link redirects to, with ?audience=&ch=
+     appended on top of whatever's already there. Optional — if omitted
+     (or on re-save without passing it), it falls back to whatever destBase
+     was already stored for this code, and only defaults to the flyer's
+     production domain if this is a brand-new code with nothing stored yet.
+     This is what makes the destination editable per-link rather than
+     hardcoded: change destBase and re-run create for the same audience+ch
+     to repoint the same short link without minting a new one. */
   if (type === 'channel') {
     if (!audience || !ch) {
       return res.status(400).json({ error: 'audience and ch are required for a channel link' });
     }
     const code = buildChannelCode(audience, ch);
-    const record = { type: 'channel', audience, ch, createdAt: new Date().toISOString() };
+    const existing = await redis.get(`link:${code}`);
+    const base = (destBase && destBase.trim())
+      ? destBase.trim().replace(/\/+$/, '')
+      : (existing && existing.destBase) || 'https://knocktalent.co.za';
+    const record = { type: 'channel', audience, ch, destBase: base, createdAt: (existing && existing.createdAt) || new Date().toISOString() };
     await redis.set(`link:${code}`, record);
     await redis.lpush('all_links', code);
-    return res.status(200).json({ shortUrl: `https://go.knocktalent.co.za/${code}`, code });
+    return res.status(200).json({ shortUrl: `https://go.knocktalent.co.za/${code}`, code, destBase: base });
   }
 
   if (!dest || !org || !source || !medium || !wave) {

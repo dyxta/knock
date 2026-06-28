@@ -201,6 +201,11 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
       <label>pack label (internal, optional)</label>
       <input type="text" id="pack-label" placeholder="e.g. STEM students — Instagram push, June 2026">
     </div>
+    <div class="field">
+      <label>redirect destination</label>
+      <input type="text" id="dest-base" placeholder="https://knocktalent.co.za (default — change to point this link anywhere)" autocomplete="off">
+      <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">the short link will redirect here with ?audience=&amp;ch= appended. change this and re-save to repoint an existing link without minting a new one.</div>
+    </div>
     <div class="field" id="go-password-field">
       <label>go.knocktalent.co.za password</label>
       <input type="password" id="go-password" placeholder="needed to mint the short link (often the same as the ops password)" autocomplete="off">
@@ -443,10 +448,11 @@ async function saveAndMintLink(){
       return;
     }
     btn.textContent='minting link…';
+    const destBase=document.getElementById('dest-base').value.trim();
     const createRes=await fetch(window.KNOCK_GO_CREATE_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'channel',audience:aud,ch:ch,password:goPassword})
+      body:JSON.stringify({type:'channel',audience:aud,ch:ch,destBase:destBase||undefined,password:goPassword})
     });
     const createJson=await createRes.json();
     if(!createRes.ok||!createJson||createJson.error){
@@ -459,7 +465,9 @@ async function saveAndMintLink(){
     status.textContent='done — pack '+saveJson.mode+', link ready.';
     status.className='status-msg ok';
     document.getElementById('out-short-url').textContent=createJson.shortUrl;
-    document.getElementById('out-real-url').textContent='knocktalent.co.za/?audience='+aud+'&ch='+ch;
+    const usedDestBase=(createJson.destBase||'https://knocktalent.co.za').replace(/\/+$/,'');
+    document.getElementById('out-real-url').textContent=usedDestBase+'/?audience='+aud+'&ch='+ch;
+    document.getElementById('dest-base').value=usedDestBase;
     document.getElementById('out-click-count').textContent='new link — 0 clicks so far';
     resultBlock.style.display='block';
     await loadExistingPacks();

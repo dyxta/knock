@@ -37,6 +37,7 @@ module.exports = async function handler(req, res) {
       wave:      rec.wave,
       audience:  rec.audience,
       ch:        rec.ch,
+      destBase:  rec.destBase,
       createdAt: rec.createdAt,
       clicks:    parseInt(clicks[i] || 0, 10)
     };
