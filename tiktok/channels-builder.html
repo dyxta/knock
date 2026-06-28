@@ -538,7 +538,24 @@ async function saveAndMintLink(){
     });
     const createJson=await createRes.json();
     if(!createRes.ok||!createJson||createJson.error){
-      status.textContent='starter pack saved ('+saveJson.mode+'), but link creation failed: '+((createJson&&createJson.error)||createRes.status);
+      var createErr=(createJson&&createJson.error)||createRes.status;
+      var createMsg='starter pack saved ('+saveJson.mode+'), but link creation failed: '+createErr+'.';
+      // 401/"Unauthorized" here specifically means the go-password field's
+      // value doesn't match KNOCK_PASSWORD on the go.knocktalent.co.za
+      // Vercel project — a DIFFERENT secret from the ops password this
+      // page checks against KNOCK_OPS_PASSWORD (Apps Script). Pre-filling
+      // go-password from the ops password (see checkAccessAndInit) only
+      // works if those two are deliberately set to the same value — if
+      // they've drifted apart, step 1 (Apps Script) succeeds and step 2
+      // (go/api/create.js) always 401s, exactly like this. Spell that out
+      // instead of leaving ops to guess.
+      if(createRes.status===401||/unauthor/i.test(String(createErr))){
+        createMsg='starter pack saved ('+saveJson.mode+'), but link creation failed: Unauthorized. '+
+          'The "go.knocktalent.co.za password" field above doesn\'t match the KNOCK_PASSWORD env var on the go Vercel project — '+
+          'this is a separate secret from the ops password you unlocked this page with (KNOCK_OPS_PASSWORD). '+
+          'Re-type the correct go.knocktalent.co.za password into that field and save again, or update one of the two secrets so they match.';
+      }
+      status.textContent=createMsg;
       status.className='status-msg err';
       btn.disabled=false;btn.textContent='save starter pack + generate channel link';
       return;

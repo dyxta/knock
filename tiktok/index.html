@@ -1102,6 +1102,14 @@ body.ops #opsPanel{display:block;}
     <p class="slide-label">bonus opportunities.</p>
     <h2 class="slide-title">3 more<br><em>waiting for you.</em></h2>
     <p class="slide-body" id="p3-locked-body">sign up and request to join your campus group on the previous slide to unlock these.</p>
+    <!-- Sign-up CTA shown only pre-signup, so this slide can convert
+         directly instead of always bouncing back to slide 1. Once
+         signed up (but still missing the WA group request), this CTA
+         is hidden and only the "go back" button shows, since signing
+         up again isn't the blocker anymore — see refreshP3(). -->
+    <button class="cta-btn cta-primary door-cta" id="p3-signup-btn" style="max-width:280px;" onclick="openSheet('sheet-form');ph('cta_signup',{from:'slide3'});track('hero_cta_clicked',{from:'slide3'})">
+      <div class="cta-t"><div class="cta-arr">sign up →</div></div>
+    </button>
     <button class="cta-btn cta-secondary" style="max-width:280px;" onclick="goSlide(1)">
       <div class="cta-t"><div class="cta-arr">← go back</div></div>
     </button>
@@ -1148,8 +1156,7 @@ body.ops #opsPanel{display:block;}
     <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
       <div class="cta-t"><div class="cta-arr">📄 download opportunity bundle</div></div>
     </button>
-    <p id="s3-pdf-gate-hint" style="font-size:12px;color:var(--g500);margin-top:8px;text-align:center;line-height:1.5;">← go back and complete sign up + group request to unlock</p>
-    <p id="s3-no-bundle-msg" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← save some opportunities on slide 2 first</p>
+    <div id="s3-bundle-nudge" style="display:none;font-size:12px;color:var(--g500);margin-top:10px;text-align:center;line-height:1.6;"></div>
   </div>
 
   <div class="s3-divider anim a5"></div>
@@ -1310,8 +1317,7 @@ body.ops #opsPanel{display:block;}
         <div class="pdf-preview" id="sf-pdf-preview"></div>
         <div class="sf-consent pdf-consent" id="sf-pdf-consent-row" onclick="pdfToggleConsent()"><div class="sf-cb" id="sf-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
         <button class="pdf-btn" id="sf-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;">📄 download opportunity bundle</button>
-        <p id="sf-pdf-gate-hint" style="font-size:12px;color:var(--g500);margin-top:8px;text-align:center;line-height:1.5;">tap "request to join group" above to unlock the download</p>
-        <p id="sf-no-bundle" style="display:none;font-size:12px;color:var(--g500);margin-top:8px;text-align:center;">← go back to slide 2 to save opportunities first</p>
+        <div id="sf-bundle-nudge" style="display:none;font-size:12px;color:var(--g500);margin-top:10px;text-align:center;line-height:1.6;"></div>
         <p style="font-size:11px;color:var(--g300);text-align:center;margin-top:6px;line-height:1.5;">saved to your device · no account needed · links live when active</p>
       </div>
     </div>
@@ -1401,15 +1407,47 @@ const WA_LINKS={
   other:'https://chat.whatsapp.com/KUTUWMx7cfG189jab0NW8c?mode=gi_t'
 };
 const WA_WAITLIST=WA_LINKS.other; // non-STEM or unrecognized uni land on the "other" group for now, tagged as waitlist
+// Maps the sign-up form's university chip values (SF_UNI, capitalized —
+// 'UCT'/'Wits'/'Stellies'/'Pretoria'/'UKZN'/'Other') to the lowercase
+// WA_LINKS/UNI keys used everywhere else in this file.
+const SF_UNI_TO_KEY={'UCT':'uct','Wits':'wits','Stellies':'stellies','Pretoria':'up'};
+// Resolves which university to route WhatsApp-group-wise: the form's
+// explicit chip selection (SF_UNI) wins whenever the visitor has actually
+// picked one, since that's a real answer — not a guess. PAGE_UNI (from
+// the URL path) is only a fallback for before the form's been touched,
+// e.g. while still on slide 1/2. This matters because most channel links
+// point at the bare root URL (?audience=&ch=, no path segments), so
+// PAGE_UNI silently defaults to 'uct' for every such link — without this,
+// a visitor who explicitly picks "UKZN" or "Other" in the form still got
+// routed to whatever PAGE_UNI happened to default to (usually UCT's STEM
+// group), regardless of what they actually selected.
+function resolvedUniKey(){
+  if(SF_UNI&&SF_UNI!=='Other')return SF_UNI_TO_KEY[SF_UNI]||'';
+  if(SF_UNI==='Other')return ''; // explicit "Other" — never matches a named group, always falls through to the catch-all
+  return PAGE_UNI; // form not touched yet — fall back to the path guess
+}
 function getWaLink(){
   if(SF_FIELD==='Non-STEM')return WA_WAITLIST;
-  if(UNI[PAGE_UNI]&&WA_LINKS[PAGE_UNI])return WA_LINKS[PAGE_UNI];
+  var key=resolvedUniKey();
+  if(UNI[key]&&WA_LINKS[key])return WA_LINKS[key];
   return WA_LINKS.other;
 }
 function isWaitlisted(){
-  return SF_FIELD==='Non-STEM'||!UNI[PAGE_UNI];
+  return SF_FIELD==='Non-STEM'||!UNI[resolvedUniKey()];
 }
 const SEG={'devsoc':'Developer Society','cs':'Computer Science','is':'Information Systems','honours':'Honours','compsci':'Computer Science','eng':'Engineering','data':'Data Science','math':'Mathematics','fintech':'FinTech','stem':'STEM students'};
+// Friendly label for the ?audience= param used by channel links (set in
+// channels-builder.html's "audience" field, e.g. "stem-students",
+// "cs-students", "devsoc") — only used for the "hi, {x}" greeting when
+// there's no path-based university segment to greet with instead (see
+// audienceDisplay() below). Falls back to a slugified version of
+// whatever audience string was given, so an unlisted audience still
+// reads as a sensible label instead of a missing/garbled greeting.
+const AUDIENCE_LABELS={'stem-students':'stem students','cs-students':'cs students','devsoc':'devsoc'};
+function audienceDisplay(aud){
+  if(AUDIENCE_LABELS[aud])return AUDIENCE_LABELS[aud];
+  return String(aud||'').replace(/[-_]+/g,' ').trim();
+}
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
 const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1';
 let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
@@ -1829,7 +1867,18 @@ if(isAdminPage()){
   PAGE_AUDIENCE=qp.get('audience')||''; PAGE_CH=qp.get('ch')||'';
   const u=UNI[PAGE_UNI]||{display:PAGE_UNI?(PAGE_UNI.charAt(0).toUpperCase()+PAGE_UNI.slice(1)):'your uni',full:'',location:'',emailHint:'student@example.ac.za'};
   const seg=SEG[PAGE_SEG]||PAGE_SEG.replace(/-/g,' ');
-  document.getElementById('s0-uni').textContent=u.display.toLowerCase()+'.';
+  // Channel links minted by channels-builder.html default to
+  // https://knocktalent.co.za/?audience=X&ch=Y — a root path with no
+  // "-uni-seg" path segments, so PAGE_UNI/PAGE_SEG above always fall back
+  // to their generic defaults ('uct'/'stem') for that link shape. When
+  // that's the case (no real path info) but an audience param IS present,
+  // greet with the audience label instead of the meaningless uct/stem
+  // fallback — a path-based uni segment (e.g. /digital-flyer-wits-cs)
+  // still wins whenever one is actually present, since that's more
+  // specific than the audience label.
+  const hasPathUni=parts.length>1&&!!parts[1];
+  const greetLabel=(!hasPathUni&&PAGE_AUDIENCE)?audienceDisplay(PAGE_AUDIENCE):u.display.toLowerCase();
+  document.getElementById('s0-uni').textContent=greetLabel+'.';
   document.getElementById('s0-seg').textContent=seg.toLowerCase()+' · '+u.display.toLowerCase();
   document.getElementById('sf-email').placeholder=u.emailHint;
   document.getElementById('sf-wa-btn').href=getWaLink();
@@ -2160,6 +2209,13 @@ function sfUniChip(el,silent){
     }
   }
   if(!silent)ph('university_selected',{uni_chip:SF_UNI});
+  // Refresh every WA-group button on the page now that the resolved
+  // university (and therefore the destination group) may have changed —
+  // sfChip() already does this for the field-of-study chip, this was
+  // missing here, which is why picking "Other" (or any uni) in the form
+  // never actually updated which group the visitor would be sent to.
+  var waBtn1=document.getElementById('sf-wa-btn');if(waBtn1)waBtn1.href=getWaLink();
+  var waBtn2=document.getElementById('p2-wa-btn');if(waBtn2)waBtn2.href=getWaLink();
 }
 document.addEventListener('input',function(e){
   if(e.target&&e.target.id==='universityOther')SF_UNI_OTHER=e.target.value.trim();
@@ -2216,7 +2272,7 @@ async function sfSubmit(){
     degree:SF_OPTIONAL.degree||'',
     gpa:SF_OPTIONAL.gpa||'',
     lookingFor:SF_OPTIONAL.lookingFor||[],
-    group:isWaitlisted()?'waitlist':(PAGE_UNI+'_stem'),
+    group:isWaitlisted()?'waitlist':(resolvedUniKey()+'_stem'),
     source:window.location.pathname.replace(/^\//,''),
     audience:PAGE_AUDIENCE,
     ch:PAGE_CH,
@@ -2265,29 +2321,46 @@ function syncPdfConsentUI(){
     cb.innerHTML=PDF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';
   });
 }
+// Builds the nudge shown under a disabled download button when the
+// bundle is empty. Two cases, since "signed up with an empty bundle"
+// covers two genuinely different visitors:
+//   1. WA group not requested yet — nudge that first (it's the obvious
+//      next step right there on the same screen), then liking.
+//   2. WA already requested but still nothing saved — the group-join
+//      nudge would be a dead end (they already did it), so go straight
+//      to "go like some opportunities", framed as a bonus worth grabbing
+//      rather than a chore, with a real button back to slide 2 instead
+//      of just descriptive text.
+function bundleNudgeHTML(){
+  var waOK=localStorage.getItem(KEY_WA)==='1';
+  if(!waOK){
+    return 'request to join your campus group above, then go back and save a few opportunities — '+
+      '<button type="button" onclick="goSlide(1);" style="display:block;margin:8px auto 0;background:none;border:1px solid var(--g300);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--ink);cursor:pointer;">← back to opportunities</button>';
+  }
+  return '<strong style="color:var(--purple);">bonus:</strong> save a few opportunities and we\'ll bundle them into your free PDF — '+
+    '<button type="button" onclick="goSlide(1);" style="display:block;margin:8px auto 0;background:none;border:1px solid var(--g300);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--ink);cursor:pointer;">♡ go like some opportunities</button>';
+}
 function refreshPDFGate(){
   // download requires both (a) having saved something and (b) the
   // privacy/terms consent box ticked — the company links only ever
   // surface inside the generated PDF, so gating the PDF gates the links.
-  // signup/WA status is irrelevant and intentionally not mentioned.
   var bundle=getBundle();
   var canDL=bundle.length>0&&PDF_CONSENT;
   syncPdfConsentUI();
+  var nudgeHTML=bundle.length>0?'':bundleNudgeHTML();
   // sf-done PDF button
   var sfBtn=document.getElementById('sf-pdf-btn');
-  var sfHint=document.getElementById('sf-pdf-gate-hint');
+  var sfNudge=document.getElementById('sf-bundle-nudge');
   var sfConsentRow=document.getElementById('sf-pdf-consent-row');
   if(sfBtn){sfBtn.disabled=!canDL;sfBtn.style.opacity=canDL?'1':'0.4';sfBtn.style.cursor=canDL?'pointer':'not-allowed';}
-  if(sfHint)sfHint.style.display='none';
+  if(sfNudge){sfNudge.style.display=bundle.length>0?'none':'block';sfNudge.innerHTML=nudgeHTML;}
   if(sfConsentRow)sfConsentRow.style.display=bundle.length>0?'flex':'none';
   // slide 4 PDF button
   var s3Btn=document.getElementById('s3-pdf-btn');
-  var s3Hint=document.getElementById('s3-pdf-gate-hint');
-  var s3NoBundle=document.getElementById('s3-no-bundle-msg');
+  var s3Nudge=document.getElementById('s3-bundle-nudge');
   var s3ConsentRow=document.getElementById('s3-pdf-consent-row');
   if(s3Btn){s3Btn.disabled=!canDL;s3Btn.style.opacity=canDL?'1':'0.4';s3Btn.style.cursor=canDL?'pointer':'not-allowed';}
-  if(s3Hint)s3Hint.style.display='none';
-  if(s3NoBundle)s3NoBundle.style.display=bundle.length>0?'none':'block';
+  if(s3Nudge){s3Nudge.style.display=bundle.length>0?'none':'block';s3Nudge.innerHTML=nudgeHTML;}
   if(s3ConsentRow)s3ConsentRow.style.display=bundle.length>0?'flex':'none';
 }
 
@@ -2358,9 +2431,9 @@ function refreshBundleUI(){
 }
 function refreshS3(){
   var bundle=getBundle();
-  var noBundle=document.getElementById('s3-no-bundle-msg');
   var preview=document.getElementById('s3-pdf-preview');
-  if(noBundle)noBundle.style.display=(bundle.length===0)?'block':'none';
+  // empty-bundle messaging now lives in #s3-bundle-nudge, driven by
+  // refreshPDFGate()'s bundleNudgeHTML() — no separate element to sync here.
   if(preview&&bundle.length>0){
     preview.classList.add('show');
     preview.innerHTML=bundle.map(function(o){return '<div class="pdf-preview-item">'+o.title+' — '+o.company+'</div>';}).join('');
@@ -2402,10 +2475,15 @@ function refreshP3(){
     unlocked.style.display=ok?'block':'none';
     if(ok&&OPPORTUNITIES&&OPPORTUNITIES.length)renderBatch(2);
   }
+  var signupBtn=document.getElementById('p3-signup-btn');
   if(!ok&&body){
     if(signed&&!waOK)body.textContent='request to join your campus group on the previous slide to unlock your 3 bonus opportunities.';
-    else body.textContent='sign up and request to join your campus group on the previous slide to unlock these.';
+    else body.textContent='sign up below (or on the previous slide) and request to join your campus group to unlock these.';
   }
+  // Only show the inline sign-up CTA pre-signup — once signed up, the
+  // WA-group request (not signing up again) is the remaining blocker,
+  // and that request button lives on slide 2, not here.
+  if(signupBtn)signupBtn.style.display=signed?'none':'block';
   // bundle-ready copy applies regardless of signup state — exporting
   // never required signing up, it just quietly works once something's saved.
   var bundle=getBundle();
@@ -2515,6 +2593,12 @@ document.addEventListener('pointerdown',function(e){
   var bundle=getBundle();
   var reason=bundle.length===0?'no_bundle':'no_consent';
   ph('pdf_download_blocked',{reason:reason,surface:btn.id});
+  if(reason==='no_bundle'){
+    var waOK=localStorage.getItem(KEY_WA)==='1';
+    showToast(waOK?'♡ like a few opportunities first ↓':'request to join your group, then save some opportunities ↓');
+  }else{
+    showToast('tick the consent box to unlock ↓');
+  }
 });
 
 /* ══════ PDF GENERATION ══════ */
