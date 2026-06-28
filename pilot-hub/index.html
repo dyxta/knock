@@ -562,7 +562,7 @@
       </div>
     </div>
     <h1>Pilot access</h1>
-    <p class="lock-sub">Ops team only. Same password as the analytics dashboard.</p>
+    <p class="lock-sub">Ops team only. Same passwords as the analytics dashboard.</p>
     <div class="lock-error" id="lock-error"></div>
     <input type="password" id="pw-input" placeholder="Ops password" />
     <input type="password" id="go-pw-input" placeholder="Links password (for click data)" />
@@ -634,7 +634,7 @@
       <div class="section-title">Build and track channel links.</div>
       <div class="card-grid">
 
-        <a class="hub-card" href="https://go.knocktalent.co.za/channels-builder.html" target="_blank">
+        <a class="hub-card" href="https://channel-builder.knocktalent.co.za" target="_blank">
           <div class="card-visual visual-channel">
             <div class="mini-url">knocktalent.co.za/wits-stem-1</div>
           </div>
@@ -795,15 +795,34 @@ function unlock() {
 
   statusEl.textContent = 'checking…';
 
-  fetch(window.KNOCK_APPS_SCRIPT_URL + '?action=starterpacks_admin&password=' + encodeURIComponent(opsPw))
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
-      if (!data || data.error) {
-        errEl.textContent = 'Ops password rejected: ' + ((data && data.error) || 'unknown error');
+  // Gate the page itself against the KNOCK_OPS_PASSWORD env var set in
+  // Vercel (pilot-hub project → Settings → Environment Variables), via
+  // /api/auth — same pattern as ops/index.html. This is the actual
+  // access control; the Apps Script + go/api/links checks below are
+  // separate passwords needed only for pulling live data, not for
+  // unlocking the page.
+  fetch('/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: opsPw })
+  })
+    .then(function (r) {
+      if (r.status === 401) {
+        errEl.textContent = 'Incorrect password.';
         errEl.style.display = 'block';
         statusEl.textContent = '';
-        return;
+        return null;
       }
+      if (!r.ok) {
+        errEl.textContent = 'Server error checking password — is KNOCK_OPS_PASSWORD set in Vercel?';
+        errEl.style.display = 'block';
+        statusEl.textContent = '';
+        return null;
+      }
+      return r.json();
+    })
+    .then(function (data) {
+      if (!data) return; // error already shown above
       OPS_PASSWORD = opsPw;
       GO_PASSWORD = goPw;
       sessionStorage.setItem(SESSION_KEY, '1');
