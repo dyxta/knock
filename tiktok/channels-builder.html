@@ -540,20 +540,23 @@ async function saveAndMintLink(){
     if(!createRes.ok||!createJson||createJson.error){
       var createErr=(createJson&&createJson.error)||createRes.status;
       var createMsg='starter pack saved ('+saveJson.mode+'), but link creation failed: '+createErr+'.';
-      // 401/"Unauthorized" here specifically means the go-password field's
-      // value doesn't match KNOCK_PASSWORD on the go.knocktalent.co.za
-      // Vercel project — a DIFFERENT secret from the ops password this
-      // page checks against KNOCK_OPS_PASSWORD (Apps Script). Pre-filling
-      // go-password from the ops password (see checkAccessAndInit) only
-      // works if those two are deliberately set to the same value — if
-      // they've drifted apart, step 1 (Apps Script) succeeds and step 2
-      // (go/api/create.js) always 401s, exactly like this. Spell that out
-      // instead of leaving ops to guess.
+      // Previously this branch told ops the 401 meant the go-password field
+      // didn't match KNOCK_PASSWORD on Vercel. That theory was disproven —
+      // the two secrets were confirmed identical and the 401 still happened.
+      // Real cause: this fetch uses Content-Type: text/plain (to dodge a
+      // CORS preflight), and Vercel's automatic body parser only JSON-parses
+      // application/json bodies — a text/plain body arrived at
+      // go/api/create.js as a raw string, so destructuring `password` off
+      // req.body always produced undefined, which always failed the
+      // password check no matter what was typed. Fixed server-side in
+      // go/api/create.js (now parses the body defensively regardless of
+      // content-type). If this 401 still happens after that fix ships, it's
+      // most likely an actually-wrong password or a stale deploy — not a
+      // secret-drift issue.
       if(createRes.status===401||/unauthor/i.test(String(createErr))){
         createMsg='starter pack saved ('+saveJson.mode+'), but link creation failed: Unauthorized. '+
-          'The "go.knocktalent.co.za password" field above doesn\'t match the KNOCK_PASSWORD env var on the go Vercel project — '+
-          'this is a separate secret from the ops password you unlocked this page with (KNOCK_OPS_PASSWORD). '+
-          'Re-type the correct go.knocktalent.co.za password into that field and save again, or update one of the two secrets so they match.';
+          'Double-check the "go.knocktalent.co.za password" field above is correct, then try saving again. '+
+          'If it still fails, the go API deploy may be stale — check that the latest go/api/create.js is live on Vercel.';
       }
       status.textContent=createMsg;
       status.className='status-msg err';

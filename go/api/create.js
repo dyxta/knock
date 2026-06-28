@@ -29,6 +29,32 @@ function buildCode(org, source, wave) {
   return `${o}-${u}-${w}`;
 }
 
+// Callers (channels-builder.html in particular) deliberately POST with
+// Content-Type: text/plain;charset=utf-8 to avoid a CORS preflight, even
+// though the body is JSON. Vercel's automatic body parser only JSON-parses
+// req.body when the content-type is application/json — for text/plain it
+// leaves req.body as a raw string. Destructuring fields off a string
+// silently yields undefined for all of them (including password), which
+// always failed the password check below and returned 401 regardless of
+// what was actually sent. Parse defensively here, mirroring the readBody()
+// helper already used in pilot-hub/api/auth.js, so content-type can't
+// break auth again.
+async function readBody(req) {
+  if (req.body && typeof req.body === 'object') return req.body;
+  if (typeof req.body === 'string') {
+    try { return JSON.parse(req.body); } catch (e) { return {}; }
+  }
+  return new Promise(function (resolve) {
+    const chunks = [];
+    req.on('data', function (c) { chunks.push(c); });
+    req.on('end', function () {
+      try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); }
+      catch (e) { resolve({}); }
+    });
+    req.on('error', function () { resolve({}); });
+  });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -37,7 +63,8 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { type, dest, org, source, medium, wave, audience, ch, code: customCode, title, password, _auth_check } = req.body;
+  const body = await readBody(req);
+  const { type, dest, org, source, medium, wave, audience, ch, code: customCode, title, password, _auth_check } = body;
 
   const validPassword = process.env.KNOCK_PASSWORD;
   if (!validPassword) return res.status(500).json({ error: 'KNOCK_PASSWORD not set' });
