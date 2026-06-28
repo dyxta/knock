@@ -16,17 +16,6 @@ function buildCode(org, source, wave) {
   return `${o}-${u}-${w}`;
 }
 
-// channels links are keyed by audience+ch only (no dest/org/wave) — code is
-// just "<audience>-<ch>", e.g. "stem-students-ig". Stable and re-creatable:
-// re-running create for the same audience+ch reuses the same code instead of
-// growing a new one each time, so the short link ops hand out never changes
-// once a starter pack has been attached to it.
-function buildChannelCode(audience, ch) {
-  const a = slugify(audience);
-  const c = slugify(ch);
-  return `${a}-${c}`;
-}
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -35,7 +24,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { type, dest, org, source, medium, wave, audience, ch, destBase, password, _auth_check } = req.body;
+  const { type, dest, org, source, medium, wave, audience, ch, code: customCode, password, _auth_check } = req.body;
 
   const validPassword = process.env.KNOCK_PASSWORD;
   if (!validPassword) return res.status(500).json({ error: 'KNOCK_PASSWORD not set' });
@@ -43,35 +32,42 @@ module.exports = async function handler(req, res) {
   if (_auth_check) return res.status(200).json({ ok: true });
 
   /* ── CHANNELS LINK ──
-     A separate link type from the original campaigns flow above. Points at
-     a flyer (an owned page, not an arbitrary dest URL via campaigns
-     .knocktalent.co.za) with ?audience=&ch= appended — the flyer reads
-     those params directly and swaps in the matching starter pack itself
-     (see applyStarterPack() in tiktok/index.html). No PII anywhere in this
-     record — just two labels — so the click counter below stays fully
-     anonymous.
+     A separate link type from the original campaigns flow above. Each
+     channel link is a custom short code (ops types it — e.g.
+     "digital-flyer-uct-is-hons" — so it can look intentional/personalised
+     to whoever it's handed to) pointing at any destination URL, used
+     exactly as given — no params appended. Channel champions get a link
+     that looks made for them; clicks are tracked per-code the same way as
+     the rest of this file. audience/ch are stored alongside purely as
+     labels so the channels-builder UI can look up which starter pack
+     belongs to this link — they have no effect on the redirect itself.
 
-     destBase is the base URL the link redirects to, with ?audience=&ch=
-     appended on top of whatever's already there. Optional — if omitted
-     (or on re-save without passing it), it falls back to whatever destBase
-     was already stored for this code, and only defaults to the flyer's
-     production domain if this is a brand-new code with nothing stored yet.
-     This is what makes the destination editable per-link rather than
-     hardcoded: change destBase and re-run create for the same audience+ch
-     to repoint the same short link without minting a new one. */
+     code is required and must be unique per audience+ch combo in practice,
+     but nothing here enforces that — ops chooses the code, and re-saving
+     the same code repoints that link (keeps the same short URL, just
+     updates where it goes and which audience/ch label it's tagged with). */
   if (type === 'channel') {
-    if (!audience || !ch) {
-      return res.status(400).json({ error: 'audience and ch are required for a channel link' });
+    if (!customCode || !customCode.trim()) {
+      return res.status(400).json({ error: 'code is required for a channel link' });
     }
-    const code = buildChannelCode(audience, ch);
+    if (!dest || !dest.trim()) {
+      return res.status(400).json({ error: 'dest is required for a channel link' });
+    }
+    const code = slugify(customCode);
+    if (!code) return res.status(400).json({ error: 'code must contain letters or numbers' });
+    let cleanDest = dest.trim();
+    if (!/^https?:\/\//i.test(cleanDest)) cleanDest = 'https://' + cleanDest;
     const existing = await redis.get(`link:${code}`);
-    const base = (destBase && destBase.trim())
-      ? destBase.trim().replace(/\/+$/, '')
-      : (existing && existing.destBase) || 'https://knocktalent.co.za';
-    const record = { type: 'channel', audience, ch, destBase: base, createdAt: (existing && existing.createdAt) || new Date().toISOString() };
+    const record = {
+      type: 'channel',
+      audience: audience || (existing && existing.audience) || '',
+      ch: ch || (existing && existing.ch) || '',
+      dest: cleanDest,
+      createdAt: (existing && existing.createdAt) || new Date().toISOString(),
+    };
     await redis.set(`link:${code}`, record);
-    await redis.lpush('all_links', code);
-    return res.status(200).json({ shortUrl: `https://go.knocktalent.co.za/${code}`, code, destBase: base });
+    if (!existing) await redis.lpush('all_links', code);
+    return res.status(200).json({ shortUrl: `https://go.knocktalent.co.za/${code}`, code, dest: cleanDest });
   }
 
   if (!dest || !org || !source || !medium || !wave) {

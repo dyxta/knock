@@ -16,23 +16,22 @@ module.exports = async function handler(req, res) {
 
   res.setHeader('Cache-Control', 'no-store');
 
-  // CHANNELS link — goes straight to a flyer with ?audience=&ch= appended,
-  // not through campaigns.knocktalent.co.za/?dest= (that domain/param is the
-  // older campaigns mechanic for arbitrary external destinations; the flyer
-  // is an owned page that reads its own query params directly).
+  // CHANNELS link — redirects exactly to data.dest, no params appended.
+  // dest is whatever ops typed in channels-builder.html: the flyer (often
+  // with its own ?audience=&ch= already baked in, by ops's own choice, so
+  // the flyer applies the matching starter pack), an Instagram post,
+  // anywhere. The code itself (not query params on the destination) is
+  // what carries the tracking signal — that's what clicks:<code> counts.
   //
-  // destBase is the configurable part: set at creation time (see create.js),
-  // defaults to https://knocktalent.co.za for any link saved before this was
-  // added. Falling back here too means old records in Redis that predate
-  // destBase keep working with zero migration needed.
+  // Old records saved before this used a destBase+?audience/ch scheme
+  // (pre-dating an explicit dest field) — handled for backwards
+  // compatibility so links minted before this change don't break.
   if (data.type === 'channel') {
-    const { audience, ch, destBase } = data;
-    const base = (destBase || 'https://knocktalent.co.za').replace(/\/+$/, '');
+    if (data.dest) return res.redirect(302, data.dest);
+    const base = (data.destBase || 'https://knocktalent.co.za').replace(/\/+$/, '');
     const sep = base.includes('?') ? '&' : '?';
-    const flyerUrl =
-      base + sep + 'audience=' + encodeURIComponent(audience) +
-      '&ch=' + encodeURIComponent(ch);
-    return res.redirect(302, flyerUrl);
+    const legacyUrl = base + sep + 'audience=' + encodeURIComponent(data.audience || '') + '&ch=' + encodeURIComponent(data.ch || '');
+    return res.redirect(302, legacyUrl);
   }
 
   const { dest, org, source, medium, wave } = data;

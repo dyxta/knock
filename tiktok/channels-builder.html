@@ -8,32 +8,35 @@
   ============================================================
   KNOCK CHANNELS BUILDER — ops-only internal tool
   ============================================================
-  Builds a "channel link": a short, trackable, fully anonymous link
-  (go.knocktalent.co.za/<code>) that redirects straight to the digital
-  flyer with ?audience=&ch=, with a starter pack of exactly 6
-  opportunities (3 "main" + 3 "bonus") attached to that specific
-  audience+channel combo.
+  Builds a "channel link": a short, trackable link (go.knocktalent.co.za
+  /<custom-code>, e.g. /digital-flyer-uct-is-hons) that redirects to any
+  destination URL ops types in — the flyer, an Instagram post, anywhere —
+  used exactly as given, no params appended. Ops chooses the code, so the
+  link can look made specifically for the channel/champion it's handed to.
+  Optionally also attaches a starter pack of exactly 6 opportunities
+  (3 "main" + 3 "bonus") keyed to an audience+channel label, for when the
+  destination is the flyer and should show personalized opportunities.
 
   This is a separate, parallel tool to the existing campaigns mechanic
-  (campaigns/knock_campaigns.gs + go/guide/index.html), which is keyed by
-  opportunity+org+wave and points at arbitrary external dest URLs via
-  campaigns.knocktalent.co.za. Channels links are keyed by audience+ch
-  only, point at the owned flyer (not an arbitrary dest), and the click
-  counter + redirect both live in go/api/{create,redirect}.js — no new
-  domain needed, no PII anywhere in the link record.
+  (campaigns/knock_campaigns.gs + go/guide/index.html), which auto-builds
+  its own code from org+source+wave. Channel links use an explicit
+  ops-chosen code instead, and the click counter + redirect both live in
+  go/api/{create,redirect}.js — no new domain needed, no PII anywhere in
+  the link record.
 
   WHAT THIS TOOL DOES, IN ORDER:
-   1. Pick an audience + channel.
+   1. Pick an audience + channel (labels — used to look up/attach the
+      right starter pack, have no effect on the redirect itself).
    2. Pick exactly 3 "main" opportunities + 3 "bonus" opportunities from
       the Opportunities List Sheet (Status=Open only) — these become
       OPPORTUNITIES o1-o3 (batch 1, shown first) and o4-o6 (batch 2) on
-      the flyer for anyone who lands via this link.
+      the flyer, if the destination below is the flyer with ?audience=&ch=.
    3. Save the starter pack (writes to the StarterPacks sheet tab via
       the existing Apps Script backend).
-   4. Mint (or re-mint) the short link via go.knocktalent.co.za's
-      /api/create endpoint. Re-running this for the same audience+channel
-      reuses the same short code — the link ops already posted never
-      changes underneath them, only what it shows updates.
+   4. Type a short link code and a destination URL, then mint (or re-mint)
+      the short link via go.knocktalent.co.za's /api/create endpoint.
+      Re-saving the same code repoints the same short link — whatever was
+      already shared keeps working, it just points somewhere new.
 
   ACCESS: a single shared password, entered once below. It's checked
   against KNOCK_OPS_PASSWORD (an Apps Script Script Property) for the
@@ -50,12 +53,12 @@
 -->
 <script>
 window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
-// knocktalent.co.za's own link-creation endpoint (see tiktok/api/create.js).
-// Short links now live at knocktalent.co.za/<code> (not go.knocktalent.co.za)
-// and redirect to an exact destination URL with no params appended — the
-// custom code itself (e.g. "digital-flyer-uct-is-hons") is the tracking
-// signal, since the destination can be anything (Instagram, the flyer, etc).
-window.KNOCK_FLYER_CREATE_URL='https://knocktalent.co.za/api/create';
+// go.knocktalent.co.za's link-creation endpoint (see go/api/create.js).
+// Channel links: ops picks a custom code (e.g. "digital-flyer-uct-is-hons")
+// and an exact destination URL — redirect is exactly what's typed, no
+// params appended, so it can point to Instagram, the flyer, anywhere. The
+// code itself is the tracking signal; clicks are counted per code.
+window.KNOCK_GO_CREATE_URL='https://go.knocktalent.co.za/api/create';
 </script>
 <style>
 :root{
@@ -208,7 +211,7 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
     <div class="field">
       <label>short link code</label>
       <input type="text" id="link-code" placeholder="e.g. digital-flyer-uct-is-hons" autocomplete="off" oninput="LINK_CODE_AUTOFILLED=false;">
-      <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">the short link will be knocktalent.co.za/&lt;this&gt;. saving again with the same code repoints it instead of making a new one.</div>
+      <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">the short link will be go.knocktalent.co.za/&lt;this&gt;. saving again with the same code repoints it instead of making a new one.</div>
     </div>
     <div class="field">
       <label>redirect destination</label>
@@ -216,7 +219,7 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
       <div style="font-size:11.5px;color:var(--g700);margin-top:5px;">used exactly as typed, no params appended — can be the flyer, an Instagram post, anything.</div>
     </div>
     <div class="field" id="go-password-field">
-      <label>knocktalent.co.za password</label>
+      <label>go.knocktalent.co.za password</label>
       <input type="password" id="go-password" placeholder="needed to mint the short link (often the same as the ops password)" autocomplete="off">
     </div>
     <button class="save-btn" id="save-btn" onclick="saveAndMintLink()" disabled>save starter pack + generate channel link</button>
@@ -455,8 +458,8 @@ async function saveAndMintLink(){
     }
 
     // 2. Mint (or re-mint) the short link (knocktalent.co.za/<code> — password gated).
-    if(!window.KNOCK_FLYER_CREATE_URL){
-      status.textContent='starter pack saved, but KNOCK_FLYER_CREATE_URL is not set — no short link minted.';
+    if(!window.KNOCK_GO_CREATE_URL){
+      status.textContent='starter pack saved, but KNOCK_GO_CREATE_URL is not set — no short link minted.';
       status.className='status-msg err';
       btn.disabled=false;btn.textContent='save starter pack + generate channel link';
       return;
@@ -477,10 +480,10 @@ async function saveAndMintLink(){
       linkDest='https://knocktalent.co.za/?audience='+encodeURIComponent(aud)+'&ch='+encodeURIComponent(ch);
     }
     btn.textContent='minting link…';
-    const createRes=await fetch(window.KNOCK_FLYER_CREATE_URL,{
+    const createRes=await fetch(window.KNOCK_GO_CREATE_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code:linkCode,dest:linkDest,label:label,password:goPassword})
+      body:JSON.stringify({type:'channel',code:linkCode,dest:linkDest,audience:aud,ch:ch,password:goPassword})
     });
     const createJson=await createRes.json();
     if(!createRes.ok||!createJson||createJson.error){
