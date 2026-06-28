@@ -135,6 +135,10 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
 .count-badge{font-size:12px;color:var(--g700);margin-bottom:10px;}
 .existing-packs{font-size:12px;color:var(--g700);margin-top:10px;}
 .step-disabled{opacity:.45;pointer-events:none;}
+@media (max-width:420px){
+  .row2{grid-template-columns:1fr;}
+  .wrap{padding:20px 14px 70px;}
+}
 </style>
 </head>
 <body>
@@ -159,19 +163,21 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
     <div class="row2">
       <div class="field">
         <label>audience</label>
-        <select id="aud-select" onchange="onParamsChanged()">
-          <option value="stem-students">stem-students</option>
-          <option value="cs-students">cs-students</option>
-          <option value="devsoc">devsoc</option>
-        </select>
+        <input type="text" id="aud-select" list="aud-options" placeholder="e.g. stem-students" autocomplete="off" oninput="onParamsChanged()">
+        <datalist id="aud-options">
+          <option value="stem-students">
+          <option value="cs-students">
+          <option value="devsoc">
+        </datalist>
       </div>
       <div class="field">
         <label>channel</label>
-        <select id="ch-select" onchange="onParamsChanged()">
-          <option value="ig">ig — instagram</option>
-          <option value="wa">wa — whatsapp</option>
-          <option value="ln">ln — linkedin</option>
-        </select>
+        <input type="text" id="ch-select" list="ch-options" placeholder="e.g. ig" autocomplete="off" oninput="onParamsChanged()">
+        <datalist id="ch-options">
+          <option value="ig">
+          <option value="wa">
+          <option value="ln">
+        </datalist>
       </div>
     </div>
     <div id="existing-pack-note" class="existing-packs"></div>
@@ -279,9 +285,15 @@ async function loadExistingPacks(){
 }
 
 /* ── PARAMS CHANGED — pre-fill from any existing pack for this combo ── */
+function getAudienceValue(){
+  return document.getElementById('aud-select').value.trim().toLowerCase();
+}
+function getChannelValue(){
+  return document.getElementById('ch-select').value.trim().toLowerCase();
+}
 function onParamsChanged(){
-  const aud=document.getElementById('aud-select').value;
-  const ch=document.getElementById('ch-select').value;
+  const aud=getAudienceValue();
+  const ch=getChannelValue();
   const existing=EXISTING_PACKS.find(function(p){return p.audience===aud&&p.channel===ch;});
   const note=document.getElementById('existing-pack-note');
   if(existing){
@@ -364,8 +376,13 @@ function updateSaveBtn(){
 
 /* ── SAVE STARTER PACK, THEN MINT THE SHORT LINK ── */
 async function saveAndMintLink(){
-  const aud=document.getElementById('aud-select').value;
-  const ch=document.getElementById('ch-select').value;
+  const aud=getAudienceValue();
+  const ch=getChannelValue();
+  if(!aud||!ch){
+    document.getElementById('save-status').textContent='enter both an audience and a channel first.';
+    document.getElementById('save-status').className='status-msg err';
+    return;
+  }
   const label=document.getElementById('pack-label').value.trim();
   const goPassword=document.getElementById('go-password').value;
   const btn=document.getElementById('save-btn');
@@ -407,7 +424,7 @@ async function saveAndMintLink(){
     // 1. Save the starter pack (Apps Script — password gated, plain POST).
     const saveRes=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify({type:'starterpack_save',password:OPS_PASSWORD,data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
     });
     const saveJson=await saveRes.json();

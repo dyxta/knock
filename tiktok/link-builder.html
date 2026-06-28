@@ -311,7 +311,7 @@ async function savePack(){
   try{
     const res=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify({type:'starterpack_save',password:OPS_PASSWORD,data:{audience:aud,channel:ch,label:label,opportunities:opportunities}})
     });
     const json=await res.json();
