@@ -24,6 +24,13 @@
   go/api/{create,redirect}.js — no new domain needed, no PII anywhere in
   the link record.
 
+  Every opportunity included in a saved pack also gets its own recycled
+  go.knocktalent.co.za/opp-<id> link auto-minted (see step 3 below) — one
+  link per opportunity, shared across every pack/audience/channel it
+  appears in, so its click count is a true lifetime total for that
+  opportunity rather than reset per pack. This happens automatically;
+  ops never types an opportunity link manually.
+
   WHAT THIS TOOL DOES, IN ORDER:
    1. Pick an audience + channel (labels — used to look up/attach the
       right starter pack, have no effect on the redirect itself).
@@ -32,11 +39,15 @@
       OPPORTUNITIES o1-o3 (batch 1, shown first) and o4-o6 (batch 2) on
       the flyer, if the destination below is the flyer with ?audience=&ch=.
    3. Save the starter pack (writes to the StarterPacks sheet tab via
-      the existing Apps Script backend).
+      the existing Apps Script backend), then auto-mint/recycle one
+      go.knocktalent.co.za/opp-<id> link per opportunity in the pack.
    4. Type a short link code and a destination URL, then mint (or re-mint)
-      the short link via go.knocktalent.co.za's /api/create endpoint.
+      the channel link via go.knocktalent.co.za's /api/create endpoint.
       Re-saving the same code repoints the same short link — whatever was
       already shared keeps working, it just points somewhere new.
+   5. Optionally record who this channel link is for (a "champion") —
+      name + contact + platform — so it's there in the Champions sheet
+      next time, even if you've never created them before.
 
   ACCESS: a single shared password, entered once below. It's checked
   against KNOCK_OPS_PASSWORD (an Apps Script Script Property) for the
@@ -236,7 +247,42 @@ select:focus,input:focus{outline:none;border-color:var(--purple);}
         <div class="out-label">what it redirects to</div>
         <div class="out" id="out-real-url"></div>
       </div>
+      <div class="out-block" id="out-opp-links-block" style="display:none;">
+        <div class="out-label">opportunity links (auto-minted/recycled, one per opportunity)</div>
+        <div class="out" id="out-opp-links" style="font-size:11.5px;"></div>
+      </div>
     </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">5</span>champion <span class="subhead" style="display:inline;margin:0;font-weight:600;text-transform:none;letter-spacing:0;">— who's sharing this link? (optional)</span></h2>
+    <div class="row2">
+      <div class="field">
+        <label>name</label>
+        <input type="text" id="champ-name" placeholder="e.g. Naledi M." autocomplete="off">
+      </div>
+      <div class="field">
+        <label>contact</label>
+        <input type="text" id="champ-contact" placeholder="phone, email, or @handle" autocomplete="off">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>platform</label>
+        <input type="text" id="champ-platform" list="champ-platform-options" placeholder="e.g. Instagram" autocomplete="off">
+        <datalist id="champ-platform-options">
+          <option value="Instagram">
+          <option value="WhatsApp">
+          <option value="LinkedIn">
+          <option value="In person">
+        </datalist>
+      </div>
+      <div class="field">
+        <label>notes</label>
+        <input type="text" id="champ-notes" placeholder="optional context" autocomplete="off">
+      </div>
+    </div>
+    <div style="font-size:11.5px;color:var(--g700);">leave blank to skip — the channel link works fine without a champion attached. fill this in and save above to record them (or update them, if they already exist) alongside this link's code.</div>
   </div>
 </div>
 
@@ -480,9 +526,14 @@ async function saveAndMintLink(){
       linkDest='https://knocktalent.co.za/?audience='+encodeURIComponent(aud)+'&ch='+encodeURIComponent(ch);
     }
     btn.textContent='minting link…';
+    // text/plain here (not application/json) so this stays a CORS-simple
+    // request — application/json makes the browser send an OPTIONS
+    // preflight first, which Vercel's function handles fine via its own
+    // OPTIONS branch above, but matching the same pattern used for the
+    // Apps Script calls keeps this consistent and avoids relying on that.
     const createRes=await fetch(window.KNOCK_GO_CREATE_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify({type:'channel',code:linkCode,dest:linkDest,audience:aud,ch:ch,password:goPassword})
     });
     const createJson=await createRes.json();
@@ -493,12 +544,71 @@ async function saveAndMintLink(){
       return;
     }
 
-    status.textContent='done — pack '+saveJson.mode+', link ready.';
-    status.className='status-msg ok';
+    // 3. Auto-mint/recycle one opportunity link per opportunity in this
+    // pack. One persistent link per opportunity (see go/api/create.js's
+    // 'opportunity' branch) — calling this again for an opportunity
+    // already linked elsewhere just recycles the same code, it never
+    // creates a second link for the same opportunity.
+    btn.textContent='linking opportunities…';
+    const oppLinkResults=await Promise.all(opportunities.map(async function(o){
+      if(!o.title||!o.url)return {title:o.title,ok:false,error:'missing title/url'};
+      try{
+        const r=await fetch(window.KNOCK_GO_CREATE_URL,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({type:'opportunity',title:o.title,dest:o.url,password:goPassword})
+        });
+        const j=await r.json();
+        if(!r.ok||!j||j.error)return {title:o.title,ok:false,error:(j&&j.error)||r.status};
+        return {title:o.title,ok:true,shortUrl:j.shortUrl,recycled:j.recycled};
+      }catch(e){
+        return {title:o.title,ok:false,error:'network error'};
+      }
+    }));
+
+    // 4. Optionally record the champion this link is for.
+    const champName=document.getElementById('champ-name').value.trim();
+    const champContact=document.getElementById('champ-contact').value.trim();
+    let champResult=null;
+    if(champName&&champContact){
+      btn.textContent='saving champion…';
+      try{
+        const champRes=await fetch(window.KNOCK_APPS_SCRIPT_URL,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({type:'champion_save',password:OPS_PASSWORD,data:{
+            name:champName,
+            contact:champContact,
+            platform:document.getElementById('champ-platform').value.trim(),
+            notes:document.getElementById('champ-notes').value.trim(),
+            linkCode:createJson.code
+          }})
+        });
+        champResult=await champRes.json();
+      }catch(e){champResult={ok:false,error:'network error'};}
+    }
+
+    let statusMsg='done — pack '+saveJson.mode+', link ready';
+    const oppFails=oppLinkResults.filter(function(r){return !r.ok;});
+    if(oppFails.length)statusMsg+=', '+oppFails.length+' of '+oppLinkResults.length+' opportunity links failed';
+    if(champResult&&champResult.ok===false)statusMsg+=', champion save failed: '+champResult.error;
+    else if(champResult&&champResult.ok)statusMsg+=', champion '+champResult.mode;
+    status.textContent=statusMsg+'.';
+    status.className='status-msg '+(oppFails.length||(champResult&&champResult.ok===false)?'err':'ok');
+
     document.getElementById('out-short-url').textContent=createJson.shortUrl;
     document.getElementById('out-real-url').textContent=createJson.dest;
     document.getElementById('link-dest').value=createJson.dest;
     document.getElementById('out-click-count').textContent='new link — 0 clicks so far';
+    const oppLinksBlock=document.getElementById('out-opp-links-block');
+    const oppLinksEl=document.getElementById('out-opp-links');
+    if(oppLinkResults.length){
+      oppLinksEl.innerHTML=oppLinkResults.map(function(r){
+        if(!r.ok)return '<div style="color:#b3261e;">'+r.title+' — failed ('+r.error+')</div>';
+        return '<div>'+r.title+' → '+r.shortUrl+(r.recycled?' (recycled)':' (new)')+'</div>';
+      }).join('');
+      oppLinksBlock.style.display='block';
+    }
     resultBlock.style.display='block';
     await loadExistingPacks();
   }catch(e){

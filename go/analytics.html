@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>knock — starter pack &amp; opportunity analytics</title>
+<!--
+  ============================================================
+  KNOCK ANALYTICS DASHBOARD — ops-only, standalone, read-only
+  ============================================================
+  Shows starter packs (with their channel link + champion + click
+  stats) and per-opportunity stats (likes/bundle-saves, PDF downloads,
+  link clicks) across the whole "starterpack/pilot" link-tracking
+  system. Pulls from FOUR sources and joins them client-side:
+
+   1. Apps Script ?action=starterpacks_admin  → packs (audience, channel,
+      label, opportunities[], updated_at/by)
+   2. Apps Script ?action=opp_stats            → per-oppId {likes, downloads}
+      ('likes' = net bundle_add/bundle_remove — see knock_signup_backend.gs
+      for why there's no separate 'like' signal)
+   3. Apps Script ?action=champions            → champion list, each with
+      a linkCodes[] array of every go.knocktalent.co.za code they've been
+      handed
+   4. go/api/links.js (same origin)            → every minted link (code,
+      type, dest, audience, ch, oppId, title, clicks) + its click count
+
+  JOIN LOGIC:
+   - A starter pack's channel link is found by matching a 'channel'-type
+     link record's audience+ch fields against the pack's audience+channel
+     (channels-builder.html always saves both together with the same
+     values, see saveAndMintLink()).
+   - A pack's champion is found by checking every champion's linkCodes[]
+     for that channel link's code.
+   - Each opportunity inside a pack is matched to its stats by oppId,
+     computed client-side the same way channels-builder.html/go/api/
+     create.js/knock_signup_backend.gs all do (title+url → MD5 → first 12
+     hex chars) — see oppId() below. This is the THIRD independent copy of
+     that exact computation; if you ever change the input shape, you must
+     change it in all four places (the others being knock_signup_backend.gs's
+     oppId_(), go/api/create.js's oppId(), and tiktok/index.html's oppId()).
+   - Each opportunity's click count comes from the 'opportunity'-type link
+     record whose oppId matches (code is always opp-<oppId>, auto-minted
+     by channels-builder.html — see go/api/create.js).
+
+  ACCESS: two passwords, both entered once below and kept in memory only.
+   - ops password → checked by Apps Script against KNOCK_OPS_PASSWORD,
+     gates starterpacks_admin/opp_stats/champions.
+   - go password → checked by go/api/links.js against KNOCK_PASSWORD (a
+     Vercel env var), gates the click-count data. Often the same value as
+     the ops password, same as in channels-builder.html, but kept as two
+     separate fields since they're two independent systems.
+  Nothing here writes anything — this page is read-only.
+
+  RESPONSIVE: single-column card layout that already works at any width;
+  the only width-dependent CSS is the summary-metrics grid, which drops
+  from 4 columns to 2 below 640px and 2 to 1 below 420px.
+
+  SET THESE before this page is useful:
+-->
+<script>
+window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
+// Same-origin (this file lives in go/, links.js lives in go/api/) — no
+// CORS concerns here, unlike the Apps Script calls above.
+window.KNOCK_GO_LINKS_URL='/api/links';
+</script>
+<style>
+:root{
+  --ink:#0F0F12;--g700:#54545c;--g400:#9b9ba3;--g200:#e4e3e8;--off:#F8F7F5;
+  --white:#fff;--purple:#5E17EB;--purple-pale:#F0EBFF;--wa:#25D366;
+  --font-b:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--font-b);background:var(--off);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+header{margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+h1{font-size:21px;font-weight:800;letter-spacing:-.01em;}
+.sub{font-size:13px;color:var(--g700);margin-top:4px;}
+.refresh-btn{
+  background:var(--white);border:1.5px solid var(--g200);border-radius:10px;
+  padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--font-b);
+  color:var(--ink);flex-shrink:0;
+}
+.refresh-btn:disabled{opacity:.5;cursor:not-allowed;}
+.card{
+  background:var(--white);border:1px solid var(--g200);border-radius:16px;
+  padding:20px;margin-bottom:18px;
+}
+.card h2{font-size:14px;font-weight:700;margin-bottom:14px;}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--g700);margin-bottom:6px;}
+.field{margin-bottom:14px;}
+input[type=password]{
+  width:100%;padding:11px 12px;border:1.5px solid var(--g200);border-radius:10px;
+  font-size:14px;font-family:var(--font-b);background:var(--white);color:var(--ink);
+}
+input:focus{outline:none;border-color:var(--purple);}
+.save-btn{
+  width:100%;background:linear-gradient(180deg,#2a2a2e 0%,#1a1a1d 50%,#0a0a0c 100%);
+  color:var(--white);border:1px solid rgba(255,255,255,.10);border-radius:12px;
+  padding:14px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:var(--font-b);
+  margin-top:6px;
+}
+.save-btn:disabled{opacity:.4;cursor:not-allowed;}
+.gate{max-width:420px;margin:80px auto;text-align:center;padding:0 20px;}
+.gate h1{font-size:18px;margin-bottom:8px;}
+.gate p{font-size:13.5px;color:var(--g700);line-height:1.6;margin-bottom:14px;}
+.status-msg{font-size:12.5px;margin-top:10px;text-align:center;}
+.status-msg.ok{color:#0a7a4d;}
+.status-msg.err{color:#b3261e;}
+.empty,.loading,.errbox{font-size:13px;color:var(--g700);padding:16px;text-align:center;}
+.errbox{color:#b3261e;background:#fdecea;border-radius:10px;}
+
+/* summary metrics */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.metric{background:var(--off);border:1px solid var(--g200);border-radius:12px;padding:14px;}
+.metric .n{font-size:24px;font-weight:800;color:var(--purple);line-height:1.1;}
+.metric .l{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--g700);margin-top:4px;}
+@media (max-width:640px){.metrics-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:420px){.metrics-grid{grid-template-columns:1fr;}}
+
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--g200);}
+.tab{
+  font-size:13px;font-weight:700;color:var(--g700);padding:10px 4px;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+
+/* starter pack cards */
+.pack-card{border:1px solid var(--g200);border-radius:14px;padding:16px;margin-bottom:14px;}
+.pack-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.pack-title{font-size:14.5px;font-weight:800;}
+.pack-sub{font-size:12px;color:var(--g700);margin-top:2px;}
+.pill{
+  display:inline-block;background:var(--purple-pale);color:var(--purple);font-size:11px;
+  font-weight:700;border-radius:999px;padding:3px 10px;
+}
+.pill.green{background:#e6f6ee;color:#0a7a4d;}
+.pill.grey{background:var(--g200);color:var(--g700);}
+.pack-meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.pack-link{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;
+  background:var(--off);border:1px solid var(--g200);border-radius:8px;padding:8px 10px;
+  word-break:break-all;margin-bottom:8px;
+}
+.pack-champ{font-size:12.5px;color:var(--g700);margin-bottom:10px;}
+.pack-champ b{color:var(--ink);}
+.opp-mini-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.opp-mini-table th{
+  text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--g400);padding:6px 8px;border-bottom:1px solid var(--g200);
+}
+.opp-mini-table td{padding:7px 8px;border-bottom:1px solid var(--g200);}
+.opp-mini-table tr:last-child td{border-bottom:none;}
+.opp-mini-table .num{text-align:right;font-weight:700;color:var(--ink);}
+.opp-name{font-weight:600;}
+.opp-name a{color:var(--ink);text-decoration:none;}
+.opp-name a:hover{color:var(--purple);}
+
+/* opportunities tab: full table */
+.opp-table-wrap{overflow-x:auto;}
+.opp-table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px;}
+.opp-table th{
+  text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--g400);padding:8px 10px;border-bottom:1.5px solid var(--g200);cursor:pointer;
+  white-space:nowrap;
+}
+.opp-table th.sorted{color:var(--purple);}
+.opp-table td{padding:9px 10px;border-bottom:1px solid var(--g200);}
+.opp-table tr:last-child td{border-bottom:none;}
+.opp-table .num{text-align:right;font-weight:700;}
+.opp-table tbody tr:hover{background:var(--off);}
+
+@media (max-width:420px){
+  .wrap{padding:20px 14px 70px;}
+  header{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <h1>🔒 ops access only</h1>
+  <p id="gate-msg">enter both passwords to load starter pack &amp; opportunity analytics.</p>
+  <div class="field" style="text-align:left;">
+    <label>ops password</label>
+    <input type="password" id="ops-password" placeholder="ops password" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('go-password').focus();">
+  </div>
+  <div class="field" style="text-align:left;">
+    <label>go.knocktalent.co.za password</label>
+    <input type="password" id="go-password" placeholder="often the same as the ops password" autocomplete="off" onkeydown="if(event.key==='Enter')checkAccessAndLoad();">
+  </div>
+  <button class="save-btn" onclick="checkAccessAndLoad()">unlock</button>
+  <div id="gate-status" class="status-msg"></div>
+</div>
+
+<div id="app" class="wrap" style="display:none;">
+  <header>
+    <div>
+      <h1>knock — starter pack &amp; opportunity analytics</h1>
+      <div class="sub">read-only. channel link clicks, champions, and per-opportunity likes/downloads/clicks.</div>
+    </div>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">refresh</button>
+  </header>
+
+  <div class="card">
+    <h2>summary</h2>
+    <div class="metrics-grid" id="metrics-grid">
+      <div class="metric"><div class="n">—</div><div class="l">starter packs</div></div>
+      <div class="metric"><div class="n">—</div><div class="l">total downloads</div></div>
+      <div class="metric"><div class="n">—</div><div class="l">avg opportunities / pack</div></div>
+      <div class="metric"><div class="n">—</div><div class="l">total link clicks</div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" id="tab-packs" onclick="switchTab('packs')">starter packs</div>
+    <div class="tab" id="tab-opps" onclick="switchTab('opps')">opportunities</div>
+    <div class="tab" id="tab-champs" onclick="switchTab('champs')">champions</div>
+  </div>
+
+  <div id="view-packs">
+    <div id="packs-list"><div class="loading">loading…</div></div>
+  </div>
+
+  <div id="view-opps" style="display:none;">
+    <div class="card">
+      <h2>all opportunities — across every starter pack</h2>
+      <div class="opp-table-wrap">
+        <table class="opp-table" id="opp-table">
+          <thead>
+            <tr>
+              <th onclick="sortOpps('title')" data-col="title">opportunity</th>
+              <th onclick="sortOpps('packs')" data-col="packs">in # packs</th>
+              <th class="num" onclick="sortOpps('likes')" data-col="likes">likes (saved)</th>
+              <th class="num" onclick="sortOpps('downloads')" data-col="downloads">in downloaded bundles</th>
+              <th class="num" onclick="sortOpps('clicks')" data-col="clicks">link clicks</th>
+            </tr>
+          </thead>
+          <tbody id="opp-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-champs" style="display:none;">
+    <div class="card">
+      <h2>champions</h2>
+      <div id="champs-list"><div class="loading">loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── ACCESS GATE ── */
+let OPS_PASSWORD='';
+let GO_PASSWORD='';
+let PACKS=[];
+let OPP_STATS={};   // oppId -> {likes, downloads}
+let CHAMPIONS=[];
+let LINKS=[];        // all minted go.knocktalent.co.za links
+let OPP_SORT={col:'clicks',dir:'desc'};
+
+async function checkAccessAndLoad(){
+  const gate=document.getElementById('gate');
+  const gateMsg=document.getElementById('gate-status');
+  const app=document.getElementById('app');
+  const opsPw=document.getElementById('ops-password').value;
+  const goPw=document.getElementById('go-password').value;
+  if(!opsPw||!goPw){
+    gateMsg.textContent='enter both passwords.';
+    gateMsg.className='status-msg err';
+    return;
+  }
+  gateMsg.textContent='checking…';
+  gateMsg.className='status-msg';
+  try{
+    const res=await fetch(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpacks_admin&password='+encodeURIComponent(opsPw));
+    const data=await res.json();
+    if(!data||data.error){
+      gateMsg.textContent='ops password rejected: '+((data&&data.error)||'unknown error');
+      gateMsg.className='status-msg err';
+      return;
+    }
+    OPS_PASSWORD=opsPw;
+    GO_PASSWORD=goPw;
+    gate.style.display='none';
+    app.style.display='block';
+    await loadAll();
+  }catch(e){
+    gateMsg.textContent='could not reach the backend. check your connection and try again.';
+    gateMsg.className='status-msg err';
+  }
+}
+
+/* ── LOAD EVERYTHING ── */
+async function loadAll(){
+  const btn=document.getElementById('refresh-btn');
+  if(btn){btn.disabled=true;btn.textContent='loading…';}
+  try{
+    const [packsRes,statsRes,champsRes,linksRes]=await Promise.all([
+      fetch(window.KNOCK_APPS_SCRIPT_URL+'?action=starterpacks_admin&password='+encodeURIComponent(OPS_PASSWORD)).then(r=>r.json()),
+      fetch(window.KNOCK_APPS_SCRIPT_URL+'?action=opp_stats&password='+encodeURIComponent(OPS_PASSWORD)).then(r=>r.json()),
+      fetch(window.KNOCK_APPS_SCRIPT_URL+'?action=champions&password='+encodeURIComponent(OPS_PASSWORD)).then(r=>r.json()),
+      fetch(window.KNOCK_GO_LINKS_URL,{headers:{'x-knock-password':GO_PASSWORD}}).then(r=>r.json())
+    ]);
+    PACKS=(packsRes&&packsRes.packs)||[];
+    OPP_STATS={};
+    ((statsRes&&statsRes.stats)||[]).forEach(function(s){OPP_STATS[s.oppId]=s;});
+    CHAMPIONS=(champsRes&&champsRes.champions)||[];
+    LINKS=(linksRes&&linksRes.links)||[];
+
+    renderSummary();
+    renderPacks();
+    renderOpps();
+    renderChampions();
+  }catch(e){
+    document.getElementById('packs-list').innerHTML='<div class="errbox">failed to load — check your connection and try refresh.</div>';
+  }
+  if(btn){btn.disabled=false;btn.textContent='refresh';}
+}
+
+/* ── oppId — MUST stay identical to knock_signup_backend.gs's oppId_(),
+   go/api/create.js's oppId(), and tiktok/index.html's oppId(). Same
+   textbook MD5 implementation as tiktok/index.html's _md5(), since
+   browsers have no native MD5 and this page needs to compute the same
+   stable id from (title, url) to join an opportunity to its stats/link
+   without the Sheet needing a real ID column. ── */
+function _md5(str){
+  function rotl(x,c){return (x<<c)|(x>>>(32-c));}
+  function toHex(n){let s='';for(let i=0;i<4;i++){s+=((n>>>(i*8))&0xff).toString(16).padStart(2,'0');}return s;}
+  const s=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+  const K=[];for(let i=0;i<64;i++)K[i]=(Math.floor(Math.abs(Math.sin(i+1))*4294967296))>>>0;
+  const bytes=[];for(let i=0;i<str.length;i++){let c=str.charCodeAt(i);if(c<128){bytes.push(c);}else if(c<2048){bytes.push((c>>6)|192,(c&63)|128);}else{bytes.push((c>>12)|224,((c>>6)&63)|128,(c&63)|128);}}
+  const origLenBits=bytes.length*8;
+  bytes.push(0x80);
+  while(bytes.length%64!==56)bytes.push(0);
+  for(let i=0;i<8;i++)bytes.push((origLenBits/Math.pow(2,8*i))&0xff);
+  let a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+  for(let chunkStart=0;chunkStart<bytes.length;chunkStart+=64){
+    const M=[];for(let i=0;i<16;i++){M[i]=bytes[chunkStart+i*4]|(bytes[chunkStart+i*4+1]<<8)|(bytes[chunkStart+i*4+2]<<16)|(bytes[chunkStart+i*4+3]<<24);}
+    let A=a0,B=b0,C=c0,D=d0;
+    for(let i=0;i<64;i++){
+      let F,g;
+      if(i<16){F=(B&C)|(~B&D);g=i;}
+      else if(i<32){F=(D&B)|(~D&C);g=(5*i+1)%16;}
+      else if(i<48){F=B^C^D;g=(3*i+5)%16;}
+      else{F=C^(B|~D);g=(7*i)%16;}
+      F=(F+A+K[i]+M[g])|0;
+      A=D;D=C;C=B;
+      B=(B+rotl(F,s[i]))|0;
+    }
+    a0=(a0+A)|0;b0=(b0+B)|0;c0=(c0+C)|0;d0=(d0+D)|0;
+  }
+  function toLE(n){n=n>>>0;return toHex(n);}
+  return toLE(a0)+toLE(b0)+toLE(c0)+toLE(d0);
+}
+function oppId(title,url){
+  const raw=String(title||'').trim().toLowerCase()+'|'+String(url||'').trim().toLowerCase();
+  return _md5(raw).slice(0,12);
+}
+
+/* ── JOIN HELPERS ── */
+function findChannelLink(audience,channel){
+  return LINKS.find(function(l){return l.type==='channel'&&(l.audience||'')===audience&&(l.ch||'')===channel;})||null;
+}
+function findOpportunityLink(oid){
+  return LINKS.find(function(l){return l.type==='opportunity'&&l.oppId===oid;})||null;
+}
+function findChampionForCode(code){
+  if(!code)return null;
+  return CHAMPIONS.find(function(c){return (c.linkCodes||[]).indexOf(code)!==-1;})||null;
+}
+
+/* ── SUMMARY METRICS ── */
+function renderSummary(){
+  const grid=document.getElementById('metrics-grid');
+  const packCount=PACKS.length;
+  const totalDownloads=Object.keys(OPP_STATS).reduce(function(sum,id){return sum+(OPP_STATS[id].downloads||0);},0);
+  const avgOpps=packCount?(PACKS.reduce(function(s,p){return s+(p.opportunities||[]).length;},0)/packCount):0;
+  const totalClicks=LINKS.reduce(function(s,l){return s+(l.clicks||0);},0);
+  grid.innerHTML=
+    metricHTML(packCount,'starter packs')+
+    metricHTML(totalDownloads,'opportunity-in-downloaded-bundle events')+
+    metricHTML(avgOpps.toFixed(1),'avg opportunities / pack')+
+    metricHTML(totalClicks,'total link clicks (all link types)');
+}
+function metricHTML(n,label){
+  return '<div class="metric"><div class="n">'+n+'</div><div class="l">'+label+'</div></div>';
+}
+
+/* ── TABS ── */
+function switchTab(name){
+  ['packs','opps','champs'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.toggle('active',t===name);
+    document.getElementById('view-'+t).style.display=(t===name?'block':'none');
+  });
+}
+
+/* ── STARTER PACKS VIEW ── */
+function renderPacks(){
+  const el=document.getElementById('packs-list');
+  if(!PACKS.length){
+    el.innerHTML='<div class="card"><div class="empty">no starter packs saved yet — build one in channels-builder.html.</div></div>';
+    return;
+  }
+  el.innerHTML=PACKS.map(function(p){
+    const link=findChannelLink(p.audience,p.channel);
+    const champ=link?findChampionForCode(link.code):null;
+    const opps=p.opportunities||[];
+    const oppsRows=opps.map(function(o){
+      const oid=oppId(o.title,o.url);
+      const stats=OPP_STATS[oid]||{likes:0,downloads:0};
+      const oppLink=findOpportunityLink(oid);
+      const clicks=oppLink?(oppLink.clicks||0):0;
+      return '<tr>'+
+        '<td class="opp-name"><a href="'+escapeAttr(o.url||'#')+'" target="_blank" rel="noopener">'+escapeHTML(o.title||'(untitled)')+'</a></td>'+
+        '<td class="num">'+stats.likes+'</td>'+
+        '<td class="num">'+stats.downloads+'</td>'+
+        '<td class="num">'+clicks+'</td>'+
+      '</tr>';
+    }).join('');
+    return '<div class="pack-card">'+
+      '<div class="pack-head">'+
+        '<div>'+
+          '<div class="pack-title">'+escapeHTML(p.audience)+' · '+escapeHTML(p.channel)+(p.label?(' — '+escapeHTML(p.label)):'')+'</div>'+
+          '<div class="pack-sub">'+opps.length+' opportunities · updated '+formatDate(p.updated_at)+(p.updated_by?(' by '+escapeHTML(p.updated_by)):'')+'</div>'+
+        '</div>'+
+        (link?'<span class="pill green">'+(link.clicks||0)+' clicks</span>':'<span class="pill grey">no link yet</span>')+
+      '</div>'+
+      (link?'<div class="pack-link">'+escapeHTML(link.shortUrl)+' → '+escapeHTML(link.dest||'')+'</div>':'')+
+      '<div class="pack-champ">'+(champ?('champion: <b>'+escapeHTML(champ.name)+'</b> ('+escapeHTML(champ.platform||'platform not set')+(champ.contact?(' · '+escapeHTML(champ.contact)):'')+')'):'champion: not recorded')+'</div>'+
+      (opps.length?('<table class="opp-mini-table"><thead><tr><th>opportunity</th><th class="num" style="text-align:right;">likes</th><th class="num" style="text-align:right;">downloaded in</th><th class="num" style="text-align:right;">clicks</th></tr></thead><tbody>'+oppsRows+'</tbody></table>'):'<div class="empty">no opportunities in this pack.</div>')+
+    '</div>';
+  }).join('');
+}
+
+/* ── OPPORTUNITIES TAB — flattened, deduped by oppId across all packs ── */
+function buildOppRows(){
+  const byId={};
+  PACKS.forEach(function(p){
+    (p.opportunities||[]).forEach(function(o){
+      const oid=oppId(o.title,o.url);
+      if(!byId[oid]){
+        const stats=OPP_STATS[oid]||{likes:0,downloads:0};
+        const oppLink=findOpportunityLink(oid);
+        byId[oid]={
+          oppId:oid,
+          title:o.title||'(untitled)',
+          url:o.url||'',
+          packs:0,
+          likes:stats.likes||0,
+          downloads:stats.downloads||0,
+          clicks:oppLink?(oppLink.clicks||0):0
+        };
+      }
+      byId[oid].packs++;
+    });
+  });
+  return Object.keys(byId).map(function(k){return byId[k];});
+}
+function renderOpps(){
+  sortOpps(OPP_SORT.col,true);
+}
+function sortOpps(col,keepDir){
+  if(!keepDir){
+    if(OPP_SORT.col===col)OPP_SORT.dir=(OPP_SORT.dir==='desc'?'asc':'desc');
+    else{OPP_SORT.col=col;OPP_SORT.dir='desc';}
+  }
+  const rows=buildOppRows();
+  rows.sort(function(a,b){
+    let av=a[col],bv=b[col];
+    if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}
+    if(av<bv)return OPP_SORT.dir==='asc'?-1:1;
+    if(av>bv)return OPP_SORT.dir==='asc'?1:-1;
+    return 0;
+  });
+  document.querySelectorAll('#opp-table th').forEach(function(th){
+    th.classList.toggle('sorted',th.dataset.col===OPP_SORT.col);
+  });
+  const body=document.getElementById('opp-table-body');
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="5" class="empty">no opportunities found across any starter pack.</td></tr>';
+    return;
+  }
+  body.innerHTML=rows.map(function(r){
+    return '<tr>'+
+      '<td class="opp-name"><a href="'+escapeAttr(r.url||'#')+'" target="_blank" rel="noopener">'+escapeHTML(r.title)+'</a></td>'+
+      '<td>'+r.packs+'</td>'+
+      '<td class="num">'+r.likes+'</td>'+
+      '<td class="num">'+r.downloads+'</td>'+
+      '<td class="num">'+r.clicks+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+/* ── CHAMPIONS TAB ── */
+function renderChampions(){
+  const el=document.getElementById('champs-list');
+  if(!CHAMPIONS.length){
+    el.innerHTML='<div class="empty">no champions recorded yet — add one while minting a channel link in channels-builder.html.</div>';
+    return;
+  }
+  el.innerHTML=CHAMPIONS.map(function(c){
+    const codes=c.linkCodes||[];
+    const totalClicks=codes.reduce(function(sum,code){
+      const l=LINKS.find(function(x){return x.code===code;});
+      return sum+(l?(l.clicks||0):0);
+    },0);
+    return '<div class="pack-card">'+
+      '<div class="pack-head">'+
+        '<div>'+
+          '<div class="pack-title">'+escapeHTML(c.name)+'</div>'+
+          '<div class="pack-sub">'+escapeHTML(c.platform||'platform not set')+(c.contact?(' · '+escapeHTML(c.contact)):'')+'</div>'+
+        '</div>'+
+        '<span class="pill green">'+totalClicks+' total clicks</span>'+
+      '</div>'+
+      (c.notes?('<div class="pack-champ">'+escapeHTML(c.notes)+'</div>'):'')+
+      '<div class="pack-sub">links: '+(codes.length?codes.map(escapeHTML).join(', '):'none')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* ── UTIL ── */
+function escapeHTML(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function escapeAttr(s){return escapeHTML(s);}
+function formatDate(s){
+  if(!s)return 'never';
+  const d=new Date(s);
+  if(isNaN(d.getTime()))return String(s);
+  return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+}
+</script>
+</body>
+</html>

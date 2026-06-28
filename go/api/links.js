@@ -38,6 +38,8 @@ module.exports = async function handler(req, res) {
       audience:  rec.audience,
       ch:        rec.ch,
       destBase:  rec.destBase,
+      oppId:     rec.oppId,
+      title:     rec.title,
       createdAt: rec.createdAt,
       clicks:    parseInt(clicks[i] || 0, 10)
     };

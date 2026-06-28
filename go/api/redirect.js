@@ -34,6 +34,16 @@ module.exports = async function handler(req, res) {
     return res.redirect(302, legacyUrl);
   }
 
+  // OPPORTUNITY link — one recycled code per opportunity (see
+  // go/api/create.js's 'opportunity' branch). Redirects exactly to
+  // data.dest, same as a channel link. clicks:<code> above counts every
+  // click on this opportunity's single link regardless of which starter
+  // pack/audience/channel it was surfaced through — that's the whole
+  // point of recycling instead of minting a new code per pack.
+  if (data.type === 'opportunity') {
+    return res.redirect(302, data.dest);
+  }
+
   const { dest, org, source, medium, wave } = data;
   const fullUrl =
     'https://campaigns.knocktalent.co.za/?dest=' + encodeURIComponent(dest) +
