@@ -1072,11 +1072,11 @@ body.ops #opsPanel{display:block;}
     </button>
   </div>
 
-  <!-- STATE 2: WA request -->
+  <!-- STATE 2: WA request (copy/icon swapped by renderP2Done() for waitlisted visitors — see comment near renderSfDone()) -->
   <div id="p2-s2" style="display:none;">
-    <p class="opp-unlock-note" style="margin-top:0;margin-bottom:10px;">you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.</p>
+    <p class="opp-unlock-note" style="margin-top:0;margin-bottom:10px;" id="p2-s2-note">you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.</p>
     <button class="p2-wa-btn" id="p2-wa-btn" onclick="requestWA(this)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" id="p2-wa-icon"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg><span id="p2-wa-label">request to join group</span>
     </button>
   </div>
 
@@ -1308,10 +1308,16 @@ body.ops #opsPanel{display:block;}
       <button class="sf-submit" id="sf-submit" onclick="sfSubmit()">get me found ✓</button>
     </div>
     <div class="sf-done" id="sf-done">
-      <div class="sf-done-icon">🎉</div>
-      <div class="sf-done-title">you're vetted.</div>
-      <div class="sf-done-sub">request to join your campus group — we'll verify and approve you within 24 hours.</div>
-      <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener" onclick="requestWA(this);return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>request to join group</a>
+      <div class="sf-done-icon" id="sf-done-icon">🎉</div>
+      <div class="sf-done-title" id="sf-done-title">you're vetted.</div>
+      <div class="sf-done-sub" id="sf-done-sub">request to join your campus group — we'll verify and approve you within 24 hours.</div>
+      <!-- Button markup/styling stays the same for both cohorts (looks like
+           a real next step either way) but its icon, label, and click
+           behavior are swapped by JS in renderSfDone() below based on
+           isWaitlisted() — waitlisted visitors never see a WhatsApp icon or
+           get redirected, since requestWA() already skips window.open() for
+           them (their details are saved; this is a confirmation tap only). -->
+      <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener" onclick="requestWA(this);return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" id="sf-wa-icon"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg><span id="sf-wa-label">request to join group</span></a>
       <!-- PDF section (shown after signup if bundle exists) -->
       <div id="sf-pdf-section" style="display:none;margin-top:18px;">
         <div style="height:1px;background:var(--g200);margin-bottom:14px;"></div>
@@ -2317,7 +2323,13 @@ async function sfSubmit(){
     degree:SF_OPTIONAL.degree||'',
     gpa:SF_OPTIONAL.gpa||'',
     lookingFor:SF_OPTIONAL.lookingFor||[],
-    group:isWaitlisted()?'waitlist':(resolvedUniKey()+'_stem'),
+    // 'waitlist_pilot' = non-STEM but at one of the 4 pilot unis (UCT/Wits/
+    // Stellies/UP) — these visitors are closest to launch-ready once knock
+    // adds non-STEM support there, so ops wants them tracked separately from
+    // 'waitlist_other' (non-STEM at a non-pilot/unrecognized uni, who are
+    // waitlisted for a different reason — wrong campus, not wrong field).
+    // STEM-at-a-pilot-uni visitors are unaffected, still '<uni>_stem'.
+    group:isWaitlisted()?(UNI[resolvedUniKey()]?'waitlist_pilot':'waitlist_other'):(resolvedUniKey()+'_stem'),
     source:window.location.pathname.replace(/^\//,''),
     audience:PAGE_AUDIENCE,
     ch:PAGE_CH,
@@ -2330,18 +2342,53 @@ async function sfSubmit(){
     track('submit_success',{uni:PAGE_UNI,seg:PAGE_SEG,university:uniFallback,audience:PAGE_AUDIENCE,ch:PAGE_CH});
     localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshP3(); refreshS3();
     document.getElementById('sf-form-body').style.display='none';
+    renderSfDone();
     document.getElementById('sf-done').style.display='block';
   }catch{btn.disabled=false;btn.textContent='get me found ✓';showToast('something went wrong, try again');}
 }
 
-/* ── WA REQUEST + PDF GATE ── */
+/* Swaps the post-submit confirmation screen's copy/icon/button between the
+   two cohorts. Waitlisted (any non-STEM, or unrecognized uni) never sees
+   WhatsApp framing — their details are already saved by the POST above, so
+   this is a "you're on the list" confirmation, not a join-a-group step.
+   Non-waitlisted (STEM at a pilot uni) keeps the original WA-group copy. */
+function renderSfDone(){
+  var waitlisted=isWaitlisted();
+  var icon=document.getElementById('sf-done-icon');
+  var title=document.getElementById('sf-done-title');
+  var sub=document.getElementById('sf-done-sub');
+  var waIcon=document.getElementById('sf-wa-icon');
+  var waLabel=document.getElementById('sf-wa-label');
+  if(waitlisted){
+    if(icon)icon.textContent='⏳';
+    if(title)title.textContent="you're on the waiting list.";
+    if(sub)sub.textContent="we've saved your details — we'll reach out as soon as we're ready for you.";
+    if(waIcon)waIcon.style.display='none';
+    if(waLabel)waLabel.textContent='join waiting list ✓';
+  }else{
+    if(icon)icon.textContent='🎉';
+    if(title)title.textContent="you're vetted.";
+    if(sub)sub.textContent="request to join your campus group — we'll verify and approve you within 24 hours.";
+    if(waIcon)waIcon.style.display='';
+    if(waLabel)waLabel.textContent='request to join group';
+  }
+}
+
+/* ── WA REQUEST + PDF GATE ──
+   isWaitlisted() (non-STEM, any uni — or unrecognized uni) never opens a
+   WhatsApp link here: their details are already saved by sfSubmit()'s POST
+   above, so this button is just a confirmation tap, not a second save step.
+   Only STEM-at-a-pilot-uni visitors actually get sent to a WhatsApp group. */
 function requestWA(el){
   localStorage.setItem(KEY_WA,'1');
-  var link=el||document.getElementById('sf-wa-btn');
-  if(link&&link.href&&link.href!=='#'&&!link.href.endsWith('#')){
-    window.open(link.href,'_blank');
+  var waitlisted=isWaitlisted();
+  if(!waitlisted){
+    var link=el||document.getElementById('sf-wa-btn');
+    if(link&&link.href&&link.href!=='#'&&!link.href.endsWith('#')){
+      window.open(link.href,'_blank');
+    }
   }
-  ph('wa_requested',{uni:PAGE_UNI,waitlisted:isWaitlisted()});
+  ph(waitlisted?'waitlist_joined':'wa_requested',{uni:PAGE_UNI,waitlisted:waitlisted});
   refreshP2();
   refreshP3();
   refreshPDFGate();
@@ -2532,6 +2579,16 @@ function refreshP2(){
   if(uniName)uniName.textContent=u2.display.toLowerCase();
   if(s1)s1.style.display=!signed?'block':'none';
   if(s2)s2.style.display=(signed&&!waOK)?'block':'none';
+  // Same waitlisted-vs-WA-group copy swap as renderSfDone(), applied here
+  // too since p2-s2 is a second copy of the same post-signup CTA shown on
+  // slide 1's lock card rather than inside the sign-up sheet.
+  var waitlisted2=isWaitlisted();
+  var note=document.getElementById('p2-s2-note');
+  var icon2=document.getElementById('p2-wa-icon');
+  var label2=document.getElementById('p2-wa-label');
+  if(note)note.innerHTML=waitlisted2?"you're in. <strong>you've been added to the waiting list</strong> — we'll reach out when we're ready for you.":"you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.";
+  if(icon2)icon2.style.display=waitlisted2?'none':'';
+  if(label2)label2.textContent=waitlisted2?'join waiting list ✓':'request to join group';
 }
 function refreshP3(){
   var signed=localStorage.getItem(KEY_SIGNUP)==='1';
