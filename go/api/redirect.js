@@ -9,12 +9,36 @@ module.exports = async function handler(req, res) {
   const { code } = req.query;
   if (!code) return res.status(400).send('Missing code');
 
+  res.setHeader('Cache-Control', 'no-store');
+
+  // SHARE link — one single, fixed code ("share") used by every share
+  // action across the flyer (see doShare() in tiktok/index.html), instead
+  // of each visitor sharing their own raw window.location.href. Handled
+  // before the redis.get() below and with no stored link:share record
+  // needed at all, since there's nothing per-link to configure — every
+  // share just bounces straight back to wherever it was shared from.
+  // clicks:share still gets incremented exactly like every other code in
+  // this file, so it's a real aggregate "times a shared link was opened"
+  // counter, with no creation step required in go/api/create.js.
+  //
+  // dest carries the full flyer URL (path + audience/ch + any other query
+  // params) the sharer was actually on, captured client-side at share-time
+  // — there's no single fixed flyer domain/path to hardcode here, since
+  // the flyer can be deployed at different paths per project and every
+  // channel link already points at its own dest. If dest is somehow
+  // missing (e.g. someone hits /share directly with no params), fall back
+  // to the production marketing site rather than erroring.
+  if (code === 'share') {
+    await redis.incr('clicks:share');
+    const dest = req.query.dest;
+    const url = dest ? decodeURIComponent(dest) : 'https://knocktalent.co.za';
+    return res.redirect(302, url);
+  }
+
   const data = await redis.get(`link:${code}`);
   if (!data) return res.status(404).send('Link not found');
 
   await redis.incr(`clicks:${code}`);
-
-  res.setHeader('Cache-Control', 'no-store');
 
   // CHANNELS link — redirects to data.dest, with this link's own
   // audience/ch (captured once at creation time in go/api/create.js)

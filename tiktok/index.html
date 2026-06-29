@@ -1896,7 +1896,7 @@ if(isAdminPage()){
   document.getElementById('s0-seg').textContent='STEM students SA 🇿🇦';
   document.getElementById('sf-email').placeholder=u.emailHint;
   document.getElementById('sf-wa-btn').href=getWaLink();
-  document.getElementById('copy-url-txt').textContent=window.location.href;
+  document.getElementById('copy-url-txt').textContent='go.knocktalent.co.za/share';
   // Pre-select the matching university chip from PAGE_UNI/u.full, if one
   // of the 5 named chips matches. PAGE_UNI keys ('uct','wits','stellies',
   // 'up','ukzn') are mapped to chip data-v values here; 'up' (UNI key) maps
@@ -2382,8 +2382,18 @@ function refreshPDFGate(){
 }
 
 /* ── SHARE ── */
-async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});track('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});bumpGlobalStat('shares');if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:window.location.href});}catch(_){}}else copyLink();}
-function copyLink(){navigator.clipboard.writeText(window.location.href).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');ph('copy_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});track('share_copied',{uni:PAGE_UNI,seg:PAGE_SEG});}
+// Every share/copy action hands out the SAME short link —
+// go.knocktalent.co.za/share — instead of each visitor's raw
+// window.location.href. That single fixed link is what makes click
+// tracking possible at all (go/api/redirect.js increments clicks:share on
+// every hit) and it's what gets posted/forwarded around, so it stays
+// identical no matter which audience/channel loaded the flyer. The actual
+// page (with this visitor's audience/ch/path intact) travels along as a
+// dest= param and redirect.js bounces straight back to it, so whoever
+// opens a shared link still lands on the same personalised page.
+function shareLink(){return 'https://go.knocktalent.co.za/share?dest='+encodeURIComponent(window.location.href);}
+async function doShare(){ph('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});track('share_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});bumpGlobalStat('shares');const url=shareLink();if(navigator.share){try{await navigator.share({title:'knock — opportunity is knocking.',text:"we don't believe opportunity should be gatekept. neither should this.",url:url});}catch(_){}}else copyLink();}
+function copyLink(){navigator.clipboard.writeText(shareLink()).catch(()=>{});const b=document.getElementById('copy-btn');b.textContent='copied ✓';setTimeout(()=>{const x=document.getElementById('copy-btn');if(x)x.textContent='copy';},2000);showToast('link copied');ph('copy_link_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});track('share_copied',{uni:PAGE_UNI,seg:PAGE_SEG});}
 
 /* ── TOAST / PH ── */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
