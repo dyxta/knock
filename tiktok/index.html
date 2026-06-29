@@ -1393,6 +1393,12 @@ body.ops #opsPanel{display:block;}
 <script>
 /* ── CONFIG ── */
 window.KNOCK_APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwjSWi2ioY6OWr1tWxdxzrTvGmk1tL1zRQ-7OkVBjdWMoE7YdiX4ShGJL_kGe6n3cvFyQ/exec';
+// Powers the heart/share button counters (fetchGlobalStats() below) —
+// a public, no-PII action ('global_stats') on the same Apps Script
+// backend, added once likes/shares started actually being collected
+// (OppEvents bundle_add/remove, Events share_clicked/share_copied).
+// Same deployment URL as KNOCK_APPS_SCRIPT_URL since it's the same script.
+window.KNOCK_STATS_URL=window.KNOCK_APPS_SCRIPT_URL+'?action=global_stats';
 // No shared secret here on purpose — access to list/events/full reads and
 // state_update writes is now decided server-side in Apps Script, based on
 // each caller's verified Google sign-in against an email allowlist. There

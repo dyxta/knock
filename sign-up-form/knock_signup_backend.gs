@@ -374,6 +374,17 @@ return v;
   });
 }
 /**
+ * Site-wide totals for the flyer's public like/share counters. See the
+ * action === 'global_stats' comment in doGet for what each field means
+ * and why no new Sheet tab/event was needed to support this.
+ */
+function rollUpGlobalStats_() {
+const likes = rollUpOppStats_().reduce((sum, v) => sum + v.likes, 0);
+const events = readAllRows_(getEventsSheet_());
+const shares = events.filter(r => r.event === 'share_clicked' || r.event === 'share_copied').length;
+return { likes: likes, shares: shares };
+}
+/**
  * Upserts a champion by (name, contact) — case-insensitive, trimmed
  * match on both fields together. If found, merges in any new linkCode
  * (no duplicates) and updates notes/platform if newly provided rather
@@ -505,6 +516,21 @@ if (!isOpsPasswordValid_(e.parameter.password)) {
 return jsonOut_({ error: 'unauthorized: incorrect or missing password' });
       }
 return jsonOut_({ stats: rollUpOppStats_() });
+    }
+// Public — no PII. Aggregate, site-wide like/share totals for the
+// flyer's heart/share button counters (tiktok/index.html's
+// fetchGlobalStats(), gated behind window.KNOCK_STATS_URL). Built purely
+// from data already being collected by other endpoints, so no new Sheet
+// tab or client-side event was needed:
+//  - likes  = sum of rollUpOppStats_()'s per-opportunity net likes
+//             (bundle_add minus bundle_remove, floored at 0 per opp by
+//             rollUpOppStats_ already) — i.e. "how many opportunities are
+//             currently saved across everyone, total".
+//  - shares = count of Events rows where event is 'share_clicked' or
+//             'share_copied' (doShare()/copyLink() already send these on
+//             every share action, completely independent of this change).
+if (action === 'global_stats') {
+return jsonOut_(rollUpGlobalStats_());
     }
 // Champion mini-CRM list, for the analytics dashboard / channels-builder.
 if (action === 'champions') {
