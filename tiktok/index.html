@@ -437,6 +437,26 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .act-label{font-size:10.5px;font-weight:600;color:var(--g500);}
 .like-btn.liked .act-icon{background:rgba(255,60,80,.12)!important;border-color:rgba(255,60,80,.25)!important;color:#ff3c50!important;}
 
+/* ── GLASS PILL BUTTON (e.g. "view bundle" on the last slide) ──
+   White/frosted background with a purple border — distinct from both
+   the circular act-icon buttons and the solid cta-primary buttons, so
+   it doesn't get visually mistaken for either (and doesn't render as
+   a flat grey/blue blob the way a light-purple-fill icon could). */
+.glass-pill-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 22px;border-radius:999px;
+  background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  backdrop-filter:blur(14px) saturate(160%);
+  border:1.5px solid var(--purple);
+  color:var(--purple);font-family:var(--font-b);font-size:13.5px;font-weight:700;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  box-shadow:0 2px 10px rgba(94,23,235,.12);
+  transition:transform .15s ease;
+}
+.glass-pill-btn:active{transform:scale(.96);}
+.glass-pill-btn .gpb-icon{font-size:16px;line-height:1;}
+
 /* ── DOTS ─────────────────────────────────── */
 #dots{
   position:fixed;right:7px;top:50%;
@@ -1216,14 +1236,13 @@ body.ops #opsPanel{display:block;}
 
   <!-- PDF section — visible once WA requested and bundle has items.
        The opportunity list + links used to render inline here
-       (#s3-pdf-preview) — replaced with a "view bundle" icon button (same
-       circular act-icon style as the like/share buttons) that opens the
+       (#s3-pdf-preview) — replaced with a "view bundle" glass-pill button
+       (white/frosted, purple border — see .glass-pill-btn) that opens the
        cart sheet instead, so this page stays focused on download/share
        and the bundle contents live in one place (the cart popup). -->
   <div class="anim a4">
-    <button class="act-btn" style="margin:0 auto 14px;" onclick="openCartSheet()">
-      <div class="act-icon" style="background:var(--purple-pale);border-color:rgba(94,23,235,.25);color:var(--purple);">🎁</div>
-      <span class="act-label" style="color:var(--purple);">view bundle</span>
+    <button class="glass-pill-btn" style="margin:0 auto 14px;" onclick="openCartSheet()">
+      <span class="gpb-icon">🎁</span><span>view bundle</span>
     </button>
     <div class="sf-consent pdf-consent" id="s3-pdf-consent-row" style="max-width:300px;" onclick="pdfToggleConsent()"><div class="sf-cb" id="s3-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
     <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
