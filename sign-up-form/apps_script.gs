@@ -234,3 +234,24 @@ function _smokeTest() {
   Logger.log('Signups: ' + s.getLastRow() + ' rows');
   Logger.log('Events: ' + e.getLastRow() + ' rows');
 }
+
+/**
+ * Manual reset — wipes all recorded data before a pilot goes live.
+ *
+ * Deletes every data row (keeps row 1, the header) in both the Signups
+ * and Events tabs. Does NOT touch Script Properties (STATS_PASSWORD,
+ * SHEET_ID), so auth and sheet binding keep working after a reset.
+ *
+ * NOT wired to doGet/doPost — there is no URL or button on the live
+ * site that can trigger this. Run it manually from the Apps Script
+ * editor (select "resetAllStats" from the function dropdown, click Run)
+ * whenever you want a clean slate. Deploying new versions of this
+ * script never calls this function and never touches Sheet data.
+ */
+function resetAllStats() {
+  const s = getSignupsSheet_();
+  const e = getEventsSheet_();
+  if (s.getLastRow() > 1) s.deleteRows(2, s.getLastRow() - 1);
+  if (e.getLastRow() > 1) e.deleteRows(2, e.getLastRow() - 1);
+  Logger.log('Reset complete. Signups: 1 row (header only). Events: 1 row (header only).');
+}
