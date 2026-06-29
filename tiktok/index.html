@@ -1478,7 +1478,7 @@ let NET=null,CYCLE_TIMER=null;
    ph() PostHog calls — neither replaces the other. */
 const STORAGE_EVENTS='knock_signup_events';
 const STORAGE_EVENT_QUEUE='knock_signup_event_queue';
-const BACKEND_EVENTS=new Set(['page_view','hero_cta_clicked','form_started','submit_clicked','submit_success','validation_failed','share_clicked','share_copied','like']);
+const BACKEND_EVENTS=new Set(['page_view','hero_cta_clicked','form_started','submit_clicked','submit_success','validation_failed','share_clicked','share_copied','like','unlike']);
 let SESSION_ID=sessionStorage.getItem('knock_sess_id');
 if(!SESSION_ID){SESSION_ID='s_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);sessionStorage.setItem('knock_sess_id',SESSION_ID);}
 
@@ -1701,20 +1701,20 @@ function renderAdminData(data){
     var v=uniCounts[k];
     return '<div class="a-bar-row"><div class="a-bar-label">'+k+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxU*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
   }).join(''):'<div class="a-empty">no signups yet.</div>';
-  /* likes — total + per-slide breakdown (heart-tap events carry {slide:i}) */
-  var likeTotal=0;var likesBySlide=[0,0,0,0];
+  /* likes — net total (like minus unlike, floored at 0). The flyer now
+     has one shared like state instead of one per slide (see toggleLike()),
+     so there's no longer a meaningful per-slide breakdown to show — every
+     like/unlike applies to the whole flyer, not slide i specifically.
+     Previously this only ever counted 'like' events and never subtracted
+     'unlike', so the total could only climb even after someone unliked. */
+  var likeTotal=0;
   events.forEach(function(e){
-    if(e.event!=='like')return;
-    likeTotal++;
-    var slide=opsEventProps(e).slide;
-    if(typeof slide==='number'&&likesBySlide[slide]!==undefined)likesBySlide[slide]++;
+    if(e.event==='like')likeTotal++;
+    else if(e.event==='unlike')likeTotal--;
   });
+  likeTotal=Math.max(0,likeTotal);
   document.getElementById('aLikeTotal').textContent=likeTotal;
-  var maxL=Math.max.apply(null,likesBySlide.concat([1]));
-  document.getElementById('aLikesBySlide').innerHTML=likeTotal?SLIDE_LABELS.map(function(label,i){
-    var v=likesBySlide[i]||0;
-    return '<div class="a-bar-row"><div class="a-bar-label">'+label+'</div><div class="a-bar-track"><div class="a-bar-fill" style="width:'+(v/maxL*100)+'%"></div></div><div class="a-bar-val">'+v+'</div></div>';
-  }).join(''):'<div class="a-empty">no likes yet.</div>';
+  document.getElementById('aLikesBySlide').innerHTML='<div class="a-bar-row"><div class="a-bar-label">currently liked</div><div class="a-bar-track"><div class="a-bar-fill" style="width:100%"></div></div><div class="a-bar-val">'+likeTotal+'</div></div>';
   document.getElementById('aSubmissions').innerHTML=subs.length?(
     '<table class="a-table"><thead><tr><th>when</th><th>university</th><th>field</th><th>phone</th><th>email</th></tr></thead><tbody>'+
     subs.slice().reverse().map(function(s){
@@ -2066,8 +2066,14 @@ function toggleLike(btn){
   data.liked=!was;
   localStorage.setItem(KEY_LIKES,JSON.stringify(data));
   setLikeUI(!was);
-  if(!was){burstHearts(btn);ph('like',{});bumpGlobalStat('likes',1);}
-  else{ph('unlike',{});bumpGlobalStat('likes',-1);}
+  // track() (not ph()) is what actually reaches the Apps Script Events
+  // sheet — ph() only forwards to PostHog, so the ops admin panel's like
+  // counter was reading 0 even after real likes/unlikes, since nothing
+  // was ever recorded server-side. 'unlike' added to BACKEND_EVENTS below
+  // so it gets recorded too — without it, renderAdminData() has no way to
+  // net likes against unlikes and the dashboard total only ever climbs.
+  if(!was){burstHearts(btn);track('like',{});bumpGlobalStat('likes',1);}
+  else{track('unlike',{});bumpGlobalStat('likes',-1);}
 }
 
 /* ── GLOBAL LIKE/SHARE COUNTERS (TikTok-style, under the icons) ──
