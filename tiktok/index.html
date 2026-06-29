@@ -2066,7 +2066,8 @@ function toggleLike(btn){
   data.liked=!was;
   localStorage.setItem(KEY_LIKES,JSON.stringify(data));
   setLikeUI(!was);
-  if(!was){burstHearts(btn);ph('like',{});bumpGlobalStat('likes');}
+  if(!was){burstHearts(btn);ph('like',{});bumpGlobalStat('likes',1);}
+  else{ph('unlike',{});bumpGlobalStat('likes',-1);}
 }
 
 /* ── GLOBAL LIKE/SHARE COUNTERS (TikTok-style, under the icons) ──
@@ -2109,11 +2110,14 @@ function formatCount(n){
   if(n>=1000)return(n/1000).toFixed(1).replace(/\.0$/,'')+'k';
   return ''+n;
 }
-function bumpGlobalStat(key){
+function bumpGlobalStat(key,delta){
   // optimistic local bump so the tap feels responsive — once a real
   // backend is wired, this should also persist the increment server-side.
+  // delta defaults to +1 (share clicks only ever go up); toggleLike()
+  // passes -1 on unlike so the count actually comes back down instead of
+  // only ever climbing.
   if(!GLOBAL_STATS)return;
-  GLOBAL_STATS[key]=(GLOBAL_STATS[key]||0)+1;
+  GLOBAL_STATS[key]=Math.max(0,(GLOBAL_STATS[key]||0)+(delta||1));
   renderGlobalStats();
   // TODO: also POST the increment to the Google Sheet endpoint here.
 }
