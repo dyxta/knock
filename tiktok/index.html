@@ -50,8 +50,15 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 
 /* ── SLIDE BASE ────────────────────────────── */
 .slide{
-  height:100vh;
-  height:calc(var(--vh,1vh)*100);
+  /* height:100% of #feed, not its own 100vh/--vh calc. Two independent
+     vh-based heights (one on #feed, one on each .slide) can round to
+     different pixel values at fractional browser-zoom levels — the
+     mismatch compounds slide-to-slide, eventually clipping content and
+     leaving scroll-snap unable to land cleanly on a boundary (which reads
+     as "swipe is locked"). Locking .slide to 100% of its already-correctly
+     -sized parent removes the second independent calculation entirely, so
+     there's nothing left to drift out of sync regardless of zoom level. */
+  height:100%;
   scroll-snap-align:start;
   position:relative;
   overflow:hidden;
@@ -556,6 +563,50 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
   animation:knobGlow 2.2s ease-in-out infinite;
 }
 
+/* ── DOOR GATE (first-visit "knock twice to enter") ── */
+.door-gate{
+  position:fixed;inset:0;z-index:200;
+  background:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  transition:opacity .5s ease,visibility .5s ease;
+  touch-action:none;
+}
+/* Belt-and-suspenders: while the gate is up, also lock body scroll itself so
+   wheel/keyboard-scroll on the page (not just touches on the gate) can't
+   reach #feed underneath. Removed the moment the gate is knocked open. */
+body.door-locked{overflow:hidden;height:100%;}
+.door-gate.opening{pointer-events:none;}
+.door-gate.gone{opacity:0;visibility:hidden;pointer-events:none;}
+@keyframes doorGateRing{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.18);}
+  50%{box-shadow:0 0 0 14px rgba(255,255,255,0);}
+}
+.door-gate-circle{
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#6a2bff,#5e17eb 60%,#4a10c4);
+  border:1.5px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+  animation:doorGateRing 2s ease-in-out infinite;
+  transition:transform .15s ease;
+}
+.door-gate-circle:active{transform:scale(.93);}
+/* tap 1: small jolt, signals "registered" without fully opening yet */
+.door-gate-circle.knocked-once{animation:doorGateJolt .35s ease;}
+@keyframes doorGateJolt{
+  0%,100%{transform:scale(1);}
+  30%{transform:scale(.9) rotate(-2deg);}
+  60%{transform:scale(1.05) rotate(1deg);}
+}
+.door-gate-word{
+  font-family:var(--font-b);font-weight:800;font-size:15px;letter-spacing:.02em;
+  color:#fff;text-transform:lowercase;
+}
+.door-gate-hint{
+  font-family:var(--font-b);font-size:12.5px;color:rgba(255,255,255,.55);
+  letter-spacing:.02em;transition:opacity .2s;
+}
+
 
 /* ── BUNDLE COUNTER ON SLIDE ── */
 .bundle-pill{display:none;align-items:center;gap:6px;background:var(--purple-pale);border:1px solid rgba(94,23,235,.2);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px;width:fit-content;}
@@ -959,6 +1010,17 @@ body.ops #opsPanel{display:block;}
   <div class="dot" data-i="1"></div>
   <div class="dot" data-i="2"></div>
   <div class="dot" data-i="3"></div>
+</div>
+
+<!-- FIRST-VISIT DOOR GATE: 2 taps on the circle "opens the door" onto the
+     manifesto. Shown only when no slide has been saved yet (i.e. true
+     first visit — see the savedSlide branch in init() and doorGateTap()
+     below for the gating/open logic). -->
+<div class="door-gate" id="doorGate">
+  <div class="door-gate-circle" id="doorGateCircle" onclick="doorGateTap()">
+    <span class="door-gate-word">knock</span>
+  </div>
+  <div class="door-gate-hint" id="doorGateHint">tap to knock</div>
 </div>
 
 <div id="feed">
@@ -1455,7 +1517,7 @@ function audienceDisplay(aud){
   return String(aud||'').replace(/[-_]+/g,' ').trim();
 }
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
-const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1';
+const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1',KEY_DOOR_SEEN='knock_door_gate_seen_v1';
 let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
 // Channel-tracking params for the link-builder tool: ?audience=stem-students&ch=ig
 // (audience/channel — independent of PAGE_UNI/PAGE_SEG above, which come from the
@@ -1895,8 +1957,24 @@ if(isAdminPage()){
       dots.forEach(function(d,i){d.classList.toggle('active',i===savedSlide);});
       setTimeout(function(){slides[savedSlide].classList.add('entered');},40);
     },50);
-  }else{
+    // Returning mid-funnel visitor — door gate never shown, so make sure
+    // it's hidden/non-blocking instead of sitting in front of the feed.
+    var dg=document.getElementById('doorGate');
+    if(dg)dg.classList.add('gone');
+  }else if(localStorage.getItem(KEY_DOOR_SEEN)==='1'){
+    // Already knocked once before (e.g. refreshed on slide 0) — skip the
+    // gate, go straight to the manifesto reveal like before.
+    var dg2=document.getElementById('doorGate');
+    if(dg2)dg2.classList.add('gone');
     setTimeout(()=>{ slides[0].classList.add('entered'); },80);
+  }else{
+    // True first visit: hold the manifesto reveal until the door gate
+    // reports it's been knocked open (see doorGateTap() below), and lock
+    // body scroll so the feed underneath the gate can't be swiped/scrolled.
+    document.body.classList.add('door-locked');
+    window.__onDoorOpened=function(){
+      slides[0].classList.add('entered');
+    };
   }
   // Start network + cycling
   initNetwork();
@@ -2824,6 +2902,36 @@ function _doPDF(bundle){
   doc.save('knock-opportunity-bundle.pdf');
   ph('pdf_generated',{bundle_size:bundle.length,uni:PAGE_UNI});
   bundle.forEach(function(opp){sendOppEvent(opp,'download');});
+}
+
+/* ── DOOR GATE (first-visit 2-tap entry) ──
+   Tap 1: jolt animation + hint text changes to "knock again" — registers
+   as "heard" without opening yet. Tap 2: fades the whole gate out and
+   reveals the manifesto via window.__onDoorOpened (set by init() only on
+   a true first visit — see the savedSlide branch above). Marked seen in
+   localStorage so a refresh on slide 0 doesn't show the gate twice. */
+var DOOR_TAPS=0;
+function doorGateTap(){
+  DOOR_TAPS++;
+  var circle=document.getElementById('doorGateCircle');
+  var hint=document.getElementById('doorGateHint');
+  var gate=document.getElementById('doorGate');
+  if(DOOR_TAPS===1){
+    if(circle){circle.classList.remove('knocked-once');void circle.offsetWidth;circle.classList.add('knocked-once');}
+    if(hint)hint.textContent='knock again';
+    ph('door_gate_tap',{tap:1});
+    return;
+  }
+  // Second tap: open.
+  ph('door_gate_tap',{tap:2});
+  ph('door_gate_opened',{});
+  localStorage.setItem(KEY_DOOR_SEEN,'1');
+  if(gate)gate.classList.add('opening');
+  document.body.classList.remove('door-locked');
+  setTimeout(function(){
+    if(gate)gate.classList.add('gone');
+    if(typeof window.__onDoorOpened==='function')window.__onDoorOpened();
+  },150);
 }
 
 /* ── VIEWPORT HEIGHT FIX (Chrome/Android) ── */
