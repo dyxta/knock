@@ -1041,12 +1041,12 @@ body.ops #opsPanel{display:block;}
   </div>
 
   <div class="swipe-hint anim a4">
-    if you agree — <span class="hint-heart" onclick="toggleLike(0,document.getElementById('like-0'))">♡</span>
+    if you agree — <span class="hint-heart" onclick="toggleLike(document.getElementById('like-0'))">♡</span>
   </div>
 
   <!-- right actions -->
   <div class="slide-actions">
-    <button class="act-btn like-btn" id="like-0" onclick="toggleLike(0,this)">
+    <button class="act-btn like-btn" id="like-0" onclick="toggleLike(this)">
       <div class="act-icon">♡</div><span class="act-label" id="lc-0" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
@@ -1085,7 +1085,7 @@ body.ops #opsPanel{display:block;}
 
   <!-- right actions -->
   <div class="slide-actions">
-    <button class="act-btn like-btn" id="like-1" onclick="toggleLike(1,this)">
+    <button class="act-btn like-btn" id="like-1" onclick="toggleLike(this)">
       <div class="act-icon">♡</div><span class="act-label" id="lc-1" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
@@ -1133,7 +1133,7 @@ body.ops #opsPanel{display:block;}
 
   <!-- right actions -->
   <div class="slide-actions">
-    <button class="act-btn like-btn" id="like-2" onclick="toggleLike(2,this)">
+    <button class="act-btn like-btn" id="like-2" onclick="toggleLike(this)">
       <div class="act-icon">♡</div><span class="act-label" id="lc-2" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
@@ -1173,7 +1173,7 @@ body.ops #opsPanel{display:block;}
 
   <!-- right actions -->
   <div class="slide-actions">
-    <button class="act-btn like-btn" id="like-3" onclick="toggleLike(3,this)">
+    <button class="act-btn like-btn" id="like-3" onclick="toggleLike(this)">
       <div class="act-icon">♡</div><span class="act-label" id="lc-3" style="display:none;">0</span>
     </button>
     <button class="act-btn" onclick="doShare()">
@@ -2040,21 +2040,33 @@ function goSlide(n){feed.scrollTo({top:n*feed.clientHeight,behavior:'smooth'});}
 dots.forEach(d=>d.addEventListener('click',()=>goSlide(+d.dataset.i)));
 
 /* ── LIKES ── */
+// ONE like state for the whole flyer, not one per slide. Each of the 4
+// slides repeats the like button in its own action rail (so it's always
+// in reach while scrolling, same as TikTok repeating like/comment/share
+// per video) but they all read/write the SAME 'liked' flag and must stay
+// visually in sync — previously each slide stored its own 'l'+i flag, so
+// a visitor could "like" up to 4 times and the 4 hearts could disagree
+// with each other. toggleLike(btn) (no slide index anymore) flips the one
+// shared flag and updates every like-0..3 button's icon/class together.
 function loadLikes(){
   const data=JSON.parse(localStorage.getItem(KEY_LIKES)||'{}');
+  if(data.liked)setLikeUI(true);
+}
+function setLikeUI(liked){
   for(let i=0;i<4;i++){
     const btn=document.getElementById('like-'+i);
-    if(btn&&data['l'+i]){btn.classList.add('liked');btn.querySelector('.act-icon').textContent='♥';}
+    if(!btn)continue;
+    btn.classList.toggle('liked',liked);
+    btn.querySelector('.act-icon').textContent=liked?'♥':'♡';
   }
 }
-function toggleLike(i,btn){
+function toggleLike(btn){
   const data=JSON.parse(localStorage.getItem(KEY_LIKES)||'{}');
-  const was=data['l'+i]||false;
-  data['l'+i]=!was; data[i]=(data[i]||0)+(was?-1:1);
+  const was=data.liked||false;
+  data.liked=!was;
   localStorage.setItem(KEY_LIKES,JSON.stringify(data));
-  const icon=btn.querySelector('.act-icon');
-  if(!was){btn.classList.add('liked');icon.textContent='♥';burstHearts(btn);ph('like',{slide:i});bumpGlobalStat('likes');}
-  else{btn.classList.remove('liked');icon.textContent='♡';}
+  setLikeUI(!was);
+  if(!was){burstHearts(btn);ph('like',{});bumpGlobalStat('likes');}
 }
 
 /* ── GLOBAL LIKE/SHARE COUNTERS (TikTok-style, under the icons) ──
