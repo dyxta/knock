@@ -1051,7 +1051,7 @@ body.ops #opsPanel{display:block;}
     <p class="m-post">should be a time-consuming humiliation ritual.</p>
     <p class="m-belief">real opportunity should find you.<br>we help bring it to your door.</p>
     <p class="m-pilot">we're running a pilot to help you — <em>swipe up to find out more.</em></p>
-    <button class="pilot-link" onclick="event.stopPropagation();ph('pilot_link_clicked',{from:'slide0'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide0'})">what's the pilot? <span class="pilot-link-arr">→</span></button>
+    <button class="pilot-link" onclick="event.stopPropagation();ph('pilot_link_clicked',{from:'slide0'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide0'})">why are we reaching out to you? <span class="pilot-link-arr">→</span></button>
   </div>
 
   <div class="swipe-hint anim a4">
@@ -1073,7 +1073,7 @@ body.ops #opsPanel{display:block;}
 <!-- ══════════ SLIDE 2: PILOT INFO + STARTER PACK ══════════ -->
 <div class="slide slide-pack" data-slide="1">
 
-  <p class="slide-label anim a1">early pilot <button class="pilot-link pilot-link-inline" onclick="ph('pilot_link_clicked',{from:'slide1'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide1'})">what's this? →</button></p>
+  <p class="slide-label anim a1">early pilot <button class="pilot-link pilot-link-inline" onclick="ph('pilot_link_clicked',{from:'slide1'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide1'})">why should i care? →</button></p>
   <h2 class="slide-title anim a2">what we bring<br><em>to your door.</em></h2>
   <p class="slide-body anim a3" style="margin-bottom:10px;">relevant opportunities, dropped to your campus group. twice a week — 0 noise. (admin only.)</p>
 
@@ -1348,10 +1348,30 @@ body.ops #opsPanel{display:block;}
 <!-- SHEET: PILOT EXPLAINER -->
 <div class="sheet" id="sheet-pilot">
   <div class="sheet-handle"></div>
-  <div class="sheet-head"><span class="sheet-title">what's the pilot?</span><button class="sheet-close" onclick="closeSheet()">✕</button></div>
+  <div class="sheet-head"><span class="sheet-title">why are we reaching out to you?</span><button class="sheet-close" onclick="closeSheet()">✕</button></div>
   <div class="sheet-body">
 
-    <p style="font-size:13px;color:var(--g700);line-height:1.5;margin-bottom:14px;">knock is in early testing at a few universities. it's free to use. here's how it works:</p>
+    <!-- STAGE 0: who-we-are / what-we-want-to-do / the-pilot intro. Shown
+         first every time the sheet opens (see resetPilotDeck()), replacing
+         the old one-line "knock is in early testing..." sentence — this
+         covers the same ground in more depth before the visitor reaches the
+         existing step-by-step mechanics deck below. "continue" hides this
+         and reveals the deck; it intentionally has no sign-up CTA of its
+         own, since the deck's final step already has one. -->
+    <div id="pilot-intro">
+      <div style="font-size:13px;color:var(--g700);line-height:1.6;">
+        <p style="margin-bottom:14px;"><strong style="color:var(--ink);">who we are</strong><br>we're a student-first company, started by students who hated how overwhelming and frustrating it felt to look for funding, internships, and jobs. we know how much being aware of the right opportunity can change your life — and the lives of the people closest to you.</p>
+        <p style="margin-bottom:14px;"><strong style="color:var(--ink);">what we want to do</strong><br>build one place where students share their details, wants, and needs — and real, relevant opportunities find them based on that. it's part of a bigger vision: make sure no student misses a life-changing opportunity they qualify for.</p>
+        <p style="margin-bottom:0;"><strong style="color:var(--ink);">the pilot</strong><br>we're starting small — a focused pilot with STEM students from all universities, with extra focus on UCT, Wits, Stellies, and Tuks for now. everyone's welcome to sign up and join the waitlist — we'll reach out the moment we have something for you.</p>
+      </div>
+      <button class="cta-btn cta-primary" style="width:100%;margin-top:16px;" onclick="pilotIntroContinue()">
+        <div class="cta-t"><div class="cta-sub">how it actually works</div><div class="cta-arr">continue →</div></div>
+        <span style="opacity:.4;">→</span>
+      </button>
+    </div>
+
+    <!-- STAGE 1: existing step-by-step mechanics deck, hidden until continue -->
+    <div id="pilot-mechanics" style="display:none;">
 
     <!-- interactive step-through diagram -->
     <div class="pilot-deck">
@@ -1405,6 +1425,7 @@ body.ops #opsPanel{display:block;}
       <div class="cta-t"><div class="cta-sub">45 seconds · popia-aligned</div><div class="cta-arr">sign up now →</div></div>
       <span style="opacity:.4;">→</span>
     </button>
+    </div>
   </div>
 </div>
 
@@ -2209,6 +2230,12 @@ function closeSheet(){
 let PILOT_STEP=0;
 const PILOT_STEPS=4;
 function resetPilotDeck(){
+  // Sheet always reopens on the who-we-are/what-we-want-to-do/pilot intro
+  // (stage 0), not the mechanics step deck — pilotIntroContinue() below is
+  // the only way into the deck, and it always starts that deck back at
+  // step 0 too, so reopening the sheet never strands a visitor mid-deck.
+  document.getElementById('pilot-intro').style.display='block';
+  document.getElementById('pilot-mechanics').style.display='none';
   PILOT_STEP=0;
   document.querySelectorAll('.pilot-step').forEach(function(el){el.classList.toggle('active',+el.dataset.step===0);});
   document.querySelectorAll('.pilot-dot').forEach(function(el){el.classList.toggle('active',+el.dataset.i===0);});
@@ -2216,6 +2243,11 @@ function resetPilotDeck(){
   var nextBtn=document.getElementById('pilot-next');
   if(prevBtn)prevBtn.disabled=true;
   if(nextBtn)nextBtn.textContent='next →';
+}
+function pilotIntroContinue(){
+  document.getElementById('pilot-intro').style.display='none';
+  document.getElementById('pilot-mechanics').style.display='block';
+  ph('pilot_intro_continued',{});
 }
 function pilotDeckGo(dir){
   if(dir>0&&PILOT_STEP===PILOT_STEPS-1){closeSheet();return;}
