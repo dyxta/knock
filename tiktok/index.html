@@ -1212,11 +1212,17 @@ body.ops #opsPanel{display:block;}
 
   <p class="slide-label anim a1">thank you.</p>
   <h2 class="slide-title anim a2" id="s3-title">for joining<br><em>the pilot.</em></h2>
-  <p class="slide-body anim a3" id="s3-body">welcome to the gang. your saved opportunities are below — download them and share the love.</p>
+  <p class="slide-body anim a3" id="s3-body">welcome to the gang. view your saved opportunities below, then download them as a PDF.</p>
 
-  <!-- PDF section — visible once WA requested and bundle has items -->
+  <!-- PDF section — visible once WA requested and bundle has items.
+       The opportunity list + links used to render inline here
+       (#s3-pdf-preview) — replaced with a "view bundle" button that opens
+       the cart sheet instead, so this page stays focused on download/share
+       and the bundle contents live in one place (the cart popup). -->
   <div class="anim a4">
-    <div class="pdf-preview" id="s3-pdf-preview"></div>
+    <button class="cta-btn" style="max-width:300px;margin-bottom:10px;" onclick="openCartSheet()">
+      <div class="cta-t"><div class="cta-arr">🎁 view bundle</div></div>
+    </button>
     <div class="sf-consent pdf-consent" id="s3-pdf-consent-row" style="max-width:300px;" onclick="pdfToggleConsent()"><div class="sf-cb" id="s3-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
     <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
       <div class="cta-t"><div class="cta-arr">📄 download opportunity bundle</div></div>
@@ -2706,21 +2712,12 @@ function refreshBundleUI(){
 }
 function refreshS3(){
   var bundle=getBundle();
-  var preview=document.getElementById('s3-pdf-preview');
   // empty-bundle messaging now lives in #s3-bundle-nudge, driven by
-  // refreshPDFGate()'s bundleNudgeHTML() — no separate element to sync here.
-  if(preview&&bundle.length>0){
-    preview.classList.add('show');
-    // Each saved opportunity's tracked short link is now shown inline here
-    // too — previously this page (slide 3 / "thank you for joining") only
-    // listed title — company with no link at all, so visitors had nothing
-    // to click on before downloading the PDF.
-    preview.innerHTML=bundle.map(function(o){
-      var link='go.knocktalent.co.za/opp-'+oppId(o.title,o.url);
-      return '<div class="pdf-preview-item">'+o.title+' — '+o.company
-        +'<br><a href="https://'+link+'" target="_blank" rel="noopener" style="color:var(--purple);font-size:11.5px;text-decoration:none;">'+link+'</a></div>';
-    }).join('');
-  }else if(preview){preview.classList.remove('show');}
+  // refreshPDFGate()'s bundleNudgeHTML(). Slide 3 (last page) no longer
+  // lists opportunities/links inline — that view moved into the cart sheet
+  // (openCartSheet()), reached via the "view bundle" button added there.
+  // sf-pdf-preview (inside the sign-up sheet's done-state) is unrelated and
+  // still populated below as before.
   // Also refresh sf-done PDF section if visible
   var sfPdf=document.getElementById('sf-pdf-section');
   var sfPreview=document.getElementById('sf-pdf-preview');
