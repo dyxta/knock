@@ -1931,7 +1931,10 @@ if(isAdminPage()){
   initNetwork();
   startCycling();
   maybeShowSwipeCoach();
-  setTimeout(hideSwipeCoach,7000);
+  // Was 7000ms — too long for a hint that's just meant to nudge a first
+  // scroll; if the visitor doesn't scroll right away it just sits there.
+  // Capped to 3s max regardless of slide/scroll state per feedback.
+  setTimeout(hideSwipeCoach,3000);
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG,audience:PAGE_AUDIENCE,ch:PAGE_CH});
   track('page_view',{uni:PAGE_UNI,seg:PAGE_SEG,audience:PAGE_AUDIENCE,ch:PAGE_CH});
   // Anonymous channel-link landing signal — only fires when the visitor
@@ -2450,14 +2453,29 @@ function refreshS3(){
   // refreshPDFGate()'s bundleNudgeHTML() — no separate element to sync here.
   if(preview&&bundle.length>0){
     preview.classList.add('show');
-    preview.innerHTML=bundle.map(function(o){return '<div class="pdf-preview-item">'+o.title+' — '+o.company+'</div>';}).join('');
+    // Each saved opportunity's tracked short link is now shown inline here
+    // too — previously this page (slide 3 / "thank you for joining") only
+    // listed title — company with no link at all, so visitors had nothing
+    // to click on before downloading the PDF.
+    preview.innerHTML=bundle.map(function(o){
+      var link='go.knocktalent.co.za/opp-'+oppId(o.title,o.url);
+      return '<div class="pdf-preview-item">'+o.title+' — '+o.company
+        +'<br><a href="https://'+link+'" target="_blank" rel="noopener" style="color:var(--purple);font-size:11.5px;text-decoration:none;">'+link+'</a></div>';
+    }).join('');
   }else if(preview){preview.classList.remove('show');}
   // Also refresh sf-done PDF section if visible
   var sfPdf=document.getElementById('sf-pdf-section');
   var sfPreview=document.getElementById('sf-pdf-preview');
   if(sfPdf&&localStorage.getItem(KEY_SIGNUP)==='1'){
     sfPdf.style.display='block';
-    if(bundle.length>0&&sfPreview){sfPreview.classList.add('show');sfPreview.innerHTML=bundle.map(function(o){return '<div class="pdf-preview-item">'+o.title+' — '+o.company+'</div>';}).join('');}
+    if(bundle.length>0&&sfPreview){
+      sfPreview.classList.add('show');
+      sfPreview.innerHTML=bundle.map(function(o){
+        var link='go.knocktalent.co.za/opp-'+oppId(o.title,o.url);
+        return '<div class="pdf-preview-item">'+o.title+' — '+o.company
+          +'<br><a href="https://'+link+'" target="_blank" rel="noopener" style="color:var(--purple);font-size:11.5px;text-decoration:none;">'+link+'</a></div>';
+      }).join('');
+    }
   }
   refreshPDFGate();
 }
@@ -2667,7 +2685,14 @@ function _doPDF(bundle){
     // oppId() here matches that endpoint's id scheme exactly (same MD5
     // of lowercased title+url), so this never needs a network call.
     var shortLink='go.knocktalent.co.za/opp-'+oppId(opp.title,opp.url);
-    doc.text('→ '+shortLink,M+7,y+31);
+    var linkLabel='→ '+shortLink;
+    doc.text(linkLabel,M+7,y+31);
+    // doc.text() only draws text — it doesn't make it tappable on its
+    // own, which is why this looked like a link but wasn't one. doc.link()
+    // overlays an actual clickable annotation on top of the rendered text;
+    // width is approximated from font size since jsPDF doesn't expose
+    // getTextWidth without also tracking font metrics state.
+    doc.link(M+7,y+27,doc.getTextWidth(linkLabel),5,{url:'https://'+shortLink});
     y+=h+7;
   });
   // Footer
