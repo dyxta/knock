@@ -266,9 +266,13 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .swipe-arrow{
   display:inline-flex;
   color:var(--purple);font-weight:700;
-  animation:swipeBounce 1.5s ease-in-out infinite;
+  opacity:.75;
+  animation:swipeBounce 2.6s ease-in-out infinite;
 }
-@keyframes swipeBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+/* subtler than before — shorter travel (1.5px vs 4px), slower cycle (2.6s
+   vs 1.5s), and a brief pause at each end (held via extra keyframe steps)
+   so it reads as a gentle pulse rather than an active bounce. */
+@keyframes swipeBounce{0%,42%,100%{transform:translateY(0);}21%{transform:translateY(-1.5px);}}
 
 /* Swipe-up affordance: folded into .swipe-hint (slide 0 only, CSS-only
    bounce, no JS timing/state — scrolls away naturally with the slide,
