@@ -76,10 +76,12 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
   padding-top:calc(env(safe-area-inset-top,0px) + 52px);
   padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px);
 }
-/* slide 2 can run tall (title + subhead + CTA + starter pack) — let it
-   scroll internally instead of clipping the CTA when the viewport is
-   short (e.g. Chrome's collapsed toolbar height differs from Safari's) */
-.slide-pack{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+/* slides 2 & 3 can run tall (title + subhead + CTA + starter pack /
+   share buttons) — let them scroll internally instead of clipping
+   content when the viewport is short (e.g. Chrome's collapsed toolbar
+   height differs from Safari's, which was cutting off the share button
+   on slide 3) */
+.slide-pack,.slide-share,.slide-unlock{overflow-y:auto;-webkit-overflow-scrolling:touch;}
 /* Slide 2 & 3 spacing */
 .s3-divider{margin-top:24px;}
 
@@ -255,65 +257,15 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 }
 .swipe-arrow{
   display:inline-flex;
+  color:var(--purple);font-weight:700;
   animation:swipeBounce 1.5s ease-in-out infinite;
 }
-@keyframes swipeBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+@keyframes swipeBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
 
-/* ── FIRST-VISIT SWIPE COACHMARK (animated drag gesture) ── */
-.swipe-coach{
-  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  z-index:60;pointer-events:none;
-  font-family:var(--font-b);
-  transition:opacity .35s ease;
-}
-.swipe-coach.hide{opacity:0;pointer-events:none;}
-.swipe-coach.pending{opacity:0;}
-.swipe-coach.revealed{opacity:1;}
-.swipe-coach-pill{
-  background:var(--ink);color:var(--white);font-size:12px;font-weight:600;
-  padding:7px 14px;border-radius:999px;white-space:nowrap;
-  box-shadow:0 4px 18px rgba(0,0,0,.18);
-  letter-spacing:.01em;
-}
-/* gesture track: vertical line the "finger" travels along */
-.swipe-coach-track{
-  position:relative;width:30px;height:54px;
-  display:flex;align-items:center;justify-content:center;
-}
-.swipe-coach-track::before{
-  content:'';position:absolute;left:50%;top:2px;bottom:2px;width:2px;
-  transform:translateX(-50%);
-  background:linear-gradient(to top,rgba(94,23,235,0) 0%,rgba(94,23,235,.35) 35%,rgba(94,23,235,.35) 100%);
-  border-radius:2px;
-}
-/* the "finger" dot dragging upward, looping with a fade */
-.swipe-coach-finger{
-  position:absolute;left:50%;bottom:2px;
-  width:22px;height:22px;border-radius:50%;
-  background:var(--purple);
-  box-shadow:0 2px 10px rgba(94,23,235,.45),0 0 0 5px rgba(94,23,235,.12);
-  animation:swipeFingerDrag 1.6s cubic-bezier(.3,0,.4,1) infinite;
-}
-@keyframes swipeFingerDrag{
-  0%{transform:translate(-50%,0) scale(1);opacity:0;}
-  10%{opacity:1;}
-  70%{transform:translate(-50%,-46px) scale(.82);opacity:1;}
-  100%{transform:translate(-50%,-50px) scale(.7);opacity:0;}
-}
-/* small chevrons trailing above, rippling up to reinforce direction */
-.swipe-coach-chevs{position:absolute;top:-4px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;}
-.swipe-coach-chevs span{
-  font-size:11px;line-height:1;color:var(--purple);opacity:0;
-  animation:chevRipple 1.6s ease-in-out infinite;
-}
-.swipe-coach-chevs span:nth-child(1){animation-delay:0s;}
-.swipe-coach-chevs span:nth-child(2){animation-delay:.18s;margin-top:-2px;}
-@keyframes chevRipple{
-  0%,100%{opacity:0;transform:translateY(4px);}
-  40%{opacity:.9;transform:translateY(0);}
-  75%{opacity:0;transform:translateY(-3px);}
-}
+/* Swipe-up affordance: folded into .swipe-hint (slide 0 only, CSS-only
+   bounce, no JS timing/state — scrolls away naturally with the slide,
+   so it can't get "stuck" on Chrome or on the last slide the way the
+   old position:fixed coachmark did). */
 
 /* ── HEART/SAVE EXPLAINER ── */
 .heart-explainer{
@@ -336,11 +288,17 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .pilot-link-arr{transition:transform .15s;}
 .pilot-link:active .pilot-link-arr{transform:translateX(2px);}
 .pilot-link-inline{
-  font-size:9px;letter-spacing:.08em;text-transform:none;font-weight:700;
-  padding:0;margin:0;text-decoration:none;
-  color:var(--g500);opacity:.85;
+  font-size:10.5px;letter-spacing:.02em;text-transform:none;font-weight:700;
+  padding:4px 10px;margin:0 0 0 4px;text-decoration:none;
+  color:var(--purple);background:var(--purple-pale);
+  border:1px solid rgba(94,23,235,.22);border-radius:999px;
+  animation:pilotLinkPulse 2.6s ease-in-out infinite;
 }
-.pilot-link-inline:active{opacity:.6;}
+.pilot-link-inline:active{opacity:.6;animation:none;}
+@keyframes pilotLinkPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(94,23,235,.22);}
+  50%{box-shadow:0 0 0 5px rgba(94,23,235,0);}
+}
 
 /* ── PILOT EXPLAINER: interactive step deck ── */
 .pilot-deck{background:var(--off);border:1px solid var(--g200);border-radius:14px;padding:18px 16px 14px;overflow:hidden;}
@@ -548,13 +506,15 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .followup{width:100%;background:var(--off);border:1px solid var(--g200);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);font-family:var(--font-b);outline:none;margin-top:8px;transition:border-color .15s,background .15s;}
 .followup:focus{border-color:var(--purple);background:var(--white);}
 .followup[hidden]{display:none;}
-.optional-toggle{border:1px solid var(--g200);border-radius:12px;background:var(--off);margin-bottom:14px;overflow:hidden;}
+.optional-toggle{border:1.5px solid rgba(94,23,235,.3);border-radius:12px;background:var(--purple-pale);margin-bottom:14px;overflow:hidden;}
 .optional-toggle summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;}
 .optional-toggle summary::-webkit-details-marker{display:none;}
-.optional-toggle summary::after{content:'+';font-size:18px;color:var(--g500);flex-shrink:0;margin-left:10px;transition:transform .2s;}
+.optional-toggle summary::after{content:'+';font-size:18px;color:var(--purple);flex-shrink:0;margin-left:10px;transition:transform .2s;}
 .optional-toggle[open] summary::after{transform:rotate(45deg);}
 .ot-label{font-size:13px;font-weight:700;color:var(--ink);}
-.ot-sub{font-size:11px;color:var(--g500);margin-top:2px;}
+.ot-label::before{content:'✦ ';color:var(--purple);}
+.ot-sub{font-size:11px;color:var(--purple);font-weight:600;margin-top:2px;}
+.optional-toggle .ot-body{background:var(--white);}
 .ot-body{padding:0 15px 15px;}
 .ot-body .form-field{margin-top:12px;margin-bottom:0;}
 
@@ -1000,15 +960,6 @@ body.ops #opsPanel{display:block;}
   <div class="dot" data-i="3"></div>
 </div>
 
-<!-- FIRST-VISIT SWIPE COACHMARK -->
-<div class="swipe-coach pending" id="swipe-coach">
-  <div class="swipe-coach-track">
-    <div class="swipe-coach-chevs"><span>︿</span><span>︿</span></div>
-    <div class="swipe-coach-finger"></div>
-  </div>
-  <div class="swipe-coach-pill">swipe up ↑</div>
-</div>
-
 <div id="feed">
 
 <!-- ══════════ SLIDE 1: MANIFESTO ══════════ -->
@@ -1056,6 +1007,7 @@ body.ops #opsPanel{display:block;}
 
   <div class="swipe-hint anim a4">
     if you agree — <span class="hint-heart" onclick="toggleLike(document.getElementById('like-0'))">♡</span>
+    <span class="swipe-arrow" aria-hidden="true">↑</span>
   </div>
 
   <!-- right actions -->
@@ -1432,7 +1384,7 @@ body.ops #opsPanel{display:block;}
 <div class="toast" id="toast"></div>
 <div class="opp-info-backdrop" id="oppInfoBackdrop" onclick="closeOppInfo()"></div>
 <div class="opp-info-popup" id="oppInfoPopup">
-  <div class="opp-info-popup-text">the links for the opportunities can be found at the end — you don't need to sign up to access them, but we advise it so you can access more opportunities like this.</div>
+  <div class="opp-info-popup-text" id="oppInfoText">the links for the opportunities can be found at the end — you don't need to sign up to access them, but we advise it so you can access more opportunities like this.</div>
   <button class="opp-info-popup-ok" onclick="closeOppInfo()">got it</button>
 </div>
 
@@ -1629,40 +1581,6 @@ async function sendToBackend(submission){
   const url=window.KNOCK_APPS_SCRIPT_URL;
   if(!url){console.info('No backend URL set — submission saved locally only.');return;}
   await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'submission',data:submission})});
-}
-
-/* ── SWIPE COACHMARK (first visit only) ── */
-const KEY_SWIPE_SEEN='knock_swipe_seen_v1';
-function hideSwipeCoach(){
-  const c=document.getElementById('swipe-coach');
-  const wasShown=c&&c.classList.contains('revealed')&&!c.classList.contains('hide');
-  if(c&&!c.classList.contains('hide')){c.classList.add('hide');}
-  if(wasShown)ph('swipe_coach_dismissed',{});
-  localStorage.setItem(KEY_SWIPE_SEEN,'1');
-}
-function maybeShowSwipeCoach(){
-  const c=document.getElementById('swipe-coach');
-  if(!c)return;
-  // CURRENT_SLIDE>0 used to be the only "don't show" guard, treating
-  // every non-zero slide the same. But slides[].length-1 is the last
-  // slide (slide-share, nothing further to swipe to) — landing there
-  // directly via the saved-slide restore in init() still revealed
-  // "swipe up ↑" pinned at the bottom with nothing above it, which read
-  // as a stuck/persisting hint since there's no further content to
-  // dismiss it against. Guard against the last slide explicitly too.
-  const isLastSlide=CURRENT_SLIDE>=slides.length-1;
-  if(localStorage.getItem(KEY_SWIPE_SEEN)==='1'||CURRENT_SLIDE>0||isLastSlide){
-    c.classList.add('hide');
-    return;
-  }
-  // Wait for slide 1's text to finish animating in (last item is .a4,
-  // delay .36s + .5s duration) before revealing the swipe gesture, so it
-  // reads at a natural reading pace rather than competing with the copy.
-  setTimeout(function(){
-    c.classList.remove('pending');
-    c.classList.add('revealed');
-    ph('swipe_coach_shown',{});
-  },1100);
 }
 
 /* ── SHARED OPS PASSWORD ──
@@ -1982,11 +1900,6 @@ if(isAdminPage()){
   // Start network + cycling
   initNetwork();
   startCycling();
-  maybeShowSwipeCoach();
-  // Was 7000ms — too long for a hint that's just meant to nudge a first
-  // scroll; if the visitor doesn't scroll right away it just sits there.
-  // Capped to 3s max regardless of slide/scroll state per feedback.
-  setTimeout(hideSwipeCoach,3000);
   ph('page_view',{uni:PAGE_UNI,seg:PAGE_SEG,audience:PAGE_AUDIENCE,ch:PAGE_CH});
   track('page_view',{uni:PAGE_UNI,seg:PAGE_SEG,audience:PAGE_AUDIENCE,ch:PAGE_CH});
   // Anonymous channel-link landing signal — only fires when the visitor
@@ -2072,7 +1985,6 @@ function startCycling(){
 /* ── SCROLL / SLIDE TRACKING ── */
 feed.addEventListener('scroll',()=>{
   const idx=Math.round(feed.scrollTop/feed.clientHeight);
-  hideSwipeCoach();
   if(idx!==CURRENT_SLIDE){
     slides[CURRENT_SLIDE]?.classList.remove('entered');
     CURRENT_SLIDE=idx;
@@ -2528,7 +2440,9 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
    the real, trackable link only exists once it's in the bundle at the end
    (see slide 4 / PDF / sf-pdf-preview, which use go.knocktalent.co.za/opp-<id>
    short links). This explains that instead of the tap silently doing nothing. */
-function showOppInfo(){
+function showOppInfo(msg){
+  var textEl=document.getElementById('oppInfoText');
+  if(textEl)textEl.textContent=msg||"the links for the opportunities can be found at the end — you don't need to sign up to access them, but we advise it so you can access more opportunities like this.";
   document.getElementById('oppInfoBackdrop').classList.add('show');
   document.getElementById('oppInfoPopup').classList.add('show');
   ph('opp_info_viewed',{});
@@ -2705,7 +2619,7 @@ function renderStack(){
     el.innerHTML=
       '<div class="opp-card-content">'+
         '<div class="opp-card-co">'+opp.company+'</div>'+
-        '<div class="opp-card-role" onclick="showOppInfo()" style="cursor:pointer;">'+opp.title+'</div>'+
+        '<div class="opp-card-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div>'+
         '<div class="opp-card-meta">'+opp.location+' · '+opp.degrees+'</div>'+
         '<div class="opp-card-deadline">closes '+opp.deadline+'</div>'+
       '</div>'+
@@ -2715,6 +2629,13 @@ function renderStack(){
     el.querySelector('.opp-save-btn').addEventListener('click',function(e){
       e.stopPropagation();
       toggleSave(opp,el,e);
+    });
+    // Tapping the card body itself (not the title, not the save button —
+    // both already have their own handlers above) used to do nothing,
+    // which read as a dead tap. Nudge toward the actual save action and
+    // explain where the real link ends up.
+    el.addEventListener('click',function(){
+      showOppInfo("hey, you probably want more info. like this to save it to your bundle for later — that's where the links to extra info can be found.");
     });
     stack.appendChild(el);
   });
@@ -2889,9 +2810,12 @@ function renderBatch(batchNum){
     row.className='opp-row';
     row.className='opp-row'+(liked?' row-liked':'');
     var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
-    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role" onclick="showOppInfo()" style="cursor:pointer;">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
+    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
       +(opp.deadline?'<div class="opp-row-deadline">closes '+opp.deadline+'</div>':'')+'</div>'
-      +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
+      +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="event.stopPropagation();toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
+    row.addEventListener('click',function(){
+      showOppInfo("hey, you probably want more info. like this to save it to your bundle for later — that's where the links to extra info can be found.");
+    });
     container.appendChild(row);
   });
   if(batchNum===1)maybeShowHeartCue();
