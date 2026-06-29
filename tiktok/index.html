@@ -443,6 +443,37 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .dot{width:3px;height:18px;border-radius:2px;background:rgba(0,0,0,.2);transition:all .3s;}
 .dot.active{background:var(--purple);height:28px;}
 
+/* ── FLOATING CART (live bundle count, all slides) ──
+   Fixed top-right so it never collides with #dots (right-center) or the
+   per-slide content. Always visible regardless of slide/state — it's pure
+   feedback ("your saves are going somewhere"), not a checkout flow. Tapping
+   it opens #sheet-cart (see openCartSheet()) which just lists what's saved. */
+.cart-fab{
+  position:fixed;top:14px;right:14px;z-index:60;
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease;
+}
+.cart-fab:active{transform:scale(.9);}
+.cart-fab-icon{font-size:18px;line-height:1;}
+.cart-fab-badge{
+  position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;
+  border-radius:999px;background:var(--purple);color:#fff;
+  font-family:var(--font-b);font-size:10.5px;font-weight:800;
+  display:none;align-items:center;justify-content:center;
+  border:1.5px solid var(--white);
+}
+.cart-fab-badge.show{display:flex;}
+.cart-fab.bump{animation:cartBump .35s ease;}
+@keyframes cartBump{
+  0%,100%{transform:scale(1);}
+  40%{transform:scale(1.18);}
+  70%{transform:scale(.95);}
+}
+
 /* ── BOTTOM SHEET ─────────────────────────── */
 .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:190;}
 .sheet-overlay.show{opacity:1;pointer-events:all;}
@@ -1214,8 +1245,31 @@ body.ops #opsPanel{display:block;}
 
 </div><!-- end #feed -->
 
+<!-- FLOATING CART: live feedback that saved opportunities are going
+     somewhere. Visible on every slide, count updates instantly on
+     like/unlike (see refreshBundleUI()). Tapping opens #sheet-cart. -->
+<div class="cart-fab" id="cartFab" onclick="openCartSheet()">
+  <span class="cart-fab-icon">🛍️</span>
+  <span class="cart-fab-badge" id="cartFabBadge">0</span>
+</div>
+
 <!-- SHEET OVERLAY -->
 <div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
+
+<!-- SHEET: CART (view saved opportunities — informational only, like
+     glancing in a cart, not a checkout flow. Content rendered by
+     renderCartSheet(), called from openCartSheet() and refreshBundleUI(). -->
+<div class="sheet" id="sheet-cart">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <span class="sheet-title">your saved opportunities.</span>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div id="cart-sheet-msg" style="font-size:13px;color:var(--g500);line-height:1.6;margin-bottom:14px;"></div>
+    <div id="cart-sheet-list"></div>
+  </div>
+</div>
 
 <!-- SHEET: PACK (swipe UI) -->
 <div class="sheet" id="sheet-pack">
@@ -2217,6 +2271,44 @@ function closeSheet(){
   if(LAST_OPEN_SHEET){ph('sheet_close',{sheet:LAST_OPEN_SHEET});LAST_OPEN_SHEET=null;}
 }
 
+/* ── CART SHEET: glance-in-the-cart view of saved opportunities ──
+   Purely informational (no sign-up/download buttons here on purpose) —
+   it's live feedback that likes are "going somewhere", not a checkout
+   step. Three message states, by liked/signed-up combination:
+     no likes yet          → encouragement to start saving
+     likes, not signed up  → nudge to sign up for more every week
+     likes + signed up     → thank-you + bonus reminder
+   getBundle() already IS the source of truth for "what's saved" (every
+   like/unlike goes through addToBundle/removeFromBundle), so this sheet
+   just reads it — no new state to keep in sync. */
+function openCartSheet(){
+  renderCartSheet();
+  openSheet('sheet-cart');
+}
+function renderCartSheet(){
+  const bundle=getBundle();
+  const signed=localStorage.getItem(KEY_SIGNUP)==='1';
+  const msgEl=document.getElementById('cart-sheet-msg');
+  const listEl=document.getElementById('cart-sheet-list');
+  if(msgEl){
+    if(bundle.length===0){
+      msgEl.textContent='add opportunities to save here for later — tap ♡ on any card.';
+    }else if(!signed){
+      msgEl.innerHTML='nice — these are saved. <strong style="color:var(--purple);">sign up</strong> to get more like this every week.';
+    }else{
+      msgEl.innerHTML="thanks for signing up! don't forget to collect your <strong style=\"color:var(--purple);\">bonus 3 opportunities</strong>.";
+    }
+  }
+  if(listEl){
+    listEl.innerHTML=bundle.length===0?'':bundle.map(function(o){
+      return '<div class="pc" style="margin-bottom:8px;">'
+        +'<div style="font-weight:700;font-size:13.5px;color:var(--ink);">'+o.title+'</div>'
+        +'<div style="font-size:12px;color:var(--g500);">'+o.company+(o.location?' · '+o.location:'')+'</div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
 /* ── PILOT EXPLAINER: interactive step deck ── */
 let PILOT_STEP=0;
 const PILOT_STEPS=4;
@@ -2586,6 +2678,7 @@ function getBundle(){try{return JSON.parse(localStorage.getItem(KEY_BUNDLE)||'[]
 function saveBundle(b){try{localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}catch(e){}}
 function addToBundle(opp){const b=getBundle();if(!b.find(o=>o.id===opp.id)){b.push(opp);saveBundle(b);}refreshBundleUI();}
 function removeFromBundle(id){saveBundle(getBundle().filter(o=>o.id!==id));refreshBundleUI();}
+var CART_FAB_LAST_N=0;
 function refreshBundleUI(){
   const n=getBundle().length;
   const pill=document.getElementById('slide-bundle-pill');
@@ -2594,6 +2687,17 @@ function refreshBundleUI(){
   if(pill)pill.classList.toggle('show',n>0);
   if(num)num.textContent=n;
   if(badge)badge.textContent=n+' saved';
+  // Floating cart icon — live feedback, visible on every slide regardless
+  // of which one the visitor is on when they like/unlike.
+  const fab=document.getElementById('cartFab');
+  const fabBadge=document.getElementById('cartFabBadge');
+  if(fabBadge){fabBadge.textContent=n;fabBadge.classList.toggle('show',n>0);}
+  if(fab&&n!==CART_FAB_LAST_N){
+    fab.classList.remove('bump');void fab.offsetWidth;fab.classList.add('bump');
+  }
+  CART_FAB_LAST_N=n;
+  // Keep the cart sheet's contents in sync too, in case it's open right now.
+  if(document.getElementById('sheet-cart').classList.contains('open'))renderCartSheet();
   refreshS3();
 }
 function refreshS3(){
