@@ -1216,12 +1216,14 @@ body.ops #opsPanel{display:block;}
 
   <!-- PDF section — visible once WA requested and bundle has items.
        The opportunity list + links used to render inline here
-       (#s3-pdf-preview) — replaced with a "view bundle" button that opens
-       the cart sheet instead, so this page stays focused on download/share
+       (#s3-pdf-preview) — replaced with a "view bundle" icon button (same
+       circular act-icon style as the like/share buttons) that opens the
+       cart sheet instead, so this page stays focused on download/share
        and the bundle contents live in one place (the cart popup). -->
   <div class="anim a4">
-    <button class="cta-btn" style="max-width:300px;margin-bottom:10px;" onclick="openCartSheet()">
-      <div class="cta-t"><div class="cta-arr">🎁 view bundle</div></div>
+    <button class="act-btn" style="margin:0 auto 14px;" onclick="openCartSheet()">
+      <div class="act-icon" style="background:var(--purple-pale);border-color:rgba(94,23,235,.25);color:var(--purple);">🎁</div>
+      <span class="act-label" style="color:var(--purple);">view bundle</span>
     </button>
     <div class="sf-consent pdf-consent" id="s3-pdf-consent-row" style="max-width:300px;" onclick="pdfToggleConsent()"><div class="sf-cb" id="s3-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
     <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
