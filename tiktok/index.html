@@ -714,6 +714,20 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--white);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;font-family:var(--font-b);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+/* ── OPP INFO POPUP ──
+   Shown when a visitor taps an opportunity's name/title (not the save
+   heart) — the title isn't a link, so this explains where the real link
+   lives instead of doing nothing. Unlike .toast (single-line, nowrap,
+   built for short confirmations like "saved ♥"), this needs to wrap a full
+   sentence, so it gets its own small backdrop+card instead of stretching
+   the toast past what it was designed for. */
+.opp-info-backdrop{position:fixed;inset:0;background:rgba(17,17,17,.32);z-index:340;opacity:0;pointer-events:none;transition:opacity .2s;}
+.opp-info-backdrop.show{opacity:1;pointer-events:auto;}
+.opp-info-popup{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(10px);width:min(86vw,320px);background:var(--white);border-radius:14px;padding:16px 18px;box-shadow:0 12px 32px rgba(17,17,17,.18);z-index:341;opacity:0;pointer-events:none;transition:all .2s;font-family:var(--font-b);}
+.opp-info-popup.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.opp-info-popup-text{font-size:13.5px;line-height:1.55;color:var(--ink);margin-bottom:12px;}
+.opp-info-popup-ok{display:block;width:100%;background:var(--ink);color:var(--white);border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;font-family:var(--font-b);cursor:pointer;}
+
 /* ── ADMIN STATS PAGE (?stats=1, no password — public analytics view) ── */
 body.admin #feed,body.admin .toast{display:none!important;}
 body.admin,body.ops{height:auto!important;overflow-y:auto!important;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
@@ -1395,6 +1409,11 @@ body.ops #opsPanel{display:block;}
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="opp-info-backdrop" id="oppInfoBackdrop" onclick="closeOppInfo()"></div>
+<div class="opp-info-popup" id="oppInfoPopup">
+  <div class="opp-info-popup-text">the links for the opportunities can be found at the end — you don't need to sign up to access them, but we advise it so you can access more opportunities like this.</div>
+  <button class="opp-info-popup-ok" onclick="closeOppInfo()">got it</button>
+</div>
 
 <script>
 /* ── CONFIG ── */
@@ -2473,6 +2492,20 @@ function copyLink(){navigator.clipboard.writeText(shareLink()).catch(()=>{});con
 /* ── TOAST / PH ── */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 
+/* Tapping an opportunity's name (not the save heart) doesn't go anywhere —
+   the real, trackable link only exists once it's in the bundle at the end
+   (see slide 4 / PDF / sf-pdf-preview, which use go.knocktalent.co.za/opp-<id>
+   short links). This explains that instead of the tap silently doing nothing. */
+function showOppInfo(){
+  document.getElementById('oppInfoBackdrop').classList.add('show');
+  document.getElementById('oppInfoPopup').classList.add('show');
+  ph('opp_info_viewed',{});
+}
+function closeOppInfo(){
+  document.getElementById('oppInfoBackdrop').classList.remove('show');
+  document.getElementById('oppInfoPopup').classList.remove('show');
+}
+
 /* ══════ OPPORTUNITIES DATA ══════ */
 var OPPORTUNITIES=[
   {id:'o1',company:'[ Company A ]',title:'[ Graduate Developer Programme ]',location:'Cape Town',degrees:'CompSci · IS · Engineering',deadline:'[ date ]',url:'go.knocktalent.co.za/company-uct-1'},
@@ -2640,7 +2673,7 @@ function renderStack(){
     el.innerHTML=
       '<div class="opp-card-content">'+
         '<div class="opp-card-co">'+opp.company+'</div>'+
-        '<div class="opp-card-role">'+opp.title+'</div>'+
+        '<div class="opp-card-role" onclick="showOppInfo()" style="cursor:pointer;">'+opp.title+'</div>'+
         '<div class="opp-card-meta">'+opp.location+' · '+opp.degrees+'</div>'+
         '<div class="opp-card-deadline">closes '+opp.deadline+'</div>'+
       '</div>'+
@@ -2824,7 +2857,7 @@ function renderBatch(batchNum){
     row.className='opp-row';
     row.className='opp-row'+(liked?' row-liked':'');
     var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
-    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
+    row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role" onclick="showOppInfo()" style="cursor:pointer;">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
       +(opp.deadline?'<div class="opp-row-deadline">closes '+opp.deadline+'</div>':'')+'</div>'
       +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
     container.appendChild(row);
