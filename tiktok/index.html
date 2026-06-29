@@ -201,6 +201,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .slide.entered .a4{animation-delay:.36s;}
 .slide.entered .a5{animation-delay:.46s;}
 .slide.entered .a6{animation-delay:.56s;}
+.slide.entered .a7{animation-delay:.66s;}
 .anim-r{opacity:0;}
 .slide.entered .anim-r{animation:enterRight .45s ease forwards;}
 .slide.entered .r1{animation-delay:.2s;}
@@ -994,18 +995,18 @@ body.ops #opsPanel{display:block;}
   <p class="slide-label anim a1" id="s0-seg">stem · uct</p>
   <h1 class="slide-hi anim a2">hi, <em id="s0-uni">uct.</em></h1>
 
-  <div class="manifesto anim a3">
-    <p class="m-pre">we don't believe finding</p>
-    <div class="cycle-wrap">
+  <div class="manifesto">
+    <p class="m-pre anim a3">we don't believe finding</p>
+    <div class="cycle-wrap anim a3">
       <span id="cycle-word">job</span>
     </div>
-    <p class="m-post">should be a time-consuming humiliation ritual.</p>
-    <p class="m-belief">real opportunity should find you.<br>we help bring it to your door.</p>
-    <p class="m-pilot">we're running a pilot to help you — <em>swipe up to find out more.</em></p>
-    <button class="pilot-link" onclick="event.stopPropagation();ph('pilot_link_clicked',{from:'slide0'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide0'})">why are we reaching out to you? <span class="pilot-link-arr">→</span></button>
+    <p class="m-post anim a4">should be a time-consuming humiliation ritual.</p>
+    <p class="m-belief anim a5">real opportunity should find you.<br>we help bring it to your door.</p>
+    <p class="m-pilot anim a6">we're running a pilot to help you — <em>swipe up to find out more.</em></p>
+    <button class="pilot-link anim a6" onclick="event.stopPropagation();ph('pilot_link_clicked',{from:'slide0'});openSheet('sheet-pilot');ph('pilot_explainer_open',{from:'slide0'})">why are we reaching out to you? <span class="pilot-link-arr">→</span></button>
   </div>
 
-  <div class="swipe-hint anim a4">
+  <div class="swipe-hint anim a7">
     if you agree — <span class="hint-heart" onclick="toggleLike(document.getElementById('like-0'))">♡</span>
     <span class="swipe-arrow" aria-hidden="true">↑</span>
   </div>
@@ -1202,8 +1203,8 @@ body.ops #opsPanel{display:block;}
         <input type="text" class="followup sf-input" id="universityOther" placeholder="which university?" hidden/>
       </div>
       <div class="sf-field"><label class="sf-label">field of study</label><div class="sf-chips"><button class="sf-chip" data-v="stem" onclick="sfChip(this)">stem</button><button class="sf-chip" data-v="non-stem" onclick="sfChip(this)">non-stem</button></div></div>
-      <div class="sf-field"><label class="sf-label">whatsapp number</label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
-      <div class="sf-field"><label class="sf-label" id="sf-email-label">university email <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional</span></label>
+      <div class="sf-field"><label class="sf-label">whatsapp number <span style="opacity:.5;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">(to know who to accept into campus group)</span></label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
+      <div class="sf-field"><label class="sf-label" id="sf-email-label">university email <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional · (verify you are a student)</span></label>
         <div class="sf-email-row" id="sfEmailRow"><input class="sf-input" id="sf-email" type="text" placeholder="your.username" autocomplete="email"/><div class="sf-domain" id="sfEmailDomain">@uct.ac.za</div></div>
       </div>
 
@@ -2325,7 +2326,14 @@ function renderSfDone(){
   if(waitlisted){
     if(icon)icon.textContent='⏳';
     if(title)title.textContent="you're on the waiting list.";
-    if(sub)sub.textContent="we've saved your details — we'll reach out as soon as we're ready for you.";
+    // non-stem visitors get the specific "we're not yet helping non-stem
+    // students" copy; visitors waitlisted for a different reason (stem at
+    // an unrecognized/non-pilot uni) get the generic version instead —
+    // telling a stem student "we don't help non-stem students" would be
+    // both wrong and confusing.
+    if(sub)sub.textContent=SF_FIELD==='non-stem'
+      ?"we're not yet helping non-stem students. as soon as we do, you'll be the first we help."
+      :"we've saved your details — we'll reach out as soon as we're ready for you.";
     if(waIcon)waIcon.style.display='none';
     if(waLabel)waLabel.textContent='join waiting list ✓';
   }else{
@@ -2565,7 +2573,11 @@ function refreshP2(){
   var note=document.getElementById('p2-s2-note');
   var icon2=document.getElementById('p2-wa-icon');
   var label2=document.getElementById('p2-wa-label');
-  if(note)note.innerHTML=waitlisted2?"you're in. <strong>you've been added to the waiting list</strong> — we'll reach out when we're ready for you.":"you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.";
+  if(note)note.innerHTML=waitlisted2
+    ?(SF_FIELD==='non-stem'
+      ?"we're not yet helping non-stem students. as soon as we do, <strong>you'll be the first we help.</strong>"
+      :"you're in. <strong>you've been added to the waiting list</strong> — we'll reach out when we're ready for you.")
+    :"you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.";
   if(icon2)icon2.style.display=waitlisted2?'none':'';
   if(label2)label2.textContent=waitlisted2?'join waiting list ✓':'request to join group';
 }
@@ -2745,9 +2757,14 @@ function _doPDF(bundle){
   // Divider
   doc.setDrawColor(224,222,217);doc.setLineWidth(0.4);doc.line(M,41,W-M,41);
   // Cards
+  // Footer block (share line + socials + legal) needs ~50mm; start a new
+  // page if the next card would run into that zone instead of letting
+  // cards/footer overlap on bundles of 4+ opportunities.
+  const FOOTER_ZONE=247;
   let y=50;
   bundle.forEach(opp=>{
     const h=40;
+    if(y+h>FOOTER_ZONE){doc.addPage();y=20;}
     doc.setFillColor(248,247,245);doc.roundedRect(M,y,W-M*2,h,3,3,'F');
     doc.setFillColor(94,23,235);doc.rect(M,y,2.5,h,'F');
     doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(94,23,235);
@@ -2776,10 +2793,34 @@ function _doPDF(bundle){
     doc.link(M+7,y+27,doc.getTextWidth(linkLabel),5,{url:'https://'+shortLink});
     y+=h+7;
   });
-  // Footer
-  doc.setDrawColor(224,222,217);doc.line(M,278,W-M,278);
+  // Footer — same ~50mm zone the card loop above reserves; if the last
+  // card landed too close to the bottom, start a fresh page so the footer
+  // never overlaps the final card.
+  if(y>FOOTER_ZONE-9){doc.addPage();y=20;}
+  var fy=Math.max(y+6,256);
+  doc.setDrawColor(224,222,217);doc.line(M,fy,W-M,fy);
+  // "don't gatekeep" share line — sits above the social/legal footer so
+  // it reads as the last thing before the page ends, not buried under it.
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(94,23,235);
+  doc.text("let's not gatekeep. share this with your friends to recruit them to the gang.",M,fy+8);
+  // Social + website — each a real clickable doc.link() annotation, same
+  // approach as the per-opportunity short links above (jsPDF text isn't
+  // tappable on its own).
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(136,133,128);
+  var social=[
+    {label:'instagram → @knock_talent',url:'https://instagram.com/knock_talent'},
+    {label:'linkedin → knock talent sa',url:'https://www.linkedin.com/company/knock-talent-sa'},
+    {label:'knocktalent.co.za',url:'https://knocktalent.co.za'}
+  ];
+  var sy=fy+15;
+  social.forEach(function(s){
+    doc.setTextColor(94,23,235);
+    doc.text(s.label,M,sy);
+    doc.link(M,sy-4,doc.getTextWidth(s.label),5,{url:s.url});
+    sy+=6;
+  });
   doc.setFontSize(7);doc.setTextColor(200,198,194);doc.setFont('helvetica','normal');
-  doc.text('opportunity finds you. delivered by knock. · links activate when opportunities go live on go.knocktalent.co.za',M,283);
+  doc.text('opportunity finds you. delivered by knock. · links activate when opportunities go live on go.knocktalent.co.za',M,sy+2);
   doc.save('knock-opportunity-bundle.pdf');
   ph('pdf_generated',{bundle_size:bundle.length,uni:PAGE_UNI});
   bundle.forEach(function(opp){sendOppEvent(opp,'download');});
