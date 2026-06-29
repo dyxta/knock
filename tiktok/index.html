@@ -2289,6 +2289,13 @@ function claimPack(e){
 /* ── SHEETS ── */
 let LAST_OPEN_SHEET=null;
 function openSheet(id){
+  // Dismiss any in-flight hint/error toast (showToast()) the moment a sheet
+  // opens — toasts are fire-and-forget with their own 2.2s timer, so without
+  // this a toast fired just before the sheet opens (e.g. tapping a disabled
+  // PDF button right before tapping "view bundle") stays visible, fixed at
+  // the bottom of the screen, layered on top of the sheet underneath it.
+  const toastEl=document.getElementById('toast');
+  if(toastEl){clearTimeout(toastEl._t);toastEl.classList.remove('show');}
   document.getElementById('overlay').classList.add('show');
   document.getElementById(id).classList.add('open');
   if(id==='sheet-pilot')resetPilotDeck();
@@ -2466,6 +2473,22 @@ function sfOptionalChip(el){
 }
 function sfToggleConsent(){SF_CONSENT=!SF_CONSENT;const cb=document.getElementById('sf-cb');cb.classList.toggle('on',SF_CONSENT);cb.innerHTML=SF_CONSENT?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'';ph('consent_toggled',{on:SF_CONSENT});}
 async function sfSubmit(){
+  // Wrapped in try/catch purely for diagnosis: this is an async function
+  // with no error handling, so any thrown error (bad selector, network
+  // failure, etc.) previously failed completely silently — the button
+  // would just sit there disabled/stuck on "sending…" with nothing in the
+  // console pointing at why. If a report comes in of "can't submit", this
+  // turns that into a visible console.error instead of a silent no-op.
+  try{
+    return await sfSubmitInner();
+  }catch(err){
+    console.error('[sfSubmit] threw — submit silently failed:',err);
+    const btn=document.getElementById('sf-submit');
+    if(btn){btn.disabled=false;btn.textContent='try again';}
+    showToast('something went wrong — try again');
+  }
+}
+async function sfSubmitInner(){
   track('submit_clicked',{uni:PAGE_UNI,seg:PAGE_SEG});
   const u=UNI[PAGE_UNI]||{full:PAGE_UNI};
   const uniFallback=SF_UNI?(SF_UNI==='other'?SF_UNI_OTHER:SF_UNI):(u.full||PAGE_UNI);
