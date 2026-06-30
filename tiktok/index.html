@@ -1391,9 +1391,9 @@ body.ops #opsPanel{display:block;}
         <input type="text" class="followup sf-input" id="universityOther" placeholder="which university?" hidden/>
       </div>
       <div class="sf-field"><label class="sf-label">field of study</label><div class="sf-chips"><button class="sf-chip" data-v="stem" onclick="sfChip(this)">stem</button><button class="sf-chip" data-v="non-stem" onclick="sfChip(this)">non-stem</button></div></div>
-      <div class="sf-field"><label class="sf-label" style="color:var(--purple);">whatsapp number <span style="opacity:1;color:var(--g700);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">(to know who to accept into campus group)</span></label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
+      <div class="sf-field"><label class="sf-label" style="color:var(--purple);">whatsapp number <span style="opacity:1;color:var(--g700);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">(to know who to accept into campus group)</span></label><div class="sf-phone"><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="0791234567" maxlength="10" style="border-radius:10px;"/></div></div>
       <div class="sf-field"><label class="sf-label" id="sf-email-label" style="color:var(--purple);">university email <span style="opacity:1;color:var(--g700);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional · (helps verify you're a student)</span></label>
-        <div class="sf-email-row" id="sfEmailRow"><input class="sf-input" id="sf-email" type="text" placeholder="your.username" autocomplete="email"/><div class="sf-domain" id="sfEmailDomain">@uct.ac.za</div></div>
+        <div class="sf-email-row" id="sfEmailRow"><input class="sf-input" id="sf-email" type="text" placeholder="your.username" autocomplete="email" maxlength="80"/><div class="sf-domain" id="sfEmailDomain">@uct.ac.za</div></div>
       </div>
 
       <details class="optional-toggle" id="optionalToggle">
@@ -1651,7 +1651,7 @@ function audienceDisplay(aud){
 }
 const KEY_PACK='knock_pack_v1',KEY_SIGNUP='knock_signup_v1',KEY_LIKES='knock_likes_v1';
 const KEY_WA='knock_wa_v1',KEY_SLIDE='knock_slide_v1',KEY_DOOR_SEEN='knock_door_gate_seen_v1';
-let PAGE_UNI='uct',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
+let PAGE_UNI='',PAGE_SEG='stem',SF_CONSENT=false,SF_FIELD='',CURRENT_SLIDE=0;
 // Channel-tracking params for the link-builder tool: ?audience=stem-students&ch=ig
 // (audience/channel — independent of PAGE_UNI/PAGE_SEG above, which come from the
 // URL path, not query params). When both are present and a matching StarterPack
@@ -2037,7 +2037,7 @@ if(isAdminPage()){
 (function init(){
   const path=window.location.pathname.replace(/^\//,'');
   const parts=path.split('-');
-  PAGE_UNI=parts[1]||'uct'; PAGE_SEG=parts.slice(2).join('-')||'stem';
+  PAGE_UNI=parts[1]||''; PAGE_SEG=parts.slice(2).join('-')||'stem';
   const qp=new URLSearchParams(window.location.search);
   PAGE_AUDIENCE=qp.get('audience')||''; PAGE_CH=qp.get('ch')||'';
   const u=UNI[PAGE_UNI]||{display:PAGE_UNI?(PAGE_UNI.charAt(0).toUpperCase()+PAGE_UNI.slice(1)):'your uni',full:'',location:'',emailHint:'student@example.ac.za'};
@@ -2543,8 +2543,11 @@ async function sfSubmitInner(){
   // separately below) are 9 digits, e.g. "79 123 4567" → "791234567".
   // length<9 alone let through things like "abc123456" — this also checks
   // every remaining character is a digit once spaces are stripped.
+  // Phone: exactly 10 digits, starting with 0 (SA mobile format e.g. 0791234567).
+  // Strip spaces before checking — maxlength="10" on the input already prevents
+  // longer entries, but spaces can sneak in on paste.
   const phoneDigits=phone.replace(/\s/g,'');
-  if(!phone||phoneDigits.length<9||!/^\d+$/.test(phoneDigits)){showToast('valid whatsapp number please');ph('form_field_error',{field:'phone'});track('validation_failed',{field:'phone'});return;}
+  if(!phoneDigits||phoneDigits.length!==10||!/^0\d{9}$/.test(phoneDigits)){showToast('enter a 10-digit number starting with 0 (e.g. 0791234567)');ph('form_field_error',{field:'phone'});track('validation_failed',{field:'phone'});return;}
   if(!uniFallback){showToast('pick your university');ph('form_field_error',{field:'university'});track('validation_failed',{field:'university'});return;}
   if(!SF_FIELD){showToast('pick your field');ph('form_field_error',{field:'field_of_study'});track('validation_failed',{field:'field_of_study'});return;}
   if(!SF_CONSENT){showToast('tick consent to continue');ph('form_field_error',{field:'consent'});track('validation_failed',{field:'consent'});return;}
@@ -2556,14 +2559,18 @@ async function sfSubmitInner(){
   // forcing the field. Plain ASCII pattern (no full RFC 5322) is
   // intentional — this only needs to catch obvious typos, not validate
   // every edge case a real address can take.
-  if(finalEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(finalEmail)){showToast('that email doesn\'t look right');ph('form_field_error',{field:'email'});track('validation_failed',{field:'email'});return;}
+  // Email: optional, but if provided must look like a valid address.
+  // Block control chars and characters that are never valid in email addresses.
+  // The username portion (before @) allows letters, digits, and . _ + - only.
+  // Max 80 chars enforced via the input's maxlength attribute.
+  if(finalEmail&&(finalEmail.length>80||!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(finalEmail))){showToast('that email doesn\'t look right');ph('form_field_error',{field:'email'});track('validation_failed',{field:'email'});return;}
   const btn=document.getElementById('sf-submit');btn.disabled=true;btn.textContent='sending…';
   ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
   const payload={
     ref:(Date.now().toString(36)+Math.random().toString(36).slice(2,8)),
     university:uniFallback,
     field:SF_FIELD,
-    phone:'+27'+document.getElementById('sf-phone').value.trim().replace(/\s/g,''),
+    phone:document.getElementById('sf-phone').value.trim().replace(/\s/g,''),
     email:finalEmail,
     year:SF_OPTIONAL.year||'',
     degree:SF_OPTIONAL.degree||'',
@@ -2912,7 +2919,10 @@ function refreshP3(){
   var locked=document.getElementById('p3-locked');
   var unlocked=document.getElementById('p3-unlocked');
   var body=document.getElementById('p3-locked-body');
-  var ok=signed&&waOK;
+  // Waitlisted users have signed up but will never join a WA group — they
+  // should still see the bonus opportunities rather than being stuck on the
+  // lock screen forever. Treat signup alone as sufficient for waitlisted visitors.
+  var ok=signed&&(waOK||isWaitlisted());
   if(locked)locked.style.display=ok?'none':'block';
   if(unlocked){
     unlocked.style.display=ok?'block':'none';
