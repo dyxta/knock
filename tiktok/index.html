@@ -1392,7 +1392,7 @@ body.ops #opsPanel{display:block;}
       </div>
       <div class="sf-field"><label class="sf-label">field of study</label><div class="sf-chips"><button class="sf-chip" data-v="stem" onclick="sfChip(this)">stem</button><button class="sf-chip" data-v="non-stem" onclick="sfChip(this)">non-stem</button></div></div>
       <div class="sf-field"><label class="sf-label" style="color:var(--purple);">whatsapp number <span style="opacity:1;color:var(--g700);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">(to know who to accept into campus group)</span></label><div class="sf-phone"><div class="sf-prefix">+27</div><input class="sf-input" id="sf-phone" type="tel" inputmode="numeric" placeholder="79 123 4567" maxlength="12"/></div></div>
-      <div class="sf-field"><label class="sf-label" id="sf-email-label">university email <span style="opacity:.4;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional · (verify you are a student)</span></label>
+      <div class="sf-field"><label class="sf-label" id="sf-email-label" style="color:var(--purple);">university email <span style="opacity:1;color:var(--g700);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">optional · (helps verify you're a student)</span></label>
         <div class="sf-email-row" id="sfEmailRow"><input class="sf-input" id="sf-email" type="text" placeholder="your.username" autocomplete="email"/><div class="sf-domain" id="sfEmailDomain">@uct.ac.za</div></div>
       </div>
 
@@ -1466,13 +1466,18 @@ body.ops #opsPanel{display:block;}
       <div class="sf-done-icon" id="sf-done-icon">🎉</div>
       <div class="sf-done-title" id="sf-done-title">you're vetted.</div>
       <div class="sf-done-sub" id="sf-done-sub">request to join your campus group — we'll verify and approve you within 24 hours.</div>
-      <!-- Button markup/styling stays the same for both cohorts (looks like
-           a real next step either way) but its icon, label, and click
-           behavior are swapped by JS in renderSfDone() below based on
-           isWaitlisted() — waitlisted visitors never see a whatsapp icon or
-           get redirected, since requestWA() already skips window.open() for
-           them (their details are saved; this is a confirmation tap only). -->
-      <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener" onclick="requestWA(this);return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" id="sf-wa-icon"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg><span id="sf-wa-label">request to join group</span></a>
+      <!-- Primary CTA: swapped by renderSfDone() based on isWaitlisted().
+           Non-waitlisted → "see your 3 bonus opportunities →" (navigates to slide 2).
+           Waitlisted → hidden in favour of the waitlist-specific block below. -->
+      <a class="wa-btn" id="sf-wa-btn" href="#" target="_blank" rel="noopener" onclick="requestWA(this);return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" id="sf-wa-icon"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.8-1.5c1.5.8 3.3 1.3 5.2 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg><span id="sf-wa-label">see your 3 bonus opportunities →</span></a>
+      <!-- Waitlist-specific block: auto-enrolled, no action required.
+           Shown by renderSfDone() when isWaitlisted(); hidden otherwise. -->
+      <div id="sf-waitlist-block" style="display:none;margin-top:4px;">
+        <button class="cta-btn cta-primary" style="max-width:300px;margin:0 auto 12px;" onclick="closeSheet();goSlide(1);">
+          <div class="cta-t"><div class="cta-arr">browse available opportunities →</div></div>
+        </button>
+        <button id="sf-remove-btn" onclick="sfRemoveFromWaitlist()" style="display:block;width:100%;max-width:300px;margin:0 auto;background:none;border:1.5px solid var(--g300);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--g700);cursor:pointer;">remove me from the waitlist</button>
+      </div>
       <!-- PDF section (shown after signup if bundle exists) -->
       <div id="sf-pdf-section" style="display:none;margin-top:18px;">
         <div style="height:1px;background:var(--g200);margin-bottom:14px;"></div>
@@ -2601,30 +2606,22 @@ function renderSfDone(){
   var waIcon=document.getElementById('sf-wa-icon');
   var waLabel=document.getElementById('sf-wa-label');
   var waBtn=document.getElementById('sf-wa-btn');
+  var waitlistBlock=document.getElementById('sf-waitlist-block');
   if(waitlisted){
     if(icon)icon.textContent='⏳';
-    if(title)title.textContent="you're on the waiting list.";
-    // non-stem visitors get the specific "we're not yet helping non-stem
-    // students" copy; visitors waitlisted for a different reason (stem at
-    // an unrecognized/non-pilot uni) get the generic version instead —
-    // telling a stem student "we don't help non-stem students" would be
-    // both wrong and confusing.
+    if(title)title.textContent="you're on the waitlist.";
     if(sub)sub.textContent=SF_FIELD==='non-stem'
-      ?"we're not yet helping non-stem students. as soon as we do, you'll be the first we help."
-      :"we've saved your details — we'll reach out as soon as we're ready for you.";
-    if(waIcon)waIcon.style.display='none';
-    // No further action exists once waitlisted — render as a static
-    // confirmation badge (not clickable) instead of a live green button,
-    // so it doesn't read as something still waiting to be pressed.
-    if(waLabel)waLabel.textContent='you\'re on the list ✓';
-    if(waBtn){waBtn.classList.add('wa-static');waBtn.removeAttribute('href');waBtn.onclick=function(e){e.preventDefault();return false;};}
+      ?"we're not yet helping non-stem students — you're first in line when we do."
+      :"we've saved your details. you'll be the first we contact when we expand to your uni.";
+    // Hide the WA/CTA button — waitlisted block below handles their next step.
+    if(waBtn)waBtn.style.display='none';
+    if(waitlistBlock)waitlistBlock.style.display='block';
   }else{
     if(icon)icon.textContent='🎉';
     if(title)title.textContent="you're in.";
     if(sub)sub.textContent="you've unlocked 3 bonus opportunities — go see them now.";
-    // Primary action: close the sheet and take them straight to the unlocked
-    // bonus opportunities on slide 2. The WA group join is a secondary ask
-    // that happens on slide 2 itself — we don't gate the bonus opps on it here.
+    if(waBtn)waBtn.style.display='';
+    if(waitlistBlock)waitlistBlock.style.display='none';
     if(waIcon)waIcon.style.display='none';
     if(waBtn){
       waBtn.classList.remove('wa-static');
@@ -2639,6 +2636,15 @@ function renderSfDone(){
     }
     if(waLabel)waLabel.textContent='see your 3 bonus opportunities →';
   }
+}
+function sfRemoveFromWaitlist(){
+  // Clear their signup so they can re-enter different details if they want,
+  // and close the sheet back to slide 1.
+  localStorage.removeItem(KEY_SIGNUP);
+  localStorage.removeItem(KEY_WA);
+  ph('waitlist_removed',{uni:PAGE_UNI});
+  closeSheet();
+  showToast("you've been removed from the waitlist.");
 }
 
 /* ── WA REQUEST + PDF GATE ──
