@@ -2620,11 +2620,24 @@ function renderSfDone(){
     if(waBtn){waBtn.classList.add('wa-static');waBtn.removeAttribute('href');waBtn.onclick=function(e){e.preventDefault();return false;};}
   }else{
     if(icon)icon.textContent='🎉';
-    if(title)title.textContent="you're vetted.";
-    if(sub)sub.textContent="request to join your campus group — we'll verify and approve you within 24 hours.";
-    if(waIcon)waIcon.style.display='';
-    if(waBtn){waBtn.classList.remove('wa-static');waBtn.href=getWaLink();waBtn.onclick=function(){requestWA(this);return false;};}
-    if(waLabel)waLabel.textContent='request to join group';
+    if(title)title.textContent="you're in.";
+    if(sub)sub.textContent="you've unlocked 3 bonus opportunities — go see them now.";
+    // Primary action: close the sheet and take them straight to the unlocked
+    // bonus opportunities on slide 2. The WA group join is a secondary ask
+    // that happens on slide 2 itself — we don't gate the bonus opps on it here.
+    if(waIcon)waIcon.style.display='none';
+    if(waBtn){
+      waBtn.classList.remove('wa-static');
+      waBtn.removeAttribute('href');
+      waBtn.onclick=function(e){
+        e.preventDefault();
+        ph('signup_see_bonus_opps',{uni:PAGE_UNI});
+        closeSheet();
+        setTimeout(function(){goSlide(2);},120);
+        return false;
+      };
+    }
+    if(waLabel)waLabel.textContent='see your 3 bonus opportunities →';
   }
 }
 
@@ -2844,22 +2857,10 @@ function refreshS3(){
   // refreshPDFGate()'s bundleNudgeHTML(). Slide 3 (last page) no longer
   // lists opportunities/links inline — that view moved into the cart sheet
   // (openCartSheet()), reached via the "view bundle" button added there.
-  // sf-pdf-preview (inside the sign-up sheet's done-state) is unrelated and
-  // still populated below as before.
-  // Also refresh sf-done PDF section if visible
-  var sfPdf=document.getElementById('sf-pdf-section');
-  var sfPreview=document.getElementById('sf-pdf-preview');
-  if(sfPdf&&localStorage.getItem(KEY_SIGNUP)==='1'){
-    sfPdf.style.display='block';
-    if(bundle.length>0&&sfPreview){
-      sfPreview.classList.add('show');
-      sfPreview.innerHTML=bundle.map(function(o){
-        var link='go.knocktalent.co.za/opp-'+oppId(o.title,o.url);
-        return '<div class="pdf-preview-item">'+o.title+' — '+o.company
-          +'<br><a href="https://'+link+'" target="_blank" rel="noopener" style="color:var(--purple);font-size:11.5px;text-decoration:none;">'+link+'</a></div>';
-      }).join('');
-    }
-  }
+  // The sf-done PDF section has been removed from the sign-up sheet's
+  // done-state — after signup the primary CTA is "see your 3 bonus
+  // opportunities", so the PDF download (which belongs on slide 3) was
+  // noise here. sf-pdf-section stays in the DOM as display:none.
   refreshPDFGate();
 }
 
