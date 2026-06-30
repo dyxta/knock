@@ -589,6 +589,119 @@
     padding: 4px 10px; border-radius: 999px;
   }
 
+  /* explainer diagram (replaces interactive sandbox) */
+  .explainer-card {
+    background: var(--off-white); border: 1px solid var(--gray-100);
+    border-radius: 14px; padding: 0.9rem;
+  }
+  .exp-steps {
+    display: flex; align-items: stretch; gap: 0; flex-wrap: wrap;
+  }
+  .exp-step {
+    flex: 1 1 200px; min-width: 200px;
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 12px; padding: 0.7rem 0.75rem;
+    display: flex; flex-direction: column;
+  }
+  .exp-step--highlight { border: 1.5px solid var(--purple); }
+  .exp-step--dark { background: var(--black); border-color: var(--black); }
+  .exp-connector {
+    flex: 0 0 18px; align-self: center;
+    height: 2px; background: var(--purple-mid);
+    margin: 0 2px; min-width: 14px;
+  }
+  .exp-step-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .exp-step-no {
+    width: 24px; height: 24px; border-radius: 7px;
+    background: var(--purple-light); color: var(--purple);
+    font-family: var(--font-title); font-weight: 900; font-size: 11px;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .exp-step-no--light { background: var(--purple); color: var(--white); }
+  .exp-step-label {
+    font-family: var(--font-body); font-weight: 700; font-size: 8.5px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500);
+  }
+  .exp-step-label--light { color: #C9AAFF; }
+  .exp-step-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 12.5px;
+    color: var(--black); margin-bottom: 4px; letter-spacing: -0.01em;
+  }
+  .exp-step-title--light { color: var(--white); }
+  .exp-step-desc {
+    font-family: var(--font-body); font-size: 10.5px; color: var(--gray-500);
+    line-height: 1.5; margin-bottom: 10px;
+  }
+  .exp-step-desc--light { color: rgba(255,255,255,0.6); }
+  .exp-step-stat {
+    margin-top: auto; background: var(--off-white); border: 1px solid var(--gray-100);
+    border-radius: 9px; padding: 8px 10px;
+  }
+  .exp-step-stat--dark { background: rgba(255,255,255,0.08); border: none; }
+  .exp-stat-num {
+    font-family: var(--font-title); font-weight: 900; font-size: 17px;
+    color: var(--black); line-height: 1;
+  }
+  .exp-stat-num--light { color: var(--white); }
+  .exp-stat-suffix { font-size: 10px; color: #C9AAFF; font-weight: 700; }
+  .exp-stat-label { font-family: var(--font-body); font-size: 9.5px; color: var(--gray-500); margin-top: 3px; }
+  .exp-stat-label--light { color: rgba(255,255,255,0.55); }
+  .exp-callout-tag { font-family: var(--font-body); font-size: 9.5px; font-weight: 700; color: var(--purple); margin-bottom: 4px; }
+  .exp-step-callout {
+    margin-top: auto; background: var(--purple-light); border: 1px solid var(--purple-mid);
+    border-radius: 9px; padding: 8px 10px;
+  }
+  .exp-callout-text { font-family: var(--font-body); font-size: 9.5px; color: var(--gray-700); line-height: 1.4; }
+  .exp-bars { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
+  .exp-bar-row { display: flex; justify-content: space-between; font-family: var(--font-body); font-size: 10px; margin-bottom: -2px; }
+  .exp-bar-row span { color: var(--gray-700); font-weight: 500; }
+  .exp-bar-row b { color: var(--black); font-weight: 700; }
+  .exp-bar-track { height: 6px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .exp-bar-fill { height: 100%; border-radius: 99px; }
+
+  .exp-summary {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-top: 0.7rem; background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 11px; padding: 0.7rem 0.85rem;
+  }
+  .exp-summary-text { font-family: var(--font-body); font-size: 11px; color: var(--gray-700); line-height: 1.5; flex: 1 1 260px; }
+  .exp-summary-text strong { color: var(--black); }
+  .exp-summary-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .exp-tag {
+    background: var(--purple-light); color: var(--purple);
+    font-family: var(--font-body); font-size: 10px; font-weight: 600;
+    padding: 5px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .exp-tag--green { background: var(--do-bg); color: var(--do-ink); }
+
+  .exp-pricing { margin-top: 0.8rem; }
+  .exp-pricing-head {
+    font-family: var(--font-body); font-weight: 700; font-size: 9.5px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500);
+    margin-bottom: 8px;
+  }
+  .exp-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+  .exp-price-card {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 11px; padding: 0.75rem 0.85rem; text-align: left;
+  }
+  .exp-price-card--featured { border: 1.5px solid var(--purple); background: var(--purple-light); }
+  .exp-price-tier {
+    font-family: var(--font-body); font-weight: 700; font-size: 9px;
+    text-transform: uppercase; letter-spacing: 0.07em; color: var(--purple); margin-bottom: 6px;
+  }
+  .exp-price-amount {
+    font-family: var(--font-title); font-weight: 900; font-size: 21px;
+    color: var(--black); letter-spacing: -0.01em; line-height: 1; margin-bottom: 4px;
+  }
+  .exp-price-desc { font-family: var(--font-body); font-size: 10px; color: var(--gray-500); line-height: 1.4; }
+
+  @media (max-width: 700px) {
+    .exp-steps { flex-direction: column; }
+    .exp-connector { display: none; }
+    .exp-pricing-grid { grid-template-columns: 1fr; }
+  }
+
   .sandbox-grid {
     display: grid;
     grid-template-columns: 250px 1fr;
@@ -1055,6 +1168,14 @@
         <label for="in-recipientPhone">Recipient phone</label>
         <input id="in-recipientPhone" data-field="recipientPhone" type="tel" placeholder="+27 ___ ___ ____" autocomplete="off" />
       </div>
+      <div class="fb-field wide-2">
+        <label for="in-knockName">Knock signatory name</label>
+        <input id="in-knockName" data-field="knockName" type="text" placeholder="e.g. Dylan Tasdhary" autocomplete="off" />
+      </div>
+      <div class="fb-field">
+        <label for="in-knockTitle">Knock signatory title</label>
+        <input id="in-knockTitle" data-field="knockTitle" type="text" placeholder="e.g. Founder" autocomplete="off" />
+      </div>
     </div>
   </div>
 </details>
@@ -1320,7 +1441,7 @@
       If Knock delivers <span class="kw">100 verified UCT STEM final-years</span> with transcripts uploaded,
       and we can deliver your posts <span class="kw">direct to each student's phone via WhatsApp</span> —
       then <span class="kw"><span class="ed" data-field="company">[Company Name]</span></span> agrees to
-      <span class="kw">1 pilot talent drop</span> at <span class="kw price">R2,500</span>.
+      <span class="kw">1 pilot talent drop</span> starting at <span class="kw price">R3,500</span>.
     </div>
     <div class="offer-foot">
       Non-binding. No payment owed until the drop is mutually confirmed in writing.
@@ -1370,7 +1491,7 @@
     </div>
     <div class="tl-item">
       <div class="tl-key">Commercial</div>
-      <div class="tl-val"><strong>R2,500</strong> flat. Invoiced on execution. No retainer, no platform fee.</div>
+      <div class="tl-val"><strong>R3,500</strong> standard post + analytics · <strong>R5,000</strong> for 2 drops + analytics report · <strong>R10,000</strong> custom for additional volume. Invoiced on execution. No retainer, no platform fee.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Cancellation</div>
@@ -1383,128 +1504,116 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- EMBEDDED INTERACTIVE SANDBOX                                   -->
+  <!-- EXPLAINER: WHAT YOUR FEE BUYS                                  -->
   <!-- ============================================================ -->
-  <div class="demo-section">
+  <div class="demo-section explainer-section">
     <div class="demo-head">
       <div class="dh-left">
         <span class="dh-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
         </span>
         <span class="dh-title">
-          Try the product
-          <small>Switch personas. Click actions. See what corporates see.</small>
+          What you pay for
+          <small>One flat fee, one drop, a measured result.</small>
         </span>
       </div>
-      <span class="dh-tag">Interactive · live demo</span>
+      <span class="dh-tag">For employers · how the pilot works</span>
     </div>
 
-    <div class="sandbox-grid">
-      <!-- LEFT: STUDENT WHATSAPP -->
-      <div>
-        <div class="sb-section-label"><span class="step-no">1</span>Student persona</div>
-        <div class="selector-row">
-          <button class="select-btn active" id="btn-thabo" onclick="loadStudentPersona('thabo')">Thabo · CS</button>
-          <button class="select-btn" id="btn-priya" onclick="loadStudentPersona('priya')">Priya · Data</button>
-          <button class="select-btn" id="btn-alex" onclick="loadStudentPersona('alex')">Alex · Eng</button>
+    <div class="explainer-card">
+      <div class="exp-steps">
+        <div class="exp-step">
+          <div class="exp-step-top">
+            <div class="exp-step-no">1</div>
+            <div class="exp-step-label">We do this</div>
+          </div>
+          <div class="exp-step-title">We sign up students</div>
+          <div class="exp-step-desc">Knock recruits and verifies STEM students from the university — they join with a transcript, no CV needed.</div>
+          <div class="exp-step-stat">
+            <div class="exp-stat-num">100</div>
+            <div class="exp-stat-label">verified students in the pool</div>
+          </div>
         </div>
 
-        <div class="phone-mockup">
-          <div class="phone-screen">
-            <div class="wa-header">
-              <div class="knock-logo"><svg><use href="#logo-dark"/></svg></div>
-              <div>
-                <div class="wa-name">Knock</div>
-                <div class="wa-presence">verified signal layer</div>
-              </div>
-            </div>
-            <div class="wa-chat" id="waChatBox"></div>
+        <div class="exp-connector"></div>
+
+        <div class="exp-step">
+          <div class="exp-step-top">
+            <div class="exp-step-no">2</div>
+            <div class="exp-step-label">You give us</div>
+          </div>
+          <div class="exp-step-title">Your opportunity</div>
+          <div class="exp-step-desc">Send us the role, internship or event you want in front of them. We format it for WhatsApp — done for you.</div>
+          <div class="exp-step-callout">
+            <div class="exp-callout-tag">📣 Your role, your brand</div>
+            <div class="exp-callout-text">Graduate Software Engineer — apply by Fri 👀</div>
+          </div>
+        </div>
+
+        <div class="exp-connector"></div>
+
+        <div class="exp-step exp-step--dark">
+          <div class="exp-step-top">
+            <div class="exp-step-no exp-step-no--light">3</div>
+            <div class="exp-step-label exp-step-label--light">We deliver</div>
+          </div>
+          <div class="exp-step-title exp-step-title--light">Straight to the group</div>
+          <div class="exp-step-desc exp-step-desc--light">Your opportunity drops into the verified student WhatsApp group. No job board, no inbox — where they actually are.</div>
+          <div class="exp-step-stat exp-step-stat--dark">
+            <div class="exp-stat-num exp-stat-num--light">100 <span class="exp-stat-suffix">phones</span></div>
+            <div class="exp-stat-label exp-stat-label--light">reached on WhatsApp, instantly</div>
+          </div>
+        </div>
+
+        <div class="exp-connector"></div>
+
+        <div class="exp-step exp-step--highlight">
+          <div class="exp-step-top">
+            <div class="exp-step-no">4</div>
+            <div class="exp-step-label">You get back</div>
+          </div>
+          <div class="exp-step-title">The proof · in 7 days</div>
+          <div class="exp-step-desc">A simple report: who saw it, who was interested, who responded. Real engagement, not guesswork.</div>
+          <div class="exp-bars">
+            <div class="exp-bar-row"><span>Saw it</span><b>100</b></div>
+            <div class="exp-bar-track"><div class="exp-bar-fill" style="width:100%; background: var(--purple);"></div></div>
+            <div class="exp-bar-row"><span>Liked / tapped</span><b>58</b></div>
+            <div class="exp-bar-track"><div class="exp-bar-fill" style="width:58%; background: #8B5CF6;"></div></div>
+            <div class="exp-bar-row"><span>Responded</span><b>31</b></div>
+            <div class="exp-bar-track"><div class="exp-bar-fill" style="width:31%; background: #1A7F5A;"></div></div>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT: CORPORATE WORKSPACE -->
-      <div>
-        <div class="sb-section-label"><span class="step-no">2</span>Enterprise buyer</div>
-        <div class="selector-row">
-          <button class="select-btn active" id="corp-bank" onclick="loadCorpPersona('bank')">Company A · Talent Team</button>
-          <button class="select-btn" id="corp-bbee" onclick="loadCorpPersona('bbee')">B-BBEE Compliance</button>
+      <div class="exp-summary">
+        <div class="exp-summary-text">
+          <strong>In plain terms:</strong> your fee puts your opportunity in front of 100 verified students and tells you exactly how many cared — measured engagement you can take to your team.
         </div>
+        <div class="exp-summary-tags">
+          <span class="exp-tag">No CVs to sift</span>
+          <span class="exp-tag">No retainer</span>
+          <span class="exp-tag exp-tag--green">POPIA-aligned</span>
+        </div>
+      </div>
 
-        <div class="corp-workspace">
-          <div class="corp-topbar">
-            <div class="corp-title" id="corpNameDisplay">Company A · talent portal</div>
-            <div class="credit-badge" id="creditCounter">Balance R4,500</div>
+      <!-- PRICING TIERS -->
+      <div class="exp-pricing">
+        <div class="exp-pricing-head">Pricing · choose what fits the drop</div>
+        <div class="exp-pricing-grid">
+          <div class="exp-price-card">
+            <div class="exp-price-tier">Standard</div>
+            <div class="exp-price-amount">R3,500</div>
+            <div class="exp-price-desc">1 post + full analytics report</div>
           </div>
-          <div class="pricing-strip">
-            <span class="pp">View list <b>R200</b></span>
-            <span class="pp">Unlock <b>R50</b></span>
-            <span class="pp">Audience drop <b>R2,500</b></span>
+          <div class="exp-price-card exp-price-card--featured">
+            <div class="exp-price-tier">Most popular</div>
+            <div class="exp-price-amount">R5,000</div>
+            <div class="exp-price-desc">2 drops + analytics report</div>
           </div>
-          <div class="corp-desc" id="corpDescriptionDisplay">
-            Searching for high-performance engineering candidates across verified pools.
-          </div>
-          <div class="profile-list" id="anonymisedProfileContainer"></div>
-
-          <!-- ANALYTICS PANEL -->
-          <div class="analytics-panel">
-            <div class="analytics-head">
-              <div class="ah-label"><span class="step-no">3</span>Brand &amp; post analytics</div>
-              <div class="ah-period">Last 30 days</div>
-            </div>
-            <div class="analytics-grid">
-              <div class="a-tile sentiment">
-                <div class="score-circle" id="aScore">82</div>
-                <div class="score-text">
-                  <div class="a-lbl">Sentiment</div>
-                  <div class="trend" id="aTrend">↑ +6</div>
-                </div>
-              </div>
-              <div class="a-tile bench">
-                <div class="a-lbl">vs sector</div>
-                <div class="bench-vals">
-                  <span class="bench-mine" id="aBenchMine">47%</span>
-                  <span class="bench-vs" id="aBenchSector">vs banking 22%</span>
-                </div>
-                <div class="bench-bar"><div class="fill" id="aBenchFill" style="width:78%;"></div></div>
-              </div>
-              <div class="a-tile posts">
-                <div class="a-lbl">Posts · last 7</div>
-                <div class="spark" id="aSpark">
-                  <div class="bar" style="height:30%"></div>
-                  <div class="bar" style="height:55%"></div>
-                  <div class="bar hi" style="height:78%"></div>
-                  <div class="bar" style="height:42%"></div>
-                  <div class="bar" style="height:68%"></div>
-                  <div class="bar hi" style="height:90%"></div>
-                  <div class="bar" style="height:60%"></div>
-                </div>
-                <div class="pf-foot"><b>2,841</b> reach</div>
-              </div>
-              <div class="a-tile funnel">
-                <div class="a-lbl" style="margin-bottom: 5px;">Talent funnel</div>
-                <div class="funnel-row">
-                  <span class="label">Reached</span>
-                  <div class="funnel-bar"><div class="funnel-fill" style="width:100%"></div></div>
-                  <span class="num" id="aFun1">250</span>
-                </div>
-                <div class="funnel-row">
-                  <span class="label">Unlocked</span>
-                  <div class="funnel-bar"><div class="funnel-fill" style="width:35%"></div></div>
-                  <span class="num" id="aFun2">87</span>
-                </div>
-                <div class="funnel-row">
-                  <span class="label">Responded</span>
-                  <div class="funnel-bar"><div class="funnel-fill" style="width:12%"></div></div>
-                  <span class="num" id="aFun3">31</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="corp-foot" id="demoAlertStatus">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-            Click an action to execute real-time routing.
+          <div class="exp-price-card">
+            <div class="exp-price-tier">Custom</div>
+            <div class="exp-price-amount">R10,000</div>
+            <div class="exp-price-desc">For additional volume or scope</div>
           </div>
         </div>
       </div>
@@ -1541,7 +1650,7 @@
       <div class="sig-block">
         <div class="sb-label">For Knock Talent Intelligence</div>
         <div class="sb-line"></div>
-        <div class="sb-name"><strong>Dylan Tasdhary</strong> · Founder · Date: ___ / ___ / ______</div>
+        <div class="sb-name"><strong><span class="ed" data-field="knockName">[Dylan Tasdhary]</span></strong> · <span class="ed" data-field="knockTitle">[Founder]</span> · Date: ___ / ___ / ______</div>
       </div>
     </div>
 
@@ -1738,205 +1847,6 @@
 
   setActive(0);
 
-  /* ============================================================
-     SANDBOX DEMO
-     ============================================================ */
-  const studentData = {
-    thabo: {
-      school: "UCT", degree: "BSc CompSci", gpa: "81% GPA", status: "Debt · R42,000",
-      messages: [
-        { type: "user", text: "📤 Uploading: transcript_final.pdf" },
-        { type: "bot", text: "⚙️ Parsing structure vectors…" },
-        { type: "bot", text: "✅ <strong>Verified</strong><br/>UCT · CompSci · 81.3%<br/>🔒 PII stripped for blind matching." }
-      ]
-    },
-    priya: {
-      school: "Wits", degree: "BSc Data Science", gpa: "78% GPA", status: "Bursary active",
-      messages: [
-        { type: "user", text: "📤 Uploading: Priya_Wits_Data.pdf" },
-        { type: "bot", text: "⚙️ Validating pipelines…" },
-        { type: "bot", text: "✅ <strong>Validated</strong><br/>Wits · Data Science · 78.5%<br/>🔒 Anonymisation token active." }
-      ]
-    },
-    alex: {
-      school: "Stellenbosch", degree: "BEng Mechatronics", gpa: "74% GPA", status: "Debt · R18,500",
-      messages: [
-        { type: "user", text: "📤 Uploading: Maties_Record.pdf" },
-        { type: "bot", text: "⚙️ Parsing academic tables…" },
-        { type: "bot", text: "✅ <strong>Parsed</strong><br/>SU · Mechatronics · 74.0%<br/>🔒 PII isolated." }
-      ]
-    }
-  };
-
-  const corpData = {
-    bank: {
-      title: "Company A · talent portal",
-      desc: "Searching for high-performance engineering candidates across verified pools.",
-      sentiment: 82, sentTrend: '↑ +6',
-      benchMine: 47, benchSector: 22, sectorLabel: 'banking',
-      posts: [30,55,78,42,68,90,60], reach: 2841,
-      funnel: { reached: 250, unlocked: 87, responded: 31 }
-    },
-    bbee: {
-      title: "Enterprise B-BBEE deck",
-      desc: "Targeting Skills Development fund allocation against verified student debt.",
-      sentiment: 91, sentTrend: '↑ +11',
-      benchMine: 58, benchSector: 19, sectorLabel: 'compliance',
-      posts: [40,70,55,82,95,68,88], reach: 1820,
-      funnel: { reached: 320, unlocked: 142, responded: 67 }
-    }
-  };
-
-  let activeStudent = 'thabo';
-  let activeCorp = 'bank';
-  let availableBalance = 4500;
-  let listViewed = false;
-
-  function loadStudentPersona(id) {
-    activeStudent = id;
-    ['thabo','priya','alex'].forEach(s => {
-      document.getElementById('btn-' + s).classList.toggle('active', s === id);
-    });
-    const chatBox = document.getElementById('waChatBox');
-    chatBox.innerHTML = '';
-    studentData[id].messages.forEach(m => {
-      const div = document.createElement('div');
-      div.className = `msg msg--${m.type}`;
-      div.innerHTML = m.text;
-      chatBox.appendChild(div);
-    });
-    chatBox.scrollTop = chatBox.scrollHeight;
-    listViewed = false;
-    renderCorporateList();
-  }
-
-  function loadCorpPersona(corpId) {
-    activeCorp = corpId;
-    document.getElementById('corp-bank').classList.toggle('active', corpId === 'bank');
-    document.getElementById('corp-bbee').classList.toggle('active', corpId === 'bbee');
-    const c = corpData[corpId];
-    document.getElementById('corpNameDisplay').textContent = c.title;
-    document.getElementById('corpDescriptionDisplay').textContent = c.desc;
-
-    const scoreEl = document.getElementById('aScore');
-    scoreEl.textContent = c.sentiment;
-    if (c.sentiment >= 85)      { scoreEl.style.background = 'var(--do-bg)';   scoreEl.style.color = 'var(--do-ink)'; }
-    else if (c.sentiment >= 65) { scoreEl.style.background = 'var(--warn-bg)'; scoreEl.style.color = 'var(--warn-ink)'; }
-    else                        { scoreEl.style.background = 'var(--dont-bg)'; scoreEl.style.color = 'var(--dont-ink)'; }
-    document.getElementById('aTrend').textContent = c.sentTrend;
-    document.getElementById('aBenchMine').textContent = c.benchMine + '%';
-    document.getElementById('aBenchSector').textContent = `vs ${c.sectorLabel} ${c.benchSector}%`;
-    document.getElementById('aBenchFill').style.width = Math.min(100, c.benchMine / 60 * 100) + '%';
-
-    const sparkEl = document.getElementById('aSpark');
-    sparkEl.innerHTML = '';
-    const maxBar = Math.max(...c.posts);
-    c.posts.forEach((v) => {
-      const div = document.createElement('div');
-      div.className = 'bar' + (v === maxBar ? ' hi' : '');
-      div.style.height = v + '%';
-      sparkEl.appendChild(div);
-    });
-    document.querySelector('.a-tile.posts .pf-foot').innerHTML = `<b>${c.reach.toLocaleString()}</b> reach`;
-    document.getElementById('aFun1').textContent = c.funnel.reached;
-    document.getElementById('aFun2').textContent = c.funnel.unlocked;
-    document.getElementById('aFun3').textContent = c.funnel.responded;
-
-    listViewed = false;
-    renderCorporateList();
-  }
-
-  function renderCorporateList() {
-    const container = document.getElementById('anonymisedProfileContainer');
-    container.innerHTML = '';
-    const info = studentData[activeStudent];
-
-    if (!listViewed) {
-      const row = document.createElement('div');
-      row.className = 'anonymised-row';
-      row.innerHTML = `
-        <div>
-          <div class="row-top">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Matched talent pool
-          </div>
-          <div class="row-meta">${activeCorp === 'bank' ? 'STEM · GPA ≥ 75%' : 'Skills Dev · debt > R10k'} · <strong>${activeCorp === 'bank' ? '7 candidates' : '12 candidates'}</strong></div>
-        </div>
-        <button class="action-btn outline" onclick="viewTalentList()">View · R200</button>
-      `;
-      container.appendChild(row);
-      return;
-    }
-
-    const row = document.createElement('div');
-    row.className = 'anonymised-row';
-    if (activeCorp === 'bank') {
-      row.innerHTML = `
-        <div>
-          <div class="row-top">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Candidate token
-          </div>
-          <div class="row-meta">${info.school} · ${info.degree} · <strong>${info.gpa}</strong></div>
-        </div>
-        <button class="action-btn" onclick="executeDemoAction('unlock')">Unlock · R50</button>
-      `;
-    } else {
-      row.innerHTML = `
-        <div>
-          <div class="row-top">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Compliance match
-          </div>
-          <div class="row-meta">${info.school} · <span class="debt">${info.status}</span></div>
-        </div>
-        <button class="action-btn green" onclick="executeDemoAction('clearDebt')">Clear debt</button>
-      `;
-    }
-    container.appendChild(row);
-  }
-
-  function viewTalentList() {
-    if (availableBalance < 200) return;
-    availableBalance -= 200;
-    document.getElementById('creditCounter').textContent = `Balance R${availableBalance.toLocaleString()}`;
-    listViewed = true;
-    const alertBar = document.getElementById('demoAlertStatus');
-    alertBar.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      List unlocked · R200 deducted · ${activeCorp === 'bank' ? '7' : '12'} tokens loaded.
-    `;
-    renderCorporateList();
-  }
-
-  function executeDemoAction(actionType) {
-    const alertBar = document.getElementById('demoAlertStatus');
-    const chatBox = document.getElementById('waChatBox');
-    if (actionType === 'unlock' && availableBalance >= 50) {
-      availableBalance -= 50;
-      document.getElementById('creditCounter').textContent = `Balance R${availableBalance.toLocaleString()}`;
-      alertBar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Profile unlocked · R50 deducted · routing to student…`;
-      const notice = document.createElement('div');
-      notice.className = 'msg msg--bot';
-      notice.style.borderLeft = '3px solid var(--purple)';
-      notice.innerHTML = `🔔 <strong>Update:</strong> A corporate talent team unlocked your profile!`;
-      chatBox.appendChild(notice);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    } else if (actionType === 'clearDebt') {
-      alertBar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="color: var(--do-ink);"><polyline points="20 6 9 17 4 12"/></svg> <span style="color: var(--do-ink);">Balance transferred · routed compliance funds to university.</span>`;
-      const notice = document.createElement('div');
-      notice.className = 'msg msg--bot';
-      notice.style.borderLeft = '3px solid var(--do-ink)';
-      notice.innerHTML = `🎉 <strong>Alert:</strong> Corporate compliance funding cleared your university debt!`;
-      chatBox.appendChild(notice);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    loadCorpPersona('bank');
-    loadStudentPersona('thabo');
-  });
 </script>
 </body>
 </html>
