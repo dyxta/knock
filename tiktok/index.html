@@ -688,7 +688,7 @@ body.door-locked{overflow:hidden;height:100%;}
 .opp-card-list.saved{border-color:rgba(94,23,235,.3);background:var(--purple-pale);}
 .opp-card-list.saved::before{transform:scaleY(1);}
 .opp-card-content{flex:1;min-width:0;}
-.opp-card-co{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
+.opp-card-co{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
 .opp-card-role{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.25;}
 .opp-card-meta{font-size:12px;color:var(--g500);margin-bottom:2px;}
 .opp-card-deadline{font-size:11.5px;font-weight:600;color:var(--g700);}
@@ -714,6 +714,13 @@ body.door-locked{overflow:hidden;height:100%;}
 }
 .opp-save-btn.saved{background:var(--purple);border-color:var(--purple);color:var(--white);}
 .opp-save-btn.bounce{animation:saveBounce .42s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+/* Cart-sheet variant of the shared opp card (buildOppCardEl mode:'cart') —
+   tighter vertical rhythm to match the old .pc list it replaced, and a
+   neutral "×" remove action instead of the heart save-toggle (these items
+   are already saved; tapping here removes rather than likes). */
+.opp-card-cart{padding:10px 10px 10px 14px;margin-bottom:8px;gap:10px;}
+.opp-remove-btn{width:34px;height:34px;font-size:18px;font-weight:400;color:var(--g500);}
+.opp-remove-btn:active{background:var(--g200);}
 .swipe-done-sub{font-size:13px;color:var(--g700);line-height:1.65;margin-bottom:18px;}
 .swipe-done-actions{display:flex;flex-direction:column;gap:8px;}
 /* ── PDF BUTTON ── */
@@ -2345,12 +2352,10 @@ function renderCartSheet(){
     }
   }
   if(listEl){
-    listEl.innerHTML=bundle.length===0?'':bundle.map(function(o){
-      return '<div class="pc" style="margin-bottom:8px;">'
-        +'<div style="font-weight:700;font-size:13.5px;color:var(--ink);">'+o.title+'</div>'
-        +'<div style="font-size:12px;color:var(--g500);">'+o.company+(o.location?' · '+o.location:'')+'</div>'
-        +'</div>';
-    }).join('');
+    listEl.innerHTML='';
+    bundle.forEach(function(o){
+      listEl.appendChild(buildOppCardEl(o,{mode:'cart',saved:true}));
+    });
   }
 }
 
@@ -2876,26 +2881,38 @@ var CARD_IDX=0;
 function initCardStack(){
   renderStack();
 }
-function renderStack(){
-  var stack=document.getElementById('card-stack');
-  if(!stack)return;
-  stack.innerHTML='';
-  var bundle=getBundle();
-  OPPORTUNITIES.forEach(function(opp){
-    var saved=!!bundle.find(function(o){return o.id===opp.id;});
-    var el=document.createElement('div');
-    el.className='opp-card-list'+(saved?' saved':'');
-    el.dataset.id=opp.id;
-    el.innerHTML=
-      '<div class="opp-card-content">'+
-        '<div class="opp-card-co">'+opp.company+'</div>'+
-        '<div class="opp-card-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div>'+
-        '<div class="opp-card-meta">'+opp.location+' · '+opp.degrees+'</div>'+
-        '<div class="opp-card-deadline">closes '+formatDeadline(opp.deadline)+'</div>'+
-      '</div>'+
-      '<button class="opp-save-btn'+(saved?' saved':'')+'" aria-label="'+(saved?'unsave':'save')+'">'+
-        (saved?'♥':'♡')+
-      '</button>';
+// Shared opportunity-card builder — single source of markup for both the
+// browse stack (renderStack, mode 'browse': heart toggles save/unsave) and
+// the cart/bundle sheet (renderCartSheet, mode 'cart': already-saved items,
+// so the action is a plain remove "×" via removeFromBundle rather than a
+// like-toggle). Consolidates what used to be two parallel markup strings
+// (.opp-card-list here vs. an inline-styled .pc div in renderCartSheet) so
+// company/title hierarchy, deadline formatting, etc. only need fixing once.
+function buildOppCardEl(opp,opts){
+  opts=opts||{};
+  var mode=opts.mode||'browse';
+  var saved=!!opts.saved;
+  var el=document.createElement('div');
+  el.className='opp-card-list'+(saved?' saved':'')+(mode==='cart'?' opp-card-cart':'');
+  el.dataset.id=opp.id;
+  var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
+  el.innerHTML=
+    '<div class="opp-card-content">'+
+      '<div class="opp-card-co">'+opp.company+'</div>'+
+      '<div class="opp-card-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div>'+
+      (metaBits?'<div class="opp-card-meta">'+metaBits+'</div>':'')+
+      (opp.deadline?'<div class="opp-card-deadline">closes '+formatDeadline(opp.deadline)+'</div>':'')+
+    '</div>'+
+    (mode==='cart'
+      ?'<button class="opp-save-btn opp-remove-btn" aria-label="remove">×</button>'
+      :'<button class="opp-save-btn'+(saved?' saved':'')+'" aria-label="'+(saved?'unsave':'save')+'">'+(saved?'♥':'♡')+'</button>');
+  if(mode==='cart'){
+    el.querySelector('.opp-remove-btn').addEventListener('click',function(e){
+      e.stopPropagation();
+      removeFromBundle(opp.id);
+      renderCartSheet();
+    });
+  }else{
     el.querySelector('.opp-save-btn').addEventListener('click',function(e){
       e.stopPropagation();
       toggleSave(opp,el,e);
@@ -2907,6 +2924,17 @@ function renderStack(){
     el.addEventListener('click',function(){
       showOppInfo("hey, you probably want more info. like this to save it to your bundle for later — that's where the links to extra info can be found.");
     });
+  }
+  return el;
+}
+function renderStack(){
+  var stack=document.getElementById('card-stack');
+  if(!stack)return;
+  stack.innerHTML='';
+  var bundle=getBundle();
+  OPPORTUNITIES.forEach(function(opp){
+    var saved=!!bundle.find(function(o){return o.id===opp.id;});
+    var el=buildOppCardEl(opp,{mode:'browse',saved:saved});
     stack.appendChild(el);
   });
   updateProgress();
@@ -3045,10 +3073,14 @@ function _doPDF(bundle){
     doc.text(linkLabel,M+7,y+31);
     // doc.text() only draws text — it doesn't make it tappable on its
     // own, which is why this looked like a link but wasn't one. doc.link()
-    // overlays an actual clickable annotation on top of the rendered text;
-    // width is approximated from font size since jsPDF doesn't expose
-    // getTextWidth without also tracking font metrics state.
-    doc.link(M+7,y+27,doc.getTextWidth(linkLabel),5,{url:'https://'+shortLink});
+    // overlays an actual clickable annotation on top of the rendered text.
+    // The original hit box was only 5mm tall and exactly text-width wide —
+    // easy to miss on a phone screen in a mobile PDF viewer. Padding the
+    // box a few mm on every side (without changing the visible text)
+    // gives a more forgiving tap target while staying clear of the
+    // surrounding card content above/below.
+    var linkW=doc.getTextWidth(linkLabel);
+    doc.link(M+4,y+24,linkW+10,11,{url:'https://'+shortLink});
     y+=h+7;
   });
   // Footer — same ~50mm zone the card loop above reserves; if the last
