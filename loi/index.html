@@ -684,8 +684,25 @@
   .exp-price-card {
     background: var(--white); border: 1px solid var(--gray-100);
     border-radius: 11px; padding: 0.75rem 0.85rem; text-align: left;
+    cursor: pointer; transition: all .15s ease;
+    width: 100%; font: inherit; appearance: none;
   }
+  .exp-price-card:hover { border-color: var(--purple-mid); transform: translateY(-1px); }
   .exp-price-card--featured { border: 1.5px solid var(--purple); background: var(--purple-light); }
+  .exp-price-card.is-selected {
+    border: 1.5px solid var(--purple); background: var(--black);
+    box-shadow: 0 6px 18px rgba(94,23,235,0.18);
+  }
+  .exp-price-card.is-selected .exp-price-tier { color: var(--purple-mid); }
+  .exp-price-card.is-selected .exp-price-amount { color: var(--white); }
+  .exp-price-card.is-selected .exp-price-desc { color: rgba(255,255,255,0.65); }
+  .exp-price-check {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-body); font-weight: 700; font-size: 9px;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--purple-mid);
+    margin-top: 6px; opacity: 0; transition: opacity .15s ease;
+  }
+  .exp-price-card.is-selected .exp-price-check { opacity: 1; }
   .exp-price-tier {
     font-family: var(--font-body); font-weight: 700; font-size: 9px;
     text-transform: uppercase; letter-spacing: 0.07em; color: var(--purple); margin-bottom: 6px;
@@ -1022,6 +1039,9 @@
   }
   .waitlist-btn:hover { background: var(--purple-deep); }
   .waitlist-btn svg { width: 13px; height: 13px; }
+  .waitlist-btn:disabled { opacity: 0.75; cursor: default; }
+  .waitlist-btn.is-joined { background: var(--do-ink); cursor: default; }
+  .waitlist-btn.is-joined:hover { background: var(--do-ink); }
 
   /* ==========  FOOTER  ========== */
   .doc-footer {
@@ -1260,8 +1280,8 @@
             <div class="csl-eyebrow">01 · What is Knock</div>
             <h3 class="csl-title">The opportunity layer for <em>SA students.</em></h3>
             <p class="csl-body">
-              An AI infrastructure that turns a student's verified academic transcript into a
-              <strong>matchable identity</strong> — instantly. WhatsApp-native. POPIA-compliant.
+              We sign up STEM final-years from UCT, Wits, UP, and Stellenbosch and give them a
+              <strong>matchable profile</strong> — instantly. WhatsApp-native. POPIA-compliant.
             </p>
           </div>
           <div class="csl-visual">
@@ -1320,7 +1340,7 @@
             <div class="csl-eyebrow">03 · How it works</div>
             <h3 class="csl-title">Three steps. <em>Done in seconds.</em></h3>
             <p class="csl-body">
-              Students upload transcripts. Knock verifies and matches. Your post lands directly on their WhatsApp.
+              Students sign up and verify. Knock matches by university and field. Your post lands directly on their WhatsApp.
             </p>
           </div>
           <div class="csl-visual">
@@ -1329,7 +1349,7 @@
                 <span class="pm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg></span>
                 <div>
                   <div class="pm-name">Verify</div>
-                  <div class="pm-desc">Transcripts AI-parsed</div>
+                  <div class="pm-desc">University sign-up confirmed</div>
                 </div>
               </div>
               <div class="pillar-mini">
@@ -1354,10 +1374,10 @@
         <div class="csl-slide" data-slide="3">
           <div class="csl-text">
             <div class="csl-eyebrow">04 · This pilot</div>
-            <h3 class="csl-title">100 grads. <em>One drop. R2,500.</em></h3>
+            <h3 class="csl-title">100 grads. <em>One drop. R3,500.</em></h3>
             <p class="csl-body">
-              UCT STEM final-years with verified transcripts. Your post, delivered direct.
-              Reach, click rate, and channel-comparison within <strong>7 days</strong>.
+              100 STEM final-years from UCT, Wits, UP, and Stellenbosch. Your post, delivered direct.
+              Reach, click rate, sentiment, intent level, and conversion within <strong>7 days</strong> — and ongoing.
             </p>
           </div>
           <div class="csl-visual">
@@ -1371,8 +1391,8 @@
                 <div class="pn-lbl">WhatsApp drop</div>
               </div>
               <div class="pilot-num dark">
-                <div class="pn-val">R2.5k</div>
-                <div class="pn-lbl">Flat fee</div>
+                <div class="pn-val">R3.5k</div>
+                <div class="pn-lbl">Starting fee</div>
               </div>
             </div>
           </div>
@@ -1394,7 +1414,7 @@
                 <div class="ts-dot">1</div>
                 <div>
                   <div class="ts-name">Pilot drop</div>
-                  <div class="ts-when">Now → 6 months</div>
+                  <div class="ts-when">Now → 1 month</div>
                 </div>
               </div>
               <div class="timeline-arrow">↓</div>
@@ -1438,10 +1458,10 @@
   <div class="eyebrow">The Offer · Conditional Pilot</div>
   <div class="offer-card">
     <div class="offer-text">
-      If Knock delivers <span class="kw">100 verified UCT STEM final-years</span> with transcripts uploaded,
+      If Knock delivers <span class="kw">100 STEM final-years from SA's top universities</span>,
       and we can deliver your posts <span class="kw">direct to each student's phone via WhatsApp</span> —
       then <span class="kw"><span class="ed" data-field="company">[Company Name]</span></span> agrees to
-      <span class="kw">1 pilot talent drop</span> starting at <span class="kw price">R3,500</span>.
+      <span class="kw">1 pilot talent drop</span> starting at <span class="kw price" id="offerPrice">R3,500</span>.
     </div>
     <div class="offer-foot">
       Non-binding. No payment owed until the drop is mutually confirmed in writing.
@@ -1456,7 +1476,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
       </div>
       <div class="dc-title">100 verified students</div>
-      <div class="dc-desc">UCT STEM final-years with verified transcripts. AI-parsed by Knock.</div>
+      <div class="dc-desc">STEM final-years from UCT, Wits, UP, and Stellenbosch.</div>
     </div>
     <div class="delivery-card">
       <div class="dc-ico">
@@ -1470,7 +1490,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       </div>
       <div class="dc-title">Post-drop analytics</div>
-      <div class="dc-desc">Reach, click rate, and channel comparison — within 7 days.</div>
+      <div class="dc-desc">Reach, click rate, sentiment, intent level, and conversion/application rate — within 7 days, and ongoing.</div>
     </div>
   </div>
 
@@ -1483,15 +1503,15 @@
     </div>
     <div class="tl-item">
       <div class="tl-key">Targeting</div>
-      <div class="tl-val">100 UCT STEM final-years with verified transcripts. Tighter filters (degree, GPA) free on request.</div>
+      <div class="tl-val">100 STEM final-years from UCT, Wits, UP, and Stellenbosch. No tighter filters than university level for the pilot.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Timing</div>
-      <div class="tl-val">Mutually agreed, typically within <strong>6 months</strong>. Either party may postpone with 14 days' notice.</div>
+      <div class="tl-val">Mutually agreed, typically within <strong>1 month</strong>, with weekly or bi-weekly analytics and application updates. Either party may postpone with 14 days' notice.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Commercial</div>
-      <div class="tl-val"><strong>R3,500</strong> standard post + analytics · <strong>R5,000</strong> for 2 drops + analytics report · <strong>R10,000</strong> custom for additional volume. Invoiced on execution. No retainer, no platform fee.</div>
+      <div class="tl-val" id="commercialVal"><strong>R3,500</strong> standard post + analytics. Invoiced on execution. No retainer, no platform fee.</div>
     </div>
     <div class="tl-item">
       <div class="tl-key">Cancellation</div>
@@ -1528,7 +1548,7 @@
             <div class="exp-step-label">We do this</div>
           </div>
           <div class="exp-step-title">We sign up students</div>
-          <div class="exp-step-desc">Knock recruits and verifies STEM students from the university — they join with a transcript, no CV needed.</div>
+          <div class="exp-step-desc">Knock recruits and verifies STEM final-years from UCT, Wits, UP, and Stellenbosch — no CV needed to join.</div>
           <div class="exp-step-stat">
             <div class="exp-stat-num">100</div>
             <div class="exp-stat-label">verified students in the pool</div>
@@ -1599,22 +1619,25 @@
       <!-- PRICING TIERS -->
       <div class="exp-pricing">
         <div class="exp-pricing-head">Pricing · choose what fits the drop</div>
-        <div class="exp-pricing-grid">
-          <div class="exp-price-card">
+        <div class="exp-pricing-grid" id="pricingGrid">
+          <button type="button" class="exp-price-card is-selected" data-tier="standard" data-price="R3,500" data-commercial="<strong>R3,500</strong> standard post + analytics. Invoiced on execution. No retainer, no platform fee.">
             <div class="exp-price-tier">Standard</div>
             <div class="exp-price-amount">R3,500</div>
             <div class="exp-price-desc">1 post + full analytics report</div>
-          </div>
-          <div class="exp-price-card exp-price-card--featured">
+            <div class="exp-price-check">✓ Selected</div>
+          </button>
+          <button type="button" class="exp-price-card exp-price-card--featured" data-tier="popular" data-price="R5,000" data-commercial="<strong>R5,000</strong> for 2 drops + analytics report. Invoiced on execution. No retainer, no platform fee.">
             <div class="exp-price-tier">Most popular</div>
             <div class="exp-price-amount">R5,000</div>
             <div class="exp-price-desc">2 drops + analytics report</div>
-          </div>
-          <div class="exp-price-card">
+            <div class="exp-price-check">✓ Selected</div>
+          </button>
+          <button type="button" class="exp-price-card" data-tier="custom" data-price="R10,000" data-commercial="<strong>R10,000</strong> custom, for additional volume or scope. Invoiced on execution. No retainer, no platform fee.">
             <div class="exp-price-tier">Custom</div>
             <div class="exp-price-amount">R10,000</div>
             <div class="exp-price-desc">For additional volume or scope</div>
-          </div>
+            <div class="exp-price-check">✓ Selected</div>
+          </button>
         </div>
       </div>
     </div>
@@ -1669,10 +1692,10 @@
       <div class="wl-title">Join the waitlist for the full Knock platform.</div>
       <div class="wl-desc">Multi-drop campaigns, audience clustering, B-BBEE routing, live analytics. Launching after the pilot.</div>
     </div>
-    <a id="waitlistBtn" href="mailto:sales@knocktalent.co.za?subject=Knock%20platform%20waitlist&body=Hi%20Knock%20team%2C%0A%0AWe%27d%20like%20to%20be%20added%20to%20the%20waitlist%20for%20the%20full%20Knock%20platform.%0A%0ACompany%3A%20%0AContact%3A%20%0AEmail%3A%20%0APhone%3A%20" class="waitlist-btn">
-      Join the waitlist
+    <button type="button" id="waitlistBtn" class="waitlist-btn">
+      <span class="wl-btn-label">Join the waitlist</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </a>
+    </button>
   </div>
 
   <!-- FOOTER -->
@@ -1846,6 +1869,76 @@
   });
 
   setActive(0);
+
+  /* ============================================================
+     PRICING TIER SELECTOR — clicking a tier updates the offer-card
+     price and the terms-list Commercial line to match.
+     ============================================================ */
+  const pricingGrid = document.getElementById('pricingGrid');
+  const offerPriceEl = document.getElementById('offerPrice');
+  const commercialEl = document.getElementById('commercialVal');
+  if (pricingGrid) {
+    pricingGrid.querySelectorAll('.exp-price-card').forEach(card => {
+      card.addEventListener('click', () => {
+        pricingGrid.querySelectorAll('.exp-price-card').forEach(c => c.classList.remove('is-selected'));
+        card.classList.add('is-selected');
+        if (offerPriceEl) offerPriceEl.textContent = card.dataset.price;
+        if (commercialEl) commercialEl.innerHTML = card.dataset.commercial;
+      });
+    });
+  }
+
+  /* ============================================================
+     EMPLOYER WAITLIST — posts to the Knock Apps Script backend
+     (type: 'employer_waitlist'), reusing the LOI's own already-
+     filled-in fields (company / recipientName / recipientEmail /
+     recipientPhone) instead of asking the user to type anything
+     twice. Distinct from the student-facing signup flow.
+     ============================================================ */
+  const KNOCK_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxI8CeMbboWYqMeRLzgiCRfV-V55kv2J26enSWLWTYDqGk3K_Sx5Fikv25ehhQsY7F7Dw/exec';
+  const waitlistBtn = document.getElementById('waitlistBtn');
+  function fieldVal(name) {
+    const el = document.querySelector('.ed[data-field="' + name + '"]');
+    if (!el) return '';
+    return el.classList.contains('is-placeholder') ? '' : el.textContent.trim();
+  }
+  if (waitlistBtn) {
+    const labelEl = waitlistBtn.querySelector('.wl-btn-label');
+    waitlistBtn.addEventListener('click', () => {
+      const company = fieldVal('company');
+      const contact = fieldVal('recipientName');
+      const email = fieldVal('recipientEmail');
+      const phone = fieldVal('recipientPhone');
+      if (!company || !email) {
+        alert('Please fill in your company name and email in the form at the top before joining the waitlist.');
+        document.getElementById('fillBar').open = true;
+        document.getElementById('fillBar').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      waitlistBtn.disabled = true;
+      const origLabel = labelEl.textContent;
+      labelEl.textContent = 'Joining…';
+      fetch(KNOCK_APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          type: 'employer_waitlist',
+          data: { company, contact, email, phone, source: 'pilot_loi' }
+        })
+      })
+        .then(r => r.json())
+        .catch(() => ({ ok: true })) // Apps Script responses can fail CORS-preflight reads even on success; treat as best-effort
+        .then(() => {
+          labelEl.textContent = "You're on the list";
+          waitlistBtn.classList.add('is-joined');
+        })
+        .catch(() => {
+          labelEl.textContent = origLabel;
+          waitlistBtn.disabled = false;
+          alert('Something went wrong submitting the waitlist. Please try again or email sales@knocktalent.co.za.');
+        });
+    });
+  }
 
 </script>
 </body>

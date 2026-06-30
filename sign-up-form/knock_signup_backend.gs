@@ -37,6 +37,12 @@
  *        person, the new linkCode is appended to their linkCodes list
  *        instead of creating a duplicate row.
  *
+ * Endpoint used by the Pilot LOI page's employer waitlist (loi/index.html):
+ *
+ *   POST { type:'employer_waitlist', data:{ company, contact, email, phone, source } }
+ *        (public — no password; same trust model as 'submission'. Writes
+ *        to a separate "EmployerWaitlist" tab, not the student Signups tab.)
+ *
  * ============================================================
  * ACCESS CONTROL — a single shared password, everywhere
  * ============================================================
@@ -125,6 +131,7 @@ const SHEET_NAME_EVENTS  = 'Events';
 const SHEET_NAME_STARTERPACKS = 'StarterPacks';
 const SHEET_NAME_OPPEVENTS = 'OppEvents';
 const SHEET_NAME_CHAMPIONS = 'Champions';
+const SHEET_NAME_EMPLOYER_WAITLIST = 'EmployerWaitlist';
 // The "Opportunities List" Sheet is a separate spreadsheet (not a tab in
 // this one) that ops maintains by hand. The link-builder tool reads from
 // it via this script (rather than talking to the Sheets API directly from
@@ -193,6 +200,20 @@ const CHAMPIONS_HEADERS = [
 'created_at',
 'updated_at'
 ];
+// One row per employer/company that joins the waitlist for the full
+// Knock platform (distinct from the student-facing Signups tab). Fired
+// from the Pilot LOI page's waitlist button, reusing whatever the
+// company has already filled into the LOI's own company/recipientName/
+// recipientEmail/recipientPhone fields — see employer_waitlist in
+// doPost below.
+const EMPLOYER_WAITLIST_HEADERS = [
+'submitted_at',
+'company',
+'contact',
+'email',
+'phone',
+'source'
+];
 function getSpreadsheet_() {
 const id = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
 if (id) return SpreadsheetApp.openById(id);
@@ -224,6 +245,7 @@ function getEventsSheet_()  { return getTab_(SHEET_NAME_EVENTS,  EVENTS_HEADERS)
 function getStarterPacksSheet_() { return getTab_(SHEET_NAME_STARTERPACKS, STARTERPACKS_HEADERS); }
 function getOppEventsSheet_() { return getTab_(SHEET_NAME_OPPEVENTS, OPPEVENTS_HEADERS); }
 function getChampionsSheet_() { return getTab_(SHEET_NAME_CHAMPIONS, CHAMPIONS_HEADERS); }
+function getEmployerWaitlistSheet_() { return getTab_(SHEET_NAME_EMPLOYER_WAITLIST, EMPLOYER_WAITLIST_HEADERS); }
 /**
  * Returns true only if `password` matches KNOCK_OPS_PASSWORD in Script
  * Properties. Fails CLOSED: if the property isn't set at all, this
@@ -679,6 +701,33 @@ return jsonOut_({ ok: false, error: 'unauthorized: incorrect or missing password
       }
 return jsonOut_(upsertChampion_(body.data || {}));
     }
+/* ---- EMPLOYER WAITLIST ----
+     * Public/unauthenticated — same trust model as 'submission': this is
+     * the employer-facing waitlist on the Pilot LOI page (loi/index.html),
+     * distinct from the student Signups tab. Company/contact/email/phone
+     * come straight from fields the company already filled into the LOI
+     * itself, so there's no separate signup form to abuse.
+     */
+if (body.type === 'employer_waitlist') {
+const s = body.data || {};
+if (!s.company || !s.email) {
+return jsonOut_({ ok: false, error: 'missing company or email' });
+      }
+const sheet = getEmployerWaitlistSheet_();
+const row = EMPLOYER_WAITLIST_HEADERS.map(h => {
+if (h === 'submitted_at') return new Date();
+return s[h] !== undefined && s[h] !== null ? s[h] : '';
+      });
+const newRowIndex = sheet.getLastRow() + 1;
+sheet.getRange(newRowIndex, 1, 1, row.length).setValues([row]);
+const phoneCol = EMPLOYER_WAITLIST_HEADERS.indexOf('phone') + 1;
+if (phoneCol > 0) {
+const phoneCell = sheet.getRange(newRowIndex, phoneCol);
+phoneCell.setNumberFormat('@STRING@');
+phoneCell.setValue(String(s.phone || ''));
+      }
+return jsonOut_({ ok: true });
+    }
 /* ---- EVENTS BATCH ---- */
 if (body.type === 'events_batch') {
 const events = Array.isArray(body.data) ? body.data : [];
@@ -709,9 +758,11 @@ const e = getEventsSheet_();
 const p = getStarterPacksSheet_();
 const o = getOppEventsSheet_();
 const c = getChampionsSheet_();
+const w = getEmployerWaitlistSheet_();
 Logger.log('Signups: ' + s.getLastRow() + ' rows');
 Logger.log('Events: ' + e.getLastRow() + ' rows');
 Logger.log('StarterPacks: ' + p.getLastRow() + ' rows');
 Logger.log('OppEvents: ' + o.getLastRow() + ' rows');
 Logger.log('Champions: ' + c.getLastRow() + ' rows');
+Logger.log('EmployerWaitlist: ' + w.getLastRow() + ' rows');
 }

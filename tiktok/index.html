@@ -2771,15 +2771,20 @@ function applyStarterPack(){
 var KEY_BUNDLE='knock_bundle_v1',KEY_DOOR='knock_door_v1',KEY_CARD_IDX='knock_card_v1';
 function getBundle(){try{return JSON.parse(localStorage.getItem(KEY_BUNDLE)||'[]')||[];}catch(e){return [];}}
 // Deadline values in OPPORTUNITIES/starter packs are free-text strings set
-// by whoever fills the sheet (e.g. "2026-08-15", "15 Aug", or the literal
-// placeholder "[ date ]"). This normalizes anything that parses as a real
-// date into "15 Aug" style display text; anything that doesn't parse
-// (placeholders, "rolling", "ASAP", etc.) is returned unchanged so content
-// editors aren't forced into a strict date format.
+// by whoever fills the sheet (e.g. "2026-08-15", "15 Aug", or placeholders
+// like "[ date ]" / "does not specify" / "TBC"). This normalizes anything
+// that parses as a real date into "15 Aug" style display text. Known
+// "no real date" placeholders return null so callers omit the deadline
+// line entirely instead of printing "closes does not specify" — but a
+// genuine free-text value an editor intentionally wrote (e.g. "rolling",
+// "ASAP") is still passed through unchanged, since that IS meaningful info.
+var DEADLINE_NO_DATA=['[ date ]','does not specify','tbc','tba','n/a','none','-'];
 function formatDeadline(raw){
-  if(!raw)return raw;
+  if(!raw)return null;
+  var trimmed=String(raw).trim();
+  if(DEADLINE_NO_DATA.indexOf(trimmed.toLowerCase())!==-1)return null;
   var d=new Date(raw);
-  if(isNaN(d.getTime()))return raw;
+  if(isNaN(d.getTime()))return trimmed;
   return d.toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
 }
 function saveBundle(b){try{localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}catch(e){}}
@@ -2913,12 +2918,13 @@ function buildOppCardEl(opp,opts){
   el.className='opp-card-list'+(saved?' saved':'')+(mode==='cart'?' opp-card-cart':'');
   el.dataset.id=opp.id;
   var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
+  var deadlineText=formatDeadline(opp.deadline);
   el.innerHTML=
     '<div class="opp-card-content">'+
       '<div class="opp-card-co">'+opp.company+'</div>'+
       '<div class="opp-card-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div>'+
       (metaBits?'<div class="opp-card-meta">'+metaBits+'</div>':'')+
-      (opp.deadline?'<div class="opp-card-deadline">closes '+formatDeadline(opp.deadline)+'</div>':'')+
+      (deadlineText?'<div class="opp-card-deadline">applications close '+deadlineText+'</div>':'')+
     '</div>'+
     (mode==='cart'
       ?'<button class="opp-save-btn opp-remove-btn" aria-label="remove">×</button>'
@@ -3075,7 +3081,9 @@ function _doPDF(bundle){
     doc.setFontSize(11.5);doc.setTextColor(17,17,17);
     doc.text(opp.title,M+7,y+16);
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(136,133,128);
-    doc.text(`${opp.location}  ·  ${opp.degrees}  ·  closes ${formatDeadline(opp.deadline)}`,M+7,y+23);
+    var pdfDeadlineText=formatDeadline(opp.deadline);
+    var pdfMetaLine=[opp.location,opp.degrees].filter(Boolean).join('  ·  ')+(pdfDeadlineText?'  ·  applications close '+pdfDeadlineText:'');
+    doc.text(pdfMetaLine,M+7,y+23);
     doc.setTextColor(94,23,235);doc.setFontSize(7.5);
     // Use the tracked go.knocktalent.co.za/opp-<id> short link, not the
     // raw opp.url — opp.url is the opportunity's own application page,
@@ -3216,8 +3224,9 @@ function renderBatch(batchNum){
     row.className='opp-row';
     row.className='opp-row'+(liked?' row-liked':'');
     var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
+    var rowDeadlineText=formatDeadline(opp.deadline);
     row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
-      +(opp.deadline?'<div class="opp-row-deadline">closes '+formatDeadline(opp.deadline)+'</div>':'')+'</div>'
+      +(rowDeadlineText?'<div class="opp-row-deadline">applications close '+rowDeadlineText+'</div>':'')+'</div>'
       +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="event.stopPropagation();toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
     row.addEventListener('click',function(){
       showOppInfo("hey, you probably want more info. like this to save it to your bundle for later — that's where the links to extra info can be found.");
