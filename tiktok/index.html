@@ -717,6 +717,12 @@ body.door-locked{overflow:hidden;height:100%;}
 .opp-card-list.saved{border-color:rgba(94,23,235,.3);background:var(--purple-pale);}
 .opp-card-list.saved::before{transform:scaleY(1);}
 .opp-card-content{flex:1;min-width:0;}
+/* Long company names / titles (e.g. "Investec Graduate Opportunity: Remote
+   Technology Systems (IAA/Grad u K POC/Eng)") were spilling past the card
+   edge instead of wrapping. min-width:0 on the flex child above lets these
+   shrink below their content size, but the text itself still needs
+   word-break so long unbroken strings actually wrap onto a 2nd line. */
+.opp-card-co,.opp-card-role,.opp-card-meta,.opp-card-deadline{overflow-wrap:break-word;word-break:break-word;}
 .opp-card-co{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px;}
 .opp-card-role{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.25;}
 .opp-card-meta{font-size:12px;color:var(--g500);margin-bottom:2px;}
