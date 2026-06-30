@@ -640,11 +640,12 @@ body.door-locked{overflow:hidden;height:100%;}
   width:120px;height:120px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%,#6a2bff,#5e17eb 60%,#4a10c4);
   border:1.5px solid rgba(255,255,255,.25);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
   animation:doorGateRing 2s ease-in-out infinite;
   transition:transform .15s ease;
 }
+.door-gate-logo{width:30px;height:30px;flex-shrink:0;}
 .door-gate-circle:active{transform:scale(.93);}
 /* tap 1: small jolt, signals "registered" without fully opening yet */
 .door-gate-circle.knocked-once{animation:doorGateJolt .35s ease;}
@@ -1073,6 +1074,12 @@ body.ops #opsPanel{display:block;}
      below for the gating/open logic). -->
 <div class="door-gate" id="doorGate">
   <div class="door-gate-circle" id="doorGateCircle" onclick="doorGateTap()">
+    <svg class="door-gate-logo" viewBox="0 0 1180 1180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse cx="541" cy="586" rx="491" ry="540" fill="white"/>
+      <path d="M362.18 310.409C364.904 272.597 397.764 244.153 435.576 246.877C473.958 249.642 502.553 283.437 499.078 321.763C481.321 517.64 472.679 643.087 463.565 814.542C461.522 852.97 428.379 882.342 389.997 879.577C352.184 876.853 323.739 843.992 326.464 806.179L362.18 310.409Z" fill="#5E17EB"/>
+      <rect width="138.762" height="302.898" rx="69.3809" transform="matrix(0.700995 0.713166 -0.768651 0.639668 702.051 285.949)" fill="#5E17EB"/>
+      <path d="M506.589 671.562C480.334 643.654 483.357 601.689 513.342 577.831C543.327 553.974 588.919 557.259 615.174 585.168L804.101 785.991C830.356 813.9 827.333 855.865 797.348 879.722C767.363 903.579 721.771 900.295 695.516 872.386L506.589 671.562Z" fill="#5E17EB"/>
+    </svg>
     <span class="door-gate-word">knock</span>
   </div>
   <div class="door-gate-hint" id="doorGateHint">tap to knock</div>
@@ -2741,6 +2748,18 @@ function applyStarterPack(){
 /* ══════ BUNDLE & DOOR STATE ══════ */
 var KEY_BUNDLE='knock_bundle_v1',KEY_DOOR='knock_door_v1',KEY_CARD_IDX='knock_card_v1';
 function getBundle(){try{return JSON.parse(localStorage.getItem(KEY_BUNDLE)||'[]')||[];}catch(e){return [];}}
+// Deadline values in OPPORTUNITIES/starter packs are free-text strings set
+// by whoever fills the sheet (e.g. "2026-08-15", "15 Aug", or the literal
+// placeholder "[ date ]"). This normalizes anything that parses as a real
+// date into "15 Aug" style display text; anything that doesn't parse
+// (placeholders, "rolling", "ASAP", etc.) is returned unchanged so content
+// editors aren't forced into a strict date format.
+function formatDeadline(raw){
+  if(!raw)return raw;
+  var d=new Date(raw);
+  if(isNaN(d.getTime()))return raw;
+  return d.toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
+}
 function saveBundle(b){try{localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}catch(e){}}
 function addToBundle(opp){const b=getBundle();if(!b.find(o=>o.id===opp.id)){b.push(opp);saveBundle(b);}refreshBundleUI();}
 function removeFromBundle(id){saveBundle(getBundle().filter(o=>o.id!==id));refreshBundleUI();}
@@ -2872,7 +2891,7 @@ function renderStack(){
         '<div class="opp-card-co">'+opp.company+'</div>'+
         '<div class="opp-card-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div>'+
         '<div class="opp-card-meta">'+opp.location+' · '+opp.degrees+'</div>'+
-        '<div class="opp-card-deadline">closes '+opp.deadline+'</div>'+
+        '<div class="opp-card-deadline">closes '+formatDeadline(opp.deadline)+'</div>'+
       '</div>'+
       '<button class="opp-save-btn'+(saved?' saved':'')+'" aria-label="'+(saved?'unsave':'save')+'">'+
         (saved?'♥':'♡')+
@@ -3011,7 +3030,7 @@ function _doPDF(bundle){
     doc.setFontSize(11.5);doc.setTextColor(17,17,17);
     doc.text(opp.title,M+7,y+16);
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(136,133,128);
-    doc.text(`${opp.location}  ·  ${opp.degrees}  ·  closes ${opp.deadline}`,M+7,y+23);
+    doc.text(`${opp.location}  ·  ${opp.degrees}  ·  closes ${formatDeadline(opp.deadline)}`,M+7,y+23);
     doc.setTextColor(94,23,235);doc.setFontSize(7.5);
     // Use the tracked go.knocktalent.co.za/opp-<id> short link, not the
     // raw opp.url — opp.url is the opportunity's own application page,
@@ -3074,6 +3093,10 @@ function _doPDF(bundle){
 var DOOR_TAPS=0;
 function doorGateTap(){
   DOOR_TAPS++;
+  // Light haptic buzz on each tap — purely cosmetic, no-ops silently on
+  // browsers/devices without Vibration API support (most desktop browsers,
+  // iOS Safari), so no feature check is needed beyond the existence guard.
+  if(navigator.vibrate)navigator.vibrate(10);
   var circle=document.getElementById('doorGateCircle');
   var hint=document.getElementById('doorGateHint');
   var gate=document.getElementById('doorGate');
@@ -3103,6 +3126,30 @@ function doorGateTap(){
   window.addEventListener('orientationchange',function(){setTimeout(setVH,100);},{passive:true});
 })();
 
+/* ── KEYBOARD OVERLAY FIX (mobile Safari / Chrome) ──
+   The sign-up sheet (.sheet#sheet-form) is position:fixed with its own
+   internal scroll (max-height:88dvh; overflow-y:auto). When the on-screen
+   keyboard opens on a field near the bottom (phone, email), mobile Safari
+   doesn't resize that fixed container or auto-scroll the focused input
+   above the keyboard — it can end up hidden, along with #sf-submit below
+   it. scrollIntoView on focus, after a short delay for the keyboard
+   animation to finish, fixes this without needing visualViewport (which
+   has inconsistent fixed-position resize behavior across iOS Safari
+   versions). Delegated listener so it covers every input added to the
+   form sheet, not just phone/email by id. */
+(function(){
+  var formSheet=document.getElementById('sheet-form');
+  if(!formSheet)return;
+  formSheet.addEventListener('focusin',function(e){
+    var el=e.target;
+    if(!el||!('scrollIntoView' in el))return;
+    if(el.tagName!=='INPUT'&&el.tagName!=='TEXTAREA'&&el.tagName!=='SELECT')return;
+    setTimeout(function(){
+      el.scrollIntoView({block:'center',behavior:'smooth'});
+    },300);
+  },{passive:true});
+})();
+
 /* ══════ BATCH ROW RENDERING ══════ */
 function renderBatch(batchNum){
   if(!OPPORTUNITIES||!OPPORTUNITIES.length)return;
@@ -3121,7 +3168,7 @@ function renderBatch(batchNum){
     row.className='opp-row'+(liked?' row-liked':'');
     var metaBits=[opp.location,opp.degrees].filter(Boolean).join(' · ');
     row.innerHTML='<div class="opp-row-info"><div class="opp-row-co">'+opp.company+'</div><div class="opp-row-role" onclick="event.stopPropagation();showOppInfo();" style="cursor:pointer;">'+opp.title+'</div><div class="opp-row-loc">'+metaBits+'</div>'
-      +(opp.deadline?'<div class="opp-row-deadline">closes '+opp.deadline+'</div>':'')+'</div>'
+      +(opp.deadline?'<div class="opp-row-deadline">closes '+formatDeadline(opp.deadline)+'</div>':'')+'</div>'
       +'<button class="opp-row-heart'+(liked?' liked':'')+'" onclick="event.stopPropagation();toggleSaveRow(\''+id+'\',this)">'+(liked?'♥':'♡')+'</button>';
     row.addEventListener('click',function(){
       showOppInfo("hey, you probably want more info. like this to save it to your bundle for later — that's where the links to extra info can be found.");
