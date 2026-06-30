@@ -489,6 +489,7 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 }
 .dot{width:3px;height:18px;border-radius:2px;background:rgba(0,0,0,.2);transition:all .3s;}
 .dot.active{background:var(--purple);height:28px;}
+.dot.dot-hidden{display:none;}
 
 /* ── FLOATING CART (live bundle count, all slides) ──
    Fixed top-right so it never collides with #dots (right-center) or the
@@ -1274,7 +1275,7 @@ body.ops #opsPanel{display:block;}
        and the bundle contents live in one place (the cart popup). -->
   <div class="anim a4">
     <button class="glass-pill-btn" style="margin:0 auto 14px;" onclick="openCartSheet()">
-      <span class="gpb-icon">🎁</span><span>view bundle</span>
+      <span class="gpb-icon">🔖</span><span>view bundle</span>
     </button>
     <div class="sf-consent pdf-consent" id="s3-pdf-consent-row" style="max-width:300px;" onclick="pdfToggleConsent()"><div class="sf-cb" id="s3-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
     <button class="cta-btn cta-primary" id="s3-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin-top:4px;">
@@ -1309,7 +1310,7 @@ body.ops #opsPanel{display:block;}
      somewhere. Visible on every slide, count updates instantly on
      like/unlike (see refreshBundleUI()). Tapping opens #sheet-cart. -->
 <div class="cart-fab" id="cartFab" onclick="openCartSheet()">
-  <span class="cart-fab-icon">🎁</span>
+  <span class="cart-fab-icon">🔖</span>
   <span class="cart-fab-badge" id="cartFabBadge">0</span>
 </div>
 
@@ -2063,7 +2064,7 @@ if(isAdminPage()){
   // pack geo is set via OPPORTUNITIES array — no inline card refs needed
   // pack geo bias now handled by OPPORTUNITIES array
   // (opportunities in OPPORTUNITIES array use PAGE_UNI city for geo bias)
-  loadLikes(); renderCTA(); fetchGlobalStats();
+  loadLikes(); renderCTA(); fetchGlobalStats(); refreshDots();
   // Restore slide position from last visit
   var savedSlide=parseInt(localStorage.getItem(KEY_SLIDE)||'0');
   if(savedSlide>0&&savedSlide<slides.length){
@@ -2569,7 +2570,7 @@ async function sfSubmitInner(){
     sendToBackend(payload).catch(function(){});
     ph('signup_success',{uni:PAGE_UNI,seg:PAGE_SEG});
     track('submit_success',{uni:PAGE_UNI,seg:PAGE_SEG,university:uniFallback,audience:PAGE_AUDIENCE,ch:PAGE_CH});
-    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshP3(); refreshS3();
+    localStorage.setItem(KEY_SIGNUP,'1'); renderCTA(); refreshBundleUI(); refreshP2(); refreshP3(); refreshS3(); refreshDots();
     document.getElementById('sf-form-body').style.display='none';
     renderSfDone();
     document.getElementById('sf-done').style.display='block';
@@ -2790,6 +2791,14 @@ function formatDeadline(raw){
 function saveBundle(b){try{localStorage.setItem(KEY_BUNDLE,JSON.stringify(b));}catch(e){}}
 function addToBundle(opp){const b=getBundle();if(!b.find(o=>o.id===opp.id)){b.push(opp);saveBundle(b);}refreshBundleUI();}
 function removeFromBundle(id){saveBundle(getBundle().filter(o=>o.id!==id));refreshBundleUI();}
+// Nav dots show all 4 slides, but slides 3 & 4 (index 2 & 3) only have
+// real content once the visitor has signed up — before that, showing 4
+// "slots" reads as if there's more to swipe to right now. Hide dots 2 & 3
+// pre-signup, reveal them once KEY_SIGNUP is set (called at init + on signup).
+function refreshDots(){
+  const signed=localStorage.getItem(KEY_SIGNUP)==='1';
+  dots.forEach(function(d,i){ if(i>=2)d.classList.toggle('dot-hidden',!signed); });
+}
 var CART_FAB_LAST_N=0;
 function refreshBundleUI(){
   const n=getBundle().length;
