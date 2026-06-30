@@ -2493,14 +2493,26 @@ async function sfSubmitInner(){
   const u=UNI[PAGE_UNI]||{full:PAGE_UNI};
   const uniFallback=SF_UNI?(SF_UNI==='other'?SF_UNI_OTHER:SF_UNI):(u.full||PAGE_UNI);
   const phone=document.getElementById('sf-phone').value.trim();
-  if(!phone||phone.length<9){showToast('valid number please');ph('form_field_error',{field:'phone'});track('validation_failed',{field:'phone'});return;}
+  // SA mobile numbers entered without the +27 prefix (which is prepended
+  // separately below) are 9 digits, e.g. "79 123 4567" → "791234567".
+  // length<9 alone let through things like "abc123456" — this also checks
+  // every remaining character is a digit once spaces are stripped.
+  const phoneDigits=phone.replace(/\s/g,'');
+  if(!phone||phoneDigits.length<9||!/^\d+$/.test(phoneDigits)){showToast('valid whatsapp number please');ph('form_field_error',{field:'phone'});track('validation_failed',{field:'phone'});return;}
   if(!uniFallback){showToast('pick your university');ph('form_field_error',{field:'university'});track('validation_failed',{field:'university'});return;}
   if(!SF_FIELD){showToast('pick your field');ph('form_field_error',{field:'field_of_study'});track('validation_failed',{field:'field_of_study'});return;}
   if(!SF_CONSENT){showToast('tick consent to continue');ph('form_field_error',{field:'consent'});track('validation_failed',{field:'consent'});return;}
-  const btn=document.getElementById('sf-submit');btn.disabled=true;btn.textContent='sending…';
-  ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
   const emailRaw=document.getElementById('sf-email').value.trim();
   const finalEmail=(SF_UNI==='other'||!SF_UNI_DOMAIN||!emailRaw)?emailRaw:(emailRaw+'@'+SF_UNI_DOMAIN);
+  // Email is "optional" per the field's own label, so an empty value is
+  // fine — but if something IS typed, it should look like an email once
+  // assembled. Skips the check entirely when emailRaw is empty rather than
+  // forcing the field. Plain ASCII pattern (no full RFC 5322) is
+  // intentional — this only needs to catch obvious typos, not validate
+  // every edge case a real address can take.
+  if(finalEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(finalEmail)){showToast('that email doesn\'t look right');ph('form_field_error',{field:'email'});track('validation_failed',{field:'email'});return;}
+  const btn=document.getElementById('sf-submit');btn.disabled=true;btn.textContent='sending…';
+  ph('signup_submitted',{uni:PAGE_UNI,seg:PAGE_SEG});
   const payload={
     ref:(Date.now().toString(36)+Math.random().toString(36).slice(2,8)),
     university:uniFallback,
