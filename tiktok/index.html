@@ -585,6 +585,11 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .sf-done-title{font-family:var(--font-d);font-weight:800;font-size:20px;color:var(--ink);margin-bottom:6px;}
 .sf-done-sub{font-size:13px;color:var(--g700);line-height:1.6;margin-bottom:16px;}
 .wa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:var(--white);border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;font-family:var(--font-b);cursor:pointer;text-decoration:none;}
+/* Waitlisted visitors have no further action to take — there's nothing to
+   "press". Swap the actionable green WA button for a static badge so it
+   doesn't read as a button still waiting to be clicked. */
+.wa-btn.wa-static{background:var(--g200);color:var(--g700);cursor:default;pointer-events:none;}
+.p2-wa-btn.wa-static{background:var(--g200);color:var(--g700);cursor:default;pointer-events:none;}
 
 /* ── EXTENDED SIGN-UP FIELDS (university chips + optional details) ── */
 .form-field{margin-bottom:12px;}
@@ -2589,6 +2594,7 @@ function renderSfDone(){
   var sub=document.getElementById('sf-done-sub');
   var waIcon=document.getElementById('sf-wa-icon');
   var waLabel=document.getElementById('sf-wa-label');
+  var waBtn=document.getElementById('sf-wa-btn');
   if(waitlisted){
     if(icon)icon.textContent='⏳';
     if(title)title.textContent="you're on the waiting list.";
@@ -2601,12 +2607,17 @@ function renderSfDone(){
       ?"we're not yet helping non-stem students. as soon as we do, you'll be the first we help."
       :"we've saved your details — we'll reach out as soon as we're ready for you.";
     if(waIcon)waIcon.style.display='none';
-    if(waLabel)waLabel.textContent='join waiting list ✓';
+    // No further action exists once waitlisted — render as a static
+    // confirmation badge (not clickable) instead of a live green button,
+    // so it doesn't read as something still waiting to be pressed.
+    if(waLabel)waLabel.textContent='you\'re on the list ✓';
+    if(waBtn){waBtn.classList.add('wa-static');waBtn.removeAttribute('href');waBtn.onclick=function(e){e.preventDefault();return false;};}
   }else{
     if(icon)icon.textContent='🎉';
     if(title)title.textContent="you're vetted.";
     if(sub)sub.textContent="request to join your campus group — we'll verify and approve you within 24 hours.";
     if(waIcon)waIcon.style.display='';
+    if(waBtn){waBtn.classList.remove('wa-static');waBtn.href=getWaLink();waBtn.onclick=function(){requestWA(this);return false;};}
     if(waLabel)waLabel.textContent='request to join group';
   }
 }
@@ -2873,7 +2884,14 @@ function refreshP2(){
       :"you're in. <strong>you've been added to the waiting list</strong> — we'll reach out when we're ready for you.")
     :"you're in. <strong>request to join your campus group</strong> — your 3 bonus opportunities unlock once you do.";
   if(icon2)icon2.style.display=waitlisted2?'none':'';
-  if(label2)label2.textContent=waitlisted2?'join waiting list ✓':'request to join group';
+  // No further action exists once waitlisted — same static-badge treatment
+  // as renderSfDone()'s sf-wa-btn: swap copy and disable the click instead
+  // of leaving a live-looking green button with nothing left to do.
+  if(label2)label2.textContent=waitlisted2?'you\'re on the list ✓':'request to join group';
+  if(p2WaBtn){
+    p2WaBtn.classList.toggle('wa-static',waitlisted2);
+    p2WaBtn.onclick=waitlisted2?function(e){e.preventDefault();return false;}:function(){requestWA(this);return false;};
+  }
 }
 function refreshP3(){
   var signed=localStorage.getItem(KEY_SIGNUP)==='1';
