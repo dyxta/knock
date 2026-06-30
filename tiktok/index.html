@@ -389,10 +389,8 @@ body{font-family:var(--font-b);-webkit-font-smoothing:antialiased;background:var
 .cta-primary{background:var(--btn-bg,var(--purple));color:var(--btn-color,var(--white));box-shadow:var(--btn-shadow,none);border:var(--btn-border,none);-webkit-backdrop-filter:var(--btn-backdrop,none);backdrop-filter:var(--btn-backdrop,none);}
 /* Pulse only on the sign-up entry CTA and the bundle-download CTA (when enabled) —
    not on plain "next slide" navigation buttons that also happen to use .cta-primary. */
-.door-cta,#s3-pdf-btn:not([disabled]){animation:metallicPulse 2.2s ease-in-out infinite;}
+.door-cta,#s3-pdf-btn:not([disabled]),#sf-pdf-btn:not([disabled]){animation:metallicPulse 2.2s ease-in-out infinite;}
 .cta-secondary{background:var(--off);color:var(--ink);border:1px solid var(--g200);}
-.cta-done{background:#e8f9f2;color:#085041;border:1px solid #b8e6d4;cursor:default;}
-.cta-done:active{transform:none;}
 .cta-t{flex:1;}
 .cta-sub{font-size:10px;opacity:.65;margin-bottom:1px;font-weight:500;}
 .cta-arr{opacity:.4;font-size:15px;}
@@ -723,18 +721,13 @@ body.door-locked{overflow:hidden;height:100%;}
 .opp-remove-btn:active{background:var(--g200);}
 .swipe-done-sub{font-size:13px;color:var(--g700);line-height:1.65;margin-bottom:18px;}
 .swipe-done-actions{display:flex;flex-direction:column;gap:8px;}
-/* ── PDF BUTTON ── */
+/* ── PDF BUTTON ──
+   The PDF download button (both #sf-pdf-btn in the cart sheet and
+   #s3-pdf-btn on slide 4) now reuses .cta-btn.cta-primary directly instead
+   of a separate .pdf-btn class that styled an identical-looking button via
+   the same --btn-bg/--btn-color/--btn-border variables. One button system,
+   one place to restyle. */
 @keyframes saveFB{0%{opacity:1;transform:translateX(-50%) translateY(0);}70%{opacity:1;transform:translateX(-50%) translateY(-18px);}100%{opacity:0;transform:translateX(-50%) translateY(-36px);}}
-.pdf-btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;background:var(--btn-bg);color:var(--btn-color);border:var(--btn-border);
-  border-radius:12px;padding:14px;font-size:14px;font-weight:700;
-  font-family:var(--font-b);cursor:pointer;transition:opacity .15s;margin-top:10px;
-}
-/* Pulse only while actually enabled — a disabled/dimmed button shouldn't glow. */
-.pdf-btn:not([disabled]){animation:metallicPulse 2.2s ease-in-out infinite;}
-.pdf-btn.show{display:flex;}
-.pdf-btn:hover{opacity:.85;}
 .pdf-preview{display:none;flex-direction:column;gap:5px;margin-top:10px;padding:12px;background:var(--off);border:1px solid var(--g200);border-radius:10px;}
 .pdf-preview.show{display:flex;}
 .pdf-preview-item{font-size:12px;color:var(--g700);display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
@@ -1276,14 +1269,11 @@ body.ops #opsPanel{display:block;}
     <button class="copy-btn" id="copy-btn" onclick="copyLink()">copy</button>
   </div>
 
-  <!-- right actions -->
+  <!-- right actions: share lives in the share-big button + copy-row below,
+       so only the like toggle remains here (avoids 3 redundant share taps) -->
   <div class="slide-actions">
     <button class="act-btn like-btn" id="like-3" onclick="toggleLike(this)">
       <div class="act-icon">♡</div><span class="act-label" id="lc-3" style="display:none;">0</span>
-    </button>
-    <button class="act-btn" onclick="doShare()">
-      <div class="act-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-      <span class="act-label sc-count" style="display:none;">0</span>
     </button>
   </div>
 </div>
@@ -1451,7 +1441,9 @@ body.ops #opsPanel{display:block;}
         <div style="height:1px;background:var(--g200);margin-bottom:14px;"></div>
         <div class="pdf-preview" id="sf-pdf-preview"></div>
         <div class="sf-consent pdf-consent" id="sf-pdf-consent-row" onclick="pdfToggleConsent()"><div class="sf-cb" id="sf-pdf-cb"></div><div class="sf-ct">i've read knock's <strong>privacy notice</strong> and agree my saved opportunities (incl. company links) can be compiled into this PDF.</div></div>
-        <button class="pdf-btn" id="sf-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;">📄 download opportunity bundle</button>
+        <button class="cta-btn cta-primary" id="sf-pdf-btn" onclick="generatePDF()" disabled style="opacity:.4;cursor:not-allowed;max-width:300px;margin:0 auto;">
+          <div class="cta-t"><div class="cta-arr">📄 download opportunity bundle</div></div>
+        </button>
         <div id="sf-bundle-nudge" style="display:none;font-size:12px;color:var(--g500);margin-top:10px;text-align:center;line-height:1.6;"></div>
         <p style="font-size:11px;color:var(--g300);text-align:center;margin-top:6px;line-height:1.5;">saved to your device · no account needed · links live when active</p>
       </div>
